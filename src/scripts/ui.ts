@@ -37,14 +37,6 @@ function openDialog(dialog: HTMLDialogElement, focusTarget?: HTMLElement | null)
 document.addEventListener('click', (e) => {
   const target = e.target as Element;
 
-  const previewTrigger = target.closest<HTMLAnchorElement>('[data-open-preview]');
-  const previewDialog = document.getElementById('preview-dialog') as HTMLDialogElement | null;
-  if (previewTrigger && previewDialog && typeof previewDialog.showModal === 'function' && !e.metaKey && !e.ctrlKey && !e.shiftKey) {
-    e.preventDefault();
-    openDialog(previewDialog, previewDialog.querySelector<HTMLElement>('input:not([type="hidden"]):not([tabindex="-1"]), select'));
-    return;
-  }
-
   const menuTrigger = target.closest('[data-open-menu]');
   const menu = document.getElementById('mobile-menu') as HTMLDialogElement | null;
   if (menuTrigger && menu) {

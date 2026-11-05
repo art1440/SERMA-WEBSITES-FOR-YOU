@@ -1,10 +1,11 @@
 ---
 import { en } from '../i18n/en';
-import { routes } from '../config/site';
-import LeadForm from '../components/LeadForm.astro';
+import { routes, site, isPlaceholder } from '../config/site';
 import TilePhone from '../components/TilePhone.astro';
 import Icon from '../components/Icon.astro';
 const t = en.final;
+const mailHref = isPlaceholder(site.email) ? undefined : `mailto:${site.email}?subject=${encodeURIComponent('Free website preview')}`;
+const phoneHref = isPlaceholder(site.phone) ? undefined : `tel:+1${site.phone.replace(/\D/g, '')}`;
 ---
 <section id="get-started" class="section final" aria-labelledby="final-title" data-final-cta>
   <div class="container final-grid">
@@ -22,8 +23,23 @@ const t = en.final;
         <div class="finale-canvas" data-canvas-host></div>
       </div>
     </div>
-    <div class="card form-card">
-      <LeadForm id="final" headingLevel="h3" />
+    <div class="card contact-card">
+      <h3 class="h3">{t.contactTitle}</h3>
+      <p class="muted">{t.contactLead}</p>
+      <ul class="contact" role="list">
+        <li>
+          <span class="ic" aria-hidden="true"><Icon name="mail" /></span>
+          <span><span class="label">{t.email}</span>{mailHref ? <a href={mailHref}>{site.email}</a> : <span class="ph">{site.email}</span>}</span>
+        </li>
+        <li>
+          <span class="ic" aria-hidden="true"><Icon name="phone" /></span>
+          <span><span class="label">{t.phone}</span>{phoneHref ? <a href={phoneHref}>{site.phone}</a> : <span class="ph">{site.phone}</span>}</span>
+        </li>
+        <li>
+          <span class="ic" aria-hidden="true"><Icon name="pin" /></span>
+          <span><span class="label">{t.location}</span>{site.city}, {site.region}</span>
+        </li>
+      </ul>
     </div>
   </div>
 </section>
@@ -34,7 +50,14 @@ const t = en.final;
   .copy { display: grid; gap: var(--sp-5); justify-items: start; }
   .talk { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); color: var(--c-muted); }
   .talk a { color: var(--c-text); text-decoration: none; }
-  .form-card { border-radius: calc(var(--r-large) * 1.25); box-shadow: var(--depth-3); }
+  .contact-card { display: grid; gap: var(--sp-4); border-radius: calc(var(--r-large) * 1.25); box-shadow: var(--depth-3); }
+  .contact { display: grid; gap: var(--sp-3); margin-top: var(--sp-2); }
+  .contact li { display: grid; grid-template-columns: 3rem 1fr; gap: var(--sp-4); align-items: center; padding: var(--sp-4); border-radius: var(--r-tile); background: var(--c-raised); border: 1px solid var(--c-line); }
+  .contact .ic { width: 3rem; height: 3rem; border-radius: var(--r-tile); display: grid; place-items: center; background: var(--c-secondary-dim); color: var(--c-secondary); }
+  .contact .ic :global(svg) { width: 1.3rem; height: 1.3rem; }
+  .contact .label { display: block; font-size: var(--fs-micro); color: var(--c-muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .contact a { font-weight: 650; font-size: var(--fs-body-l); display: inline-flex; min-height: 44px; align-items: center; }
+  .ph { color: var(--c-accent); font-family: ui-monospace, Menlo, monospace; }
   .finale { position: relative; width: min(100%, 24rem); aspect-ratio: 1.3; margin-top: var(--sp-6); }
   .finale-poster { position: absolute; inset: 0; transition: opacity 400ms var(--ease-out); }
   .finale-canvas { position: absolute; inset: -12%; opacity: 0; pointer-events: none; transition: opacity 400ms var(--ease-out); }

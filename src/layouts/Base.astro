@@ -6,7 +6,6 @@ import { en } from '../i18n/en';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import MobileCta from '../components/MobileCta.astro';
-import PreviewDialog from '../components/PreviewDialog.astro';
 import CursorFollower from '../components/CursorFollower.astro';
 import '../styles/global.css';
 
@@ -15,12 +14,10 @@ interface Props {
   description: string;
   lang?: 'en' | 'es';
   noindex?: boolean;
-  /** Pages that already contain the form can skip the dialog copy of it. */
-  withDialog?: boolean;
   /** Structured data objects for this page. */
   jsonLd?: object[];
 }
-const { title, description, lang = 'en', noindex = false, withDialog = true, jsonLd = [] } = Astro.props;
+const { title, description, lang = 'en', noindex = false, jsonLd = [] } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const tokens = tokensToCss();
 ---
@@ -59,11 +56,9 @@ const tokens = tokensToCss();
     </main>
     <Footer />
     <MobileCta />
-    {withDialog && <PreviewDialog />}
     <CursorFollower />
     <script>
       import '../scripts/ui.ts';
-      import '../scripts/lead-form.ts';
     </script>
   </body>
 </html>

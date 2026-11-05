@@ -15,7 +15,7 @@ const base = process.argv[2] ?? 'http://127.0.0.1:4321';
 const out = process.argv[3] ?? 'reports/qa';
 mkdirSync(out, { recursive: true });
 
-const pages = ['/', '/free-preview', '/styleguide', '/book-a-call', '/404'];
+const pages = ['/', '/styleguide', '/book-a-call', '/404'];
 const widths = [360, 390, 768, 1280, 1440];
 const problems = [];
 const note = (msg) => { problems.push(msg); console.log('  ✗', msg); };
@@ -86,25 +86,11 @@ for (const path of pages) {
   await page.keyboard.press('Escape');
   if (await page.isVisible('#mobile-menu')) note('mobile menu did not close on Escape');
 
-  // Preview dialog: empty submit shows errors, valid submit shows success
-  await page.click('.hero [data-open-preview]');
-  if (!(await page.isVisible('#preview-dialog'))) note('preview dialog did not open');
-  await page.click('#preview-dialog button[type=submit]');
-  const errs = await page.locator('#preview-dialog .field-error:not([hidden])').count();
-  if (errs < 4) note(`expected ≥4 field errors on empty submit, got ${errs}`);
-  const focused = await page.evaluate(() => document.activeElement?.id);
-  if (focused !== 'dlg-businessName') note(`focus after failed submit went to ${focused}, expected first invalid field`);
-  await axe(page, 'dialog with errors');
-  await page.screenshot({ path: `${out}/dialog-errors-390.png` });
-  await page.fill('#dlg-businessName', 'Test Barber Shop');
-  await page.selectOption('#dlg-businessType', 'Barbershop');
-  await page.fill('#dlg-phone', '512 555 0134');
-  await page.fill('#dlg-email', 'owner@example.com');
-  await page.fill('#dlg-link', '@testbarber');
-  await page.click('#preview-dialog button[type=submit]');
-  await page.waitForSelector('#preview-dialog .lead-success:not([hidden])', { timeout: 4000 }).catch(() => note('success state did not appear'));
-  await page.screenshot({ path: `${out}/dialog-success-390.png` });
-  await page.keyboard.press('Escape');
+  // Free-preview buttons scroll to the contact section (no form for now)
+  await page.click('.hero .btn-primary');
+  await page.waitForTimeout(900);
+  const contactVisible = await page.evaluate(() => { const r = document.getElementById('get-started').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; });
+  if (!contactVisible) note('primary button did not bring the contact section into view');
 
   // Demo: book an appointment, then check the dashboard tab
   await page.locator('#demo').scrollIntoViewIfNeeded();

@@ -64,9 +64,9 @@ Search the code for `[` placeholders and `draft: true`. They render with a visib
 ## Phase status
 
 1. Concepts and plan: done
-2. Design system and homepage without 3D: done. The lead form runs in preview mode: it validates and shows the thank-you state but doesn't send anything yet.
+2. Design system and homepage without 3D: done. (The lead form was later removed: this is a landing page for now, and the buttons lead to contact details. Validation in `src/lib/lead.ts` is kept for when forms return.)
 3. Hero 3D scene: done
 4. Scroll-driven 3D and remaining polish: **done (this build)**
-5. Lead capture backend and admin
+5. Lead capture backend and admin: on hold (no forms for now)
 6. Other pages and Spanish
 7. Final performance, accessibility, and device pass

@@ -51,7 +51,7 @@ async function mountHero(rt: Runtime, stage: HTMLElement) {
     onChip: () => stage.classList.add('chip-in'),
     onIntroEnd: () => {
       if (!skipBtn) return;
-      if (document.activeElement === skipBtn) document.querySelector<HTMLElement>('.hero [data-open-preview]')?.focus();
+      if (document.activeElement === skipBtn) document.querySelector<HTMLElement>('.hero .btn-primary')?.focus();
       skipBtn.hidden = true;
     },
   });

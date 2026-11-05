@@ -20,15 +20,10 @@ export const site = {
 
 export const isPlaceholder = (value: string) => /^\[.*\]$/.test(value);
 
-/**
- * Phase 2 preview build: the lead form validates and shows its success state,
- * but nothing is sent or saved. Phase 5 turns this off and wires the real endpoint.
- */
-export const PREVIEW_MODE = true;
-
 export const routes = {
   home: '/',
-  freePreview: '/free-preview',
+  /** No form for now: every "free preview" button scrolls to the contact section. */
+  freePreview: '/#get-started',
   bookCall: '/book-a-call',
   about: '/about',
   contact: '/contact',
