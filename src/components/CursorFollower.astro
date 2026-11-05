@@ -1,0 +1,66 @@
+---
+/**
+ * Desktop-only cursor follower: a small mint tile that trails the pointer and wraps around
+ * whatever you can click. Purely decorative: the real cursor always stays visible, and it is
+ * off on touch screens and with reduced motion.
+ */
+---
+<div class="cursor" data-cursor aria-hidden="true" hidden></div>
+<script>
+  const el = document.querySelector<HTMLElement>('[data-cursor]');
+  const ok = matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (el && ok) {
+    const TARGETS = 'a[href], button:not(:disabled), summary, [role="tab"], label.choice, select, input:not([type="hidden"]):not([type="radio"]), textarea, .d-opt, .d-chip, .d-time';
+    const SIZE = 10;
+    let x = -100, y = -100, cx = -100, cy = -100, w = SIZE, h = SIZE, r = 3;
+    let target: Element | null = null;
+    let raf = 0, visible = false;
+
+    const tick = () => {
+      raf = 0;
+      let tx = x - SIZE / 2, ty = y - SIZE / 2, tw = SIZE, th = SIZE, tr = 3;
+      if (target && target.isConnected) {
+        const b = target.getBoundingClientRect();
+        const pad = 6;
+        tx = b.left - pad; ty = b.top - pad; tw = b.width + pad * 2; th = b.height + pad * 2;
+        tr = Math.min(parseFloat(getComputedStyle(target).borderTopLeftRadius) + pad || 14, th / 2);
+      }
+      // Ease toward the target; snap when close so the loop can stop.
+      cx += (tx - cx) * 0.25; cy += (ty - cy) * 0.25; w += (tw - w) * 0.25; h += (th - h) * 0.25; r += (tr - r) * 0.25;
+      el.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+      el.style.width = `${w}px`;
+      el.style.height = `${h}px`;
+      el.style.borderRadius = `${r}px`;
+      if (Math.abs(tx - cx) + Math.abs(ty - cy) + Math.abs(tw - w) + Math.abs(th - h) > 0.5) raf = requestAnimationFrame(tick);
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+
+    window.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      x = e.clientX; y = e.clientY;
+      if (!visible) { visible = true; el.hidden = false; cx = x - SIZE / 2; cy = y - SIZE / 2; }
+      kick();
+    }, { passive: true });
+    document.addEventListener('pointerover', (e) => {
+      target = (e.target as Element).closest(TARGETS);
+      el.classList.toggle('is-on', Boolean(target));
+      kick();
+    });
+    document.documentElement.addEventListener('pointerleave', () => { visible = false; el.hidden = true; });
+    window.addEventListener('scroll', kick, { passive: true });
+    document.addEventListener('pointerdown', () => el.classList.add('is-down'));
+    document.addEventListener('pointerup', () => el.classList.remove('is-down'));
+  }
+</script>
+<style>
+  .cursor {
+    position: fixed; left: 0; top: 0; z-index: 90; pointer-events: none;
+    width: 10px; height: 10px; border-radius: 3px;
+    background: var(--c-secondary); opacity: 0.9;
+    transition: background-color var(--dur-ui), border-color var(--dur-ui), opacity var(--dur-ui);
+    will-change: transform;
+  }
+  .cursor:global(.is-on) { background: color-mix(in srgb, var(--c-secondary) 8%, transparent); border: 1.5px solid var(--c-secondary); opacity: 1; }
+  .cursor:global(.is-down) { opacity: 0.6; }
+  @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) { .cursor { display: none !important; } }
+</style>

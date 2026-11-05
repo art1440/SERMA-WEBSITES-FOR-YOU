@@ -1,9 +1,12 @@
 ---
 import { en } from '../i18n/en';
 import Icon from '../components/Icon.astro';
+import TileEdge from '../components/TileEdge.astro';
 const t = en.problem;
 ---
 <section class="section on-paper problem" aria-labelledby="problem-title">
+  <TileEdge position="top" />
+  <TileEdge position="bottom" />
   <div class="container">
     <div class="section-head">
       <p class="eyebrow">{t.eyebrow}</p>

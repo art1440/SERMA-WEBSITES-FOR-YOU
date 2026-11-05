@@ -1,0 +1,33 @@
+---
+/**
+ * A row of rounded tiles marking the edge between a dark chapter and a light one.
+ * The tiles flip up into place as the edge scrolls into view (CSS only; static with reduced motion).
+ */
+interface Props { position: 'top' | 'bottom'; count?: number }
+const { position, count = 28 } = Astro.props;
+---
+<div class:list={['tile-edge', position]} aria-hidden="true" data-reveal>
+  {Array.from({ length: count }, (_, i) => <i style={`--k:${i}`}></i>)}
+</div>
+<style>
+  .tile-edge {
+    position: absolute; left: 0; right: 0; height: 28px; z-index: 1; pointer-events: none;
+    display: grid; grid-template-columns: repeat(var(--n, 28), 1fr); gap: 6px; padding-inline: 6px;
+    perspective: 600px; overflow: hidden; contain: paint;
+  }
+  .top { top: -14px; }
+  .bottom { bottom: -14px; }
+  i {
+    height: 28px; border-radius: 7px; background: var(--c-paper);
+    transform-origin: 50% 100%;
+  }
+  .bottom i { transform-origin: 50% 0%; }
+  @media (max-width: 640px) { i:nth-child(n + 15) { display: none; } .tile-edge { --n: 14; } }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .tile-edge:not(:global(.is-in)) i { transform: rotateX(-92deg); }
+    :global(.js) .tile-edge.bottom:not(:global(.is-in)) i { transform: rotateX(92deg); }
+    i { transition: transform 700ms var(--ease-spring); transition-delay: calc(var(--k) * 22ms); }
+    /* The edge container itself shouldn't fade or slide like other reveals. */
+    :global(.js) .tile-edge[data-reveal] { opacity: 1; transform: none; }
+  }
+</style>

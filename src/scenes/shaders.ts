@@ -34,6 +34,7 @@ uniform vec3 uGold;
 uniform vec3 uFace;
 uniform vec3 uSide;
 uniform vec3 uLight;
+uniform float uLit;
 varying vec3 vObjN;
 varying vec3 vLocal;
 varying vec4 vUvRect;
@@ -72,7 +73,7 @@ void main() {
   float rim = pow(1.0 - max(dot(n, v), 0.0), 3.0);
   vec3 h = normalize(uLight + v);
   float spec = pow(max(dot(n, h), 0.0), 48.0);
-  vec3 col = base * (0.66 + 0.34 * diff) + rim * 0.05 * uMint + spec * 0.05;
+  vec3 col = base * (0.66 + 0.34 * diff + uLit * 0.22 * back) + rim * 0.05 * uMint + spec * 0.05;
   gl_FragColor = vec4(col, 1.0);
   #include <colorspace_fragment>
 }

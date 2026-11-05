@@ -22,7 +22,8 @@ function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
 }
 
 function fromToken(token: string) {
-  const n = token.match(/[-\d.]+/g)!.map(Number) as [number, number, number, number];
+  // Only the four numbers inside the parentheses (the hyphen in "cubic-bezier" is not a number).
+  const n = token.slice(token.indexOf('(') + 1, token.indexOf(')')).split(',').map(Number) as [number, number, number, number];
   return cubicBezier(...n);
 }
 

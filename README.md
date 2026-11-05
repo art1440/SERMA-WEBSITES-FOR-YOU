@@ -14,6 +14,7 @@ npm run dev        # local dev server at http://localhost:4321
 npm run build      # static build into dist/
 npm run preview    # serve the build
 npm run check      # type-check everything
+npm test           # unit tests (easing curves, lead validation)
 ```
 
 QA pass (layout at 360 to 1440 px, tap targets, axe accessibility, key flows, screenshots), against a running preview:
@@ -33,6 +34,7 @@ node scripts/qa.mjs http://127.0.0.1:4321 reports/qa
 | `src/components/` | Shared pieces: header, footer, lead form, dialogs, poster art. |
 | `src/scripts/` | Small client scripts: site UI, lead form, booking demo. |
 | `src/lib/lead.ts` | Lead validation shared by the browser and (Phase 5) the server. |
+| `src/scenes/` | All 3D: `boot.ts` (when to load), `runtime.ts` (one shared canvas), `hero/`, `journey/` (chapters + finale), `atlas.ts` (textures drawn in code). |
 | `src/pages/styleguide.astro` | Living style guide at `/styleguide` (not indexed). |
 | `CREDITS.md` | Every third-party asset and its license. |
 
@@ -45,6 +47,7 @@ Add these to any URL:
 | `?debug` | Overlay with quality tier, pixel ratio, fps, draw calls, triangles, and per-frame JS time |
 | `?quality=off\|low\|mid\|high` | Force a quality tier (also allows software renderers, for testing only) |
 | `?t=1.2` | Freeze the hero intro at that second, for screenshots |
+| `?nofreeze` | Keep animating even when the frame-rate watchdog would freeze (testing on software renderers) |
 
 To replay the intro, clear the `serma:intro-seen` key from local storage (or use a private window).
 
@@ -62,8 +65,8 @@ Search the code for `[` placeholders and `draft: true`. They render with a visib
 
 1. Concepts and plan: done
 2. Design system and homepage without 3D: done. The lead form runs in preview mode: it validates and shows the thank-you state but doesn't send anything yet.
-3. Hero 3D scene: **done (this build)**
-4. Scroll-driven 3D and remaining polish
+3. Hero 3D scene: done
+4. Scroll-driven 3D and remaining polish: **done (this build)**
 5. Lead capture backend and admin
 6. Other pages and Spanish
 7. Final performance, accessibility, and device pass

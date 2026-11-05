@@ -114,7 +114,17 @@ for (const path of pages) {
   if (!(await page.locator('.d-error').count())) note('demo: no error when continuing without a service');
   await page.click('.d-opt >> nth=0');
   await page.click('[data-act=next]');
-  await page.click('.d-time:not(.is-off) >> nth=0');
+  try {
+    await page.click('.d-time:not(.is-off) >> nth=0', { timeout: 4000 });
+  } catch {
+    const dump = await page.evaluate(() => {
+      const l = [...document.querySelectorAll('.d-time')].find((x) => !x.classList.contains('is-off'));
+      const r = l.getBoundingClientRect();
+      return { rect: [r.x, r.y, r.width, r.height].map(Math.round), stack: document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2).slice(0, 5).map((e) => e.id || e.className || e.tagName), all: [...document.querySelectorAll('.d-time')].map((x) => Math.round(x.getBoundingClientRect().y)) };
+    });
+    note(`demo: time slot not clickable ${JSON.stringify(dump)}`);
+    await page.screenshot({ path: `${out}/demo-time-fail.png` });
+  }
   await page.screenshot({ path: `${out}/demo-time-390.png`, fullPage: false });
   await page.click('[data-act=next]');
   await page.fill('#d-name', 'Alex');

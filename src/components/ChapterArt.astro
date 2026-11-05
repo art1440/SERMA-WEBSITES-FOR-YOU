@@ -13,6 +13,7 @@ const blocks: [number, number, number, boolean][] = [
 ];
 ---
 <div class={`art art-${chapter}`} aria-hidden="true" data-scene={chapter}>
+  <div class="art-poster">
   {chapter === 'design' && (
     <div class="board">
       <i class="tl tl-booked sw sw1"></i><i class="tl tl-mint sw sw2"></i><i class="tl sw sw3"></i><i class="tl tl-text sw sw4"></i>
@@ -45,11 +46,15 @@ const blocks: [number, number, number, boolean][] = [
     </div>
   )}
   {chapter === 'launch' && (
-    <div class="launch">
+    <div class="l-phone">
+      <i class="tl tl-mint"></i><i class="tl tl-photo big"></i><i class="tl tl-text"></i><i class="tl tl-muted short"></i><i class="tl"></i><i class="tl tl-booked"></i>
+    </div>
+  )}
+  </div>
+  <div class="art-canvas" data-canvas-host></div>
+  {chapter === 'launch' && (
+    <div class="art-overlay launch">
       <i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i>
-      <div class="l-phone">
-        <i class="tl tl-mint"></i><i class="tl tl-photo big"></i><i class="tl tl-text"></i><i class="tl tl-muted short"></i><i class="tl"></i><i class="tl tl-booked"></i>
-      </div>
       <div class="note"><i class="tl tl-booked"></i><span><b>New booking</b><small>Thu 2:30 · Gel manicure · demo</small></span></div>
       <div class="url"><span class="dot"></span>yourshop.com is live</div>
     </div>
@@ -63,6 +68,12 @@ const blocks: [number, number, number, boolean][] = [
     border: 1px solid var(--c-line); overflow: hidden; display: grid; place-items: center;
   }
   .art .tl { border-radius: 10px; }
+  .art-poster { position: absolute; inset: 0; display: grid; place-items: center; transition: opacity 400ms var(--ease-out); }
+  .art-canvas { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 400ms var(--ease-out); }
+  .art-canvas :global(canvas) { display: block; width: 100%; height: 100%; }
+  .art:global(.scene-live) .art-poster { opacity: 0; }
+  .art:global(.scene-live) .art-canvas { opacity: 1; }
+  .art-overlay { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 
   /* Design: a mood board */
   .board { position: relative; width: 84%; aspect-ratio: 1.25; }
@@ -103,9 +114,14 @@ const blocks: [number, number, number, boolean][] = [
   }
 
   /* Launch: the site goes live */
-  .launch { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
+  .launch { display: grid; place-items: center; }
   .ring { position: absolute; left: 50%; top: 50%; aspect-ratio: 1; border-radius: 30%; border: 1.5px solid var(--c-secondary); translate: -50% -50%; }
   .r1 { width: 52%; opacity: 0.35; } .r2 { width: 72%; opacity: 0.18; } .r3 { width: 94%; opacity: 0.08; }
+  @media (prefers-reduced-motion: no-preference) {
+    .ring { animation: ripple 3.2s var(--ease-out) infinite; }
+    .r2 { animation-delay: 0.4s; } .r3 { animation-delay: 0.8s; }
+    @keyframes ripple { 0% { scale: 0.92; } 50% { scale: 1.04; } 100% { scale: 0.92; } }
+  }
   .l-phone { position: relative; width: 30%; aspect-ratio: 9 / 17; padding: 4.5%; display: grid; grid-template-rows: 0.35fr 1.8fr 0.3fr 0.25fr 1fr 0.45fr; gap: 5%; border-radius: 18px; background: linear-gradient(160deg, #22332C, #111A17); border: 1px solid var(--c-line); box-shadow: 0 0 60px -10px color-mix(in srgb, var(--c-accent) 45%, transparent), var(--depth-3); }
   .l-phone .tl { border-radius: 5px; }
   .l-phone .short { width: 60%; }

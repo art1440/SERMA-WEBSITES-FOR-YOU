@@ -240,9 +240,11 @@ select.input {
 
 /* ---------- Reveal on scroll (progressive: only hides content once JS is confirmed running) ---------- */
 @media (prefers-reduced-motion: no-preference) {
-  .js [data-reveal]:not(.is-in) { opacity: 0; transform: translateY(var(--reveal-distance)); }
+  /* Rises from slightly further away. Scale (not a 3D tilt) so wide elements never poke past the screen edge. */
+  .js [data-reveal]:not(.is-in) { opacity: 0; transform: translateY(var(--reveal-distance)) scale(0.97); }
   .js [data-reveal] {
-    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+    transform-origin: 50% 0%;
+    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-chapter) var(--ease-out);
     transition-delay: calc(var(--i, 0) * var(--stagger));
   }
 }

@@ -22,7 +22,7 @@ export type CellKind =
 export interface Cell { kind: CellKind; char?: string }
 
 export interface DeviceLayout {
-  id: 'phone' | 'browser';
+  id: 'phone' | 'browser' | 'page';
   cols: number;
   rows: number;
   cells: Cell[];
@@ -61,6 +61,21 @@ export const browser: DeviceLayout = {
     ...row(c('icon'), c('text'), c('text'), ...repeat(7, c('dark'))),
     ...row(...repeat(3, c('card')), ...repeat(3, c('card')), c('slot'), c('booked'), c('slot'), c('slot')),
     ...row(...repeat(3, c('card')), ...repeat(3, c('card')), c('slot'), c('slot'), c('booked'), c('slot')),
+  ],
+};
+
+/** A desktop page, used by the "Build" chapter: wireframe first, then the finished design. */
+export const page: DeviceLayout = {
+  id: 'page',
+  cols: 8,
+  rows: 6,
+  cells: [
+    ...row(c('logo'), c('dark'), c('dark'), c('dark'), c('nav'), c('nav'), c('nav'), c('booked', '→')),
+    ...row(c('title'), c('title'), c('title'), c('title'), ...repeat(4, c('photo'))),
+    ...row(c('text'), c('text'), c('text'), c('dark'), ...repeat(4, c('photo'))),
+    ...row(c('letter', 'B'), c('letter', 'O'), c('letter', 'O'), c('letter', 'K'), ...repeat(4, c('photo'))),
+    ...row(c('card'), c('card'), c('slot'), c('booked'), c('card'), c('card'), c('icon'), c('text')),
+    ...row(c('card'), c('card'), c('slot'), c('slot'), c('card'), c('card'), c('icon'), c('text')),
   ],
 };
 
