@@ -33,7 +33,7 @@ export function DashboardShowcase() {
         />
 
         <Reveal className="mt-12 lg:mt-16" y={40}>
-          <div data-theme="dark" className="border border-ink bg-ink text-bone">
+          <div data-theme="dark" className="sd-tilt-in border border-ink bg-ink text-bone">
             <WindowChrome />
             <NicheTabs />
             <div

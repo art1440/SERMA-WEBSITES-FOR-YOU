@@ -19,7 +19,7 @@ export type LegalSlug = "privacy" | "terms" | "disclaimer";
 const privacyEn: LegalDoc = {
   title: "Privacy Policy",
   intro:
-    "{entity} (“SermaWebDesign,” “we,” “us”) builds websites and client-acquisition systems for local businesses. This policy explains what personal information this website collects, why, and the choices you have. The short version: we do not use cookies or trackers, we collect only what you choose to send us, and we never sell your data.",
+    "{entity} (“SermaWebDesign,” “we,” “us”) builds websites and client-acquisition systems for local businesses. This policy explains how this website handles personal information. The short version: this website has no forms, sets no cookies, runs no trackers, and does not collect your personal information. If you choose to email or call us, we use what you send only to reply — and we never sell it.",
   sections: [
     {
       id: "zero-cookie",
@@ -33,31 +33,23 @@ const privacyEn: LegalDoc = {
     {
       id: "collect",
       heading: "2. Information we collect",
-      paragraphs: ["We collect personal information only when you submit our demo request form:"],
-      list: [
-        "Contact details: your name, business name, industry, email address, and — only if you choose to provide it — your mobile phone number.",
-        "Your preferred demo language and anything you write in the optional message field.",
-        "Consent records: whether you agreed to our Privacy Policy and Terms, whether you agreed to receive text messages, the exact consent wording shown, its version, and the date and time of your submission.",
-        "Technical data processed by our hosting provider to deliver and secure the site (such as IP address, browser type, and request time in server logs). We do not use this data to identify or profile visitors.",
-      ],
-    },
-    {
-      id: "use",
-      heading: "3. How we use your information",
-      list: [
-        "To respond to your inquiry and schedule and deliver your live demo and revenue audit.",
-        "To send you text messages or calls about your inquiry and demo, only if you gave express consent.",
-        "To keep records of consent as required by law, and to protect the security and integrity of our website.",
-        "To comply with legal obligations and enforce our Terms.",
-      ],
-    },
-    {
-      id: "sms",
-      heading: "4. Text messaging (SMS) program",
       paragraphs: [
-        "If you check the text-message consent box, you agree to receive automated text messages and calls from SermaWebDesign regarding your inquiry and demo request. Consent is not a condition of purchase. Message frequency varies. Message and data rates may apply.",
-        "Reply STOP at any time to opt out, or HELP for help. You may also opt out by emailing {email}. After you opt out, we will send one final message confirming your request.",
-        "Mobile information and SMS opt-in consent will not be shared with third parties or affiliates for marketing or promotional purposes. Text-messaging originator opt-in data and consent will not be shared with any third parties, except service providers that deliver messages on our behalf.",
+        "This website does not collect personal information. It has no forms, sign-ups, accounts, chat widgets, or analytics. The interactive dashboard, simulator, and calculator run entirely in your browser; nothing you do with them is sent to us.",
+        "Like every website, our hosting provider automatically processes basic technical data needed to deliver and secure the site (such as IP address, browser type, and request time in server logs). We do not use this data to identify, track, or profile visitors.",
+      ],
+    },
+    {
+      id: "contacting",
+      heading: "3. When you contact us",
+      paragraphs: [
+        "If you choose to email or call us — for example, to book a demo — we receive the information you decide to share, such as your name, email address, phone number, business name, and message. We use it only to reply, schedule and deliver your demo, and provide services you request. Please do not send sensitive information (such as payment card or health details) by email.",
+      ],
+    },
+    {
+      id: "messages",
+      heading: "4. Text messages",
+      paragraphs: [
+        "We do not send marketing text messages from this website and do not collect phone numbers here. If we ever ask for your consent to receive texts, we will tell you how often we will message you, that message and data rates may apply, and that you can reply STOP to opt out — and mobile opt-in information will never be shared with third parties for their marketing.",
       ],
     },
     {
@@ -71,21 +63,21 @@ const privacyEn: LegalDoc = {
       id: "providers",
       heading: "6. Service providers",
       paragraphs: [
-        "We use a limited number of service providers to operate our business — for example, website hosting, email, scheduling, customer-relationship management, and SMS delivery. They process personal information only on our instructions, under contract, and may not use it for their own purposes.",
+        "We use a limited number of service providers to operate our business — for example, website hosting, email, and phone service. They process personal information only on our instructions, under contract, and may not use it for their own purposes.",
       ],
     },
     {
       id: "retention",
       heading: "7. Data retention",
       paragraphs: [
-        "We keep inquiry information only as long as needed to respond to you and provide our services, and then delete or anonymize it. Consent records may be kept longer where required to demonstrate compliance with telemarketing and messaging laws.",
+        "We keep emails and call notes only as long as needed to respond to you and provide our services, and then delete them, unless the law requires us to keep them longer.",
       ],
     },
     {
       id: "security",
       heading: "8. Security",
       paragraphs: [
-        "We protect information with encryption in transit (HTTPS), a strict Content Security Policy that blocks third-party scripts, server-side input validation, and access controls. No method of transmission or storage is completely secure, but we work to protect your information and will notify you of a breach where the law requires.",
+        "We protect this website with encryption in transit (HTTPS), a strict Content Security Policy that blocks third-party scripts, and access controls. No method of transmission or storage is completely secure, but we work to protect your information and will notify you of a breach where the law requires.",
       ],
     },
     {
@@ -128,7 +120,7 @@ const privacyEn: LegalDoc = {
 const privacyEs: LegalDoc = {
   title: "Política de Privacidad",
   intro:
-    "{entity} (“SermaWebDesign”, “nosotros”) crea sitios web y sistemas de captación de clientes para negocios locales. Esta política explica qué información personal recopila este sitio web, por qué y qué opciones tiene usted. En resumen: no usamos cookies ni rastreadores, solo recopilamos lo que usted decide enviarnos y nunca vendemos sus datos.",
+    "{entity} (“SermaWebDesign”, “nosotros”) crea sitios web y sistemas de captación de clientes para negocios locales. Esta política explica cómo este sitio web maneja la información personal. En resumen: este sitio no tiene formularios, no instala cookies, no usa rastreadores y no recopila su información personal. Si decide escribirnos o llamarnos, usamos lo que nos envía solo para responderle, y nunca lo vendemos.",
   sections: [
     {
       id: "zero-cookie",
@@ -142,31 +134,23 @@ const privacyEs: LegalDoc = {
     {
       id: "collect",
       heading: "2. Información que recopilamos",
-      paragraphs: ["Solo recopilamos información personal cuando usted envía nuestro formulario para solicitar una demostración:"],
-      list: [
-        "Datos de contacto: su nombre, el nombre de su negocio, su industria, su correo electrónico y, solo si decide proporcionarlo, su número de teléfono móvil.",
-        "El idioma preferido para su demostración y lo que escriba en el campo opcional de mensaje.",
-        "Registros de consentimiento: si aceptó nuestra Política de Privacidad y Términos, si aceptó recibir mensajes de texto, el texto exacto del consentimiento mostrado, su versión y la fecha y hora de su envío.",
-        "Datos técnicos procesados por nuestro proveedor de alojamiento para entregar y proteger el sitio (como dirección IP, tipo de navegador y hora de la solicitud en los registros del servidor). No usamos estos datos para identificar ni perfilar a los visitantes.",
-      ],
-    },
-    {
-      id: "use",
-      heading: "3. Cómo usamos su información",
-      list: [
-        "Para responder a su consulta y para agendar y realizar su demostración en vivo y auditoría de ingresos.",
-        "Para enviarle mensajes de texto o llamadas sobre su consulta y demostración, solo si otorgó su consentimiento expreso.",
-        "Para conservar los registros de consentimiento exigidos por la ley y proteger la seguridad e integridad de nuestro sitio web.",
-        "Para cumplir con obligaciones legales y hacer valer nuestros Términos.",
-      ],
-    },
-    {
-      id: "sms",
-      heading: "4. Programa de mensajes de texto (SMS)",
       paragraphs: [
-        "Si marca la casilla de consentimiento para mensajes de texto, acepta recibir mensajes de texto y llamadas automatizadas de SermaWebDesign sobre su consulta y su solicitud de demostración. El consentimiento no es condición de compra. La frecuencia de mensajes varía. Pueden aplicarse tarifas de mensajes y datos.",
-        "Responda STOP en cualquier momento para cancelar, o HELP para obtener ayuda. También puede cancelar escribiendo a {email}. Después de cancelar, le enviaremos un último mensaje para confirmar su solicitud.",
-        "La información móvil y el consentimiento para recibir SMS no se compartirán con terceros ni afiliados con fines de marketing o promoción. Los datos de suscripción y consentimiento para mensajes de texto no se compartirán con terceros, excepto con los proveedores de servicios que entregan los mensajes en nuestro nombre.",
+        "Este sitio web no recopila información personal. No tiene formularios, registros, cuentas, ventanas de chat ni analítica. El panel interactivo, el simulador y la calculadora funcionan completamente en su navegador; nada de lo que haga con ellos se nos envía.",
+        "Como en cualquier sitio web, nuestro proveedor de alojamiento procesa automáticamente datos técnicos básicos necesarios para entregar y proteger el sitio (como dirección IP, tipo de navegador y hora de la solicitud en los registros del servidor). No usamos estos datos para identificar, rastrear ni perfilar a los visitantes.",
+      ],
+    },
+    {
+      id: "contacting",
+      heading: "3. Cuando usted nos contacta",
+      paragraphs: [
+        "Si decide escribirnos o llamarnos (por ejemplo, para agendar una demostración), recibimos la información que usted elige compartir, como su nombre, correo electrónico, teléfono, nombre de su negocio y mensaje. La usamos solo para responderle, agendar y realizar su demostración y prestar los servicios que solicite. No envíe información sensible (como datos de tarjetas de pago o de salud) por correo electrónico.",
+      ],
+    },
+    {
+      id: "messages",
+      heading: "4. Mensajes de texto",
+      paragraphs: [
+        "No enviamos mensajes de texto de marketing desde este sitio web ni recopilamos números de teléfono aquí. Si alguna vez le pedimos su consentimiento para recibir mensajes de texto, le indicaremos con qué frecuencia le escribiremos, que pueden aplicarse tarifas de mensajes y datos y que puede responder STOP para cancelar; además, la información de suscripción móvil nunca se compartirá con terceros para su marketing.",
       ],
     },
     {
@@ -180,21 +164,21 @@ const privacyEs: LegalDoc = {
       id: "providers",
       heading: "6. Proveedores de servicios",
       paragraphs: [
-        "Utilizamos un número limitado de proveedores de servicios para operar nuestro negocio, por ejemplo: alojamiento web, correo electrónico, agenda, gestión de relaciones con clientes y envío de SMS. Ellos procesan información personal solo según nuestras instrucciones, bajo contrato, y no pueden usarla para sus propios fines.",
+        "Utilizamos un número limitado de proveedores de servicios para operar nuestro negocio, por ejemplo: alojamiento web, correo electrónico y servicio telefónico. Ellos procesan información personal solo según nuestras instrucciones, bajo contrato, y no pueden usarla para sus propios fines.",
       ],
     },
     {
       id: "retention",
       heading: "7. Conservación de datos",
       paragraphs: [
-        "Conservamos la información de las consultas solo el tiempo necesario para responderle y prestar nuestros servicios, y después la eliminamos o anonimizamos. Los registros de consentimiento pueden conservarse por más tiempo cuando sea necesario para demostrar el cumplimiento de las leyes de telemercadeo y mensajería.",
+        "Conservamos los correos y notas de llamadas solo el tiempo necesario para responderle y prestar nuestros servicios, y después los eliminamos, salvo que la ley nos obligue a conservarlos por más tiempo.",
       ],
     },
     {
       id: "security",
       heading: "8. Seguridad",
       paragraphs: [
-        "Protegemos la información con cifrado en tránsito (HTTPS), una Política de Seguridad de Contenido estricta que bloquea scripts de terceros, validación de datos en el servidor y controles de acceso. Ningún método de transmisión o almacenamiento es completamente seguro, pero trabajamos para proteger su información y le notificaremos de una violación de seguridad cuando la ley lo exija.",
+        "Protegemos este sitio web con cifrado en tránsito (HTTPS), una Política de Seguridad de Contenido estricta que bloquea scripts de terceros y controles de acceso. Ningún método de transmisión o almacenamiento es completamente seguro, pero trabajamos para proteger su información y le notificaremos de una violación de seguridad cuando la ley lo exija.",
       ],
     },
     {
@@ -255,9 +239,9 @@ const termsEn: LegalDoc = {
     },
     {
       id: "communications",
-      heading: "3. Demo requests and communications",
+      heading: "3. Contacting us",
       paragraphs: [
-        "When you request a demo, you agree to provide accurate information. If you consent to text messages, you agree to receive automated texts and calls about your inquiry and demo request; message frequency varies, message and data rates may apply, and you can reply STOP to opt out or HELP for help at any time. Consent is not a condition of purchase.",
+        "This website has no forms. If you email or call us to request a demo, please provide accurate information and do not send sensitive personal or payment data by email. Contacting us does not create a client relationship or any obligation to purchase.",
       ],
     },
     {
@@ -265,7 +249,7 @@ const termsEn: LegalDoc = {
       heading: "4. Acceptable use",
       paragraphs: ["You agree not to:"],
       list: [
-        "Submit false, misleading, or someone else’s information.",
+        "Impersonate another person or business when contacting us.",
         "Attempt to probe, scan, disrupt, or gain unauthorized access to the site, its servers, or the Client Portal.",
         "Scrape, copy, or republish site content, designs, or media at scale without written permission.",
         "Use the site to send spam or to transmit malicious code.",
@@ -349,9 +333,9 @@ const termsEs: LegalDoc = {
     },
     {
       id: "communications",
-      heading: "3. Solicitudes de demostración y comunicaciones",
+      heading: "3. Cómo contactarnos",
       paragraphs: [
-        "Al solicitar una demostración, usted se compromete a proporcionar información veraz. Si acepta recibir mensajes de texto, acepta recibir textos y llamadas automatizadas sobre su consulta y su solicitud de demostración; la frecuencia de mensajes varía, pueden aplicarse tarifas de mensajes y datos, y puede responder STOP para cancelar o HELP para obtener ayuda en cualquier momento. El consentimiento no es condición de compra.",
+        "Este sitio web no tiene formularios. Si nos escribe o llama para solicitar una demostración, proporcione información veraz y no envíe datos personales sensibles ni de pago por correo electrónico. Contactarnos no crea una relación de cliente ni obligación alguna de compra.",
       ],
     },
     {
@@ -359,7 +343,7 @@ const termsEs: LegalDoc = {
       heading: "4. Uso aceptable",
       paragraphs: ["Usted se compromete a no:"],
       list: [
-        "Enviar información falsa, engañosa o de otra persona.",
+        "Hacerse pasar por otra persona o negocio al contactarnos.",
         "Intentar sondear, escanear, interrumpir u obtener acceso no autorizado al sitio, sus servidores o el Portal de Clientes.",
         "Extraer, copiar o republicar a gran escala el contenido, los diseños o los medios del sitio sin permiso por escrito.",
         "Usar el sitio para enviar spam o transmitir código malicioso.",

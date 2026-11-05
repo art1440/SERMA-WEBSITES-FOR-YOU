@@ -9,14 +9,14 @@ import { Reveal, RevealLines } from "@/components/ui/Reveal";
 import { useLanguage } from "@/context/LanguageContext";
 import { NICHES } from "@/data/niches";
 import { EASE_EDITORIAL } from "@/lib/motion";
-import { goToDemoForm } from "@/lib/scroll";
+import { goToDemo } from "@/lib/scroll";
 
 export function Hero() {
   const { t, locale } = useLanguage();
 
   const onDemoClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    goToDemoForm();
+    goToDemo();
   };
 
   return (
@@ -45,7 +45,7 @@ export function Hero() {
             stagger={0.11}
             lines={t.hero.headline}
             emphasis={t.hero.headlineEmphasis}
-            className="col-span-12 font-display text-display-xl text-ink lg:col-span-8 lg:text-[clamp(2.75rem,7.4vw,9rem)]"
+            className="sd-hero-title col-span-12 font-display text-display-xl text-ink lg:col-span-8 lg:text-[clamp(2.75rem,7.4vw,9rem)]"
             lineClassName="[&:nth-child(2)]:pl-[8%] [&:nth-child(3)]:pl-[2%] lg:[&:nth-child(2)]:pl-[14%] lg:[&:nth-child(3)]:pl-[5%]"
           />
 
@@ -60,7 +60,8 @@ export function Hero() {
               src="/media/hero"
               poster="/media/hero-poster.jpg"
               label={t.hero.videoLabel}
-              className="aspect-[4/3] w-full border border-ink lg:aspect-[4/5]"
+              className="sd-hero-media aspect-[4/3] w-full border border-ink lg:aspect-[4/5]"
+              videoClassName="sd-zoom"
             />
             <figcaption className="mt-3 flex items-start justify-between gap-4 font-mono text-micro uppercase text-muted">
               <span>{t.hero.figure}</span>

@@ -14,7 +14,7 @@ import { NICHES } from "@/data/niches";
 import { fill } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
 import { SPRING_SOFT } from "@/lib/motion";
-import { goToDemoForm } from "@/lib/scroll";
+import { goToDemo } from "@/lib/scroll";
 
 const WEEKS_PER_MONTH = 4.33;
 
@@ -52,7 +52,7 @@ export function RevenueCalculator() {
 
   const onCta = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    goToDemoForm();
+    goToDemo();
   };
 
   return (
@@ -133,7 +133,7 @@ export function RevenueCalculator() {
 
           {/* Result */}
           <Reveal className="col-span-12 lg:col-span-6 lg:pt-8" delay={0.1}>
-            <div data-theme="dark" className="flex h-full flex-col justify-between bg-ink p-6 text-bone sm:p-8">
+            <div data-theme="dark" className="sd-rise-flat flex h-full flex-col justify-between bg-ink p-6 text-bone sm:p-8">
               <div>
                 <p className="eyebrow text-ash" id="calc-result-label">
                   {t.calculator.monthlyLabel}

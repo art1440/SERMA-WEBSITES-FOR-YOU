@@ -9,7 +9,7 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { useLanguage } from "@/context/LanguageContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
-import { goToDemoForm } from "@/lib/scroll";
+import { goToDemo } from "@/lib/scroll";
 import { ClientLoginModal } from "./ClientLoginModal";
 
 /**
@@ -49,7 +49,7 @@ export function Navbar() {
   const onDemoClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setMenuOpen(false);
-    goToDemoForm();
+    goToDemo();
   };
 
   const openLogin = () => {
@@ -60,6 +60,8 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-hairline-light bg-bone">
+        {/* Reading-progress hairline (CSS scroll-driven; no JS) */}
+        <span aria-hidden="true" className="sd-progress pointer-events-none absolute inset-x-0 -bottom-px h-0.5 bg-signal" />
         <div className="frame flex h-16 items-center justify-between gap-3">
           <Link href="/" aria-label={t.common.homeLabel} className="-ml-1 flex min-h-[44px] items-center px-1">
             <Wordmark />

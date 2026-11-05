@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
-import { goToDemoForm } from "@/lib/scroll";
+import { goToDemo } from "@/lib/scroll";
 
 type Props = { open: boolean; onClose: () => void };
 
@@ -71,7 +71,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
 
   const bookDemo = () => {
     onClose();
-    window.setTimeout(goToDemoForm, 60);
+    window.setTimeout(goToDemo, 60);
   };
 
   if (!mounted) return null;

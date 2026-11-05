@@ -243,7 +243,7 @@ function Phone({ phase }: { phase: Phase }) {
   const callScreen = phase === "ringing" || phase === "missed";
 
   return (
-    <div role="region" aria-label={t.simulator.phoneRegionLabel} className="mx-auto w-full max-w-[330px]">
+    <div role="region" aria-label={t.simulator.phoneRegionLabel} className="sd-rise mx-auto w-full max-w-[330px]">
       <div className="rounded-[2.6rem] border border-hairline-dark bg-ink-800 p-2.5">
         <div className="relative aspect-[9/18.5] overflow-hidden rounded-[2.1rem] bg-[#080807]">
           {/* Status bar */}

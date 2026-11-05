@@ -31,6 +31,7 @@ export function SystemArchitecture() {
                 poster="/media/architecture-poster.jpg"
                 label={t.system.videoLabel}
                 className="aspect-video w-full border border-hairline-dark"
+                videoClassName="sd-parallax"
               />
               <figcaption className="mt-3 font-mono text-micro uppercase text-ash">{t.system.figure}</figcaption>
             </figure>

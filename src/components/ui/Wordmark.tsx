@@ -5,7 +5,7 @@ export function Wordmark({ tone = "light", size = "md" }: { tone?: "light" | "da
     return (
       <span className={`block leading-none ${dark ? "text-bone" : "text-ink"}`}>
         <span className="sr-only">SermaWebDesign</span>
-        <span aria-hidden="true" className="font-display text-[clamp(4rem,16vw,15rem)] tracking-[-0.03em]">
+        <span aria-hidden="true" className="sd-wordmark block font-display text-[clamp(4rem,16vw,15rem)] tracking-[-0.03em]">
           Serma<span className="italic">Web</span>Design
         </span>
       </span>

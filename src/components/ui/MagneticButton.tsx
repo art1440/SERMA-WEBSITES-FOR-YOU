@@ -14,6 +14,8 @@ type Props = {
   "aria-label"?: string;
   /** Keeps the button focusable while signalling it is unavailable (unlike `disabled`). */
   "aria-disabled"?: boolean;
+  /** Marks the action that receives focus after "Book a demo" scrolls here. */
+  "data-primary-action"?: boolean;
 };
 
 const SPRING = { stiffness: 320, damping: 22, mass: 0.5 };
