@@ -1,0 +1,205 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ *
+ * Base — tactile, crisp scrolling
+ * ------------------------------------------------------------------ */
+@layer base {
+  html,
+  body {
+    /* No rubber-banding / scroll chaining. */
+    overscroll-behavior: none;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Reserve the scrollbar lane so locking scroll (modals) never shifts layout. */
+    scrollbar-gutter: stable;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-bone font-sans text-ink antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  /* Anchor targets clear the sticky navbar. */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+
+  ::selection {
+    background: #0d0d0b;
+    color: #f1ede4;
+  }
+
+  /* Visible, high-contrast keyboard focus (WCAG 2.4.7 / 1.4.11). */
+  :focus-visible {
+    outline: 2px solid #b23f14;
+    outline-offset: 3px;
+  }
+  [data-theme="dark"] :focus-visible {
+    outline-color: #e5582a;
+  }
+
+  /* Media never blocks layout / never overflows on phones. */
+  img,
+  video {
+    max-width: 100%;
+  }
+
+  /* Respect reduced-motion at the CSS layer too (Framer Motion handles JS motion). */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Components — Swiss structure
+ * ------------------------------------------------------------------ */
+@layer components {
+  .frame {
+    @apply mx-auto w-full max-w-frame px-4 sm:px-6 lg:px-10;
+  }
+
+  /* Mono micro-label — "(02) — Client Dashboard" */
+  .eyebrow {
+    @apply font-mono text-micro uppercase;
+  }
+
+  /*
+   * Buttons: the hover "ink wipe" is a pseudo-element scaled on the Y axis —
+   * transform-only, so it runs on the compositor. Text colour never changes,
+   * and every fill keeps AA contrast with its label.
+   */
+  .btn {
+    @apply relative isolate inline-flex min-h-[44px] select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap border px-5 py-3 font-mono text-[0.78rem] uppercase tracking-[0.08em] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--btn-fill, #0d0d0b);
+    transform: scaleY(0);
+    transform-origin: 50% 100%;
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn:hover::before,
+  .btn:focus-visible::before {
+    transform: scaleY(1);
+  }
+  .btn:disabled::before {
+    transform: scaleY(0);
+  }
+  .btn-ink {
+    @apply btn border-ink bg-ink text-bone;
+    --btn-fill: #b23f14;
+  }
+  .btn-bone {
+    @apply btn border-bone bg-bone text-ink;
+    --btn-fill: #e5582a;
+  }
+  .btn-line {
+    @apply btn border-ink bg-transparent text-ink;
+    --btn-fill: #e6e0d4;
+  }
+  .btn-line-dark {
+    @apply btn border-bone/60 bg-transparent text-bone;
+    --btn-fill: #2a2a25;
+  }
+
+  /* Form controls — square, hairline, 16px+ text (prevents iOS zoom). */
+  .field {
+    @apply block w-full rounded-none border border-ink/40 bg-bone-50 px-3 py-3 text-base text-ink placeholder:text-muted hover:border-ink focus:border-ink;
+  }
+  .field[aria-invalid="true"] {
+    @apply border-signal-deep;
+  }
+
+  /* Range slider — square tactile thumb, keyboard operable natively. */
+  .range {
+    @apply h-11 w-full cursor-pointer appearance-none bg-transparent;
+  }
+  .range::-webkit-slider-runnable-track {
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      #0d0d0b 0%,
+      #0d0d0b var(--fill, 50%),
+      #cfc8ba var(--fill, 50%),
+      #cfc8ba 100%
+    );
+  }
+  .range::-moz-range-track {
+    height: 2px;
+    background: #cfc8ba;
+  }
+  .range::-moz-range-progress {
+    height: 2px;
+    background: #0d0d0b;
+  }
+  .range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -11px;
+    height: 24px;
+    width: 24px;
+    border: 1px solid #0d0d0b;
+    background: #f1ede4;
+    transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .range::-moz-range-thumb {
+    height: 24px;
+    width: 24px;
+    border-radius: 0;
+    border: 1px solid #0d0d0b;
+    background: #f1ede4;
+    transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .range:active::-webkit-slider-thumb {
+    transform: scale(1.15);
+    background: #e5582a;
+  }
+  .range:active::-moz-range-thumb {
+    transform: scale(1.15);
+    background: #e5582a;
+  }
+  .range:focus-visible {
+    outline-offset: 6px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Utilities
+ * ------------------------------------------------------------------ */
+@layer utilities {
+  /* Promote to its own compositor layer — use sparingly (videos, animated bars). */
+  .gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
