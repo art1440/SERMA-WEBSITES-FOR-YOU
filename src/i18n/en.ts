@@ -189,10 +189,6 @@ export const en = {
         draft: true,
       },
       {
-        q: 'Is the preview really free?',
-        a: 'Yes. We design a preview of your homepage at no cost and with no obligation. If it\'s not for you, you don\'t owe anything.',
-      },
-      {
         q: 'Do my customers need to download an app?',
         a: 'No. They book right on your website, from any phone or computer.',
       },
