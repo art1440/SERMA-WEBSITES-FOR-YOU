@@ -1,6 +1,18 @@
 {
   "version": 1,
   "skills": {
+    "design-consultation": {
+      "source": "garrytan/gstack",
+      "sourceType": "github",
+      "skillPath": "design-consultation/SKILL.md",
+      "computedHash": "f902268161b5e14d4698e28cf9f7a092c4956b06165294c8978d664eec7edb80"
+    },
+    "design-review": {
+      "source": "garrytan/gstack",
+      "sourceType": "github",
+      "skillPath": "design-review/SKILL.md",
+      "computedHash": "4f838c80361851ed7acb9bd227da1871cc46ed923f9ea03e1522e0c18b10d1ca"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
