@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Book an appointment</title>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<main class="wrap">
+  <h1 id="shop">Book an appointment</h1>
+  <p class="muted">Pick a service and a time. You'll get a confirmation right away.</p>
+
+  <form id="book" novalidate>
+    <section class="card" aria-labelledby="h-svc">
+      <h2 id="h-svc">1. Service</h2>
+      <div class="grid svc" id="services" role="radiogroup" aria-labelledby="h-svc"></div>
+    </section>
+    <section class="card" aria-labelledby="h-day">
+      <h2 id="h-day">2. Day</h2>
+      <div class="grid days" id="days" role="radiogroup" aria-labelledby="h-day"></div>
+    </section>
+    <section class="card" aria-labelledby="h-time">
+      <h2 id="h-time">3. Time</h2>
+      <p class="muted" id="time-hint">Pick a service and a day first.</p>
+      <div class="grid times" id="times" role="radiogroup" aria-labelledby="h-time"></div>
+    </section>
+    <section class="card" aria-labelledby="h-you">
+      <h2 id="h-you">4. Your details</h2>
+      <label class="f">Name<input class="t" name="name" autocomplete="name" required maxlength="60" aria-describedby="e-name"></label>
+      <p class="err" id="e-name" hidden></p>
+      <label class="f">Phone<input class="t" name="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-describedby="e-phone"></label>
+      <p class="err" id="e-phone" hidden></p>
+      <label class="f">Email <span class="muted" style="font-weight:400">(optional, for your confirmation)</span><input class="t" name="email" type="email" autocomplete="email" aria-describedby="e-email"></label>
+      <p class="err" id="e-email" hidden></p>
+    </section>
+    <p class="err" id="form-error" role="alert" tabindex="-1" hidden></p>
+    <div class="row" style="margin-top:16px"><button class="btn" type="submit" id="submit">Confirm booking</button></div>
+  </form>
+
+  <section class="card done" id="done" hidden tabindex="-1" aria-live="polite">
+    <div class="mark" aria-hidden="true">✓</div>
+    <h2>You're booked!</h2>
+    <p id="done-text" class="muted"></p>
+    <button class="btn ghost" type="button" id="again">Book another</button>
+  </section>
+</main>
+<script src="/book.js" type="module"></script>
+</body>
+</html>

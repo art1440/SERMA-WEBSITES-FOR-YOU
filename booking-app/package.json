@@ -1,0 +1,10 @@
+{
+  "name": "serma-booking-prototype",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --no-warnings server.mjs",
+    "test": "node --no-warnings --test test/*.test.mjs"
+  }
+}

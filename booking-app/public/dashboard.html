@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Dashboard</title>
+<link rel="stylesheet" href="/app.css">
+<style>
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .live{display:inline-flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600;color:var(--muted)}
+  .live i{width:10px;height:10px;border-radius:3px;background:#B8C2BC}
+  .live[data-on] i{background:var(--mint);box-shadow:0 0 0 4px var(--mint-bg)}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .stat b{display:block;font-size:1.6rem;line-height:1.1}
+  .stat.hot{background:var(--accent);border-color:var(--accent)}
+  .day{margin-top:20px}
+  .day h3{font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+  .appt{display:grid;grid-template-columns:5.5rem 1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:6px}
+  .appt.new{border-color:var(--ink);box-shadow:0 0 0 1.5px var(--accent);animation:pop .6s ease-out}
+  .appt.cancelled{opacity:.5}.appt.cancelled .who{text-decoration:line-through}
+  .appt .time{font-weight:700}.appt .who small{display:block;color:var(--muted)}
+  .badge{font-size:.72rem;font-weight:700;background:var(--accent);padding:2px 7px;border-radius:6px;margin-left:6px}
+  .empty{color:var(--muted);font-size:.95rem;margin:6px 0 0}
+  @keyframes pop{from{transform:translateY(-8px) scale(.98);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.appt.new{animation:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section id="login" class="card" hidden>
+    <h1>Owner dashboard</h1>
+    <form id="login-form" novalidate>
+      <label class="f">PIN<input class="t" name="pin" type="password" inputmode="numeric" autocomplete="current-password" required aria-describedby="login-err"></label>
+      <p class="err" id="login-err" role="alert" hidden></p>
+      <div class="row" style="margin-top:14px"><button class="btn" type="submit">Log in</button></div>
+    </form>
+  </section>
+
+  <section id="app" hidden>
+    <div class="top">
+      <div>
+        <h1 id="title">Dashboard</h1>
+        <p class="muted" id="range"></p>
+      </div>
+      <div class="row">
+        <span class="live" id="live" role="status"><i aria-hidden="true"></i><span>Connecting…</span></span>
+        <button class="btn ghost small" type="button" id="notify" hidden>Turn on alerts</button>
+        <button class="btn ghost small" type="button" id="logout">Log out</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="s-today">0</b><span class="muted">today</span></div>
+      <div class="stat"><b id="s-week">0</b><span class="muted">this week</span></div>
+      <div class="stat" id="s-new-box"><b id="s-new">0</b><span class="muted">new since you opened</span></div>
+    </div>
+    <div id="days"></div>
+    <p class="visually-hidden" aria-live="polite" id="announce"></p>
+  </section>
+</main>
+<script src="/dash.js" type="module"></script>
+</body>
+</html>
