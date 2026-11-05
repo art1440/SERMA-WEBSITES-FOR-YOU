@@ -1,0 +1,53 @@
+---
+import { en } from '../i18n/en';
+import { industries, routes } from '../config/site';
+import Icon from '../components/Icon.astro';
+const t = en.industriesSection;
+---
+<section id="industries" class="section industries" aria-labelledby="ind-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 id="ind-title" class="display display-l">{t.title}</h2>
+    </div>
+    <ul class="list" role="list">
+      {industries.map((ind, i) => (
+        <li data-reveal style={`--i:${i % 4}`}>
+          <a class="row" href={`${routes.industries}/${ind.slug}`}>
+            <span class="name">{ind.name}</span>
+            <span class="line">{ind.line}</span>
+            <span class="go" aria-hidden="true"><Icon name="arrow-right" /></span>
+          </a>
+        </li>
+      ))}
+      <li data-reveal style="--i:3">
+        <a class="row other" href={routes.freePreview} data-open-preview>
+          <span class="name">{t.other.name}</span>
+          <span class="line">{t.other.line}</span>
+          <span class="go" aria-hidden="true"><Icon name="arrow-right" /></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+<style>
+  .list { border-top: 1px solid var(--c-line); }
+  .row {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-1) var(--sp-6); align-items: center;
+    padding: var(--sp-5) var(--sp-2); min-height: 44px; border-bottom: 1px solid var(--c-line); text-decoration: none;
+    transition: background-color var(--dur-ui), padding var(--dur-reveal) var(--ease-out);
+  }
+  .name { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-display-m); letter-spacing: -0.03em; line-height: 1.05; }
+  .line { grid-column: 1; color: var(--c-muted); }
+  .go { grid-column: 2; grid-row: 1 / span 2; width: 3rem; height: 3rem; border-radius: var(--r-tile); border: 1.5px solid var(--c-line); display: grid; place-items: center; transition: background-color var(--dur-ui), border-color var(--dur-ui), color var(--dur-ui), transform var(--dur-ui) var(--ease-spring); }
+  .go :global(svg) { width: 1.25rem; height: 1.25rem; }
+  .row:hover { background: var(--c-surface); padding-inline: var(--sp-5); }
+  .row:hover .go, .row:focus-visible .go { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-on-accent); transform: rotate(-8deg); }
+  .other .name { color: var(--c-secondary); }
+  @media (min-width: 900px) {
+    .row { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr) auto; }
+    .line { grid-column: 2; }
+    .go { grid-column: 3; grid-row: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .row { transition: background-color var(--dur-ui); } .row:hover { padding-inline: var(--sp-2); } }
+</style>

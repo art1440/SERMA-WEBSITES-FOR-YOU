@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import LeadForm from '../components/LeadForm.astro';
+import { en } from '../i18n/en';
+import { routes } from '../config/site';
+import Icon from '../components/Icon.astro';
+const t = en.final;
+---
+<Base
+  title="Get Your Free Website Preview | Serma, Austin TX"
+  description="Tell us about your business and we'll design a free preview of your new website with online booking built in. No credit card, no obligation."
+  withDialog={false}
+>
+  <section class="section page" aria-labelledby="fp-title" data-final-cta>
+    <div class="container grid">
+      <div class="copy">
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h1 id="fp-title" class="display display-l">{en.form.title}</h1>
+        <p class="lead">{t.lead}</p>
+        <p class="talk">{t.talk} <a class="link-arrow" href={routes.bookCall}>{en.cta.secondary}<Icon name="arrow-right" /></a></p>
+      </div>
+      <div class="card"><LeadForm id="page" showHeading={false} /></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .page { padding-top: clamp(var(--sp-8), 5vw, var(--sp-16)); }
+  .grid { display: grid; gap: var(--sp-10); grid-template-columns: minmax(0, 1fr); align-items: start; }
+  @media (min-width: 1024px) { .grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
+  .copy { display: grid; gap: var(--sp-5); justify-items: start; }
+  .talk { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); color: var(--c-muted); }
+  .talk a { color: var(--c-text); text-decoration: none; }
+</style>

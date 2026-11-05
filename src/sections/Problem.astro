@@ -1,0 +1,47 @@
+---
+import { en } from '../i18n/en';
+import Icon from '../components/Icon.astro';
+const t = en.problem;
+---
+<section class="section on-paper problem" aria-labelledby="problem-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 id="problem-title" class="display display-l">{t.title}</h2>
+    </div>
+    <ul class="items" role="list">
+      {t.items.map((item, i) => (
+        <li class="card item" data-reveal style={`--i:${i}`}>
+          <div class="motif" aria-hidden="true">
+            {i === 0 && <><i class="m-empty"></i><i class="m-empty"></i><i class="m-empty"></i></>}
+            {i === 1 && <><i class="m-solid"><Icon name="phone" /></i><i class="m-empty m-x"></i><i class="m-empty m-x"></i></>}
+            {i === 2 && <><i class="m-solid">$</i><i class="m-solid m-fade">$</i><i class="m-solid m-fade2">$</i></>}
+          </div>
+          <h3 class="h3">{item.title}</h3>
+          <p>{item.body}</p>
+        </li>
+      ))}
+    </ul>
+    <p class="resolve display display-m" data-reveal>
+      <a href="#included">{t.resolve}<Icon name="arrow-right" /></a>
+    </p>
+  </div>
+</section>
+<style>
+  .problem .display-l { max-width: 18ch; }
+  .items { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
+  .item { display: grid; gap: var(--sp-4); align-content: start; }
+  .item p { color: var(--c-ink-muted); }
+  .motif { display: flex; gap: var(--sp-2); margin-bottom: var(--sp-2); }
+  .motif i { width: 2.75rem; height: 2.75rem; border-radius: 10px; display: grid; place-items: center; font-style: normal; font-weight: 800; font-family: var(--font-display); font-size: 1.25rem; }
+  .m-empty { border: 2px dashed var(--c-paper-line); }
+  .m-x { position: relative; }
+  .m-x::after { content: ''; width: 45%; height: 2px; background: var(--c-paper-line); transform: rotate(-45deg); }
+  .m-solid { background: var(--c-ink); color: var(--c-paper); }
+  .m-solid :global(svg) { width: 1.3rem; height: 1.3rem; }
+  .m-fade { opacity: 0.6; } .m-fade2 { opacity: 0.3; }
+  .resolve { margin-top: clamp(var(--sp-10), 6vw, var(--sp-20)); max-width: 24ch; }
+  .resolve a { text-decoration: none; display: inline; }
+  .resolve a:hover { text-decoration: underline; text-decoration-thickness: 3px; }
+  .resolve :global(svg) { display: inline; width: 0.75em; height: 0.75em; margin-left: 0.2em; vertical-align: -0.05em; stroke-width: 2.6; }
+</style>

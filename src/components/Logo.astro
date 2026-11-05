@@ -1,0 +1,21 @@
+---
+/** Wordmark: a 2x2 block mark (three open slots, one booked) plus the name as real text. */
+import { site } from '../config/site';
+interface Props { href?: string; class?: string }
+const { href = '/', class: className } = Astro.props;
+---
+<a href={href} class:list={['logo', className]} aria-label={`${site.name}, home`}>
+  <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <rect x="1.5" y="1.5" width="9.5" height="9.5" rx="2.6" fill="none" stroke="var(--c-secondary)" stroke-width="1.8"/>
+    <rect x="13" y="1.5" width="9.5" height="9.5" rx="2.6" fill="var(--c-accent)"/>
+    <rect x="1.5" y="13" width="9.5" height="9.5" rx="2.6" fill="none" stroke="var(--c-secondary)" stroke-width="1.8"/>
+    <rect x="13" y="13" width="9.5" height="9.5" rx="2.6" fill="none" stroke="var(--c-secondary)" stroke-width="1.8"/>
+  </svg>
+  <span class="logo-word" aria-hidden="true">{site.name.toLowerCase()}</span>
+</a>
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 0.55rem; text-decoration: none; min-height: 44px; color: var(--c-text); }
+  .logo-mark { width: 1.6rem; height: 1.6rem; transition: transform var(--dur-ui) var(--ease-spring); }
+  .logo:hover .logo-mark { transform: rotate(-8deg) scale(1.06); }
+  .logo-word { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; letter-spacing: -0.04em; line-height: 1; }
+</style>

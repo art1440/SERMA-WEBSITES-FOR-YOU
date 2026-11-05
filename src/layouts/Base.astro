@@ -1,0 +1,70 @@
+---
+import { Font } from 'astro:assets';
+import { tokensToCss } from '../design/tokens';
+import { site } from '../config/site';
+import { en } from '../i18n/en';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileCta from '../components/MobileCta.astro';
+import PreviewDialog from '../components/PreviewDialog.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: 'en' | 'es';
+  noindex?: boolean;
+  /** Pages that already contain the form can skip the dialog copy of it. */
+  withDialog?: boolean;
+  /** Structured data objects for this page. */
+  jsonLd?: object[];
+}
+const { title, description, lang = 'en', noindex = false, withDialog = true, jsonLd = [] } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const tokens = tokensToCss();
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#0C1210" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'es' ? 'es_US' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <style is:inline set:html={tokens}></style>
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-body" preload />
+    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{en.a11y.skip}</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <MobileCta />
+    {withDialog && <PreviewDialog />}
+    <script>
+      import '../scripts/ui.ts';
+      import '../scripts/lead-form.ts';
+    </script>
+  </body>
+</html>
+<style is:global>
+  main:focus { outline: none; }
+</style>

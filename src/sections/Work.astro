@@ -1,0 +1,49 @@
+---
+import { en } from '../i18n/en';
+import { routes } from '../config/site';
+import Icon from '../components/Icon.astro';
+const t = en.work;
+// Real client sites go here: { name, industry, url, image }. Never add made-up clients.
+const clients: { name: string; industry: string; url: string; image: string }[] = [];
+const placeholders = 3 - clients.length;
+---
+<section id="work" class="section work" aria-labelledby="work-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 id="work-title" class="display display-l">{t.title}</h2>
+      <p class="lead">{t.lead}</p>
+    </div>
+    <ul class="grid" role="list">
+      {Array.from({ length: placeholders }, (_, i) => (
+        <li class="slot" data-reveal style={`--i:${i}`}>
+          <div class:list={['device', i === 1 ? 'is-phone' : 'is-laptop']} aria-hidden="true">
+            <div class="device-screen">
+              <i class="tl tl-open"></i><i class="tl tl-open"></i><i class="tl tl-open wide"></i><i class="tl tl-open"></i><i class="tl tl-open"></i>
+            </div>
+          </div>
+          <div class="meta">
+            <span class="draft-tag">{t.placeholderTag}</span>
+            <p class="h3">{t.placeholder}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p class="more">
+      <a class="link-arrow" href={routes.freePreview} data-open-preview>{t.cta}<Icon name="arrow-right" /></a>
+    </p>
+  </div>
+</section>
+<style>
+  .grid { display: grid; gap: var(--sp-6); grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+  .slot { display: grid; gap: var(--sp-5); }
+  .device { border-radius: var(--r-large); border: 1.5px dashed color-mix(in srgb, var(--c-secondary) 40%, transparent); background: var(--c-surface); padding: var(--sp-5); display: grid; place-items: center; aspect-ratio: 4 / 3; }
+  .device-screen { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 0.4fr 1.4fr 0.5fr; gap: 6%; }
+  .is-phone .device-screen { width: 42%; grid-template-columns: repeat(2, 1fr); grid-template-rows: 0.4fr 1.4fr 0.5fr 0.5fr; }
+  .device-screen .tl { border-radius: 8px; }
+  .device-screen .wide { grid-column: 1 / -1; }
+  .meta { display: grid; gap: var(--sp-2); justify-items: start; }
+  .meta .h3 { color: var(--c-muted); }
+  .more { margin-top: var(--sp-8); }
+  .more a { color: var(--c-accent); text-decoration: none; }
+</style>

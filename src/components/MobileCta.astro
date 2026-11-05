@@ -1,0 +1,23 @@
+---
+/** Sticky primary action for phones and tablets. Appears after the hero, hides near the final form or while typing. */
+import { en } from '../i18n/en';
+import { routes } from '../config/site';
+---
+<aside class="mobile-cta" data-mobile-cta hidden aria-label="Get started">
+  <a class="btn btn-primary btn-lg btn-block" href={routes.freePreview} data-open-preview>{en.cta.primary}</a>
+</aside>
+<style>
+  .mobile-cta {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    padding: var(--sp-3) max(var(--sp-gutter), env(safe-area-inset-right, 0px)) calc(var(--sp-3) + env(safe-area-inset-bottom, 0px)) max(var(--sp-gutter), env(safe-area-inset-left, 0px));
+    background: color-mix(in srgb, var(--c-bg) 88%, transparent);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid var(--c-line);
+    transform: translateY(0);
+    transition: transform var(--dur-reveal) var(--ease-out), visibility 0s;
+  }
+  .mobile-cta .btn { margin-bottom: 4px; }
+  .mobile-cta[data-away] { transform: translateY(110%); visibility: hidden; transition: transform var(--dur-reveal) var(--ease-out), visibility 0s var(--dur-reveal); }
+  @media (min-width: 1081px) { .mobile-cta { display: none !important; } }
+</style>

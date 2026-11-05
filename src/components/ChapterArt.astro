@@ -1,0 +1,118 @@
+---
+/**
+ * Still compositions for the four chapters (Design, Build, Booking, Launch).
+ * Phase 4 renders the 3D scene into the same slot; these stay as the reduced-motion and no-WebGL fallback.
+ */
+interface Props { chapter: 'design' | 'build' | 'booking' | 'launch' }
+const { chapter } = Astro.props;
+const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+// Booking grid: [day, startRow, rows, booked?]
+const blocks: [number, number, number, boolean][] = [
+  [0, 0, 2, false], [0, 3, 1, true], [1, 1, 2, true], [1, 4, 1, false], [2, 0, 1, true], [2, 2, 2, false],
+  [3, 1, 1, false], [3, 3, 2, true], [4, 0, 2, true], [4, 4, 1, false], [5, 1, 2, false], [5, 3, 1, true],
+];
+---
+<div class={`art art-${chapter}`} aria-hidden="true" data-scene={chapter}>
+  {chapter === 'design' && (
+    <div class="board">
+      <i class="tl tl-booked sw sw1"></i><i class="tl tl-mint sw sw2"></i><i class="tl sw sw3"></i><i class="tl tl-text sw sw4"></i>
+      <div class="tl aa"><span>Aa</span></div>
+      <i class="tl tl-photo ph1"></i><i class="tl tl-photo-2 ph2"></i>
+      <div class="tl lang"><span>EN</span><span>ES</span></div>
+      <div class="tl phone-mini"><i class="tl tl-mint"></i><i class="tl tl-photo"></i><i class="tl tl-text"></i><i class="tl tl-booked"></i></div>
+    </div>
+  )}
+  {chapter === 'build' && (
+    <div class="page">
+      <i class="tl tl-mint p-logo"></i><i class="tl p-nav"></i><i class="tl p-nav"></i><i class="tl tl-booked p-btn"></i>
+      <i class="tl tl-photo p-hero"></i>
+      <i class="tl tl-text p-h"></i><i class="tl tl-muted p-t"></i>
+      <i class="tl p-card"></i><i class="tl p-card"></i><i class="tl p-card"></i>
+      <i class="tl tl-photo-2 p-map"></i><i class="tl p-info"></i>
+      <i class="tl tl-open p-ghost"></i>
+    </div>
+  )}
+  {chapter === 'booking' && (
+    <div class="cal">
+      <div class="cal-head">{days.map((d) => <span>{d}</span>)}</div>
+      <div class="cal-grid">
+        {days.flatMap((_, d) => Array.from({ length: 6 }, (_, r) => <i class="slot" style={`grid-column:${d + 1};grid-row:${r + 1}`}></i>))}
+        {blocks.map(([d, r, len, booked]) => (
+          <i class:list={['tl', 'blk', booked ? 'tl-booked' : 'tl-open']} style={`grid-column:${d + 1};grid-row:${r + 1} / span ${len}`}></i>
+        ))}
+        <i class="tl tl-booked blk drop" style="grid-column:3;grid-row:5 / span 1"></i>
+      </div>
+    </div>
+  )}
+  {chapter === 'launch' && (
+    <div class="launch">
+      <i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i>
+      <div class="l-phone">
+        <i class="tl tl-mint"></i><i class="tl tl-photo big"></i><i class="tl tl-text"></i><i class="tl tl-muted short"></i><i class="tl"></i><i class="tl tl-booked"></i>
+      </div>
+      <div class="note"><i class="tl tl-booked"></i><span><b>New booking</b><small>Thu 2:30 · Gel manicure · demo</small></span></div>
+      <div class="url"><span class="dot"></span>yourshop.com is live</div>
+    </div>
+  )}
+</div>
+
+<style>
+  .art {
+    position: relative; width: 100%; aspect-ratio: 1 / 0.9; max-width: 100%;
+    border-radius: var(--r-large); background: radial-gradient(120% 90% at 50% 30%, #15241F, var(--c-bg) 75%);
+    border: 1px solid var(--c-line); overflow: hidden; display: grid; place-items: center;
+  }
+  .art .tl { border-radius: 10px; }
+
+  /* Design: a mood board */
+  .board { position: relative; width: 84%; aspect-ratio: 1.25; }
+  .board > * { position: absolute; }
+  .sw { width: 15%; aspect-ratio: 1; top: 4%; }
+  .sw1 { left: 0; } .sw2 { left: 18%; } .sw3 { left: 36%; } .sw4 { left: 54%; }
+  .aa { left: 0; top: 27%; width: 33%; aspect-ratio: 1; display: grid; place-items: center; background: var(--c-surface); border: 1px solid var(--c-line); }
+  .aa span { font-family: var(--font-display); font-weight: 800; font-size: clamp(2rem, 6vw, 4rem); letter-spacing: -0.04em; color: var(--c-text); }
+  .ph1 { left: 36%; top: 27%; width: 33%; aspect-ratio: 1; }
+  .ph2 { left: 0; top: 64%; width: 33%; height: 32%; }
+  .lang { left: 36%; top: 72%; width: 33%; height: 24%; display: flex; gap: 8%; align-items: center; justify-content: center; background: var(--c-surface); border: 1px solid var(--c-line); font-weight: 700; font-size: clamp(0.8rem, 1.6vw, 1rem); }
+  .lang span:first-child { color: var(--c-secondary); }
+  .lang span:last-child { color: var(--c-accent); }
+  .phone-mini { right: 0; top: 4%; width: 26%; height: 92%; padding: 5%; display: grid; grid-template-rows: 0.4fr 2fr 0.5fr 1fr 0.6fr; gap: 6%; background: #101915; border: 1px solid var(--c-line); transform: rotate(4deg); }
+  .phone-mini .tl { border-radius: 5px; }
+
+  /* Build: a page layout snapping into a grid */
+  .page { width: 80%; aspect-ratio: 1.15; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: 0.5fr 2fr 0.45fr 0.35fr 1.1fr 1.2fr; gap: 3%; padding: 4%; border-radius: 14px; border: 1.5px dashed color-mix(in srgb, var(--c-secondary) 45%, transparent); }
+  .page .tl { border-radius: 6px; }
+  .p-logo { grid-column: 1; } .p-nav { grid-column: span 1; opacity: 0.55; } .p-nav:nth-of-type(2) { grid-column: 3; } .p-nav:nth-of-type(3) { grid-column: 4; }
+  .p-btn { grid-column: 5 / 7; }
+  .p-hero { grid-column: 1 / 7; }
+  .p-h { grid-column: 1 / 5; } .p-t { grid-column: 1 / 4; opacity: 0.7; }
+  .p-card { grid-column: span 2; }
+  .p-map { grid-column: 1 / 4; } .p-info { grid-column: 4 / 6; }
+  .p-ghost { grid-column: 6; grid-row: 6; transform: translate(30%, -40%) rotate(12deg); }
+
+  /* Booking: a week calendar filling up */
+  .cal { width: 86%; display: grid; gap: 3%; }
+  .cal-head { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2.5%; font-size: clamp(0.65rem, 1.3vw, 0.8rem); font-weight: 600; color: var(--c-muted); text-align: center; letter-spacing: 0.04em; text-transform: uppercase; }
+  .cal-grid { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap: 2.5%; aspect-ratio: 1.15; }
+  .slot { border-radius: 8px; background: color-mix(in srgb, var(--c-secondary) 5%, transparent); border: 1px solid var(--c-line); }
+  .blk { z-index: 1; border-radius: 8px; margin: 0; }
+  .drop { box-shadow: 0 0 0 3px var(--c-bg), 0 0 24px 2px color-mix(in srgb, var(--c-accent) 55%, transparent); }
+  @media (prefers-reduced-motion: no-preference) {
+    .drop { animation: drop 2.6s var(--ease-spring) infinite; }
+    @keyframes drop { 0%, 15% { transform: translateY(-140%); opacity: 0; } 45%, 100% { transform: none; opacity: 1; } }
+  }
+
+  /* Launch: the site goes live */
+  .launch { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
+  .ring { position: absolute; left: 50%; top: 50%; aspect-ratio: 1; border-radius: 30%; border: 1.5px solid var(--c-secondary); translate: -50% -50%; }
+  .r1 { width: 52%; opacity: 0.35; } .r2 { width: 72%; opacity: 0.18; } .r3 { width: 94%; opacity: 0.08; }
+  .l-phone { position: relative; width: 30%; aspect-ratio: 9 / 17; padding: 4.5%; display: grid; grid-template-rows: 0.35fr 1.8fr 0.3fr 0.25fr 1fr 0.45fr; gap: 5%; border-radius: 18px; background: linear-gradient(160deg, #22332C, #111A17); border: 1px solid var(--c-line); box-shadow: 0 0 60px -10px color-mix(in srgb, var(--c-accent) 45%, transparent), var(--depth-3); }
+  .l-phone .tl { border-radius: 5px; }
+  .l-phone .short { width: 60%; }
+  .note { position: absolute; left: 52%; top: 22%; display: flex; gap: var(--sp-3); align-items: center; padding: var(--sp-3) var(--sp-4) var(--sp-3) var(--sp-3); background: var(--c-raised); border: 1px solid var(--c-line); border-radius: var(--r-tile); box-shadow: var(--depth-3); font-size: clamp(0.7rem, 1.3vw, 0.85rem); line-height: 1.25; white-space: nowrap; }
+  .note .tl { width: 1.6em; height: 1.6em; border-radius: 6px; flex: none; }
+  .note b { display: block; } .note small { color: var(--c-muted); }
+  .url { position: absolute; left: 50%; bottom: 8%; translate: -50% 0; display: flex; gap: var(--sp-2); align-items: center; padding: var(--sp-2) var(--sp-4); border-radius: 999px; background: var(--c-surface); border: 1px solid var(--c-line); font-size: clamp(0.7rem, 1.3vw, 0.85rem); font-weight: 600; white-space: nowrap; }
+  .url .dot { width: 0.55rem; height: 0.55rem; border-radius: 3px; background: var(--c-secondary); }
+  @media (max-width: 520px) { .note { left: auto; right: 4%; top: 10%; } }
+</style>

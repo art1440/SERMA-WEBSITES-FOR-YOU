@@ -1,0 +1,41 @@
+---
+import { en } from '../i18n/en';
+const t = en.how;
+---
+<section id="how" class="section how" aria-labelledby="how-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 id="how-title" class="display display-l">{t.title}</h2>
+    </div>
+    <ol class="steps" role="list">
+      {t.steps.map((step, i) => (
+        <li class="step" data-reveal style={`--i:${i}`}>
+          <span class="num" aria-hidden="true">{i + 1}</span>
+          <div class="track" aria-hidden="true"><i></i></div>
+          <h3 class="h3"><span class="visually-hidden">Step {i + 1}: </span>{step.title}</h3>
+          <p class="muted">{step.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+<style>
+  .steps { display: grid; gap: var(--sp-8); grid-template-columns: minmax(0, 1fr); counter-reset: s; }
+  @media (min-width: 720px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1100px) { .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-6); } }
+  .step { display: grid; gap: var(--sp-4); align-content: start; }
+  .num {
+    width: 4rem; height: 4rem; border-radius: var(--r-tile); display: grid; place-items: center;
+    font-family: var(--font-display); font-weight: 800; font-size: 1.75rem;
+    border: 1.5px solid var(--c-secondary); color: var(--c-secondary);
+  }
+  .step:last-child .num { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-on-accent); }
+  .track { height: 3px; border-radius: 2px; background: var(--c-line); overflow: hidden; }
+  .track i { display: block; height: 100%; width: 100%; background: var(--c-secondary); transform-origin: left; }
+  .step:last-child .track i { background: var(--c-accent); }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .step:not(.is-in) .track i { transform: scaleX(0); }
+    .track i { transition: transform var(--dur-chapter) var(--ease-out); transition-delay: calc(var(--i, 0) * 120ms + 200ms); }
+  }
+</style>

@@ -1,0 +1,6 @@
+---
+/** Visible marker for copy that states a policy the owner hasn't confirmed yet. Remove once confirmed. */
+interface Props { label?: string }
+const { label = 'Needs your confirmation' } = Astro.props;
+---
+<span class="draft-tag" data-draft>{label}</span>

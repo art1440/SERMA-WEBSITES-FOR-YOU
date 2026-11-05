@@ -1,0 +1,45 @@
+---
+/** The free-preview form in a dialog: full-screen sheet on phones, centered panel on desktop. */
+import { en } from '../i18n/en';
+import LeadForm from './LeadForm.astro';
+import Icon from './Icon.astro';
+---
+<dialog id="preview-dialog" class="preview-dialog" aria-labelledby="dlg-title" data-light-dismiss>
+  <div class="pd-inner">
+    <div class="pd-top">
+      <div>
+        <h2 id="dlg-title" class="h3">{en.form.title}</h2>
+        <p class="muted">{en.form.intro}</p>
+      </div>
+      <button class="pd-close" type="button" data-close-dialog>
+        <Icon name="close" /><span class="visually-hidden">{en.a11y.close}</span>
+      </button>
+    </div>
+    <LeadForm id="dlg" showHeading={false} />
+  </div>
+</dialog>
+<style>
+  .preview-dialog {
+    width: min(100% - 2rem, 36rem); max-height: min(100dvh - 2rem, 56rem); margin: auto; padding: 0;
+    border: 1px solid var(--c-line); border-radius: var(--r-large);
+    background: var(--c-surface); color: var(--c-text); box-shadow: var(--depth-3);
+    overscroll-behavior: contain;
+  }
+  .preview-dialog::backdrop { background: rgb(4 8 6 / 0.72); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .pd-inner { padding: clamp(var(--sp-5), 4vw, var(--sp-10)); display: grid; gap: var(--sp-6); }
+  .pd-top { display: flex; justify-content: space-between; gap: var(--sp-4); align-items: start; }
+  .pd-top > div { display: grid; gap: var(--sp-1); }
+  .pd-close { flex: none; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border: 1.5px solid var(--c-line); border-radius: var(--r-tile); background: var(--c-raised); }
+  .pd-close:hover { border-color: var(--c-field); }
+  .pd-close :global(svg) { width: 1.3rem; height: 1.3rem; }
+  @media (max-width: 640px) {
+    .preview-dialog { width: 100%; max-width: 100%; height: 100dvh; max-height: 100dvh; border-radius: 0; border: 0; }
+    .pd-inner { padding: calc(env(safe-area-inset-top, 0px) + var(--sp-4)) max(var(--sp-4), env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + var(--sp-8)) max(var(--sp-4), env(safe-area-inset-left, 0px)); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .preview-dialog[open] { animation: dlg-in var(--dur-reveal) var(--ease-out); }
+    .preview-dialog[open]::backdrop { animation: fade var(--dur-ui) ease-out; }
+    @keyframes dlg-in { from { opacity: 0; transform: translateY(20px) scale(0.98); } }
+    @keyframes fade { from { opacity: 0; } }
+  }
+</style>

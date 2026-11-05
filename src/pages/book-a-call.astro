@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import Draft from '../components/Draft.astro';
+import { en } from '../i18n/en';
+import { routes, site } from '../config/site';
+---
+<Base title="Book a Call | Serma, Austin TX" description="Book a short call to talk about a website with online booking for your business." noindex>
+  <section class="section" aria-labelledby="call-title">
+    <div class="container wrap">
+      <p class="eyebrow">{en.cta.secondary}</p>
+      <h1 id="call-title" class="display display-l">Let's talk about your website.</h1>
+      <Draft label="Placeholder page: waiting on how calls get booked" />
+      <p class="lead">Options: book through your own booking system (recommended), a short request form, or a call/text link to {site.phone}.</p>
+      <a class="btn btn-primary btn-lg" href={routes.freePreview} data-open-preview>{en.cta.primary}</a>
+    </div>
+  </section>
+</Base>
+<style>
+  .wrap { display: grid; gap: var(--sp-5); justify-items: start; }
+</style>

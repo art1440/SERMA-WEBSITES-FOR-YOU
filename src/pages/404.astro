@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import { en } from '../i18n/en';
+import { routes } from '../config/site';
+---
+<Base title="Page not found | Serma" description="This page doesn't exist." noindex>
+  <section class="section" aria-labelledby="nf-title">
+    <div class="container wrap">
+      <p class="eyebrow">404</p>
+      <h1 id="nf-title" class="display display-l">This page isn't booked yet.</h1>
+      <p class="lead">The link may be old, or the page hasn't been built. Head back home, or ask for your free preview.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary btn-lg" href={routes.freePreview} data-open-preview>{en.cta.primary}</a>
+        <a class="btn btn-secondary btn-lg" href={routes.home}>Back to home</a>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .wrap { display: grid; gap: var(--sp-5); justify-items: start; }
+</style>

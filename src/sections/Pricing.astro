@@ -1,0 +1,49 @@
+---
+import { en } from '../i18n/en';
+import { routes } from '../config/site';
+import Icon from '../components/Icon.astro';
+const t = en.pricing;
+---
+<section id="pricing" class="section pricing" aria-labelledby="pricing-title">
+  <div class="container">
+    <div class="plan" data-reveal>
+      <div class="plan-copy">
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h2 id="pricing-title" class="display display-l">{t.title}</h2>
+        <p class="lead">{t.lead}</p>
+        <p class="price"><span class="price-label">{t.contactLabel}</span></p>
+        <div class="btn-row">
+          <a class="btn btn-primary btn-lg" href={routes.freePreview} data-open-preview>{t.cta}<Icon name="arrow-right" /></a>
+          <a class="btn btn-secondary btn-lg" href={routes.bookCall}>{en.cta.secondary}</a>
+        </div>
+      </div>
+      <div class="plan-list">
+        <h3 class="list-title">{t.includesTitle}</h3>
+        <ul role="list">
+          {t.includes.map((item) => <li><span class="tick" aria-hidden="true"><Icon name="check" /></span>{item}</li>)}
+        </ul>
+        <p class="no-fees">{t.noFees}</p>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .plan {
+    display: grid; gap: var(--sp-10); grid-template-columns: minmax(0, 1fr);
+    padding: clamp(var(--sp-6), 5vw, var(--sp-16)); border-radius: calc(var(--r-large) * 1.5);
+    background: var(--c-surface); border: 1px solid var(--c-line);
+    background-image: radial-gradient(80% 60% at 100% 0%, color-mix(in srgb, var(--c-accent) 9%, transparent), transparent 70%);
+  }
+  @media (min-width: 1024px) { .plan { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; } }
+  .plan-copy { display: grid; gap: var(--sp-5); justify-items: start; }
+  .plan-copy .display-l { max-width: 14ch; }
+  .price { display: flex; align-items: center; gap: var(--sp-3); margin-block: var(--sp-2); }
+  .price-label { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h3); padding: var(--sp-2) var(--sp-4); border-radius: var(--r-tile); border: 1.5px solid var(--c-accent); color: var(--c-accent); }
+  .plan-list { display: grid; gap: var(--sp-4); padding: clamp(var(--sp-5), 3vw, var(--sp-8)); border-radius: var(--r-large); background: var(--c-bg); border: 1px solid var(--c-line); }
+  .list-title { font-family: var(--font-body); font-size: var(--fs-micro); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-muted); }
+  ul { display: grid; gap: var(--sp-3); }
+  li { display: grid; grid-template-columns: 1.75rem 1fr; gap: var(--sp-3); align-items: center; }
+  .tick { width: 1.75rem; height: 1.75rem; border-radius: 7px; background: var(--c-secondary-dim); color: var(--c-secondary); display: grid; place-items: center; }
+  .tick :global(svg) { width: 1rem; height: 1rem; stroke-width: 2.8; }
+  .no-fees { margin-top: var(--sp-2); padding-top: var(--sp-4); border-top: 1px solid var(--c-line); font-weight: 650; color: var(--c-accent); }
+</style>

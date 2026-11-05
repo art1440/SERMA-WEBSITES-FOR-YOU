@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import { en } from '../i18n/en';
+import { localBusiness, faqPage } from '../lib/schema';
+import Hero from '../sections/Hero.astro';
+import Problem from '../sections/Problem.astro';
+import Included from '../sections/Included.astro';
+import Demo from '../sections/Demo.astro';
+import HowItWorks from '../sections/HowItWorks.astro';
+import Work from '../sections/Work.astro';
+import Industries from '../sections/Industries.astro';
+import Pricing from '../sections/Pricing.astro';
+import Faq from '../sections/Faq.astro';
+import FinalCta from '../sections/FinalCta.astro';
+---
+<Base title={en.meta.title} description={en.meta.description} jsonLd={[localBusiness(Astro.site), faqPage()]}>
+  <Hero />
+  <Problem />
+  <Included />
+  <Demo />
+  <HowItWorks />
+  <Work />
+  <Industries />
+  <Pricing />
+  <Faq />
+  <FinalCta />
+</Base>

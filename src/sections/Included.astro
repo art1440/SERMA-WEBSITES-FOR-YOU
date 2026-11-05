@@ -1,0 +1,101 @@
+---
+import { en } from '../i18n/en';
+import ChapterArt from '../components/ChapterArt.astro';
+const t = en.included;
+---
+<section id="included" class="section included" aria-labelledby="included-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 id="included-title" class="display display-l">{t.title}</h2>
+      <p class="lead">{t.lead}</p>
+    </div>
+
+    <div class="journey" data-journey>
+      <!-- Desktop: one sticky stage whose picture follows the chapter you're reading. The 3D camera will travel here. -->
+      <div class="stage-col" aria-hidden="true">
+        <div class="stage" data-journey-stage data-active="design">
+          {t.chapters.map((c) => <div class="stage-art" data-for={c.id}><ChapterArt chapter={c.id} /></div>)}
+          <ol class="progress" role="list">
+            {t.chapters.map((c) => <li data-for={c.id}>{c.label}</li>)}
+          </ol>
+        </div>
+      </div>
+
+      <div class="chapters">
+        {t.chapters.map((c, i) => (
+          <article class="chapter" id={`chapter-${c.id}`} data-chapter={c.id} aria-labelledby={`ch-${c.id}`}>
+            <p class="ch-label"><span class="ch-n">{String(i + 1).padStart(2, '0')}</span>{c.label}</p>
+            <h3 id={`ch-${c.id}`} class="display display-m">{c.title}</h3>
+            <div class="inline-art"><ChapterArt chapter={c.id} /></div>
+            <ul class:list={['bento', `n${c.cards.length}`]} role="list">
+              {c.cards.map((card, j) => (
+                <li class="card bcard" data-reveal style={`--i:${j}`}>
+                  <span class:list={['bicon', j === 0 ? 'tl-booked' : 'tl-open']} aria-hidden="true"></span>
+                  <h4 class="h3">{card.title}</h4>
+                  <p class="muted">{card.body}</p>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Highlight the chapter in view and swap the sticky picture to match.
+  const stage = document.querySelector<HTMLElement>('[data-journey-stage]');
+  const chapters = document.querySelectorAll<HTMLElement>('[data-chapter]');
+  if (stage && chapters.length && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const en of entries) {
+        if (en.isIntersecting) stage.dataset.active = (en.target as HTMLElement).dataset.chapter;
+      }
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    chapters.forEach((c) => io.observe(c));
+  }
+</script>
+
+<style>
+  .journey { display: grid; gap: var(--sp-16); grid-template-columns: minmax(0, 1fr); }
+  .stage-col { display: none; }
+  .chapters { display: grid; gap: clamp(var(--sp-16), 10vw, var(--sp-20)); }
+  .chapter { display: grid; gap: var(--sp-6); align-content: start; }
+  .ch-label { display: flex; align-items: center; gap: var(--sp-3); font-weight: 650; font-size: var(--fs-small); letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-secondary); }
+  .ch-n { display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 9px; border: 1.5px solid currentColor; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+  .chapter .display-m { max-width: 18ch; }
+  .inline-art { margin-block: var(--sp-2); }
+
+  .bento { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+  .bcard { display: grid; gap: var(--sp-3); align-content: start; transition: border-color var(--dur-ui), background-color var(--dur-ui), transform var(--dur-ui) var(--ease-out); }
+  .bcard:hover { border-color: var(--c-field); background: var(--c-raised); }
+  .bicon { width: 2.25rem; height: 2.25rem; border-radius: 9px; margin-bottom: var(--sp-2); }
+  .n3 .bcard:first-child { grid-column: 1 / -1; }
+
+  @media (min-width: 1024px) {
+    .journey { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(var(--sp-10), 5vw, var(--sp-20)); }
+    .stage-col { display: block; }
+    .inline-art { display: none; }
+    .stage { position: sticky; top: calc(var(--layout-header-height) + var(--sp-8)); }
+    .stage-art { transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-chapter) var(--ease-out); }
+    .stage-art + .stage-art { position: absolute; inset: 0 0 auto 0; }
+    .stage-art { opacity: 0; transform: scale(0.97); }
+    .stage[data-active='design'] [data-for='design'],
+    .stage[data-active='build'] [data-for='build'],
+    .stage[data-active='booking'] [data-for='booking'],
+    .stage[data-active='launch'] [data-for='launch'] { opacity: 1; transform: none; }
+    .progress { display: flex; gap: var(--sp-2); margin-top: var(--sp-4); font-size: var(--fs-micro); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+    .progress li { flex: 1; padding-top: var(--sp-2); border-top: 3px solid var(--c-line); color: var(--c-muted); transition: border-color var(--dur-ui), color var(--dur-ui); }
+    .stage[data-active='design'] li[data-for='design'],
+    .stage[data-active='build'] li[data-for='build'],
+    .stage[data-active='booking'] li[data-for='booking'],
+    .stage[data-active='launch'] li[data-for='launch'] { border-color: var(--c-accent); color: var(--c-text); }
+    .chapter { min-height: 72vh; align-content: center; }
+    .chapter:first-child { min-height: 60vh; align-content: start; }
+  }
+  @media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+    .stage-art { transition: none; transform: none; }
+  }
+</style>

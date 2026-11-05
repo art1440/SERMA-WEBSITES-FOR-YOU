@@ -1,0 +1,153 @@
+---
+/**
+ * "Free website preview" form. Works without JavaScript (plain POST);
+ * with JavaScript it validates inline, shows a loading state, and swaps to a thank-you panel.
+ */
+import { en } from '../i18n/en';
+import { businessTypes, routes, PREVIEW_MODE } from '../config/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Unique per instance (the form can appear twice on a page). */
+  id: string;
+  presetType?: string;
+  headingLevel?: 'h2' | 'h3';
+  showHeading?: boolean;
+}
+const { id, presetType, headingLevel = 'h2', showHeading = true } = Astro.props;
+const t = en.form;
+const f = t.fields;
+const H = headingLevel;
+const fid = (name: string) => `${id}-${name}`;
+const err = (name: string) => `${id}-${name}-error`;
+---
+<div class="lead-box" data-lead-form data-preview={PREVIEW_MODE ? 'true' : undefined}>
+  <form
+    class="lead-form"
+    action="/api/lead"
+    method="post"
+    novalidate
+    aria-labelledby={showHeading ? fid('title') : undefined}
+    aria-label={showHeading ? undefined : t.title}
+    data-msg-summary-one={t.errors.summaryOne}
+    data-msg-summary-many={t.errors.summaryMany}
+    data-msg-network={t.errors.network}
+    data-msg-rate={t.errors.rateLimit}
+  >
+    {showHeading && (
+      <div class="lead-head">
+        <H id={fid('title')} class="h3">{t.title}</H>
+        <p class="muted">{t.intro}</p>
+      </div>
+    )}
+
+    <div class="form-summary" role="alert" tabindex="-1" hidden></div>
+
+    <div class="field">
+      <label class="field-label" for={fid('businessName')}>{f.businessName.label}</label>
+      <input class="input" id={fid('businessName')} name="businessName" type="text" autocomplete="organization" required maxlength="120" aria-describedby={err('businessName')} />
+      <p class="field-error" id={err('businessName')} hidden>{t.errors.businessName}</p>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for={fid('businessType')}>{f.businessType.label}</label>
+      <select class="input" id={fid('businessType')} name="businessType" required aria-describedby={err('businessType')}>
+        <option value="" selected={!presetType} disabled>{f.businessType.placeholder}</option>
+        {businessTypes.map((type) => <option value={type} selected={type === presetType}>{type}</option>)}
+      </select>
+      <p class="field-error" id={err('businessType')} hidden>{t.errors.businessType}</p>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label" for={fid('phone')}>{f.phone.label}</label>
+        <input class="input" id={fid('phone')} name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="20" aria-describedby={`${fid('phone-hint')} ${err('phone')}`} />
+        <p class="field-hint" id={fid('phone-hint')}>{f.phone.hint}</p>
+        <p class="field-error" id={err('phone')} hidden>{t.errors.phone}</p>
+      </div>
+      <div class="field">
+        <label class="field-label" for={fid('email')}>{f.email.label}</label>
+        <input class="input" id={fid('email')} name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" required maxlength="254" aria-describedby={err('email')} />
+        <p class="field-error" id={err('email')} hidden>{t.errors.email}</p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for={fid('link')}>{f.link.label} <span class="optional">({f.link.optional})</span></label>
+      <input class="input" id={fid('link')} name="link" type="text" inputmode="url" autocapitalize="off" spellcheck="false" maxlength="500" aria-describedby={`${fid('link-hint')} ${err('link')}`} />
+      <p class="field-hint" id={fid('link-hint')}>{f.link.hint}</p>
+      <p class="field-error" id={err('link')} hidden>{t.errors.link}</p>
+    </div>
+
+    <fieldset class="field" aria-describedby={err('language')}>
+      <legend class="field-label">{f.language.label}</legend>
+      <div class="choice-group">
+        <label class="choice"><input type="radio" name="language" value="en" checked /><span>{f.language.options.en}</span></label>
+        <label class="choice"><input type="radio" name="language" value="es" lang="es" /><span lang="es">{f.language.options.es}</span></label>
+      </div>
+      <p class="field-error" id={err('language')} hidden>{t.errors.language}</p>
+    </fieldset>
+
+    <!-- Spam trap: hidden from people, tempting to bots. -->
+    <div class="hp" aria-hidden="true">
+      <label for={fid('website')}>Leave this empty</label>
+      <input id={fid('website')} name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <input type="hidden" name="startedAt" value="" />
+    <input type="hidden" name="source" value={Astro.url.pathname} />
+
+    <button class="btn btn-primary btn-lg btn-block" type="submit" data-sending-label={t.sending}>
+      <span>{t.submit}</span>
+      <Icon name="arrow-right" />
+    </button>
+    <p class="privacy">{t.privacy} <a href={routes.privacy}>{t.privacyLink}</a></p>
+  </form>
+
+  <div
+    class="lead-success"
+    tabindex="-1"
+    hidden
+    data-title={t.success.title}
+    data-step3={t.success.steps[2]}
+  >
+    <div class="success-mark" aria-hidden="true"><Icon name="check" /></div>
+    <H class="h3 success-title">{t.success.title.replace(', {business}', '')}</H>
+    <p>{t.success.body}</p>
+    <ol class="success-steps" role="list">
+      {t.success.steps.map((step, i) => <li><span class="n" aria-hidden="true">{i + 1}</span><span data-step={i}>{step}</span></li>)}
+    </ol>
+    {PREVIEW_MODE && <p class="preview-notice">{t.success.previewNotice}</p>}
+    <button class="btn btn-secondary" type="button" data-reset>{t.success.again}</button>
+  </div>
+</div>
+
+<style>
+  .lead-form { display: grid; gap: var(--sp-5); }
+  .lead-head { display: grid; gap: var(--sp-1); margin-bottom: var(--sp-1); }
+  .field-row { display: grid; gap: var(--sp-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+  fieldset.field { border: 0; padding: 0; min-width: 0; }
+  fieldset.field legend { padding: 0; margin-bottom: var(--sp-2); }
+  .form-summary {
+    border: 1.5px solid var(--c-error); border-radius: var(--r-tile);
+    padding: var(--sp-3) var(--sp-4); color: var(--c-error); font-weight: 600;
+  }
+  .form-summary:focus { outline: none; }
+  .form-summary:focus-visible { outline: 3px solid var(--c-secondary); outline-offset: 3px; }
+  .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .privacy { font-size: var(--fs-micro); color: var(--c-muted); text-align: center; }
+  .privacy a { color: var(--c-text); }
+
+  .lead-success { display: grid; gap: var(--sp-4); justify-items: start; }
+  .lead-success:focus { outline: none; }
+  .success-mark { width: 3rem; height: 3rem; border-radius: var(--r-tile); background: var(--c-accent); color: var(--c-on-accent); display: grid; place-items: center; }
+  .success-mark :global(svg) { width: 1.6rem; height: 1.6rem; stroke-width: 2.6; }
+  .success-steps { display: grid; gap: var(--sp-3); }
+  .success-steps li { display: grid; grid-template-columns: 2rem 1fr; gap: var(--sp-3); align-items: start; }
+  .success-steps .n { width: 2rem; height: 2rem; border-radius: 8px; border: 1.5px solid var(--c-secondary); color: var(--c-secondary); display: grid; place-items: center; font-weight: 700; font-size: var(--fs-small); }
+  .preview-notice { font-size: var(--fs-micro); border: 1.5px dashed var(--c-accent); color: var(--c-accent); border-radius: var(--r-small); padding: var(--sp-2) var(--sp-3); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .lead-success:not([hidden]) { animation: pop var(--dur-reveal) var(--ease-spring); }
+    @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+  }
+</style>
