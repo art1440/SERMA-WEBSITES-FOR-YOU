@@ -21,7 +21,6 @@ const mailHref = isPlaceholder(site.email) ? undefined : `mailto:${site.email}`;
           <ul role="list">
             <li><a href={routes.about}>{t.links.about}</a></li>
             <li><a href={routes.contact}>{t.links.contact}</a></li>
-            <li><a href={routes.bookCall}>{t.links.bookCall}</a></li>
           </ul>
         </div>
         <div>
@@ -69,7 +68,4 @@ const mailHref = isPlaceholder(site.email) ? undefined : `mailto:${site.email}`;
   .ic :global(svg) { width: 1.1rem; height: 1.1rem; color: var(--c-secondary); }
   .ph { color: var(--c-accent); font-family: ui-monospace, Menlo, monospace; font-size: var(--fs-micro); }
   .legal { margin-top: var(--sp-12); padding-top: var(--sp-6); border-top: 1px solid var(--c-line); color: var(--c-muted); }
-  @media (max-width: 1080px) {
-    .site-footer { padding-bottom: calc(var(--layout-mobile-cta-height) + env(safe-area-inset-bottom, 0px) + var(--sp-8)); }
-  }
 </style>

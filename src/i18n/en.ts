@@ -34,16 +34,17 @@ export const en = {
     { label: 'FAQ', href: '/#faq' },
   ],
   cta: {
-    primary: 'Get your free website preview',
-    primaryShort: 'Free preview',
-    secondary: 'Book a call',
+    primary: 'See what\'s included',
+    secondary: 'Try the demo',
+    primaryShort: 'Demo',
+    contact: 'Contact us',
   },
 
   hero: {
     eyebrow: 'Websites for barbers, salons, spas, and every service business',
     title: 'Websites that book your customers for you.',
     lead: 'We design your website with online booking, a calendar, and reminders built in, then host and look after it for one monthly price. No Calendly. No Square. No extra app fees.',
-    trust: ['Free preview, no credit card', 'English and Spanish', 'Based in Austin, TX'],
+    trust: ['Booking built in', 'English and Spanish', 'Based in Austin, TX'],
     skipIntro: 'Skip intro',
   },
 
@@ -136,7 +137,6 @@ export const en = {
     lead: 'We only show real client sites here. Our first launches are on the way.',
     placeholder: 'Client site coming soon',
     placeholderTag: 'Placeholder',
-    cta: 'Want yours here first?',
   },
 
   industriesSection: {
@@ -161,7 +161,6 @@ export const en = {
       'Hosting, security, and updates',
     ],
     noFees: 'No booking app fees on top.',
-    cta: 'Get your free preview and quote',
     contactLabel: 'Contact for pricing',
   },
 
@@ -210,12 +209,10 @@ export const en = {
   },
 
   final: {
-    eyebrow: 'Free website preview',
+    eyebrow: 'Get in touch',
     title: 'Your site is next.',
-    lead: 'Email or call us about your business. We\'ll design a free preview of your new website and send it to you.',
-    talk: 'Rather talk first?',
-    contactTitle: 'Ask for your free preview',
-    contactLead: 'Tell us your business name and what you do. No credit card, no obligation.',
+    lead: 'Websites with booking built in, made in Austin for businesses that run on appointments.',
+    contactTitle: 'Contact',
     email: 'Email',
     phone: 'Call or text',
     location: 'Based in',
@@ -230,7 +227,6 @@ export const en = {
     links: {
       about: 'About',
       contact: 'Contact',
-      bookCall: 'Book a call',
       privacy: 'Privacy Policy',
       terms: 'Terms',
       accessibility: 'Accessibility Statement',

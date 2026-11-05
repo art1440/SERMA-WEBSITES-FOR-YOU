@@ -63,41 +63,6 @@ document.querySelectorAll<HTMLDialogElement>('dialog').forEach((dialog) => {
   });
 });
 
-/* ---------- Mobile CTA bar ---------- */
-const bar = document.querySelector<HTMLElement>('[data-mobile-cta]');
-if (bar) {
-  const hero = document.querySelector('[data-hero]');
-  const finals = document.querySelectorAll('[data-final-cta]');
-  let heroVisible = Boolean(hero);
-  let finalVisible = false;
-  let typing = false;
-  const render = () => {
-    const away = heroVisible || finalVisible || typing || Boolean(document.querySelector('dialog[open]'));
-    bar.toggleAttribute('data-away', away);
-  };
-  bar.setAttribute('data-away', '');
-  bar.hidden = false;
-  if (hero) new IntersectionObserver(([en]) => { heroVisible = en!.isIntersecting; render(); }, { rootMargin: '0px 0px -40% 0px' }).observe(hero);
-  if (finals.length) {
-    const seen = new Set<Element>();
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => (en.isIntersecting ? seen.add(en.target) : seen.delete(en.target)));
-      finalVisible = seen.size > 0;
-      render();
-    });
-    finals.forEach((f) => io.observe(f));
-  }
-  // Hide while the on-screen keyboard is likely open.
-  document.addEventListener('focusin', (e) => {
-    typing = (e.target as Element).matches('input, select, textarea');
-    render();
-  });
-  document.addEventListener('focusout', () => { typing = false; requestAnimationFrame(render); });
-  document.querySelectorAll('dialog').forEach((d) => d.addEventListener('close', render));
-  new MutationObserver(render).observe(document.body, { subtree: true, attributeFilter: ['open'] });
-  if (!hero) { heroVisible = false; render(); }
-}
-
 /* ---------- Reveal on scroll ---------- */
 const revealables = document.querySelectorAll<HTMLElement>('[data-reveal]');
 if (revealables.length) {

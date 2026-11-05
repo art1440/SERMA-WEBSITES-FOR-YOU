@@ -4,7 +4,7 @@ import { routes, site, isPlaceholder } from '../config/site';
 import TilePhone from '../components/TilePhone.astro';
 import Icon from '../components/Icon.astro';
 const t = en.final;
-const mailHref = isPlaceholder(site.email) ? undefined : `mailto:${site.email}?subject=${encodeURIComponent('Free website preview')}`;
+const mailHref = isPlaceholder(site.email) ? undefined : `mailto:${site.email}`;
 const phoneHref = isPlaceholder(site.phone) ? undefined : `tel:+1${site.phone.replace(/\D/g, '')}`;
 ---
 <section id="get-started" class="section final" aria-labelledby="final-title" data-final-cta>
@@ -13,7 +13,6 @@ const phoneHref = isPlaceholder(site.phone) ? undefined : `tel:+1${site.phone.re
       <p class="eyebrow">{t.eyebrow}</p>
       <h2 id="final-title" class="display display-xl">{t.title}</h2>
       <p class="lead">{t.lead}</p>
-      <p class="talk">{t.talk} <a class="link-arrow" href={routes.bookCall}>{en.cta.secondary}<Icon name="arrow-right" /></a></p>
       <!-- Phase 4: the tile cloud returns here, half-assembled. -->
       <div class="finale" data-scene="finale" aria-hidden="true">
         <div class="finale-poster">
@@ -25,7 +24,6 @@ const phoneHref = isPlaceholder(site.phone) ? undefined : `tel:+1${site.phone.re
     </div>
     <div class="card contact-card">
       <h3 class="h3">{t.contactTitle}</h3>
-      <p class="muted">{t.contactLead}</p>
       <ul class="contact" role="list">
         <li>
           <span class="ic" aria-hidden="true"><Icon name="mail" /></span>

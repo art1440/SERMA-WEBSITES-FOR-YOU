@@ -15,7 +15,7 @@ const base = process.argv[2] ?? 'http://127.0.0.1:4321';
 const out = process.argv[3] ?? 'reports/qa';
 mkdirSync(out, { recursive: true });
 
-const pages = ['/', '/styleguide', '/book-a-call', '/404'];
+const pages = ['/', '/styleguide', '/404'];
 const widths = [360, 390, 768, 1280, 1440];
 const problems = [];
 const note = (msg) => { problems.push(msg); console.log('  ✗', msg); };
@@ -86,11 +86,11 @@ for (const path of pages) {
   await page.keyboard.press('Escape');
   if (await page.isVisible('#mobile-menu')) note('mobile menu did not close on Escape');
 
-  // Free-preview buttons scroll to the contact section (no form for now)
+  // Hero button scrolls to the contact section? No: to What's included.
   await page.click('.hero .btn-primary');
   await page.waitForTimeout(900);
-  const contactVisible = await page.evaluate(() => { const r = document.getElementById('get-started').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; });
-  if (!contactVisible) note('primary button did not bring the contact section into view');
+  const contactVisible = await page.evaluate(() => { const r = document.getElementById('included').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; });
+  if (!contactVisible) note('primary button did not bring What\'s included into view');
 
   // Demo: book an appointment, then check the dashboard tab
   await page.locator('#demo').scrollIntoViewIfNeeded();
@@ -113,14 +113,13 @@ for (const path of pages) {
   }
   await page.screenshot({ path: `${out}/demo-time-390.png`, fullPage: false });
   await page.click('[data-act=next]');
-  await page.fill('#d-name', 'Alex');
   await page.click('[data-act=confirm]');
   await page.waitForSelector('.d-done');
   await page.locator('[data-demo-phone]').screenshot({ path: `${out}/demo-done-390.png` });
   await page.click('[data-act=to-dashboard]');
   if (!(await page.isVisible('#demo-panel-owner'))) note('demo: dashboard tab not shown after booking');
   const newRow = await page.locator('.d-list li.is-new').textContent();
-  if (!newRow?.includes('Alex')) note('demo: new booking missing from dashboard list');
+  if (!newRow?.includes('Jordan')) note('demo: new booking missing from dashboard list');
   await axe(page, 'demo dashboard');
   await page.locator('[data-demo]').screenshot({ path: `${out}/demo-dash-390.png` });
   await page.close();

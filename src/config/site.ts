@@ -22,9 +22,9 @@ export const isPlaceholder = (value: string) => /^\[.*\]$/.test(value);
 
 export const routes = {
   home: '/',
-  /** No form for now: every "free preview" button scrolls to the contact section. */
-  freePreview: '/#get-started',
-  bookCall: '/book-a-call',
+  included: '/#included',
+  demo: '/#demo',
+  contactSection: '/#get-started',
   about: '/about',
   contact: '/contact',
   industries: '/industries',

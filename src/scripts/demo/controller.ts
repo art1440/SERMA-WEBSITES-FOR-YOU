@@ -76,8 +76,6 @@ export function init(root: HTMLElement) {
   });
   phone.addEventListener('input', (e) => {
     const el = e.target as HTMLInputElement;
-    if (el.name === 'd-name') state.name = el.value;
-    if (el.name === 'd-phone') state.phone = el.value;
   });
 
   function firstOpenDay(): number {
@@ -99,13 +97,12 @@ export function init(root: HTMLElement) {
     } else if (act === 'next' && state.step === 'time') {
       if (state.slot === null) return set({ error: 'Pick a time to continue.' });
       set({ step: 'details', error: null }, 'title');
-      announce('Step 3 of 3: your details.');
+      announce('Step 3 of 3: confirm your booking.');
     } else if (act === 'back') {
       set({ step: state.step === 'details' ? 'time' : 'service', error: null }, 'title');
       announce(`Step ${state.step === 'time' ? 2 : 1} of 3: ${stepTitle(state)}.`);
     } else if (act === 'confirm') {
       const name = state.name.trim().split(/\s+/)[0] ?? '';
-      if (!name) return set({ error: 'Enter your name to book.' }, 'd-name');
       set({
         step: 'done',
         error: null,

@@ -41,7 +41,7 @@ const check = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><pa
 const back = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 export function stepTitle(state: DemoState): string {
-  return { service: 'Pick a service', time: 'Pick a day and time', details: 'Your details', done: 'Booked' }[state.step];
+  return { service: 'Pick a service', time: 'Pick a day and time', details: 'Confirm', done: 'Booked' }[state.step];
 }
 
 export function renderPhone(state: DemoState): string {
@@ -111,13 +111,12 @@ export function renderPhone(state: DemoState): string {
 
   if (state.step === 'details') {
     body = `
-      <h3 class="d-legend" id="d-step-title" tabindex="-1">Your details</h3>
+      <h3 class="d-legend" id="d-step-title" tabindex="-1">Confirm your booking</h3>
       <div class="d-summary">
         <div><b>${esc(service!.name)}</b><span>with ${esc(shop.staff)} · ${service!.minutes} min</span></div>
         <div><b>${esc(day.long)}</b><span>${slot!.label}</span></div>
       </div>
-      <div class="d-field"><label for="d-name">Your name</label><input class="d-input" id="d-name" name="d-name" type="text" autocomplete="off" value="${esc(state.name)}" maxlength="40"></div>
-      <div class="d-field"><label for="d-phone">Phone</label><input class="d-input" id="d-phone" name="d-phone" type="tel" autocomplete="off" value="${esc(state.phone)}" maxlength="20"></div>
+      <p class="d-muted">Booking as <b>${esc(state.name)}</b> (demo customer)</p>
       ${error}`;
     foot = `<button type="button" class="d-btn" data-act="confirm">Confirm booking · $${service!.price}</button>`;
   }
