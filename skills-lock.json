@@ -13,6 +13,12 @@
       "skillPath": "design-review/SKILL.md",
       "computedHash": "4f838c80361851ed7acb9bd227da1871cc46ed923f9ea03e1522e0c18b10d1ca"
     },
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/taste-skill/SKILL.md",
+      "computedHash": "23b3930015c478034b222e1a015da03a962c8ab48aee9fb4f3f69d977034feaa"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
