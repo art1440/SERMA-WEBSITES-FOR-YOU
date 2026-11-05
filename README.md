@@ -36,6 +36,18 @@ node scripts/qa.mjs http://127.0.0.1:4321 reports/qa
 | `src/pages/styleguide.astro` | Living style guide at `/styleguide` (not indexed). |
 | `CREDITS.md` | Every third-party asset and its license. |
 
+## 3D test switches
+
+Add these to any URL:
+
+| Switch | What it does |
+|---|---|
+| `?debug` | Overlay with quality tier, pixel ratio, fps, draw calls, triangles, and per-frame JS time |
+| `?quality=off\|low\|mid\|high` | Force a quality tier (also allows software renderers, for testing only) |
+| `?t=1.2` | Freeze the hero intro at that second, for screenshots |
+
+To replay the intro, clear the `serma:intro-seen` key from local storage (or use a private window).
+
 ## Placeholders still open
 
 Search the code for `[` placeholders and `draft: true`. They render with a visible dashed "Needs your confirmation" or "Placeholder" tag, so nothing ships by accident.
@@ -49,8 +61,8 @@ Search the code for `[` placeholders and `draft: true`. They render with a visib
 ## Phase status
 
 1. Concepts and plan: done
-2. Design system and homepage without 3D: **done (this build)**. The lead form runs in preview mode: it validates and shows the thank-you state but doesn't send anything yet.
-3. Hero 3D scene: next
+2. Design system and homepage without 3D: done. The lead form runs in preview mode: it validates and shows the thank-you state but doesn't send anything yet.
+3. Hero 3D scene: **done (this build)**
 4. Scroll-driven 3D and remaining polish
 5. Lead capture backend and admin
 6. Other pages and Spanish

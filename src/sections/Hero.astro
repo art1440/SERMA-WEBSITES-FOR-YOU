@@ -3,9 +3,26 @@ import { en } from '../i18n/en';
 import { routes } from '../config/site';
 import Icon from '../components/Icon.astro';
 import TilePhone from '../components/TilePhone.astro';
+import DeviceGrid from '../components/DeviceGrid.astro';
+import { browser } from '../scenes/layout';
+import { FLOATERS, INTRO_KEY } from '../scenes/hero/constants';
 const t = en.hero;
 ---
 <section class="hero" data-hero aria-labelledby="hero-title">
+  <!--
+    First visit on a capable device: hide the poster's tiles so the 3D can assemble them.
+    Runs before the stage paints. Falls back to the full poster after 4 s no matter what.
+  -->
+  <script is:inline define:vars={{ key: INTRO_KEY }}>
+    try {
+      var d = document.documentElement, n = navigator, c = n.connection;
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !(c && c.saveData) &&
+          window.WebGL2RenderingContext && !localStorage.getItem(key) && !(n.deviceMemory && n.deviceMemory < 2)) {
+        d.classList.add('intro-pending');
+        setTimeout(function () { d.classList.remove('intro-pending'); }, 4000);
+      }
+    } catch (e) {}
+  </script>
   <div class="container hero-grid">
     <div class="copy">
       <p class="eyebrow">{t.eyebrow}</p>
@@ -20,30 +37,31 @@ const t = en.hero;
       </ul>
     </div>
 
-    <!-- Decorative stage. Phase 3 renders the 3D scene here; this composition stays as the fallback. -->
-    <div class="stage" data-scene="hero" aria-hidden="true">
-      <div class="poster">
+    <div class="stage" data-scene="hero">
+      <!-- Still composition: shown until the 3D is ready, and instead of it on devices that shouldn't run it. -->
+      <div class="poster" aria-hidden="true">
         <div class="browser">
           <div class="b-top"><i></i><span>yourshop.com</span></div>
-          <div class="b-body">
-            <i class="tl tl-mint b-logo"></i><i class="tl b-nav"></i>
-            <i class="tl tl-photo b-hero"></i>
-            <i class="tl tl-text b-h"></i><i class="tl tl-muted b-p"></i>
-            <i class="tl tl-booked b-cta"></i>
-            <i class="tl b-s"></i><i class="tl b-s"></i><i class="tl tl-open b-s"></i>
-          </div>
+          <div class="b-grid"><DeviceGrid layout={browser} /></div>
         </div>
         <TilePhone class="phone" />
-        <div class="chip">
-          <i class="tl tl-booked"></i>
-          <span><b>Booked · Sat 10:30</b><small>Fade + beard · demo</small></span>
-        </div>
-        <i class="loose l1 tl tl-open"></i><i class="loose l2 tl tl-open"></i><i class="loose l3 tl tl-booked"></i>
-        <i class="loose l4 tl tl-open"></i><i class="loose l5 tl"></i>
+        {FLOATERS.map((f, i) => (
+          <i class:list={['loose', f.solid ? 'is-solid' : 'is-open']} style={`left:${f.x}%;top:${f.y}%;width:${f.size}%;--z:${f.z}px;--r:${f.rz}deg;--d:${-i * 0.9}s`}></i>
+        ))}
       </div>
+      <div class="canvas-host" data-canvas-host aria-hidden="true"></div>
+      <div class="chip" aria-hidden="true">
+        <i></i>
+        <span><b>Booked · Sat 10:30</b><small>Fade + beard · demo</small></span>
+      </div>
+      <button class="skip-intro" type="button" data-skip-intro hidden>{t.skipIntro}</button>
     </div>
   </div>
 </section>
+
+<script>
+  import '../scenes/hero/boot.ts';
+</script>
 
 <style>
   .hero { padding-block: clamp(var(--sp-8), 5vw, var(--sp-16)) var(--sp-section); overflow: clip; }
@@ -51,7 +69,7 @@ const t = en.hero;
   @media (min-width: 1024px) {
     .hero-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--sp-8); }
   }
-  .copy { display: grid; gap: var(--sp-6); justify-items: start; min-width: 0; }
+  .copy { display: grid; gap: var(--sp-6); justify-items: start; min-width: 0; position: relative; z-index: 1; }
   .copy h1 { max-width: 12ch; }
   .copy .lead { max-width: 36rem; }
   .btn-row { margin-top: var(--sp-2); }
@@ -59,48 +77,65 @@ const t = en.hero;
   .trust li { display: inline-flex; align-items: center; gap: var(--sp-2); }
   .trust :global(svg) { width: 1.05rem; height: 1.05rem; color: var(--c-secondary); stroke-width: 2.6; }
 
-  /* Poster composition */
-  .stage { position: relative; width: 100%; max-width: 34rem; justify-self: center; }
-  .poster { position: relative; aspect-ratio: 1 / 1.02; perspective: 1400px; }
+  /* ----- Stage: the numbers mirror src/scenes/hero/pose.ts ----- */
+  .stage { position: relative; width: 100%; max-width: 34rem; justify-self: center; aspect-ratio: 1 / 1.02; }
+  .poster { position: absolute; inset: 0; perspective: 1400px; transition: opacity 400ms var(--ease-out); }
+  .canvas-host { position: absolute; inset: -14%; opacity: 0; pointer-events: none; transition: opacity 400ms var(--ease-out); }
+  .canvas-host :global(canvas) { display: block; width: 100%; height: 100%; }
+  .stage:global(.scene-live) .canvas-host { opacity: 1; }
+  .stage:global(.scene-live) .poster { opacity: 0; }
+
   .browser {
     position: absolute; left: 0; top: 8%; width: 78%; aspect-ratio: 4 / 3;
-    border-radius: var(--r-large); background: var(--c-surface); border: 1px solid var(--c-line);
-    box-shadow: var(--depth-2); overflow: hidden;
-    transform: rotateY(16deg) rotateX(4deg) translateZ(-60px); transform-origin: left center;
+    container-type: size;
+    border-radius: 4.5% / 6%; background: linear-gradient(0deg, #111A17, var(--c-surface));
+    border: 1px solid var(--c-line); box-shadow: var(--depth-2);
+    transform: translateZ(-60px) rotateY(16deg) rotateX(4deg);
   }
-  .b-top { display: flex; align-items: center; gap: var(--sp-2); height: 12%; padding-inline: 4%; border-bottom: 1px solid var(--c-line); }
-  .b-top i { width: 7%; height: 38%; border-radius: 4px; background: var(--c-raised); }
-  .b-top span { flex: 1; max-width: 55%; margin-inline: auto; height: 46%; border-radius: 999px; background: var(--c-bg); color: var(--c-muted); font-size: clamp(0.5rem, 1.1vw, 0.7rem); display: grid; place-items: center; }
-  .b-body { display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: 0.5fr 2.1fr 0.35fr 0.3fr 0.6fr 1fr; gap: 3.2%; padding: 4.5%; height: 88%; }
-  .b-body .tl { border-radius: 5px; }
-  .b-logo { grid-column: 1 / 2; } .b-nav { grid-column: 4 / 7; opacity: 0.6; }
-  .b-hero { grid-column: 1 / 7; }
-  .b-h { grid-column: 1 / 5; } .b-p { grid-column: 1 / 4; opacity: 0.7; }
-  .b-cta { grid-column: 1 / 3; }
-  .b-s { grid-column: span 2; }
+  .b-top { position: absolute; left: 0; right: 0; top: 0; height: 10%; display: flex; align-items: center; padding-inline: 3.5%; }
+  .b-top i { width: 6%; height: 38%; border-radius: 4px; background: var(--c-raised); }
+  .b-top span { position: absolute; left: 25%; width: 50%; height: 56%; border-radius: 999px; background: var(--c-bg); color: var(--c-muted); font-size: 3cqh; display: grid; place-items: center; }
+  .b-grid { position: absolute; left: 3.5cqw; right: 3.5cqw; top: calc(10cqh + 3.5cqw); bottom: 3.5cqw; }
 
   .poster :global(.phone) {
     position: absolute; right: 2%; bottom: 0; width: 42%;
-    transform: rotateY(-14deg) rotateX(6deg) rotateZ(2deg);
+    transform: translateZ(40px) rotateY(-14deg) rotateX(6deg) rotateZ(2deg);
   }
+  .loose {
+    position: absolute; aspect-ratio: 1; border-radius: 22%;
+    transform: translateZ(var(--z)) rotate(var(--r));
+  }
+  .is-open { background: color-mix(in srgb, var(--c-secondary) 7%, transparent); border: 1.5px solid color-mix(in srgb, var(--c-secondary) 70%, transparent); }
+  .is-solid { background: var(--c-accent); }
+  @media (prefers-reduced-motion: no-preference) {
+    .loose { animation: drift 7s var(--ease-in-out) infinite alternate; animation-delay: var(--d); }
+    @keyframes drift { to { translate: 0 -10px; rotate: 10deg; } }
+  }
+
+  /* First visit: empty device bodies wait for the 3D tiles. */
+  :global(.intro-pending) .stage:not(:global(.scene-live)) :global(.dg),
+  :global(.intro-pending) .stage:not(:global(.scene-live)) .loose,
+  :global(.intro-pending) .stage:not(:global(.scene-live)) .chip { opacity: 0; }
+  .poster :global(.dg), .loose { transition: opacity 400ms var(--ease-out); }
+
   .chip {
-    position: absolute; right: 30%; bottom: 14%; display: flex; gap: var(--sp-3); align-items: center;
+    position: absolute; right: 30%; bottom: 14%; z-index: 2; display: flex; gap: var(--sp-3); align-items: center;
     padding: var(--sp-3) var(--sp-4) var(--sp-3) var(--sp-3);
     background: var(--c-raised); border: 1px solid var(--c-line); border-radius: var(--r-tile); box-shadow: var(--depth-3);
     font-size: clamp(0.72rem, 1.4vw, 0.875rem); line-height: 1.25; white-space: nowrap;
+    transition: opacity var(--dur-ui) var(--ease-out), transform var(--dur-reveal) var(--ease-spring);
   }
-  .chip .tl { width: 1.6em; height: 1.6em; border-radius: 6px; flex: none; }
+  .chip i { width: 1.6em; height: 1.6em; border-radius: 6px; flex: none; background: var(--c-accent); }
   .chip b { display: block; font-weight: 650; }
   .chip small { color: var(--c-muted); font-size: 0.85em; }
-  .loose { position: absolute; width: 5.5%; aspect-ratio: 1; border-radius: 22%; }
-  .l1 { left: 6%; top: 0; transform: rotate(-14deg); }
-  .l2 { left: 82%; top: 4%; transform: rotate(18deg); width: 4%; }
-  .l3 { left: 90%; top: 30%; transform: rotate(-10deg); width: 6.5%; }
-  .l4 { left: 2%; bottom: 10%; transform: rotate(24deg); width: 4.5%; }
-  .l5 { left: 52%; top: 2%; transform: rotate(8deg); width: 3.5%; }
-  @media (prefers-reduced-motion: no-preference) {
-    .loose { animation: drift 7s var(--ease-in-out) infinite alternate; }
-    .l2 { animation-delay: -2s; } .l3 { animation-delay: -4s; } .l4 { animation-delay: -1s; } .l5 { animation-delay: -3s; }
-    @keyframes drift { to { translate: 0 -10px; rotate: 10deg; } }
+  .stage:global(.scene-live):not(:global(.chip-in)) .chip { opacity: 0; transform: translateY(14px) scale(0.85); }
+
+  .skip-intro {
+    position: absolute; top: 0; right: 0; z-index: 3; min-height: 44px; padding: 0 var(--sp-4);
+    border-radius: var(--r-tile); border: 1.5px solid var(--c-field);
+    background: color-mix(in srgb, var(--c-bg) 80%, transparent); color: var(--c-text);
+    font-size: var(--fs-small); font-weight: 600;
+    transition: border-color var(--dur-ui), background-color var(--dur-ui);
   }
+  .skip-intro:hover { border-color: var(--c-text); background: var(--c-raised); }
 </style>

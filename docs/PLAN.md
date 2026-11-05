@@ -124,7 +124,7 @@ All cover Spanish characters (á é í ó ú ñ ü ¿ ¡). Fonts are subset to L
 |---|---|---|
 | Framework | **Astro 7** (static output) | Pages ship as plain HTML and CSS with zero JavaScript by default. JS loads only in "islands" that need it. Built-in i18n routing, image optimization, sitemap. |
 | Islands | **React 19** | Needed by React Three Fiber; also powers the interactive demo and the admin table. Loaded only where used. |
-| 3D | **Three.js 0.187 + React Three Fiber 9 + drei 10** | Declarative scenes, `<View>` for several scenes on one canvas, `PerformanceMonitor` for adaptive quality. Custom GLSL shaders for line-draw, tile flip, glow. |
+| 3D | **Three.js 0.187** with custom GLSL shaders | *Changed in Phase 3:* React Three Fiber was measured at 309 KB compressed before any scene code (it pulls in all of Three.js), over the 260 KB budget. Plain Three.js with the same features is 142 KB. Quality tiers, the frame-rate watchdog, and multi-scene support are written in-house. |
 | Motion | **GSAP 3 + ScrollTrigger** | One timeline per chapter, scrubbed by scroll progress. GSAP is free for commercial use, including all plugins. |
 | Smooth scroll | **Lenis** (desktop only) | Light smoothing on mouse wheel only. Off on touch devices and with reduced motion, so phones scroll 100% natively. Native scrollbar, keyboard, anchors, and back button keep working. If it ever feels "floaty" in testing, we drop it. |
 | Hosting | **Netlify** with `@astrojs/netlify` | Static pages from the CDN. Server routes (form, admin) deploy as Netlify Functions. Deploy previews per branch so you can test on your phone. |

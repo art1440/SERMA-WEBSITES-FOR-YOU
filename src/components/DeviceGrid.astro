@@ -1,0 +1,54 @@
+---
+/**
+ * CSS rendering of a device screen from the shared layout (src/scenes/layout.ts).
+ * Used as the still poster; the 3D scene draws the same cells onto its tiles.
+ */
+import { photoRegion, photoStops, type DeviceLayout } from '../scenes/layout';
+interface Props { layout: DeviceLayout; /** 0..1: share of tiles shown finished; the rest are open slots. */ fill?: number; class?: string }
+const { layout, fill = 1, class: className } = Astro.props;
+const region = photoRegion(layout);
+const gradient = `linear-gradient(140deg, ${photoStops.map(([o, col]) => `${col} ${o * 100}%`).join(', ')})`;
+const total = layout.cells.length;
+const cells = layout.cells.map((cell, i) => {
+  const col = i % layout.cols;
+  const r = Math.floor(i / layout.cols);
+  const open = i / total >= fill;
+  let style = '';
+  if (cell.kind === 'photo' && !open) {
+    const px = region.cols > 1 ? ((col - region.minC) / (region.cols - 1)) * 100 : 0;
+    const py = region.rows > 1 ? ((r - region.minR) / (region.rows - 1)) * 100 : 0;
+    style = `background-image:${gradient};background-size:${region.cols * 100}% ${region.rows * 100}%;background-position:${px}% ${py}%`;
+  }
+  return { kind: open ? 'slot' : cell.kind, char: open ? undefined : cell.char, style };
+});
+---
+<div class:list={['device-grid', className]} style={`--cols:${layout.cols};--rows:${layout.rows}`} aria-hidden="true">
+  <div class="dg-inner">
+    {cells.map((cell) => <i class={`dg k-${cell.kind}`} style={cell.style || undefined}>{cell.char}</i>)}
+  </div>
+</div>
+<style>
+  /* The wrapper is the size container, so the grid's own gap can be measured against it. */
+  .device-grid { container-type: inline-size; height: 100%; }
+  .dg-inner {
+    display: grid; height: 100%;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+    gap: calc(100cqi / var(--cols) * 0.15);
+  }
+  .dg {
+    display: grid; place-items: center; border-radius: 22%;
+    font-family: var(--font-display); font-style: normal; font-weight: 800; line-height: 1;
+    font-size: calc(100cqi / var(--cols) * 0.5); color: var(--c-on-accent);
+    background: var(--c-raised);
+  }
+  .k-logo, .k-icon { background: var(--c-secondary); }
+  .k-menu { background: linear-gradient(var(--c-muted), var(--c-muted)) center 32% / 50% 9% no-repeat, linear-gradient(var(--c-muted), var(--c-muted)) center 50% / 50% 9% no-repeat, linear-gradient(var(--c-muted), var(--c-muted)) center 68% / 50% 9% no-repeat, var(--c-raised); }
+  .k-title { background: var(--c-text); }
+  .k-text { background: var(--c-muted); }
+  .k-nav { background: #4D5D56; }
+  .k-card { background: #22302A; }
+  .k-price { color: var(--c-secondary); font-size: calc(100cqi / var(--cols) * 0.3); }
+  .k-letter, .k-booked { background: var(--c-accent); }
+  .k-slot { background: color-mix(in srgb, var(--c-secondary) 7%, transparent); border: 1.5px solid color-mix(in srgb, var(--c-secondary) 70%, transparent); }
+</style>

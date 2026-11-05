@@ -24,5 +24,6 @@ None yet. Concept C builds every shape in code. Any future model must be CC0 or 
 | Library | License |
 |---|---|
 | Astro (build tool, ships no runtime on static pages) | MIT |
+| Three.js 0.187 (hero 3D, loaded only on capable devices) | MIT |
 
-Phase 3 adds Three.js, React Three Fiber, drei (MIT), GSAP (free for commercial use), and Lenis (MIT).
+Phase 4 may add GSAP (free for commercial use) and Lenis (MIT) for scroll motion.

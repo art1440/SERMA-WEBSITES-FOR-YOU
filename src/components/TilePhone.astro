@@ -1,36 +1,25 @@
 ---
 /**
- * A phone screen built from 45 rounded tiles (5 x 9): the static "poster" of the 3D hero.
- * Same layout the 3D scene assembles, so the fallback and the real thing match.
+ * A phone screen built from rounded tiles: the still "poster" of the 3D phone.
+ * Same layout and proportions the 3D scene uses (src/scenes/layout.ts, src/scenes/hero/pose.ts).
  */
-interface Props { class?: string; booked?: boolean }
-const { class: className, booked = true } = Astro.props;
-const cols = 5;
-const rows = 9;
-const cell = (r: number, c: number): string => {
-  if (r === 0) return c === 0 ? 'tl-mint' : 'tl';
-  if (r >= 1 && r <= 3) return (r + c) % 3 === 0 ? 'tl-photo-2' : 'tl-photo';
-  if (r === 4) return c < 4 ? 'tl-text' : 'tl';
-  if (r === 5) return c < 3 ? 'tl-muted' : 'tl';
-  if (r === 6 || r === 7) return c === 4 ? 'tl-open' : 'tl';
-  return booked ? 'tl-booked' : 'tl-open';
-};
-const tiles = Array.from({ length: rows * cols }, (_, i) => cell(Math.floor(i / cols), i % cols));
+import DeviceGrid from './DeviceGrid.astro';
+import { phone } from '../scenes/layout';
+interface Props { class?: string; fill?: number }
+const { class: className, fill = 1 } = Astro.props;
 ---
 <div class:list={['tile-phone', className]} aria-hidden="true">
-  <div class="tp-grid">
-    {tiles.map((cls) => <i class:list={['tl', cls]} />)}
-  </div>
+  <div class="tp-screen"><DeviceGrid layout={phone} fill={fill} /></div>
 </div>
 <style>
   .tile-phone {
+    position: relative;
+    container-type: size;
     aspect-ratio: 9 / 17.5;
-    padding: 7%;
-    border-radius: 16%/8.5%;
-    background: linear-gradient(160deg, #1E2C27, #111A17);
+    border-radius: 16% / 8.23%;
+    background: linear-gradient(0deg, #111A17, #1E2C27);
     border: 1px solid var(--c-line);
     box-shadow: var(--depth-3), inset 0 0 0 1px rgb(255 255 255 / 0.03);
   }
-  .tp-grid { display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(9, 1fr); gap: 4.5%; height: 100%; }
-  .tp-grid :global(.tl) { border-radius: 22%; }
+  .tp-screen { position: absolute; inset: 7cqw; }
 </style>
