@@ -8,6 +8,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
 import { goToDemo } from "@/lib/scroll";
+import { asset } from "@/lib/asset";
 
 /** Per-line 3D exit: each line flies toward the camera on its own path. */
 const LINE_PATHS = [
@@ -112,7 +113,7 @@ export function HeroChapter() {
 
           {/* Static stand-in for the 3D engine when motion is reduced */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/media/hero-poster.jpg" alt="" className="mt-10 hidden aspect-[16/9] w-full border border-ink object-cover motion-reduce:block" />
+          <img src={asset("/media/hero-poster.jpg")} alt="" className="mt-10 hidden aspect-[16/9] w-full border border-ink object-cover motion-reduce:block" />
         </div>
 
         {/* Figure caption for the live engine (desktop) */}

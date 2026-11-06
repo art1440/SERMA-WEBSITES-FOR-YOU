@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
+import { asset } from "@/lib/asset";
 
 const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
 
@@ -65,7 +66,7 @@ export function Stage() {
           className="absolute inset-0 overflow-hidden"
           style={{ opacity: filmOpacity, scale: filmScale, rotateX: filmRotateX, rotateZ: filmRotateZ }}
         >
-          <LayerVideo src="/media/hero" poster="/media/hero-poster.jpg" visibility={filmOpacity} paused={paused} />
+          <LayerVideo src={asset("/media/hero")} poster={asset("/media/hero-poster.jpg")} visibility={filmOpacity} paused={paused} />
           <div className="absolute inset-0 bg-ink/45" />
         </motion.div>
       </div>
@@ -73,7 +74,7 @@ export function Stage() {
       <motion.div className="absolute inset-0 bg-ink" style={{ opacity: ink }} />
 
       <motion.div className="absolute inset-0" style={{ opacity: archOpacity }}>
-        <LayerVideo src="/media/architecture" poster="/media/architecture-poster.jpg" visibility={archOpacity} paused={paused} />
+        <LayerVideo src={asset("/media/architecture")} poster={asset("/media/architecture-poster.jpg")} visibility={archOpacity} paused={paused} />
       </motion.div>
 
       {webgl ? (

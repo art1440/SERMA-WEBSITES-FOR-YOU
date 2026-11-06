@@ -4,6 +4,18 @@ Bilingual (EN/ES), cookieless, interactive sales showcase: hero, system architec
 
 **Stack:** Next.js 16 (App Router) · React 19 · Tailwind CSS 3.4 · Framer Motion · three.js + React Three Fiber (WebGL) · Lucide · self-hosted fonts via `next/font/local` · Higgsfield-generated motion loops.
 
+## Live site (GitHub Pages)
+
+**https://art1440.github.io/SERMA-WEBSITES-FOR-YOU/**
+
+Every push to `main` rebuilds and republishes automatically (`.github/workflows/deploy-pages.yml`, ~2 minutes). Progress: the repo's **Actions** tab.
+
+One-time setup (already required before the first deploy):
+1. Settings → General → Danger Zone → **Change visibility → Public** (free Pages requires a public repo).
+2. Settings → **Pages** → Build and deployment → Source: **GitHub Actions**.
+
+GitHub Pages can't send custom HTTP headers, so the Content-Security-Policy ships as a `<meta>` tag there. Hosting on Vercel/Cloudflare/`next start` restores the full header set from `next.config.ts`. To use a custom domain later, add it under Settings → Pages and set `NEXT_PUBLIC_BASE_PATH` to empty in the workflow.
+
 ## Run locally
 
 ```bash
@@ -14,7 +26,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. Production check: `npm run build` then `npm start`.
+Open http://localhost:3000. Production check: `npm run build` then `npm start`. Static (GitHub Pages) build: `GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/SERMA-WEBSITES-FOR-YOU npm run build` → `out/`.
 
 ## Environment variables
 

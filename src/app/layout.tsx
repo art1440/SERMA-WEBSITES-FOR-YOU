@@ -3,9 +3,13 @@ import type { ReactNode } from "react";
 import { Providers } from "@/components/layout/Providers";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { displaySerif, geistMono, geistSans } from "./fonts";
+import { buildCsp } from "@/config/csp";
+import { asset } from "@/lib/asset";
 import "./globals.css";
 
 const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
+/** Static hosts (GitHub Pages) can't send security headers, so the CSP ships as a <meta> tag. */
+const staticExport = process.env.GITHUB_PAGES === "true";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -21,11 +25,12 @@ export const metadata: Metadata = {
     title: "SermaWebDesign — Not a brochure. A system that books clients.",
     description:
       "Websites + Client Dashboard + missed-call SMS recovery for local businesses. Book a live system demo.",
-    images: [{ url: "/media/hero-poster.jpg", width: 1600, height: 900, alt: "SermaWebDesign" }],
+    images: [{ url: asset("/media/hero-poster.jpg"), width: 1600, height: 900, alt: "SermaWebDesign" }],
     locale: "en_US",
     alternateLocale: ["es_US"],
   },
   robots: { index: true, follow: true },
+  referrer: "strict-origin-when-cross-origin",
 };
 
 export const viewport: Viewport = {
@@ -40,6 +45,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-scroll-behavior="smooth"
       className={`${displaySerif.variable} ${geistSans.variable} ${geistMono.variable}`}
     >
+      {staticExport ? (
+        <head>
+          <meta httpEquiv="Content-Security-Policy" content={buildCsp({ meta: true })} />
+        </head>
+      ) : null}
       <body>
         <Providers>
           <SkipLink />

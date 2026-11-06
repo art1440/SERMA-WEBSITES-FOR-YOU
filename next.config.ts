@@ -1,29 +1,18 @@
 import type { NextConfig } from "next";
+import { buildCsp } from "./src/config/csp";
 
 const isDev = process.env.NODE_ENV !== "production";
 
 /**
- * Content-Security-Policy: first-party only. No third-party scripts, styles,
- * fonts, frames or beacons can load — this enforces the zero-cookie /
- * zero-tracker promise at the browser level, not just by convention.
+ * GITHUB_PAGES=true → fully static export (no server) for GitHub Pages,
+ * served under NEXT_PUBLIC_BASE_PATH (e.g. /SERMA-WEBSITES-FOR-YOU).
+ * Otherwise → normal Next.js server build with security headers.
  */
-const csp = [
-  "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
-  "media-src 'self'",
-  "font-src 'self'",
-  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "object-src 'none'",
-  ...(isDev ? [] : ["upgrade-insecure-requests"]),
-].join("; ");
+const staticExport = process.env.GITHUB_PAGES === "true";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || undefined;
 
 const securityHeaders = [
-  { key: "Content-Security-Policy", value: csp },
+  { key: "Content-Security-Policy", value: buildCsp({ dev: isDev }) },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
@@ -37,15 +26,24 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
-  async headers() {
-    return [
-      { source: "/:path*", headers: securityHeaders },
-      {
-        source: "/media/:file*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
-    ];
-  },
+  ...(staticExport
+    ? {
+        output: "export",
+        trailingSlash: true,
+        basePath,
+        images: { unoptimized: true },
+      }
+    : {
+        async headers() {
+          return [
+            { source: "/:path*", headers: securityHeaders },
+            {
+              source: "/media/:file*",
+              headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+            },
+          ];
+        },
+      }),
 };
 
 export default nextConfig;

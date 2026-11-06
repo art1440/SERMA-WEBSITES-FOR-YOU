@@ -1,4 +1,5 @@
 import type { L10n } from "@/i18n/types";
+import { asset } from "@/lib/asset";
 
 /**
  * Illustrative dataset for the interactive Client Dashboard showcase.
@@ -54,8 +55,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Barbers", es: "Barberías" },
     tagline: { en: "Chairs full. No-shows covered.", es: "Sillas llenas. Inasistencias cubiertas." },
     media: {
-      src: "/media/barbershop",
-      poster: "/media/barbershop-poster.jpg",
+      src: asset("/media/barbershop"),
+      poster: asset("/media/barbershop-poster.jpg"),
       alt: {
         en: "An empty classic barbershop at night: a leather barber chair under a warm pendant light, a straight razor on black marble.",
         es: "Una barbería clásica vacía de noche: un sillón de barbero de piel bajo una lámpara cálida y una navaja sobre mármol negro.",
@@ -106,8 +107,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Salons", es: "Salones" },
     tagline: { en: "Every stylist booked, every color on cycle.", es: "Cada estilista ocupado, cada color a tiempo." },
     media: {
-      src: "/media/salon",
-      poster: "/media/salon-poster.jpg",
+      src: asset("/media/salon"),
+      poster: asset("/media/salon-poster.jpg"),
       alt: {
         en: "Minimalist salon styling stations with round brass mirrors; steam rises from a ceramic bowl of hair color.",
         es: "Estaciones de un salón minimalista con espejos redondos de latón; vapor sale de un tazón de tinte para cabello.",
@@ -157,8 +158,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Beauty", es: "Belleza" },
     tagline: { en: "Sets, lashes, and deposits — handled.", es: "Uñas, pestañas y depósitos, resueltos." },
     media: {
-      src: "/media/beauty",
-      poster: "/media/beauty-poster.jpg",
+      src: asset("/media/beauty"),
+      poster: asset("/media/beauty-poster.jpg"),
       alt: {
         en: "Macro still life of glossy oxblood nail lacquer bottles and lash tweezers on travertine stone.",
         es: "Bodegón macro de esmaltes color vino brillantes y pinzas para pestañas sobre piedra travertino.",
@@ -209,8 +210,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Restaurants", es: "Restaurantes" },
     tagline: { en: "Your orders, your tables, your guests.", es: "Sus pedidos, sus mesas, sus comensales." },
     media: {
-      src: "/media/restaurant",
-      poster: "/media/restaurant-poster.jpg",
+      src: asset("/media/restaurant"),
+      poster: asset("/media/restaurant-poster.jpg"),
       alt: {
         en: "A dark upscale restaurant kitchen: steam rises from a pan beneath brass pendant lights beside a finished plated dish.",
         es: "La cocina oscura de un restaurante elegante: sale vapor de un sartén bajo lámparas de latón junto a un platillo terminado.",
@@ -260,8 +261,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Contractors", es: "Contratistas" },
     tagline: { en: "Every missed call is a quote you lost.", es: "Cada llamada perdida es una cotización perdida." },
     media: {
-      src: "/media/contractor",
-      poster: "/media/contractor-poster.jpg",
+      src: asset("/media/contractor"),
+      poster: asset("/media/contractor-poster.jpg"),
       alt: {
         en: "A contractor's worktable at dusk with rolled blueprints, a level, and a caged work light before a timber-framed house.",
         es: "La mesa de trabajo de un contratista al anochecer con planos, un nivel y una lámpara de obra frente a una casa en construcción.",
@@ -312,8 +313,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Services", es: "Servicios" },
     tagline: { en: "Leads in, conversations handled, reviews out.", es: "Entran prospectos, se atienden conversaciones, salen reseñas." },
     media: {
-      src: "/media/service",
-      poster: "/media/service-poster.jpg",
+      src: asset("/media/service"),
+      poster: asset("/media/service-poster.jpg"),
       alt: {
         en: "Blue hour at a modern home entrance: a warm porch light glows above a professional's tool bag resting on the front step.",
         es: "Atardecer en la entrada de una casa moderna: una luz cálida ilumina la bolsa de herramientas de un profesional en el escalón.",
