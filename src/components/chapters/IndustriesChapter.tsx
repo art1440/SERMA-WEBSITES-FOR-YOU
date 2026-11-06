@@ -7,21 +7,18 @@ import { CurvedCarousel, type CarouselItem } from "@/components/ui/CurvedCarouse
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
-import { useScene, useTrackProgress } from "@/context/SceneContext";
 import { NICHES } from "@/data/niches";
 import { fill } from "@/i18n/types";
 import { EASE_EDITORIAL } from "@/lib/motion";
 
 /**
- * "Built for" — pinned while scroll spins a curved 3D carousel of the six
- * industries one full lap. Visitors can also swipe / drag / use keys at any
- * time. The front card drives the dashboard's industry below.
+ * "Built for" — a normal section (not pinned): page scroll passes straight by.
+ * The curved 3D carousel moves only when the visitor swipes, drags, taps the
+ * arrows, or uses the arrow keys. The front card drives the dashboard below.
  */
 export function IndustriesChapter() {
   const { t, locale } = useLanguage();
   const { setNicheId } = useNiche();
-  const { reduce } = useScene();
-  const track = useTrackProgress();
   const [active, setActive] = useState(0);
 
   const items: CarouselItem[] = useMemo(
@@ -52,13 +49,12 @@ export function IndustriesChapter() {
   return (
     <section
       id="industries"
-      ref={track.ref}
       aria-labelledby="industries-title"
       data-theme="dark"
-      className="relative z-10 bg-ink text-bone motion-safe:h-[280vh]"
+      className="relative z-10 bg-ink py-24 text-bone lg:py-32"
     >
-      <div className="relative motion-safe:sticky motion-safe:top-0 motion-safe:h-[100svh] motion-safe:overflow-hidden">
-        <div className="flex h-full flex-col justify-center py-24 motion-safe:py-0 motion-safe:pt-16">
+      <div className="relative">
+        <div className="flex flex-col">
           <div className="frame grid grid-cols-12 items-end gap-x-4 gap-y-4 lg:gap-x-8">
             <div className="col-span-12 lg:col-span-7">
               <Reveal y={12}>
@@ -84,7 +80,6 @@ export function IndustriesChapter() {
           <div className="mt-6 lg:mt-8">
             <CurvedCarousel
               items={items}
-              scrollProgress={reduce ? undefined : track.progress}
               onActiveChange={onActiveChange}
               regionLabel={t.industries.carouselLabel}
               prevLabel={t.industries.prev}
