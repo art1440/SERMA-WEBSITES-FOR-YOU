@@ -8,8 +8,8 @@ import { asset } from "@/lib/asset";
 import "./globals.css";
 
 const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
-/** Static hosts (GitHub Pages) can't send security headers, so the CSP ships as a <meta> tag. */
-const staticExport = process.env.GITHUB_PAGES === "true";
+/** Only for static hosts that can't send headers (Netlify sends them via netlify.toml). */
+const cspMeta = process.env.CSP_META === "true";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-scroll-behavior="smooth"
       className={`${displaySerif.variable} ${geistSans.variable} ${geistMono.variable}`}
     >
-      {staticExport ? (
+      {cspMeta ? (
         <head>
           <meta httpEquiv="Content-Security-Policy" content={buildCsp({ meta: true })} />
         </head>

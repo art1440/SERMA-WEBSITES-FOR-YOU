@@ -4,11 +4,11 @@ import { buildCsp } from "./src/config/csp";
 const isDev = process.env.NODE_ENV !== "production";
 
 /**
- * GITHUB_PAGES=true → fully static export (no server) for GitHub Pages,
- * served under NEXT_PUBLIC_BASE_PATH (e.g. /SERMA-WEBSITES-FOR-YOU).
- * Otherwise → normal Next.js server build with security headers.
+ * STATIC_EXPORT=true → fully static site in /out (used by Netlify; security
+ * headers come from netlify.toml). Otherwise → normal Next.js server build
+ * with the same headers set here.
  */
-const staticExport = process.env.GITHUB_PAGES === "true";
+const staticExport = process.env.STATIC_EXPORT === "true";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || undefined;
 
 const securityHeaders = [

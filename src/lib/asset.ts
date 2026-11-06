@@ -1,6 +1,5 @@
 /**
- * Sub-path the site is served from. Empty for a custom domain or local dev;
- * "/SERMA-WEBSITES-FOR-YOU" on GitHub Pages (set by the deploy workflow).
+ * Optional sub-path the site is served from (empty on Netlify / custom domains).
  * next/link adds this automatically — use `asset()` for media and manual URLs.
  */
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
