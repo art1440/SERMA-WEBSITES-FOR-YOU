@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, useTransform, type MotionValue } from "framer-motion";
+import { motion, useMotionValueEvent, useTransform, type MotionValue } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import type { MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
@@ -25,6 +25,12 @@ export function HeroChapter() {
   const copyOpacity = useTransform(p, [0.03, 0.18], [1, 0]);
   const copyY = useTransform(p, [0.03, 0.2], [0, -60]);
   const copyPointer = useTransform(p, (v) => (v > 0.12 ? "none" : "auto"));
+  // Once the copy has faded away, take its buttons out of the Tab order (state flips only at the threshold).
+  const [copyHidden, setCopyHidden] = useState(false);
+  useMotionValueEvent(p, "change", (v) => {
+    const hidden = v > 0.12;
+    if (hidden !== copyHidden) setCopyHidden(hidden);
+  });
   const hintOpacity = useTransform(p, [0, 0.05], [1, 0]);
 
   const stOpacity = useTransform(p, [0.5, 0.6, 0.84, 0.95], [0, 1, 1, 0]);
@@ -40,7 +46,7 @@ export function HeroChapter() {
     <section
       ref={hero.ref}
       aria-labelledby="hero-title"
-      className="relative motion-safe:h-[300vh] motion-reduce:bg-bone"
+      className="relative motion-safe:h-[180vh] motion-reduce:bg-bone"
     >
       <div className="relative motion-safe:sticky motion-safe:top-0 motion-safe:h-[100svh] motion-safe:overflow-hidden">
         {/* Phones: soft bone fade behind the copy so the 3D engine never fights the headline */}
@@ -81,6 +87,7 @@ export function HeroChapter() {
 
           <motion.div
             style={reduce ? undefined : { opacity: copyOpacity, y: copyY, pointerEvents: copyPointer }}
+            inert={!reduce && copyHidden}
             className="mt-8 lg:w-5/12"
           >
             <motion.p

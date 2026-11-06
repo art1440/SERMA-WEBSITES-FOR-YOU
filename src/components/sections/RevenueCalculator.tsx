@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { useEffect, useId, useState, type MouseEvent } from "react";
+import { useId, useState, type MouseEvent } from "react";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Reveal } from "@/components/ui/Reveal";
@@ -11,7 +11,7 @@ import { SimulationDisclaimer } from "@/components/ui/SimulationDisclaimer";
 import { TiltCard } from "@/components/ui/TiltCard";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
-import { NICHES } from "@/data/niches";
+import { NICHE_BY_ID, NICHES, type NicheId } from "@/data/niches";
 import { fill } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
 import { SPRING_SOFT } from "@/lib/motion";
@@ -32,18 +32,21 @@ const posFromTicket = (ticket: number) =>
 
 export function RevenueCalculator() {
   const { t, locale, intlLocale } = useLanguage();
-  const { niche, nicheId, setNicheId } = useNiche();
+  const { niche, nicheId, pickNiche } = useNiche();
 
   const [missedCalls, setMissedCalls] = useState(niche.calculator.missedCalls);
   const [ticketPos, setTicketPos] = useState(posFromTicket(niche.calculator.avgTicket));
   const [bookingRate, setBookingRate] = useState(niche.calculator.bookingRate);
 
-  // Switching industry anywhere on the page loads that industry's conservative preset.
-  useEffect(() => {
-    setMissedCalls(niche.calculator.missedCalls);
-    setTicketPos(posFromTicket(niche.calculator.avgTicket));
-    setBookingRate(niche.calculator.bookingRate);
-  }, [niche]);
+  // Presets load ONLY when the visitor taps an industry button here — never when the
+  // industry changes elsewhere on the page — so their own numbers are never erased.
+  const loadPreset = (id: NicheId) => {
+    const preset = NICHE_BY_ID[id].calculator;
+    pickNiche(id);
+    setMissedCalls(preset.missedCalls);
+    setTicketPos(posFromTicket(preset.avgTicket));
+    setBookingRate(preset.bookingRate);
+  };
 
   const avgTicket = ticketFromPos(ticketPos);
   const callsPerMonth = missedCalls * WEEKS_PER_MONTH;
@@ -80,7 +83,7 @@ export function RevenueCalculator() {
                       key={n.id}
                       type="button"
                       aria-pressed={active}
-                      onClick={() => setNicheId(n.id)}
+                      onClick={() => loadPreset(n.id)}
                       whileHover={active ? undefined : { y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       className={`relative isolate min-h-[44px] border px-3 py-2 text-sm ${active ? "border-ink" : "border-hairline-light"}`}

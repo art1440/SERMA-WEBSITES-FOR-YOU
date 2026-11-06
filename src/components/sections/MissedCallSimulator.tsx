@@ -125,7 +125,7 @@ export function MissedCallSimulator() {
       ref={track.ref}
       aria-labelledby="simulator-title"
       data-theme="dark"
-      className="relative z-10 bg-ink py-24 text-bone lg:py-32 motion-safe:lg:h-[420vh] motion-safe:lg:py-0"
+      className="relative z-10 bg-ink py-24 text-bone lg:py-32 motion-safe:lg:h-[240vh] motion-safe:lg:py-0"
     >
       <div className="motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-[100svh] motion-safe:lg:overflow-hidden motion-safe:lg:pb-4 motion-safe:lg:pt-20">
       <FitStage enabled={scrubbed} className="frame">

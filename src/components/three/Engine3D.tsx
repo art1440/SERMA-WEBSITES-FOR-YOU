@@ -229,8 +229,10 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
   const pointer = useRef({ x: 0, y: 0, sx: 0, sy: 0 });
   const morph = useRef(0);
   const { gl } = useThree();
+  const setDpr = useThree((s) => s.setDpr);
+  const perf = useRef({ frames: 0, time: 0, lowered: false });
 
-  const count = desktop ? 1400 : 700;
+  const count = desktop ? 1400 : 500;
   const formations = useMemo(() => buildFormations(count), [count]);
 
   const geometry = useMemo(() => {
@@ -296,6 +298,20 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
   }, []);
 
   useFrame((state, delta) => {
+    // Adaptive quality: if the device averages under ~40fps over 90 frames, render at 1× resolution.
+    const pf = perf.current;
+    if (!pf.lowered) {
+      pf.frames += 1;
+      pf.time += delta;
+      if (pf.frames >= 90) {
+        if (pf.time / pf.frames > 1 / 40) {
+          setDpr(1);
+          pf.lowered = true;
+        }
+        pf.frames = 0;
+        pf.time = 0;
+      }
+    }
     const dt = Math.min(delta, 1 / 20);
     const time = state.clock.elapsedTime;
     const h = hero.get();
@@ -427,7 +443,8 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
 export default function Engine3D({ active, ...inputs }: Props) {
   return (
     <Canvas
-      dpr={[1, 1.75]}
+      // Phones: cap sharpness at 1.25× (big battery/GPU saving, visually near-identical).
+      dpr={inputs.desktop ? [1, 1.75] : [1, 1.25]}
       frameloop={active ? "always" : "never"}
       camera={{ position: [0, 0, 9], fov: 35, near: 0.1, far: 60 }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}

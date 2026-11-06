@@ -22,7 +22,7 @@ export function SystemChapter() {
       ref={system.ref}
       aria-labelledby="system-title"
       data-theme="dark"
-      className="relative text-bone motion-safe:h-[420vh] motion-reduce:bg-ink motion-reduce:py-24"
+      className="relative text-bone motion-safe:h-[240vh] motion-reduce:bg-ink motion-reduce:py-24"
     >
       <div className="relative motion-safe:sticky motion-safe:top-0 motion-safe:h-[100svh] motion-safe:overflow-hidden">
         {/* Legibility scrim on phones, where copy sits over the particles */}

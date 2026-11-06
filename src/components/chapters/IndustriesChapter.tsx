@@ -18,7 +18,7 @@ import { EASE_EDITORIAL } from "@/lib/motion";
  */
 export function IndustriesChapter() {
   const { t, locale } = useLanguage();
-  const { setNicheId } = useNiche();
+  const { pickNiche: setNicheId } = useNiche();
   const [active, setActive] = useState(0);
 
   const items: CarouselItem[] = useMemo(

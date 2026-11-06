@@ -29,7 +29,7 @@ const BAR_SPRING = { type: "spring", stiffness: 120, damping: 20, mass: 0.8 } as
 
 export function DashboardShowcase() {
   const { t } = useLanguage();
-  const { nicheId, setNicheId } = useNiche();
+  const { nicheId, autoNiche, userPicked } = useNiche();
   const { reduce, desktop } = useScene();
   const track = useTrackProgress();
   const pinned = desktop && !reduce;
@@ -48,19 +48,19 @@ export function DashboardShowcase() {
   const zMid = useTransform(explode, (e) => e * 150);
   const zBottom = useTransform(explode, (e) => e * 420);
 
-  // Scroll cycles all six industries, starting from whichever one is selected.
+  // Scroll cycles all six industries — but only until the visitor picks one themselves.
   const nicheRef = useRef(nicheId);
   nicheRef.current = nicheId;
   const baseRef = useRef(0);
   useMotionValueEvent(d, "change", (v) => {
-    if (!pinned) return;
+    if (!pinned || userPicked.current) return;
     if (v < 0.42) {
       baseRef.current = Math.max(0, NICHES.findIndex((n) => n.id === nicheRef.current));
       return;
     }
     const k = Math.min(NICHES.length - 1, Math.floor(((v - 0.42) / 0.56) * NICHES.length));
     const next = NICHES[(baseRef.current + k) % NICHES.length].id;
-    if (next !== nicheRef.current) startTransition(() => setNicheId(next));
+    if (next !== nicheRef.current) startTransition(() => autoNiche(next));
   });
 
   const layerZ = (mv: MotionValue<number>) => (pinned ? { z: mv } : undefined);
@@ -70,7 +70,7 @@ export function DashboardShowcase() {
       id="dashboard"
       ref={track.ref}
       aria-labelledby="dashboard-title"
-      className="relative z-10 bg-bone py-24 motion-safe:lg:h-[520vh] motion-safe:lg:py-0"
+      className="relative z-10 bg-bone py-24 motion-safe:lg:h-[300vh] motion-safe:lg:py-0"
     >
       <div className="motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-[100svh] motion-safe:lg:overflow-hidden motion-safe:lg:pb-4 motion-safe:lg:pt-20">
         <div className="frame flex h-full flex-col">

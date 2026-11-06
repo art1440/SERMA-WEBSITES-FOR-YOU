@@ -16,7 +16,7 @@ export const tabId = (id: string) => `niche-tab-${id}`;
  */
 export function NicheTabs() {
   const { t, locale } = useLanguage();
-  const { nicheId, setNicheId } = useNiche();
+  const { nicheId, pickNiche: setNicheId } = useNiche();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
