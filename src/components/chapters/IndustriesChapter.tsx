@@ -67,7 +67,7 @@ export function IndustriesChapter() {
               <RevealLines
                 id="industries-title"
                 lines={t.industries.title}
-                emphasis={locale === "es" ? "Un motor." : "One engine."}
+                emphasis={t.industries.titleEmphasis}
                 className="mt-4 font-display text-display-md"
               />
             </div>
