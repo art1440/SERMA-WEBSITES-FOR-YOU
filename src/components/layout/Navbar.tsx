@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Lock, Menu, X } from "lucide-react";
+import { ArrowUpRight, Lock, Menu, Pause, Play, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMotionPause } from "@/context/MotionPauseContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
 import { goToDemo } from "@/lib/scroll";
 import { ClientLoginModal } from "./ClientLoginModal";
@@ -18,6 +19,7 @@ import { ClientLoginModal } from "./ClientLoginModal";
  */
 export function Navbar() {
   const { t } = useLanguage();
+  const { paused, toggle: toggleMotion } = useMotionPause();
   const [loginOpen, setLoginOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -87,6 +89,16 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleMotion}
+              aria-pressed={paused}
+              aria-label={paused ? t.common.playAll : t.common.pauseAll}
+              title={paused ? t.common.playAll : t.common.pauseAll}
+              className="hidden h-10 w-10 place-items-center border border-ink sm:grid"
+            >
+              {paused ? <Play aria-hidden="true" size={14} strokeWidth={1.5} /> : <Pause aria-hidden="true" size={14} strokeWidth={1.5} />}
+            </button>
             <LanguageToggle layoutId="lang-pill-header" />
             <button type="button" onClick={openLogin} className="btn-line hidden px-4 md:inline-flex">
               <Lock aria-hidden="true" size={13} strokeWidth={1.5} />
@@ -144,6 +156,10 @@ export function Navbar() {
                   ))}
                 </ul>
                 <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  <button type="button" onClick={toggleMotion} aria-pressed={paused} className="btn-line w-full sm:hidden">
+                    {paused ? <Play aria-hidden="true" size={13} strokeWidth={1.5} /> : <Pause aria-hidden="true" size={13} strokeWidth={1.5} />}
+                    {paused ? t.common.playAll : t.common.pauseAll}
+                  </button>
                   <button type="button" onClick={openLogin} className="btn-line w-full">
                     <Lock aria-hidden="true" size={13} strokeWidth={1.5} />
                     {t.nav.clientLogin}

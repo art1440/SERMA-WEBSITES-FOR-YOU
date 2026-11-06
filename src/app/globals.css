@@ -218,21 +218,6 @@
  * visitors who prefer reduced motion) get the static layout.
  * ------------------------------------------------------------------ */
 @keyframes sd-grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes sd-drift-left { to { transform: translateX(-16vw); } }
-@keyframes sd-drift-right { to { transform: translateX(12vw); } }
-@keyframes sd-drift-left-sm { to { transform: translateX(-7vw); } }
-@keyframes sd-hero-media { to { transform: translateY(18%) scale(0.92); } }
-@keyframes sd-zoom { from { transform: scale(1.02); } to { transform: scale(1.4); } }
-@keyframes sd-band-left { from { transform: translateX(0); } to { transform: translateX(-38%); } }
-@keyframes sd-band-right { from { transform: translateX(-38%); } to { transform: translateX(0); } }
-@keyframes sd-tilt-in {
-  from { transform: perspective(1800px) rotateX(30deg) translateY(120px) scale(0.88); opacity: 0.3; }
-  to { transform: none; opacity: 1; }
-}
-@keyframes sd-rise { from { transform: translateY(160px) rotate(-5deg); } to { transform: none; } }
-@keyframes sd-rise-flat { from { transform: translateY(120px); } to { transform: none; } }
-@keyframes sd-parallax { from { transform: scale(1.22) translateY(-8%); } to { transform: scale(1.22) translateY(8%); } }
-@keyframes sd-title-drift { from { transform: translateX(5vw); } to { transform: translateX(-3vw); } }
 @keyframes sd-wordmark { from { transform: translateX(35%); } to { transform: translateX(0); } }
 
 /* Hidden until the browser can drive it. */
@@ -242,31 +227,6 @@
   @media (prefers-reduced-motion: no-preference) {
     /* Reading-progress hairline under the navbar */
     .sd-progress { animation: sd-grow-x linear both; animation-timeline: scroll(root block); }
-
-    /* Hero: headline lines shear apart, the film window sinks and zooms as you leave */
-    .sd-hero-title > span > span:nth-child(1) { animation: sd-drift-left linear both; animation-timeline: scroll(root block); animation-range: 0 90vh; }
-    .sd-hero-title > span > span:nth-child(2) { animation: sd-drift-right linear both; animation-timeline: scroll(root block); animation-range: 0 90vh; }
-    .sd-hero-title > span > span:nth-child(3) { animation: sd-drift-left-sm linear both; animation-timeline: scroll(root block); animation-range: 0 90vh; }
-    .sd-hero-media { animation: sd-hero-media linear both; animation-timeline: scroll(root block); animation-range: 0 100vh; }
-    .sd-zoom { animation: sd-zoom linear both; animation-timeline: scroll(root block); animation-range: 0 100vh; }
-
-    /* Kinetic type bands slide in opposite directions while they cross the screen */
-    .sd-band-left { animation: sd-band-left linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
-    .sd-band-right { animation: sd-band-right linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
-
-    /* Dashboard window tilts up from the table into view */
-    .sd-tilt-in { transform-origin: 50% 0%; animation: sd-tilt-in linear both; animation-timeline: view(); animation-range: entry 0% cover 32%; }
-
-    /* Panels and the phone rise into place */
-    .sd-rise { animation: sd-rise linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
-    .sd-rise-flat { animation: sd-rise-flat linear both; animation-timeline: view(); animation-range: entry 0% cover 35%; }
-
-    /* Media drifts inside its frame (parallax) */
-    .sd-parallax { animation: sd-parallax linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
-
-    /* Section titles drift sideways across the page */
-    .sd-title-drift { animation: sd-title-drift linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
-
     /* Footer wordmark slides home as you reach the bottom */
     .sd-wordmark { animation: sd-wordmark linear both; animation-timeline: view(); animation-range: entry 0% cover 60%; }
   }

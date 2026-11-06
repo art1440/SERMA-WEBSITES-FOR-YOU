@@ -1,15 +1,17 @@
 "use client";
 
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { Check, MessageSquareText, PhoneIncoming, PhoneMissed, RotateCcw, Zap } from "lucide-react";
+import { AnimatePresence, LayoutGroup, motion, useMotionValueEvent, useTransform } from "framer-motion";
+import { ArrowDown, Check, MessageSquareText, PhoneIncoming, PhoneMissed, RotateCcw, Zap } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
+import { FitStage } from "@/components/ui/FitStage";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SimulationDisclaimer } from "@/components/ui/SimulationDisclaimer";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
+import { useScene, useTrackProgress } from "@/context/SceneContext";
 import { fill } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
 import { EASE_EDITORIAL } from "@/lib/motion";
@@ -32,6 +34,19 @@ const TIMELINE: [Phase, number][] = [
 
 const at = (phase: Phase, min: Phase) => PHASES.indexOf(phase) >= PHASES.indexOf(min);
 
+/** Scroll-scrubbed mode: where each phase begins along the pinned track (0 → 1). */
+const SCROLL_STARTS: [Phase, number][] = [
+  ["logged", 0.8],
+  ["confirm", 0.69],
+  ["typing2", 0.61],
+  ["reply", 0.53],
+  ["sms1", 0.4],
+  ["typing1", 0.32],
+  ["missed", 0.21],
+  ["ringing", 0.08],
+];
+const phaseAt = (v: number): Phase => SCROLL_STARTS.find(([, start]) => v >= start)?.[0] ?? "idle";
+
 export function MissedCallSimulator() {
   const { t, locale, intlLocale } = useLanguage();
   const { niche } = useNiche();
@@ -39,18 +54,43 @@ export function MissedCallSimulator() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [announcement, setAnnouncement] = useState("");
   const timers = useRef<number[]>([]);
+  const { reduce, desktop } = useScene();
+  const track = useTrackProgress();
+  const scrubbed = desktop && !reduce; // desktop: scroll plays the story; phones: tap to play
+  const p = track.progress;
+
+  // 3D: the phone swings in, faces you for the call, then leans toward the dashboard.
+  const phoneRotateY = useTransform(p, [0, 0.1, 0.45, 0.8, 1], [42, 0, -8, 10, 0]);
+  const phoneRotateX = useTransform(p, [0, 0.1, 0.6, 1], [14, 0, 4, 0]);
+  const phoneZ = useTransform(p, [0, 0.1, 0.21, 0.3, 0.8, 1], [-300, 0, 60, 0, 0, -40]);
+  const panelRotateY = useTransform(p, [0, 0.12, 0.8, 0.9], [-30, -10, -10, 0]);
+  const panelZ = useTransform(p, [0, 0.12, 0.8, 0.9], [-240, -80, -80, 0]);
+  const panelX = useTransform(p, [0, 0.12], [120, 0]);
+  const phaseRef = useRef<Phase>("idle");
+  phaseRef.current = phase;
 
   const clearTimers = useCallback(() => {
     timers.current.forEach((id) => window.clearTimeout(id));
     timers.current = [];
   }, []);
 
-  // A new industry resets the scenario.
+  // A new industry resets the scenario (or re-syncs it to the scroll position).
   useEffect(() => {
     clearTimers();
-    setPhase("idle");
+    setPhase(scrubbed ? phaseAt(p.get()) : "idle");
     setAnnouncement("");
-  }, [niche.id, clearTimers]);
+  }, [niche.id, clearTimers, scrubbed, p]);
+
+  // Scroll-scrubbed playback: state changes only when a phase boundary is crossed.
+  useMotionValueEvent(p, "change", (v) => {
+    if (!scrubbed) return;
+    const next = phaseAt(v);
+    if (next === phaseRef.current) return;
+    setPhase(next);
+    if (next === "ringing") setAnnouncement(fill(t.simulator.announceIncoming, { name: sim.caller }));
+    if (next === "logged")
+      setAnnouncement(fill(t.simulator.announceBooked, { name: sim.caller, service: sim.service[locale], time: sim.time[locale], amount: formatCurrency(sim.amount, intlLocale) }));
+  });
 
   useEffect(() => clearTimers, [clearTimers]);
 
@@ -80,30 +120,49 @@ export function MissedCallSimulator() {
   const currentStep = phase === "idle" ? -1 : stepDone.findIndex((d) => !d);
 
   return (
-    <section id="simulator" aria-labelledby="simulator-title" data-theme="dark" className="bg-ink py-24 text-bone lg:py-32">
-      <div className="frame">
+    <section
+      id="simulator"
+      ref={track.ref}
+      aria-labelledby="simulator-title"
+      data-theme="dark"
+      className="relative z-10 bg-ink py-24 text-bone lg:py-32 motion-safe:lg:h-[420vh] motion-safe:lg:py-0"
+    >
+      <div className="motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-[100svh] motion-safe:lg:overflow-hidden motion-safe:lg:pb-4 motion-safe:lg:pt-20">
+      <FitStage enabled={scrubbed} className="frame">
         <SectionHeader
           tone="dark"
           headingId="simulator-title"
           index={t.simulator.index}
           eyebrow={t.simulator.eyebrow}
           title={t.simulator.title}
-          body={t.simulator.body}
+          body={scrubbed ? undefined : t.simulator.body}
         />
 
         <p aria-live="polite" className="sr-only">
           {announcement}
         </p>
 
-        <div className="mt-14 grid grid-cols-12 gap-x-4 gap-y-12 lg:mt-20 lg:gap-x-10">
+        <div className={`grid grid-cols-12 gap-x-4 gap-y-12 [perspective:1600px] lg:gap-x-10 ${scrubbed ? "mt-6" : "mt-14 lg:mt-20"}`}>
           {/* ---------- Left: phone ---------- */}
           <Reveal className="col-span-12 md:col-span-6 lg:col-span-5">
-            <Phone phase={phase} />
+            <motion.div style={scrubbed ? { rotateY: phoneRotateY, rotateX: phoneRotateX, z: phoneZ } : undefined}>
+              <Phone phase={phase} />
+            </motion.div>
           </Reveal>
 
           {/* ---------- Right: controls, progress, dashboard ---------- */}
-          <div className="col-span-12 flex flex-col gap-8 md:col-span-6 lg:col-span-7">
+          <motion.div
+            className="col-span-12 flex flex-col gap-8 md:col-span-6 lg:col-span-7"
+            style={scrubbed ? { rotateY: panelRotateY, z: panelZ, x: panelX, transformOrigin: "100% 50%" } : undefined}
+          >
             <Reveal>
+              {scrubbed ? (
+                <p className="flex items-center gap-2 font-mono text-micro uppercase text-signal">
+                  <ArrowDown aria-hidden="true" size={13} strokeWidth={1.5} />
+                  {t.simulator.scrollHint}
+                  <span className="text-ash">· {niche.label[locale]} · {sim.business}</span>
+                </p>
+              ) : (
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <MagneticButton onClick={start} aria-disabled={running} className="btn-bone px-6 py-4 text-[0.8rem] aria-disabled:cursor-progress">
                   {phase === "logged" ? (
@@ -117,6 +176,7 @@ export function MissedCallSimulator() {
                   {niche.label[locale]} · {sim.business}
                 </p>
               </div>
+              )}
             </Reveal>
 
             {/* Progress */}
@@ -224,10 +284,11 @@ export function MissedCallSimulator() {
                 </div>
               </div>
             </Reveal>
-          </div>
+          </motion.div>
         </div>
 
-        <SimulationDisclaimer tone="dark" className="mt-8" />
+        <SimulationDisclaimer tone="dark" className={scrubbed ? "mt-4" : "mt-8"} />
+      </FitStage>
       </div>
     </section>
   );
@@ -243,7 +304,7 @@ function Phone({ phase }: { phase: Phase }) {
   const callScreen = phase === "ringing" || phase === "missed";
 
   return (
-    <div role="region" aria-label={t.simulator.phoneRegionLabel} className="sd-rise mx-auto w-full max-w-[330px]">
+    <div role="region" aria-label={t.simulator.phoneRegionLabel} className="mx-auto w-full max-w-[330px]">
       <div className="rounded-[2.6rem] border border-hairline-dark bg-ink-800 p-2.5">
         <div className="relative aspect-[9/18.5] overflow-hidden rounded-[2.1rem] bg-[#080807]">
           {/* Status bar */}

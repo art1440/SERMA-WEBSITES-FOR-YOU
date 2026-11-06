@@ -6,6 +6,7 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
+import { useScene } from "@/context/SceneContext";
 import { fill } from "@/i18n/types";
 import { EASE_EDITORIAL, VIEWPORT_ONCE } from "@/lib/motion";
 
@@ -17,30 +18,41 @@ import { EASE_EDITORIAL, VIEWPORT_ONCE } from "@/lib/motion";
  */
 export function DemoContact() {
   const { t } = useLanguage();
+  const { finale } = useScene();
   const mailto = `mailto:${siteConfig.contactEmail}?subject=${encodeURIComponent(t.demo.emailSubject)}&body=${encodeURIComponent(t.demo.emailBody)}`;
   const phone = siteConfig.contactPhone;
 
   return (
-    <section id="demo" aria-labelledby="demo-title" className="border-t border-ink py-24 lg:py-32">
-      <div className="frame grid grid-cols-12 gap-x-4 gap-y-12 lg:gap-x-10">
+    <section
+      id="demo"
+      ref={finale.ref}
+      aria-labelledby="demo-title"
+      data-theme="dark"
+      className="relative z-10 pb-24 pt-[44vh] text-bone motion-reduce:bg-ink motion-reduce:pt-24 lg:py-40"
+    >
+      {/* Finale: the section is transparent so the 3D engine returns on the right. */}
+      {/* Phones: ink fade that travels with the copy, so text never sits on the bare sculpture */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[30vh] h-[13vh] bg-gradient-to-b from-transparent to-ink lg:hidden" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 top-[43vh] bg-ink lg:hidden" />
+      <div className="frame relative grid grid-cols-12 gap-x-4 gap-y-12 lg:gap-x-10">
         {/* Pitch column */}
-        <div className="col-span-12 lg:col-span-5">
+        <div className="col-span-12 lg:col-span-6">
           <Reveal y={12}>
-            <p className="eyebrow flex items-baseline gap-3 text-muted">
-              <span className="text-signal-deep">{t.demo.index}</span>
-              <span aria-hidden="true" className="inline-block h-px w-6 translate-y-[-3px] bg-muted" />
+            <p className="eyebrow flex items-baseline gap-3 text-ash">
+              <span className="text-signal">{t.demo.index}</span>
+              <span aria-hidden="true" className="inline-block h-px w-6 translate-y-[-3px] bg-ash" />
               <span>{t.demo.eyebrow}</span>
             </p>
           </Reveal>
           <RevealLines id="demo-title" lines={[t.demo.title]} className="mt-6 font-display text-display-md text-balance" />
           <Reveal delay={0.12}>
-            <p className="mt-5 max-w-md text-pretty text-lg leading-relaxed text-muted">{t.demo.body}</p>
-            <h3 className="eyebrow mt-10 text-muted">{t.demo.expectLabel}</h3>
-            <ul className="mt-3 border-t border-hairline-light">
+            <p className="mt-5 max-w-md text-pretty text-lg leading-relaxed text-ash">{t.demo.body}</p>
+            <h3 className="eyebrow mt-10 text-ash">{t.demo.expectLabel}</h3>
+            <ul className="mt-3 grid border-t border-hairline-dark sm:grid-cols-2 sm:gap-x-6">
               {t.demo.expect.map((item, i) => (
-                <li key={item} className="flex items-baseline gap-4 border-b border-hairline-light py-3">
-                  <span className="font-mono text-micro text-signal-deep">0{i + 1}</span>
-                  <span className="text-ink">{item}</span>
+                <li key={item} className="flex items-baseline gap-4 border-b border-hairline-dark py-3">
+                  <span className="font-mono text-micro text-signal">0{i + 1}</span>
+                  <span className="text-bone">{item}</span>
                 </li>
               ))}
             </ul>
@@ -48,8 +60,8 @@ export function DemoContact() {
         </div>
 
         {/* Contact panel */}
-        <Reveal className="col-span-12 lg:col-span-7" delay={0.1}>
-          <div data-theme="dark" className="sd-rise-flat relative overflow-hidden bg-ink p-6 text-bone sm:p-10">
+        <Reveal className="col-span-12 lg:col-span-6 lg:col-start-1" delay={0.1}>
+          <div className="relative overflow-hidden border border-hairline-dark bg-ink p-6 text-bone sm:p-10">
             <p className="eyebrow text-ash">{t.demo.contactLabel}</p>
 
             <a

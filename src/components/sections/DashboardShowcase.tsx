@@ -1,15 +1,25 @@
 "use client";
 
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useMotionValueEvent,
+  useReducedMotion,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
 import { ArrowUpRight, Check, Circle, Pause, Play } from "lucide-react";
-import { useRef, useState } from "react";
+import { startTransition, useRef, useState } from "react";
 import { AmbientVideo } from "@/components/ui/AmbientVideo";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
-import { Reveal } from "@/components/ui/Reveal";
+import { FitStage } from "@/components/ui/FitStage";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SimulationDisclaimer } from "@/components/ui/SimulationDisclaimer";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
+import { useScene, useTrackProgress } from "@/context/SceneContext";
+import { NICHES } from "@/data/niches";
 import { formatCurrency } from "@/lib/format";
 import { EASE_EDITORIAL } from "@/lib/motion";
 import { fill } from "@/i18n/types";
@@ -19,47 +29,109 @@ const BAR_SPRING = { type: "spring", stiffness: 120, damping: 20, mass: 0.8 } as
 
 export function DashboardShowcase() {
   const { t } = useLanguage();
-  const { nicheId } = useNiche();
+  const { nicheId, setNicheId } = useNiche();
+  const { reduce, desktop } = useScene();
+  const track = useTrackProgress();
+  const pinned = desktop && !reduce;
+  const d = track.progress;
+
+  // 1 · Rise off the table → 2 · explode into layers → 3 · reassemble → 4 · cycle industries
+  const rotateX = useTransform(d, [0, 0.14, 0.19, 0.29, 0.38], [64, 0, 0, 16, 0]);
+  const rotateY = useTransform(d, [0.19, 0.29, 0.38], [0, -32, 0]);
+  const y = useTransform(d, [0, 0.14], ["36%", "0%"]);
+  const z = useTransform(d, [0, 0.14], [-460, 0]);
+  const opacity = useTransform(d, [0, 0.07], [0, 1]);
+  const explode = useTransform(d, [0.19, 0.28, 0.33, 0.4], [0, 1, 1, 0]);
+  const zChrome = useTransform(explode, (e) => e * 340);
+  const zSidebar = useTransform(explode, (e) => e * 60);
+  const zKpi = useTransform(explode, (e) => e * 260);
+  const zMid = useTransform(explode, (e) => e * 150);
+  const zBottom = useTransform(explode, (e) => e * 420);
+
+  // Scroll cycles all six industries, starting from whichever one is selected.
+  const nicheRef = useRef(nicheId);
+  nicheRef.current = nicheId;
+  const baseRef = useRef(0);
+  useMotionValueEvent(d, "change", (v) => {
+    if (!pinned) return;
+    if (v < 0.42) {
+      baseRef.current = Math.max(0, NICHES.findIndex((n) => n.id === nicheRef.current));
+      return;
+    }
+    const k = Math.min(NICHES.length - 1, Math.floor(((v - 0.42) / 0.56) * NICHES.length));
+    const next = NICHES[(baseRef.current + k) % NICHES.length].id;
+    if (next !== nicheRef.current) startTransition(() => setNicheId(next));
+  });
+
+  const layerZ = (mv: MotionValue<number>) => (pinned ? { z: mv } : undefined);
 
   return (
-    <section id="dashboard" aria-labelledby="dashboard-title" className="py-24 lg:py-32">
-      <div className="frame">
-        <SectionHeader
-          headingId="dashboard-title"
-          index={t.dashboard.index}
-          eyebrow={t.dashboard.eyebrow}
-          title={t.dashboard.title}
-          body={t.dashboard.body}
-        />
+    <section
+      id="dashboard"
+      ref={track.ref}
+      aria-labelledby="dashboard-title"
+      className="relative z-10 bg-bone py-24 motion-safe:lg:h-[520vh] motion-safe:lg:py-0"
+    >
+      <div className="motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-[100svh] motion-safe:lg:overflow-hidden motion-safe:lg:pb-4 motion-safe:lg:pt-20">
+        <div className="frame flex h-full flex-col">
+          <SectionHeader
+            headingId="dashboard-title"
+            index={t.dashboard.index}
+            eyebrow={t.dashboard.eyebrow}
+            title={t.dashboard.title}
+            body={pinned ? undefined : t.dashboard.body}
+          />
+          {pinned ? <p className="mt-2 font-mono text-micro uppercase text-signal-deep md:pl-[25%]">{t.dashboard.scrollHint}</p> : null}
 
-        <Reveal className="mt-12 lg:mt-16" y={40}>
-          <div data-theme="dark" className="sd-tilt-in border border-ink bg-ink text-bone">
-            <WindowChrome />
-            <NicheTabs />
-            <div
-              id={DASHBOARD_PANEL_ID}
-              role="tabpanel"
-              aria-labelledby={tabId(nicheId)}
-              tabIndex={0}
-              className="grid grid-cols-12"
-            >
-              <Sidebar />
-              <div className="col-span-12 lg:col-span-10">
-                <KpiRow />
-                <div className="grid grid-cols-12 border-t border-hairline-dark">
-                  <RevenueChart />
-                  <NichePreview />
+          <FitStage enabled={pinned} className="mt-6 flex-1">
+            <div className="[perspective:1800px]">
+              <motion.div
+                data-theme="dark"
+                className="border border-ink bg-ink text-bone [transform-style:preserve-3d]"
+                style={pinned ? { rotateX, rotateY, y, z, opacity, transformOrigin: "50% 100%" } : undefined}
+                {...(pinned
+                  ? {}
+                  : {
+                      initial: { opacity: 0, rotateX: 28, y: 80 },
+                      whileInView: { opacity: 1, rotateX: 0, y: 0 },
+                      viewport: { once: true, margin: "-10%" },
+                      transition: { duration: 1.1, ease: EASE_EDITORIAL },
+                    })}
+              >
+                <motion.div className="relative bg-ink" style={layerZ(zChrome)}>
+                  <WindowChrome />
+                  <NicheTabs />
+                </motion.div>
+                <div
+                  id={DASHBOARD_PANEL_ID}
+                  role="tabpanel"
+                  aria-labelledby={tabId(nicheId)}
+                  tabIndex={0}
+                  className="grid grid-cols-12 [transform-style:preserve-3d]"
+                >
+                  <motion.div className="hidden bg-ink lg:col-span-2 lg:block" style={layerZ(zSidebar)}>
+                    <Sidebar />
+                  </motion.div>
+                  <div className="col-span-12 [transform-style:preserve-3d] lg:col-span-10">
+                    <motion.div className="relative bg-ink" style={layerZ(zKpi)}>
+                      <KpiRow />
+                    </motion.div>
+                    <motion.div className="grid grid-cols-12 border-t border-hairline-dark bg-ink" style={layerZ(zMid)}>
+                      <RevenueChart />
+                      <NichePreview />
+                    </motion.div>
+                    <motion.div className="grid grid-cols-12 border-t border-hairline-dark bg-ink" style={layerZ(zBottom)}>
+                      <Pipeline />
+                      <ActivityStream />
+                      <Modules />
+                    </motion.div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-12 border-t border-hairline-dark">
-                  <Pipeline />
-                  <ActivityStream />
-                  <Modules />
-                </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
-        </Reveal>
-        <SimulationDisclaimer className="mt-4" />
+            <SimulationDisclaimer className="mt-4" />
+          </FitStage>
+        </div>
       </div>
     </section>
   );
@@ -94,7 +166,7 @@ function WindowChrome() {
 function Sidebar() {
   const { t } = useLanguage();
   return (
-    <div className="hidden border-r border-hairline-dark p-4 lg:col-span-2 lg:block">
+    <div className="h-full border-r border-hairline-dark p-4">
       <ul aria-label={t.dashboard.sidebarLabel} className="space-y-1">
         {t.dashboard.sidebar.map((item, i) => (
           <li

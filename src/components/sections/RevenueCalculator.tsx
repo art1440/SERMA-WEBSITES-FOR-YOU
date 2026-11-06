@@ -8,6 +8,7 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SimulationDisclaimer } from "@/components/ui/SimulationDisclaimer";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
 import { NICHES } from "@/data/niches";
@@ -56,7 +57,7 @@ export function RevenueCalculator() {
   };
 
   return (
-    <section id="calculator" aria-labelledby="calculator-title" className="py-24 lg:py-32">
+    <section id="calculator" aria-labelledby="calculator-title" className="relative z-10 bg-bone py-24 lg:py-32">
       <div className="frame">
         <SectionHeader
           headingId="calculator-title"
@@ -133,7 +134,8 @@ export function RevenueCalculator() {
 
           {/* Result */}
           <Reveal className="col-span-12 lg:col-span-6 lg:pt-8" delay={0.1}>
-            <div data-theme="dark" className="sd-rise-flat flex h-full flex-col justify-between bg-ink p-6 text-bone sm:p-8">
+            <TiltCard className="h-full">
+            <div data-theme="dark" className="flex h-full flex-col justify-between bg-ink p-6 text-bone sm:p-8">
               <div>
                 <p className="eyebrow text-ash" id="calc-result-label">
                   {t.calculator.monthlyLabel}
@@ -178,6 +180,7 @@ export function RevenueCalculator() {
                 <ArrowUpRight aria-hidden="true" size={15} strokeWidth={1.5} />
               </MagneticButton>
             </div>
+            </TiltCard>
           </Reveal>
         </div>
 

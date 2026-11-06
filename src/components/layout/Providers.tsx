@@ -3,6 +3,7 @@
 import { MotionConfig } from "framer-motion";
 import type { ReactNode } from "react";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { MotionPauseProvider } from "@/context/MotionPauseContext";
 
 /**
  * `reducedMotion="user"` makes every Framer Motion animation honor the OS
@@ -11,7 +12,9 @@ import { LanguageProvider } from "@/context/LanguageContext";
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <LanguageProvider>
-      <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      <MotionPauseProvider>
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      </MotionPauseProvider>
     </LanguageProvider>
   );
 }

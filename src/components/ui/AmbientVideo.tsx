@@ -4,6 +4,7 @@ import { useReducedMotion } from "framer-motion";
 import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMotionPause } from "@/context/MotionPauseContext";
 
 type Props = {
   /** Path without extension — expects `${src}.webm` and `${src}.mp4`. */
@@ -42,8 +43,9 @@ export function AmbientVideo({
   const { t } = useLanguage();
   const ref = useRef<HTMLVideoElement>(null);
   const reduce = useReducedMotion();
+  const { paused: globalPaused } = useMotionPause();
   const [userPaused, setUserPaused] = useState<boolean | null>(null);
-  const paused = controlledPaused ?? userPaused ?? Boolean(reduce);
+  const paused = globalPaused || (controlledPaused ?? userPaused ?? Boolean(reduce));
 
   useEffect(() => {
     const video = ref.current;

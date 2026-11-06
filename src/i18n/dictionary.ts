@@ -18,6 +18,9 @@ const en = {
     bookDemoShort: "Book a Demo",
     pauseMotion: "Pause background video",
     playMotion: "Play background video",
+    pauseAll: "Pause animations",
+    playAll: "Play animations",
+    scroll: "Scroll",
     simulationDisclaimer:
       "Illustrative interactive simulation of the SermaWebDesign Client Portal. Actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
   },
@@ -57,7 +60,9 @@ const en = {
     status: "Automation engine online",
     statusDetail: "Missed-call recovery · Bookings · Reviews",
     secondaryCta: "Explore the dashboard",
-    figure: "Fig. 01 — The engine, at rest.",
+    figure: "Fig. 01 — The engine, live in 3D.",
+    statement: ["Every missed call", "becomes a booked client."],
+    scrollHint: "Scroll to start the engine",
     videoLabel: "Ambient abstract motion: folded black paper and brushed metal swept by a thin line of warm light.",
     builtFor: "Built for",
     stack: ["Custom website", "Client dashboard", "Missed-call text-back", "Automated bookings", "Repeat business"],
@@ -81,8 +86,20 @@ const en = {
       { title: "Return", body: "Review requests and re-booking nudges keep customers coming back on schedule." },
     ],
   },
-  dashboard: {
+  industries: {
     index: "(02)",
+    eyebrow: "Built for",
+    title: ["Six industries.", "One engine."],
+    body: "Every system is tuned to how that business books, gets paid, and brings customers back. Swipe, drag, or scroll to explore.",
+    carouselLabel: "Industries we build for",
+    slideLabel: "{n} of {total}: {name}",
+    prev: "Previous industry",
+    next: "Next industry",
+    explore: "Open this dashboard",
+    swipeHint: "Swipe · Drag · Scroll",
+  },
+  dashboard: {
+    index: "(03)",
     eyebrow: "Client Dashboard",
     title: "One dashboard. Six industries. Zero guesswork.",
     body: "Choose an industry to see how the SermaWebDesign Client Dashboard adapts its modules, metrics, and automations to the way that business actually runs.",
@@ -102,10 +119,12 @@ const en = {
     previewLabel: "Industry preview",
     minutesAgo: "{n} min ago",
     vsPrevious: "vs. previous period",
+    scrollHint: "Keep scrolling — the dashboard rises, opens up in 3D, then switches industries.",
   },
   simulator: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Missed-call recovery",
+    scrollHint: "Scroll to play the missed call — scroll back to rewind.",
     title: "Hands full? The system answers for you.",
     body: "When you can't pick up, the SermaWebDesign engine texts the caller back within seconds, books the appointment, and logs the revenue in your dashboard — before they call a competitor.",
     button: "Simulate a Missed Customer Call",
@@ -139,7 +158,7 @@ const en = {
     announceBooked: "{name} booked {service} for {time}. {amount} added to the dashboard.",
   },
   calculator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "Missed-revenue calculator",
     title: "What are missed calls costing you?",
     body: "Move the sliders to match your business. The math is transparent — every assumption is on the page.",
@@ -158,7 +177,7 @@ const en = {
     cta: "Get your custom revenue audit",
   },
   compare: {
-    index: "(05)",
+    index: "(06)",
     eyebrow: "The difference",
     title: ["A brochure sits there.", "An engine goes to work."],
     body: "Most local business websites are digital business cards. Here is what changes when the site is wired into a growth engine.",
@@ -167,6 +186,7 @@ const en = {
     colEngine: "SermaWebDesign Growth Engine",
     notIncluded: "Not handled",
     included: "Handled",
+    flipHint: "Scroll — each card flips from brochure to engine.",
     rows: [
       {
         capability: "Missed calls",
@@ -211,7 +231,7 @@ const en = {
     ],
   },
   demo: {
-    index: "(06)",
+    index: "(07)",
     eyebrow: "Live demo & revenue audit",
     title: "See the system run on your business.",
     body: "Book a 30-minute live walkthrough. We'll map where your missed calls leak revenue, show your industry's dashboard, and deliver a custom revenue audit — no pricing pressure, no obligation.",
@@ -258,6 +278,9 @@ const es: Dictionary = {
     bookDemoShort: "Agendar Demo",
     pauseMotion: "Pausar video de fondo",
     playMotion: "Reproducir video de fondo",
+    pauseAll: "Pausar animaciones",
+    playAll: "Reanudar animaciones",
+    scroll: "Desplácese",
     simulationDisclaimer:
       "Simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
   },
@@ -297,7 +320,9 @@ const es: Dictionary = {
     status: "Motor de automatización en línea",
     statusDetail: "Recuperación de llamadas · Citas · Reseñas",
     secondaryCta: "Explorar el panel",
-    figure: "Fig. 01 — El motor, en reposo.",
+    figure: "Fig. 01 — El motor, en vivo en 3D.",
+    statement: ["Cada llamada perdida", "se convierte en un cliente agendado."],
+    scrollHint: "Desplácese para encender el motor",
     videoLabel: "Movimiento abstracto ambiental: papel negro plegado y metal cepillado recorridos por una delgada línea de luz cálida.",
     builtFor: "Diseñado para",
     stack: ["Sitio web a medida", "Panel de clientes", "Texto automático por llamada perdida", "Citas Automatizadas", "Clientes recurrentes"],
@@ -321,8 +346,20 @@ const es: Dictionary = {
       { title: "Regreso", body: "Las solicitudes de reseñas y los recordatorios para volver a reservar hacen que sus clientes regresen a tiempo." },
     ],
   },
-  dashboard: {
+  industries: {
     index: "(02)",
+    eyebrow: "Diseñado para",
+    title: ["Seis industrias.", "Un motor."],
+    body: "Cada sistema se ajusta a la forma en que ese negocio agenda, cobra y hace que sus clientes regresen. Deslice, arrastre o desplácese para explorar.",
+    carouselLabel: "Industrias para las que trabajamos",
+    slideLabel: "{n} de {total}: {name}",
+    prev: "Industria anterior",
+    next: "Industria siguiente",
+    explore: "Abrir este panel",
+    swipeHint: "Deslice · Arrastre · Desplácese",
+  },
+  dashboard: {
+    index: "(03)",
     eyebrow: "Panel de Control de Clientes",
     title: "Un panel. Seis industrias. Cero suposiciones.",
     body: "Elija una industria para ver cómo el Panel de Control de Clientes de SermaWebDesign adapta sus módulos, métricas y automatizaciones a la forma real en que opera ese negocio.",
@@ -342,10 +379,12 @@ const es: Dictionary = {
     previewLabel: "Vista previa de la industria",
     minutesAgo: "hace {n} min",
     vsPrevious: "vs. periodo anterior",
+    scrollHint: "Siga desplazándose: el panel se eleva, se abre en 3D y cambia de industria.",
   },
   simulator: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Recuperación de Llamadas Perdidas",
+    scrollHint: "Desplácese para reproducir la llamada perdida; regrese para rebobinar.",
     title: "¿Manos ocupadas? El sistema responde por usted.",
     body: "Cuando no puede contestar, el motor de SermaWebDesign le envía un texto a la persona en segundos, agenda la cita y registra el ingreso en su panel, antes de que llame a la competencia.",
     button: "Simular una Llamada Perdida",
@@ -379,7 +418,7 @@ const es: Dictionary = {
     announceBooked: "{name} agendó {service} para {time}. Se agregaron {amount} al panel.",
   },
   calculator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "Calculadora de ingresos perdidos",
     title: "¿Cuánto le cuestan las llamadas perdidas?",
     body: "Mueva los controles según su negocio. El cálculo es transparente: todas las suposiciones están a la vista.",
@@ -398,7 +437,7 @@ const es: Dictionary = {
     cta: "Solicitar su auditoría de ingresos",
   },
   compare: {
-    index: "(05)",
+    index: "(06)",
     eyebrow: "La diferencia",
     title: ["Un folleto se queda quieto.", "Un motor se pone a trabajar."],
     body: "La mayoría de los sitios web de negocios locales son tarjetas de presentación digitales. Esto es lo que cambia cuando el sitio está conectado a un motor de crecimiento.",
@@ -407,6 +446,7 @@ const es: Dictionary = {
     colEngine: "Motor de Crecimiento SermaWebDesign",
     notIncluded: "No resuelto",
     included: "Resuelto",
+    flipHint: "Desplácese: cada tarjeta pasa de folleto a motor.",
     rows: [
       {
         capability: "Llamadas perdidas",
@@ -451,7 +491,7 @@ const es: Dictionary = {
     ],
   },
   demo: {
-    index: "(06)",
+    index: "(07)",
     eyebrow: "Demostración en vivo y auditoría de ingresos",
     title: "Vea el sistema funcionar en su negocio.",
     body: "Agende un recorrido en vivo de 30 minutos. Identificaremos dónde sus llamadas perdidas le cuestan ingresos, le mostraremos el panel de su industria y le entregaremos una auditoría de ingresos personalizada, sin presión ni compromiso.",

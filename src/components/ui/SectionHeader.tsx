@@ -31,7 +31,7 @@ export function SectionHeader({ index, eyebrow, title, body, headingId, tone = "
         <RevealLines
           id={headingId}
           lines={lines}
-          className={`sd-title-drift font-display text-display-md text-balance ${dark ? "text-bone" : "text-ink"}`}
+          className={`font-display text-display-md text-balance ${dark ? "text-bone" : "text-ink"}`}
         />
         {body ? (
           <Reveal delay={0.15} y={16}>
