@@ -38,6 +38,36 @@ const ss = (x: number, a: number, b: number) => {
 };
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+/** Piecewise-linear keyframes: kf([[0, a], [0.5, b], [1, c]], x). */
+const kf = (frames: [number, number][], x: number) => {
+  if (x <= frames[0][0]) return frames[0][1];
+  for (let i = 1; i < frames.length; i++) {
+    const [x1, y1] = frames[i];
+    const [x0, y0] = frames[i - 1];
+    if (x <= x1) {
+      const t = (x - x0) / (x1 - x0 || 1);
+      return y0 + (y1 - y0) * t * t * (3 - 2 * t);
+    }
+  }
+  return frames[frames.length - 1][1];
+};
+
+/** Soft radial glow sprite, drawn once in memory (no image download). */
+function makeGlowTexture() {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const g = c.getContext("2d")!;
+  const grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grad.addColorStop(0, "rgba(255,255,255,1)");
+  grad.addColorStop(0.25, "rgba(255,255,255,0.45)");
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 128, 128);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
 type Pose = { x: number; y: number; z: number; s: number };
 const mix = (a: Pose, b: Pose, t: number): Pose => ({
   x: lerp(a.x, b.x, t),
@@ -191,8 +221,12 @@ const fragmentShader = /* glsl */ `
   void main() {
     float d = length(gl_PointCoord - 0.5);
     if (d > 0.5) discard;
-    float a = smoothstep(0.5, 0.05, d) * vAlpha * uOpacity;
-    gl_FragColor = vec4(mix(uColor, uAccent, vAccent), a);
+    // Hot core + soft halo reads as light, not as flat dots.
+    float core = smoothstep(0.22, 0.0, d);
+    float halo = exp(-d * d * 18.0) * 0.55;
+    float a = (core + halo) * vAlpha * uOpacity * (1.0 + vAccent * 0.6);
+    vec3 col = mix(uColor, uAccent, vAccent) * (1.0 + core * 0.35 * vAccent);
+    gl_FragColor = vec4(col, min(a, 1.0));
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
@@ -225,6 +259,12 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
   const ringB = useRef<THREE.Mesh>(null);
   const ringC = useRef<THREE.Mesh>(null);
   const wave = useRef<THREE.Mesh>(null);
+  const heart = useRef<THREE.Mesh>(null);
+  const heartGlow = useRef<THREE.Sprite>(null);
+  const ringGlow = useRef<THREE.Mesh>(null);
+  const keyLight = useRef<THREE.DirectionalLight>(null);
+  const cam = useRef({ z: 9, y: 0, x: 0, roll: 0, fov: 35, orbit: 0 });
+  const glowTexture = useMemo(() => makeGlowTexture(), []);
   const pose = useRef<Pose>({ ...posesFor(desktop).hero });
   const pointer = useRef({ x: 0, y: 0, sx: 0, sy: 0 });
   const morph = useRef(0);
@@ -257,7 +297,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
         uniforms: {
           uMorph: { value: 0 },
           uTime: { value: 0 },
-          uSize: { value: desktop ? 30 : 26 },
+          uSize: { value: desktop ? 40 : 34 },
           uPixelRatio: { value: Math.min(gl.getPixelRatio(), 2) },
           uColor: { value: INK.clone() },
           uAccent: { value: SIGNAL.clone() },
@@ -283,8 +323,9 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
       cageGeometry.dispose();
       lineMaterial.dispose();
       thinRingMaterial.dispose();
+      glowTexture.dispose();
     },
-    [geometry, pointsMaterial, coreGeometry, cageGeometry, lineMaterial, thinRingMaterial],
+    [geometry, pointsMaterial, coreGeometry, cageGeometry, lineMaterial, thinRingMaterial, glowTexture],
   );
 
   // Pointer parallax (pointer events only — never scroll listeners).
@@ -349,6 +390,45 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
       waveT = ss(s, 0.27, 0.33) - ss(s, 0.47, 0.52);
     }
 
+    // ---- Directed camera ----------------------------------------------
+    // Hero: push in + zoom + slight roll on the dive. System: orbit the engine, levelling out so
+    // the calendar grid faces you on "Book". Finale: pull back, then settle. Plus a handheld drift.
+    let camZ: number, camY: number, roll: number, fov: number, orbit: number;
+    if (f > 0.001) {
+      camZ = kf([[0, 11.5], [0.6, 9]], f);
+      camY = kf([[0, 0.9], [0.6, 0.15]], f);
+      roll = 0;
+      fov = kf([[0, 40], [0.6, 35]], f);
+      orbit = kf([[0, -0.5], [0.7, 0.15]], f);
+    } else if (h < 0.999) {
+      camZ = kf([[0, 9], [0.45, 6.4], [0.98, 8.2]], h);
+      camY = kf([[0, 0], [0.45, 0.35], [0.98, 0]], h);
+      roll = kf([[0.1, 0], [0.4, 0.07], [0.7, 0]], h);
+      fov = kf([[0, 35], [0.45, 30], [0.98, 35]], h);
+      orbit = 0;
+    } else {
+      camZ = kf([[0, 8.2], [0.25, 7.6], [0.55, 7.2], [0.75, 7.6], [1, 8.6]], s);
+      camY = kf([[0, 0], [0.25, 0.25], [0.55, 0], [1, 0.3]], s);
+      roll = kf([[0, 0], [0.3, -0.03], [0.55, 0], [0.9, 0.025]], s);
+      fov = 35;
+      // Orbit: swing round on Capture/Respond, square up for Book (grid faces camera), circle on Return.
+      orbit = kf([[0, 0], [0.22, 0.55], [0.45, -0.4], [0.55, 0], [0.72, 0], [1, 0.7]], s);
+    }
+    const ck = 1 - Math.exp(-dt * 3.2);
+    const c = cam.current;
+    c.z += (camZ - c.z) * ck;
+    c.y += (camY - c.y) * ck;
+    c.roll += (roll - c.roll) * ck;
+    c.fov += (fov - c.fov) * ck;
+    c.orbit += (orbit - c.orbit) * ck;
+    const camera = state.camera as THREE.PerspectiveCamera;
+    camera.position.set(Math.sin(time * 0.31) * 0.04, c.y + Math.sin(time * 0.43) * 0.03, c.z);
+    camera.rotation.set(Math.sin(time * 0.37) * 0.003, Math.sin(time * 0.29) * 0.004, c.roll);
+    if (Math.abs(camera.fov - c.fov) > 0.01) {
+      camera.fov = c.fov;
+      camera.updateProjectionMatrix();
+    }
+
     // ---- Damped follow (silky, frame-rate independent) -----------------
     const k = 1 - Math.exp(-dt * 5);
     const cur = pose.current;
@@ -356,7 +436,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
     cur.y += (target.y - cur.y) * k;
     cur.z += (target.z - cur.z) * k;
     cur.s += (target.s - cur.s) * k;
-    morph.current += (targetMorph - morph.current) * (1 - Math.exp(-dt * 4));
+    morph.current += (targetMorph - morph.current) * (1 - Math.exp(-dt * 6));
 
     const ptr = pointer.current;
     ptr.sx += (ptr.x - ptr.sx) * (1 - Math.exp(-dt * 3));
@@ -367,7 +447,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
       root.current.scale.setScalar(cur.s);
       // Whole-sculpture turn only during the hero; formations must face the camera in the system chapter.
       const heroSwing = f > 0.001 || h >= 0.999 ? 0 : Math.sin(h * Math.PI) * 0.7;
-      root.current.rotation.set(ptr.sy * 0.16 + 0.08, ptr.sx * 0.26 + heroSwing, 0);
+      root.current.rotation.set(ptr.sy * 0.16 + 0.08, ptr.sx * 0.26 + heroSwing + cam.current.orbit, 0);
     }
     if (core.current) {
       core.current.rotation.x = time * 0.22 + h * Math.PI;
@@ -388,6 +468,20 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
       (wave.current.material as THREE.MeshBasicMaterial).opacity = waveT * (1 - pulse) * 0.9;
     }
 
+    // ---- The heart: a slow breath, a flare on "Respond" -------------------
+    const flare = waveT * (0.6 + 0.4 * Math.sin(time * 6));
+    const beat = 1 + Math.sin(time * 2.1) * 0.06 + flare * 0.35;
+    if (heart.current) heart.current.scale.setScalar(beat * (0.85 + coreScale * 0.15));
+    if (heartGlow.current) {
+      heartGlow.current.scale.setScalar((2.4 + flare * 2.2) * beat);
+      (heartGlow.current.material as THREE.SpriteMaterial).opacity = 0.55 + darkness * 0.3 + flare * 0.3;
+    }
+    if (ringGlow.current) {
+      ringGlow.current.rotation.z = ringA.current?.rotation.z ?? 0;
+      (ringGlow.current.material as THREE.MeshBasicMaterial).opacity = 0.08 + darkness * 0.14;
+    }
+    if (keyLight.current) keyLight.current.intensity = 2.2 + flare * 1.5 + ss(f, 0, 0.5) * 0.6;
+
     // ---- Theme: ink lines on bone, bone lines on ink --------------------
     const u = pointsMaterial.uniforms;
     u.uTime.value = time;
@@ -401,20 +495,52 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
   return (
     <>
       <ambientLight intensity={0.35} />
-      <directionalLight position={[4, 5, 6]} intensity={2.4} color="#FFD9B0" />
+      <directionalLight ref={keyLight} position={[4, 5, 6]} intensity={2.4} color="#FFD9B0" />
       <directionalLight position={[-6, -2, -4]} intensity={1.4} color="#BFD3FF" />
       <pointLight position={[0, 0, 0]} intensity={6} distance={4} color="#E5582A" />
 
       <group ref={root}>
+        {/* Glowing heart, seen through the glass core */}
+        <mesh ref={heart}>
+          <icosahedronGeometry args={[0.3, 1]} />
+          <meshBasicMaterial color="#FF7A45" toneMapped={false} />
+        </mesh>
+        <sprite ref={heartGlow} scale={2.4}>
+          <spriteMaterial map={glowTexture} color="#E5582A" transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+        </sprite>
+
         <mesh ref={core} geometry={coreGeometry}>
-          <meshStandardMaterial color="#1A1A17" metalness={0.92} roughness={0.22} flatShading envMapIntensity={1.4} />
+          {desktop ? (
+            // Dark refractive glass: bends the heart's light and the particles behind it.
+            <meshPhysicalMaterial
+              color="#2A2622"
+              metalness={0.1}
+              roughness={0.08}
+              transmission={0.92}
+              thickness={1.4}
+              ior={1.5}
+              attenuationColor="#3B2216"
+              attenuationDistance={1.6}
+              clearcoat={1}
+              clearcoatRoughness={0.05}
+              flatShading
+              envMapIntensity={1.8}
+            />
+          ) : (
+            <meshStandardMaterial color="#1A1A17" metalness={0.85} roughness={0.2} flatShading envMapIntensity={1.4} transparent opacity={0.88} />
+          )}
         </mesh>
         <lineSegments ref={cage} geometry={cageGeometry} material={lineMaterial} />
 
         <group rotation={[1.2, 0.3, 0]}>
           <mesh ref={ringA}>
             <torusGeometry args={[1.8, 0.014, 12, 160]} />
-            <meshBasicMaterial color={SIGNAL} />
+            <meshBasicMaterial color={SIGNAL} toneMapped={false} />
+          </mesh>
+          {/* Soft halo around the signal ring */}
+          <mesh ref={ringGlow}>
+            <torusGeometry args={[1.8, 0.07, 12, 160]} />
+            <meshBasicMaterial color={SIGNAL} transparent opacity={0.12} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
           </mesh>
         </group>
         <group rotation={[-0.45, 0.9, 0]}>

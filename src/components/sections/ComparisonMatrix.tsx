@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
+import { MOTION } from "@/lib/motion";
 
 type Row = { capability: string; brochure: string; engine: string };
 
@@ -66,7 +67,7 @@ function FlipCard({
     offset: [`start ${0.92 - col * 0.04}`, `start ${0.42 - col * 0.04}`] as unknown as ["start end", "start start"],
   });
   const raw = useTransform(scrollYProgress, [0, 1], [0, 180]);
-  const rotateY = useSpring(raw, { stiffness: 120, damping: 22, mass: 0.6 });
+  const rotateY = useSpring(raw, MOTION.smooth);
   const lift = useTransform(rotateY, [0, 90, 180], [0, 60, 0]);
 
   const front = (

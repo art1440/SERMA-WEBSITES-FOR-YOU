@@ -1,11 +1,12 @@
 "use client";
 
-import { motion, useInView, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import type { MetricFormat } from "@/data/niches";
 import { formatMetric } from "@/lib/format";
 import { SPRING_NUMBER } from "@/lib/motion";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 type Props = {
   value: number;
@@ -22,7 +23,7 @@ export function AnimatedNumber({ value, format = "number", className }: Props) {
   const { intlLocale } = useLanguage();
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const spring = useSpring(0, SPRING_NUMBER);
   const text = useMotionValue(formatMetric(0, format, intlLocale));
 

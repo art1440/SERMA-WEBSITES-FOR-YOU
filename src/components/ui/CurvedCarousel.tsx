@@ -5,7 +5,6 @@ import {
   motion,
   useMotionValue,
   useMotionValueEvent,
-  useReducedMotion,
   useTransform,
   type MotionValue,
   type PanInfo,
@@ -13,6 +12,8 @@ import {
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useMotionPause } from "@/context/MotionPauseContext";
+import { SPRING_SMOOTH } from "@/lib/motion";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 export type CarouselItem = {
   id: string;
@@ -46,7 +47,7 @@ const mod = (n: number, m: number) => ((n % m) + m) % m;
  * front card changes.
  */
 export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLabel, prevLabel, nextLabel }: Props) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const { paused } = useMotionPause();
   const n = items.length;
   const slots = n * COPIES;
@@ -92,7 +93,7 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
   const settle = useCallback(
     (targetRotation: number, velocity = 0) => {
       const target = targetRotation - scrollRot.get();
-      animate(offset, target, reduce ? { duration: 0 } : { type: "spring", stiffness: 210, damping: 30, velocity });
+      animate(offset, target, reduce ? { duration: 0 } : { ...SPRING_SMOOTH, velocity });
     },
     [offset, scrollRot, reduce],
   );

@@ -20,12 +20,16 @@ export function Stage() {
   const { hero, system, finale, reduce, desktop } = useScene();
   const { paused } = useMotionPause();
 
-  const ink = useTransform(hero.progress, [0.6, 0.9], [0, 1]);
+  // Backdrop colour follows raw scroll so text contrast never lags behind a fast jump.
+  const ink = useTransform(hero.raw, [0.6, 0.9], [0, 1]);
   const filmOpacity = useTransform(hero.progress, [0.36, 0.48, 0.86, 0.97], [0, 1, 1, 0]);
   const filmScale = useTransform(hero.progress, [0.36, 0.8], [0.22, 1.08]);
   const filmRotateX = useTransform(hero.progress, [0.36, 0.8], [32, 0]);
   const filmRotateZ = useTransform(hero.progress, [0.36, 0.8], [-6, 0]);
   const archOpacity = useTransform(system.progress, [0, 0.1, 0.9, 1], [0, 0.32, 0.32, 0]);
+  // Film finish: grain is always faintly present; vignette deepens on the dark chapters.
+  const grainOpacity = useTransform(ink, [0, 1], [0.035, 0.075]);
+  const vignetteOpacity = useTransform(ink, [0, 1], [0, 0.85]);
 
   const [active, setActive] = useState(false);
   const [webgl, setWebgl] = useState(false);
@@ -87,6 +91,19 @@ export function Stage() {
           ink={ink}
         />
       ) : null}
+
+      {/* Vignette (transform/opacity only) */}
+      <motion.div
+        className="absolute inset-0"
+        style={{ opacity: vignetteOpacity, background: "radial-gradient(ellipse at 55% 50%, transparent 45%, rgba(13,13,11,0.75) 100%)" }}
+      />
+      {/* Film grain: a tiny tiled texture nudged in steps — matches the Higgsfield footage */}
+      <motion.div className="absolute inset-0 overflow-hidden mix-blend-overlay" style={{ opacity: grainOpacity }}>
+        <div
+          className={`absolute -inset-[10%] ${paused ? "" : "animate-grain"}`}
+          style={{ backgroundImage: `url(${asset("/media/grain.png")})`, backgroundSize: "160px 160px" }}
+        />
+      </motion.div>
     </div>
   );
 }

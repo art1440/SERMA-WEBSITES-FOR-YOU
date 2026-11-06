@@ -1,14 +1,22 @@
 "use client";
 
-import { useMotionValue, useReducedMotion, useScroll, type MotionValue } from "framer-motion";
+import { useMotionValue, useScroll, useSpring, type MotionValue } from "framer-motion";
+import { MOTION } from "@/lib/motion";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 /**
  * Scroll "chapters". Each pinned chapter is a tall track with a sticky stage;
  * its scroll progress (0 → 1) is exposed as a MotionValue, so the 3D engine
  * and CSS-3D choreography read it every frame WITHOUT React re-renders.
  */
-type Chapter = { ref: RefObject<HTMLElement | null>; progress: MotionValue<number> };
+type Chapter = {
+  ref: RefObject<HTMLElement | null>;
+  /** Smoothed (cinematic spring) — for motion. */
+  progress: MotionValue<number>;
+  /** Unsmoothed — for things that must never lag, like the backdrop colour behind text. */
+  raw: MotionValue<number>;
+};
 
 type SceneValue = {
   hero: Chapter;
@@ -25,14 +33,16 @@ const SceneContext = createContext<SceneValue | null>(null);
 function useChapter(offset: ["start start", "end end"] | ["start end", "end end"]): Chapter {
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset });
-  return { ref, progress: scrollYProgress };
+  // Cinematic smoothing: filters trackpad/wheel jitter and gives scroll-linked motion weight.
+  const progress = useSpring(scrollYProgress, MOTION.cinematic);
+  return { ref, progress, raw: scrollYProgress };
 }
 
 export function SceneProvider({ children }: { children: ReactNode }) {
   const hero = useChapter(["start start", "end end"]);
   const system = useChapter(["start start", "end end"]);
   const finale = useChapter(["start end", "end end"]);
-  const reduce = Boolean(useReducedMotion());
+  const reduce = useReducedMotionSafe();
   const [desktop, setDesktop] = useState(false);
 
   useEffect(() => {
@@ -56,7 +66,8 @@ export function useScene(): SceneValue {
 export function useTrackProgress() {
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  return { ref, progress: scrollYProgress };
+  const progress = useSpring(scrollYProgress, MOTION.cinematic);
+  return { ref, progress };
 }
 
 /** A MotionValue pinned at a constant — used when motion is reduced or a chapter is unpinned. */

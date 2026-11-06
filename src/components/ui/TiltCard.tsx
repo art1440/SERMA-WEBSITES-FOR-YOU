@@ -1,16 +1,18 @@
 "use client";
 
-import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useRef, type PointerEvent, type ReactNode } from "react";
+import { MOTION } from "@/lib/motion";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
-const SPRING = { stiffness: 180, damping: 18, mass: 0.6 };
+const SPRING = MOTION.smooth;
 
 /**
  * A card that tilts toward the pointer in 3D and settles back with a spring,
  * and swings up into place when it first scrolls into view. Transform-only.
  */
 export function TiltCard({ children, className, max = 9 }: { children: ReactNode; className?: string; max?: number }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const rect = useRef<DOMRect | null>(null);
   const rx = useSpring(useMotionValue(0), SPRING);
   const ry = useSpring(useMotionValue(0), SPRING);

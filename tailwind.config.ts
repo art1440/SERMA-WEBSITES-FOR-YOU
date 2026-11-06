@@ -75,6 +75,13 @@ const config: Config = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
         },
+        grain: {
+          "0%, 100%": { transform: "translate(0, 0)" },
+          "20%": { transform: "translate(-7%, 4%)" },
+          "40%": { transform: "translate(5%, -6%)" },
+          "60%": { transform: "translate(-4%, -3%)" },
+          "80%": { transform: "translate(6%, 5%)" },
+        },
         "scroll-cue": {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(200%)" },
@@ -83,6 +90,7 @@ const config: Config = {
       animation: {
         "live-pulse": "live-pulse 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite",
         caret: "caret 1s steps(1) infinite",
+        grain: "grain 0.9s steps(1) infinite",
         "scroll-cue": "scroll-cue 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite",
       },
     },

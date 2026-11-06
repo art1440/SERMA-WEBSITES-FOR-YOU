@@ -1,7 +1,9 @@
 "use client";
 
-import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useRef, type MouseEvent, type PointerEvent, type ReactNode } from "react";
+import { MOTION } from "@/lib/motion";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 type Props = {
   children: ReactNode;
@@ -18,14 +20,14 @@ type Props = {
   "data-primary-action"?: boolean;
 };
 
-const SPRING = { stiffness: 320, damping: 22, mass: 0.5 };
+const SPRING = MOTION.snappy;
 
 /**
  * A button that leans toward the cursor (mouse only) and settles back with a
  * spring. Pure transform via MotionValues — no React re-renders while moving.
  */
 export function MagneticButton({ children, className, onClick, href, type = "button", disabled, strength = 0.28, ...aria }: Props) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const rect = useRef<DOMRect | null>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);

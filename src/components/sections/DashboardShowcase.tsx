@@ -5,7 +5,6 @@ import {
   motion,
   useInView,
   useMotionValueEvent,
-  useReducedMotion,
   useTransform,
   type MotionValue,
 } from "framer-motion";
@@ -21,11 +20,12 @@ import { useNiche } from "@/context/NicheContext";
 import { useScene, useTrackProgress } from "@/context/SceneContext";
 import { NICHES } from "@/data/niches";
 import { formatCurrency } from "@/lib/format";
-import { EASE_EDITORIAL } from "@/lib/motion";
+import { EASE_EDITORIAL, SPRING_SMOOTH } from "@/lib/motion";
 import { fill } from "@/i18n/types";
 import { DASHBOARD_PANEL_ID, NicheTabs, tabId } from "./NicheTabs";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
-const BAR_SPRING = { type: "spring", stiffness: 120, damping: 20, mass: 0.8 } as const;
+const BAR_SPRING = SPRING_SMOOTH;
 
 export function DashboardShowcase() {
   const { t } = useLanguage();
@@ -277,7 +277,7 @@ function RevenueChart() {
 function NichePreview() {
   const { t, locale } = useLanguage();
   const { niche } = useNiche();
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionSafe();
   const [userPaused, setUserPaused] = useState<boolean | null>(null);
   const paused = userPaused ?? Boolean(reduce);
 
