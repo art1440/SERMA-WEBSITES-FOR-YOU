@@ -110,7 +110,6 @@ export function Navbar() {
               >
                 {paused ? <Play aria-hidden="true" size={14} strokeWidth={1.75} /> : <Pause aria-hidden="true" size={14} strokeWidth={1.75} />}
               </button>
-              <LanguageToggle layoutId="lang-pill-header" />
               <button type="button" onClick={openLogin} className={`btn-line glass-flat ${BAR_BUTTON} hidden md:inline-flex`}>
                 <Lock aria-hidden="true" size={13} strokeWidth={1.75} className="hidden lg:block" />
                 {t.nav.clientLogin}
@@ -119,6 +118,9 @@ export function Navbar() {
                 {t.common.bookDemoShort}
                 <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.75} className="hidden lg:block" />
               </MagneticButton>
+              {/* Language switch sits right of the CTAs: their labels change width with the language,
+                  so anything left of them would jump away from the pointer after a tap. */}
+              <LanguageToggle />
               <button
                 ref={menuButtonRef}
                 type="button"

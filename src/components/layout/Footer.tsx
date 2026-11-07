@@ -60,7 +60,7 @@ export function Footer() {
                 <ShieldCheck aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0 text-signal" />
                 {t.footer.privacyBadge}
               </p>
-              <LanguageToggle layoutId="lang-pill-footer" tone="dark" />
+              <LanguageToggle tone="dark" />
             </div>
           </div>
 
