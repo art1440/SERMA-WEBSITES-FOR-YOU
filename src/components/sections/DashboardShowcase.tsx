@@ -245,12 +245,13 @@ const VIEW_ICONS: Record<DashboardView, LucideIcon> = {
 function Sidebar({ desktop }: { desktop: boolean }) {
   const { t } = useLanguage();
   const { nicheId } = useNiche();
-  const { view, setView } = useDashboardView();
+  const { view, setView, isDone } = useDashboardView();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const data = NICHE_VIEWS[nicheId];
+  // Counts follow the demo: opening an email or texting a new lead clears it from the badge.
   const badges: Partial<Record<DashboardView, number>> = {
-    inbox: data.inbox.filter((m) => m.unread).length,
-    leads: data.leads.filter((l) => l.status === "new").length,
+    inbox: data.inbox.filter((m) => m.unread && !isDone(`read:${m.id}`)).length,
+    leads: data.leads.filter((l) => l.status === "new" && !isDone(`text:${l.id}`) && !isDone(`booked:${l.id}`)).length,
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
