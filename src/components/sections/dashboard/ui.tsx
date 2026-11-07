@@ -75,7 +75,8 @@ export type Tone = "aqua" | "live" | "signal" | "neutral";
 const TONE: Record<Tone, string> = {
   aqua: "text-aqua ring-aqua/35",
   live: "text-live ring-live/35",
-  signal: "text-signal ring-signal/40",
+  // Orange text is ~4:1 at this size on a card, so the word stays bone; the dot + ring carry the accent.
+  signal: "text-bone/90 ring-signal/50 [&>span:first-child]:bg-signal",
   neutral: "text-bone/80 ring-white/15",
 };
 
