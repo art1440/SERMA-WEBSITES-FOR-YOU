@@ -60,10 +60,10 @@ void main() {
   float vign = smoothstep(1.25, 0.15, length((uv - vec2(0.62, 0.5)) * vec2(1.0, 1.25)));
   col *= vign;
   // Keep the reading column calm: on wide screens copy sits on the left, on
-  // phones it sits in the lower half, so the threads dim to ~20% there.
+  // phones it sits in the lower half, so the threads dim to under 10% there.
   float calm = uRes.x > uRes.y
-    ? mix(0.18, 1.0, smoothstep(0.2, 0.62, uv.x))
-    : mix(0.22, 1.0, smoothstep(0.35, 0.78, uv.y));
+    ? mix(0.07, 1.0, smoothstep(0.36, 0.72, uv.x))
+    : mix(0.08, 1.0, smoothstep(0.5, 0.88, uv.y));
   col *= calm;
   gl_FragColor = vec4(col, clamp(max(col.r, max(col.g, col.b)), 0.0, 1.0));
 }
