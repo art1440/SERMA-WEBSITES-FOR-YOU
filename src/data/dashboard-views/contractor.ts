@@ -97,8 +97,8 @@ export const contractorViews: NicheViews = {
       status: "booked",
       received: { en: "Thu, 10:05 AM", es: "Jue, 10:05 AM" },
       note: {
-        en: "Insurance adjuster already signed off; Crew B starts Mon 9:00 AM",
-        es: "El ajustador del seguro ya aprobó; la Cuadrilla B empieza el lunes 9:00 AM",
+        en: "Insurance adjuster already signed off; Crew B started today at 9:00 AM",
+        es: "El ajustador del seguro ya aprobó; la Cuadrilla B empezó hoy a las 9:00 AM",
       },
     },
     {
@@ -354,11 +354,11 @@ export const contractorViews: NicheViews = {
     {
       id: "co-m2",
       kind: "textback",
-      from: "Monica D.",
-      fromEmail: "monica.d@example.net",
+      from: "SermaWebDesign Alerts",
+      fromEmail: "alerts@example.com",
       subject: {
-        en: "Monica D. replied to your missed-call text",
-        es: "Monica D. respondió a su texto de llamada perdida",
+        en: "Monica D. replied to your text-back: “How soon could you start?”",
+        es: "Monica D. respondió a su texto automático: “¿Qué tan pronto podrían empezar?”",
       },
       preview: {
         en: "“How soon could you start, and do you pull the permit?”",
@@ -370,27 +370,32 @@ export const contractorViews: NicheViews = {
         greeting: { en: "Hi Matt,", es: "Hola, Matt:" },
         paragraphs: [
           {
-            en: "Thanks for the text on Friday! We'd like to turn our hall bathtub into a curbless walk-in shower, mostly so my dad can use it safely.",
-            es: "¡Gracias por el texto del viernes! Queremos cambiar la tina del baño del pasillo por una regadera sin escalón, sobre todo para que mi papá la use con seguridad.",
+            en: "Monica D. called Friday at 12:10 PM while you were on a roof. Your automatic text went out 7 seconds later, and she wrote back this morning at 9:05:",
+            es: "Monica D. llamó el viernes a las 12:10 PM mientras usted estaba en un techo. Su texto automático salió 7 segundos después y ella respondió esta mañana a las 9:05:",
           },
           {
-            en: "How soon could you start, and do you pull the permit or do we?",
-            es: "¿Qué tan pronto podrían empezar? ¿El permiso lo sacan ustedes o nosotros?",
+            en: "“Thanks for the text on Friday! We'd like to turn our hall bathtub into a curbless walk-in shower, mostly so my dad can use it safely. How soon could you start, and do you pull the permit or do we?”",
+            es: "“¡Gracias por el texto del viernes! Queremos cambiar la tina del baño del pasillo por una regadera sin escalón, sobre todo para que mi papá la use con seguridad. ¿Qué tan pronto podrían empezar? ¿El permiso lo sacan ustedes o nosotros?”",
+          },
+          {
+            en: "Pick a reply below and it goes out from your business number. No typing needed.",
+            es: "Elija una respuesta abajo y se envía desde el número de su negocio. No hace falta escribir nada.",
           },
         ],
         details: [
+          { label: { en: "Caller", es: "Llamada de" }, value: { en: "Monica D. · (623) 555-0146", es: "Monica D. · (623) 555-0146" } },
           { label: { en: "Missed call", es: "Llamada perdida" }, value: { en: "Fri, 12:10 PM", es: "Vie, 12:10 PM" } },
-          { label: { en: "Auto-text sent", es: "Texto automático" }, value: { en: "7 seconds later", es: "7 segundos después" } },
-          { label: { en: "Phone", es: "Teléfono" }, value: { en: "(623) 555-0146", es: "(623) 555-0146" } },
+          { label: { en: "Auto-text sent", es: "Texto automático" }, value: { en: "12:10 PM · 7 sec later", es: "12:10 PM · 7 s después" } },
+          { label: { en: "Her reply", es: "Su respuesta" }, value: { en: "9:05 AM", es: "9:05 AM" } },
           { label: { en: "Project", es: "Proyecto" }, value: { en: "Tub-to-shower conversion", es: "Cambio de tina a regadera" } },
         ],
         primary: {
-          label: { en: "Reply with a quick text", es: "Responder con un texto rápido" },
+          label: { en: "Choose a quick reply", es: "Elegir una respuesta rápida" },
           action: "quickReply",
           done: { en: "Reply sent", es: "Respuesta enviada" },
         },
         secondary: {
-          label: { en: "View lead", es: "Ver prospecto" },
+          label: { en: "Open lead", es: "Abrir prospecto" },
           action: "openLeads",
           done: { en: "Opened in Leads", es: "Abierto en Prospectos" },
         },
@@ -405,10 +410,10 @@ export const contractorViews: NicheViews = {
           },
           {
             en: "Thanks, Monica! I'm on a job site right now — I'll call you after 3 PM today.",
-            es: "¡Gracias, Monica! Estoy en una obra en este momento; le llamo hoy después de las 3 PM.",
+            es: "¡Gracias, Monica! Estoy en una obra en este momento; la llamo hoy después de las 3 PM.",
           },
         ],
-        signoff: { en: "— Monica D. (replied by text)", es: "— Monica D. (respondió por texto)" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
       },
     },
     {
@@ -434,8 +439,8 @@ export const contractorViews: NicheViews = {
             es: "Sandra llenó el formulario de cotización en su sitio web a las 7:42 AM. Quiere convertir su garaje para dos autos en una ADU de una recámara y ya tiene los planos de su arquitecto.",
           },
           {
-            en: "Because the estimated value is over $10,000, she's flagged as high-ticket and pinned to the top of your Leads list.",
-            es: "Como el valor estimado supera los $10,000, aparece marcada como prospecto de alto valor y en primer lugar de su lista de Prospectos.",
+            en: "Because the estimated value is over $10,000, she's flagged as a high-ticket lead in your Leads list.",
+            es: "Como el valor estimado supera los $10,000, aparece marcada como prospecto de alto valor en su lista de Prospectos.",
           },
         ],
         details: [
@@ -446,7 +451,7 @@ export const contractorViews: NicheViews = {
           { label: { en: "Source", es: "Origen" }, value: { en: "Website quote form", es: "Formulario de cotización del sitio" } },
         ],
         primary: {
-          label: { en: "Open in Leads", es: "Abrir en Prospectos" },
+          label: { en: "Open lead", es: "Abrir prospecto" },
           action: "openLeads",
           done: { en: "Opened in Leads", es: "Abierto en Prospectos" },
         },
@@ -534,9 +539,9 @@ export const contractorViews: NicheViews = {
           },
         ],
         primary: {
-          label: { en: "Reply in Reviews", es: "Responder en Reseñas" },
+          label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened Reviews", es: "Reseñas abiertas" },
+          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
         },
         signoff: SIGNOFF,
       },

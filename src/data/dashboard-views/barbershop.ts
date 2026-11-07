@@ -107,10 +107,10 @@ export const barbershopViews: NicheViews = {
       value: 60,
       source: "referral",
       status: "booked",
-      received: { en: "Mon, 3:15 PM", es: "Lunes, 3:15 PM" },
+      received: { en: "Sat, 3:15 PM", es: "Sáb, 3:15 PM" },
       note: {
-        en: "Referred by Luis G. — booked Sat 10:00 AM with Tony",
-        es: "Recomendado por Luis G.; agendó el sábado 10:00 AM con Tony",
+        en: "Referred by Luis G. — booked this Sat 10:00 AM with Tony",
+        es: "Recomendado por Luis G.; agendó para este sábado 10:00 AM con Tony",
       },
     },
     {
@@ -133,7 +133,7 @@ export const barbershopViews: NicheViews = {
     resources: [CHAIR_ANDRE, CHAIR_TONY, CHAIR_RICO],
     events: [
       // Monday
-      { id: "bar-c1", day: 0, start: "10:00", durationMin: 60, client: "Luis G.", service: SVC.cutBeard, resource: CHAIR_ANDRE, status: "confirmed", value: 60 },
+      { id: "bar-c1", day: 0, start: "10:00", durationMin: 60, client: "Luis G.", service: SVC.cutBeard, resource: CHAIR_TONY, status: "confirmed", value: 60 },
       { id: "bar-c2", day: 0, start: "13:00", durationMin: 45, client: "Ray C.", service: SVC.skinFade, resource: CHAIR_TONY, status: "confirmed", value: 45 },
       // Tuesday
       { id: "bar-c3", day: 1, start: "09:00", durationMin: 15, client: "Tyrell W.", service: SVC.lineUp, resource: CHAIR_ANDRE, status: "confirmed", value: 20 },
@@ -162,11 +162,10 @@ export const barbershopViews: NicheViews = {
     {
       id: "bar-m1",
       kind: "textback",
-      from: "Jordan P.",
-      fromEmail: "jordan.p@example.net",
+      ...ALERTS,
       subject: {
         en: "Jordan P. replied to your text-back: “Line-up before 1?”",
-        es: "Jordan P. respondió a su mensaje automático: “¿Perfilado antes de la 1?”",
+        es: "Jordan P. respondió a su texto automático: “¿Perfilado antes de la 1?”",
       },
       preview: {
         en: "“Any chance I can get a quick line-up before 1? Got a job interview today.”",
@@ -178,16 +177,16 @@ export const barbershopViews: NicheViews = {
         greeting: HI,
         paragraphs: [
           {
-            en: "Jordan called the shop at 8:41 AM while you were with a client. Your automatic text went out 4 seconds later, and he just wrote back:",
-            es: "Jordan llamó a la barbería a las 8:41 AM mientras usted atendía a un cliente. Su texto automático salió 4 segundos después y él acaba de responder:",
+            en: "Jordan P. called the shop at 8:41 AM while you were with a client. Your automatic text went out 4 seconds later, and he wrote back at 8:47:",
+            es: "Jordan P. llamó a la barbería a las 8:41 AM mientras usted atendía a un cliente. Su texto automático salió 4 segundos después y él respondió a las 8:47:",
           },
           {
             en: "“Hey, any chance I can get a quick line-up before 1? Got a job interview today.”",
             es: "“Hola, ¿habrá chance de un perfilado rápido antes de la 1? Hoy tengo una entrevista de trabajo.”",
           },
           {
-            en: "Pick one of the replies below and it goes out from the shop's number. No typing needed.",
-            es: "Elija una de las respuestas de abajo y se envía desde el número de la barbería. No hace falta escribir nada.",
+            en: "Pick a reply below and it goes out from the shop's number. No typing needed.",
+            es: "Elija una respuesta abajo y se envía desde el número de la barbería. No hace falta escribir nada.",
           },
         ],
         details: [
@@ -204,7 +203,7 @@ export const barbershopViews: NicheViews = {
         quickReplies: [
           {
             en: "Yes! Rico has 11:15 open. Reply YES and it's yours. Good luck at the interview!",
-            es: "¡Claro que sí! Rico tiene libre a las 11:15. Responda SÍ y se la apartamos. ¡Mucha suerte en la entrevista!",
+            es: "¡Claro que sí! Rico tiene libre a las 11:15. Responda SÍ y se lo apartamos. ¡Mucha suerte en la entrevista!",
           },
           {
             en: "Andre can fit you in at 12:15 for a line-up ($20, about 15 min). Want it?",
@@ -215,7 +214,7 @@ export const barbershopViews: NicheViews = {
             es: "Lo sentimos, hoy estamos llenos hasta la 1. Después de las 4 atendemos sin cita, por si le sirve otro día.",
           },
         ],
-        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su respuesta automática de SermaWebDesign" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
       },
     },
     {
@@ -259,7 +258,7 @@ export const barbershopViews: NicheViews = {
         secondary: {
           label: { en: "View in calendar", es: "Ver en el calendario" },
           action: "openCalendar",
-          done: { en: "Shown in calendar", es: "Vista en el calendario" },
+          done: { en: "Opened in calendar", es: "Abierta en el calendario" },
         },
         calendarEventId: "bar-c11",
         signoff: { en: "— Your SermaWebDesign booking system", es: "— Su sistema de citas de SermaWebDesign" },
@@ -287,8 +286,8 @@ export const barbershopViews: NicheViews = {
             es: "Brandon T. llenó el formulario de grupos en su sitio web. Se casa en tres semanas y quiere que todo el grupo llegue bien arreglado a las fotos.",
           },
           {
-            en: "He's asking for all three chairs from 8:00 AM, plus a hot towel shave for the groom. He mentioned he's checking with two other shops, so a reply this morning helps.",
-            es: "Pide las tres sillas desde las 8:00 AM y un afeitado con toalla caliente para el novio. Comentó que también está consultando con otras dos barberías, así que conviene responderle esta mañana.",
+            en: "He's asking for all three chairs from 8:00 AM, plus a hot towel shave for the groom. He mentioned he's checking with two other shops, so a quick reply helps.",
+            es: "Pide las tres sillas desde las 8:00 AM y un afeitado con toalla caliente para el novio. Comentó que también está consultando con otras dos barberías, así que conviene responderle pronto.",
           },
         ],
         details: [
@@ -301,7 +300,7 @@ export const barbershopViews: NicheViews = {
         primary: {
           label: { en: "Open lead", es: "Abrir prospecto" },
           action: "openLeads",
-          done: { en: "Lead opened", es: "Prospecto abierto" },
+          done: { en: "Opened in Leads", es: "Abierto en Prospectos" },
         },
         signoff: { en: "— SermaWebDesign lead alerts", es: "— Alertas de prospectos de SermaWebDesign" },
       },
@@ -342,9 +341,9 @@ export const barbershopViews: NicheViews = {
           { label: { en: "Barber", es: "Barbero" }, value: { en: "Rico", es: "Rico" } },
         ],
         primary: {
-          label: { en: "Review & reply", es: "Ver y responder" },
+          label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened in Reviews", es: "Abierta en Reseñas" },
+          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
         },
         signoff: { en: "— SermaWebDesign review alerts", es: "— Alertas de reseñas de SermaWebDesign" },
       },
@@ -391,7 +390,7 @@ export const barbershopViews: NicheViews = {
         secondary: {
           label: { en: "Mark as handled", es: "Marcar como atendido" },
           action: "acknowledge",
-          done: { en: "Handled", es: "Atendido" },
+          done: { en: "Marked as handled", es: "Marcado como atendido" },
         },
         signoff: { en: "— SermaWebDesign payments", es: "— Pagos de SermaWebDesign" },
       },

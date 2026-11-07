@@ -24,7 +24,9 @@ export const LABEL = "eyebrow text-ash";
 /** A soft selectable row (list items, messages): add your own padding. */
 export const ROW =
   "rounded-[12px] hover:bg-white/[0.05] focus-visible:bg-white/[0.06]";
-export const ROW_SELECTED = "bg-white/[0.08] shadow-[inset_0_0_0_1px_rgba(61,219,201,0.35)]";
+/** Selected tint stays light (0.05) so ash secondary text keeps ≥ 4.5:1; the aqua ring is the cue. */
+export const ROW_SELECTED =
+  "bg-white/[0.05] shadow-[inset_0_0_0_1px_rgba(61,219,201,0.35)] forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]";
 
 /** Small capsule actions inside the demo (44px tall touch target). */
 export const ACTION_PRIMARY =
@@ -38,7 +40,9 @@ export const ACTION_SECONDARY =
 /** Filter / segmented capsules. Pair with aria-pressed. */
 export const PILL =
   "inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 text-[0.8125rem] font-medium";
-export const PILL_ON = "bg-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]";
+/** Pressed state also gets a system-colour outline: forced-colors mode drops backgrounds. */
+export const PILL_ON =
+  "bg-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]";
 export const PILL_OFF = "bg-white/[0.06] text-bone/90 hover:bg-white/[0.1] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]";
 
 const SAMPLE = { en: "Sample data", es: "Datos de ejemplo" } as const;
@@ -156,9 +160,18 @@ export function DoneButton({
   );
 }
 
-/** Format "HH:MM" (24h) for display in the visitor's language. */
+/**
+ * Spanish Intl output writes "a. m." / "p. m."; the sample data and the rest of
+ * the site use "AM" / "PM" in both languages, so normalise to one style.
+ */
+export function normalizeMeridiem(time: string) {
+  // Only for Intl time output (a digit, an optional space, then "a. m." / "p. m.").
+  return time.replace(/(\d\s?)([ap])\.?\s?m\.?/gi, (_, lead: string, ap: string) => `${lead}${ap.toUpperCase()}M`);
+}
+
+/** Format "HH:MM" (24h) for display in the visitor's language (always "AM"/"PM"). */
 export function formatClock(hhmm: string, intlLocale: string) {
   const [h, m] = hhmm.split(":").map(Number);
   const d = new Date(2026, 0, 5, h, m);
-  return new Intl.DateTimeFormat(intlLocale, { hour: "numeric", minute: "2-digit" }).format(d);
+  return normalizeMeridiem(new Intl.DateTimeFormat(intlLocale, { hour: "numeric", minute: "2-digit" }).format(d));
 }

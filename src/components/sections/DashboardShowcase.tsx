@@ -21,7 +21,7 @@ import { useNiche } from "@/context/NicheContext";
 import { useScene, useTrackProgress } from "@/context/SceneContext";
 import { NICHES } from "@/data/niches";
 import { NICHE_VIEWS } from "@/data/dashboard-views";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, formatMetric } from "@/lib/format";
 import { EASE_EDITORIAL, SPRING_SMOOTH } from "@/lib/motion";
 import { fill } from "@/i18n/types";
 import { DASHBOARD_PANEL_ID, NicheTabs, tabId } from "./NicheTabs";
@@ -39,6 +39,7 @@ import { InboxView } from "./dashboard/InboxView";
 import { LeadsView } from "./dashboard/LeadsView";
 import { ReviewsView } from "./dashboard/ReviewsView";
 import { SettingsView } from "./dashboard/SettingsView";
+import { SampleTag } from "./dashboard/ui";
 
 const BAR_SPRING = SPRING_SMOOTH;
 
@@ -58,10 +59,16 @@ const BAR_SPRING = SPRING_SMOOTH;
  *  - Content sits on soft CARDS inside plates.
  * Radii are concentric: window 30 − 8px padding = plate 22 − 8px = card 14.
  *
- * Pinned (lg+) the window has a fixed landscape design width (~16:10):
- * sidebar | KPIs, chart + preview, pipeline strip | activity + modules in a
- * right-hand rail. FitStage only scales by height, so a wide, short window
- * keeps the scale (and the text size) high. Phones keep the stacked layout.
+ * On lg+ the window has a landscape design (~16:10): sidebar | KPIs, chart +
+ * preview, pipeline strip | activity + modules in a right-hand rail. Phones
+ * and tablets keep the stacked layout.
+ *
+ * It pins (300vh scroll track, sticky stage, 3D explode, scroll-cycled
+ * industries) only where it still renders near full size: ≥1280×840 with
+ * motion allowed (`motion-safe:pin:` in CSS, `pin && !reduce` in JS). There
+ * FitStage scales it by height only, so a wide, short window keeps the scale
+ * (and the text size) high. Smaller laptops get the same lg window at 1:1 in
+ * normal flow.
  * ------------------------------------------------------------------ */
 const WINDOW =
   "rounded-glass-lg border border-transparent p-1.5 text-bone sm:p-2 " +
@@ -77,9 +84,10 @@ const TRAFFIC_DOT = "h-3 w-3 rounded-full bg-white/[0.16] shadow-[inset_0_0_0_0.
 export function DashboardShowcase() {
   const { t } = useLanguage();
   const { nicheId, autoNiche, pickNiche, userPicked } = useNiche();
-  const { reduce, desktop } = useScene();
+  const { reduce, desktop, pin } = useScene();
   const track = useTrackProgress();
-  const pinned = desktop && !reduce;
+  // Must match the `motion-safe:pin:` classes below (same media query as SceneContext's `pin`).
+  const pinned = pin && !reduce;
   const d = track.progress;
 
   // 1 · Rise off the table → 2 · explode into layers → 3 · reassemble → 4 · cycle industries
@@ -117,6 +125,10 @@ export function DashboardShowcase() {
   const lockNiche = () => {
     if (!userPicked.current) pickNiche(nicheRef.current);
   };
+  // The disclaimer sits outside FitStage (never scaled or clipped) but takes the scaled
+  // window's width. Set as a CSS variable, so a resize never re-renders the dashboard.
+  const column = useRef<HTMLDivElement>(null);
+  const onScale = (scale: number) => column.current?.style.setProperty("--fit-scale", String(scale));
 
   return (
     <section
@@ -125,11 +137,11 @@ export function DashboardShowcase() {
       aria-labelledby="dashboard-title"
       // overflow-clip (not -hidden): clips like hidden but creates no scroll container,
       // so the pinned `sticky` stage below keeps sticking.
-      className="relative isolate z-10 overflow-clip py-24 motion-safe:lg:h-[300vh] motion-safe:lg:py-0"
+      className="relative isolate z-10 overflow-clip py-24 motion-safe:pin:h-[300vh] motion-safe:pin:py-0"
     >
       <AmbientField variant={1} />
-      <div className="motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-[100svh] motion-safe:lg:overflow-hidden motion-safe:lg:pb-4 motion-safe:lg:pt-20">
-        <div className="frame flex h-full flex-col">
+      <div className="motion-safe:pin:sticky motion-safe:pin:top-0 motion-safe:pin:h-[100svh] motion-safe:pin:overflow-hidden motion-safe:pin:pb-4 motion-safe:pin:pt-20">
+        <div ref={column} className="frame flex h-full flex-col">
           {/* z-10: the heading always paints above the exploding 3D stage. */}
           <div className="relative z-10">
             <SectionHeader
@@ -152,7 +164,9 @@ export function DashboardShowcase() {
             ) : null}
           </div>
 
-          <FitStage enabled={pinned} className={`${pinned ? "mt-4" : "mt-6"} flex-1`}>
+          {/* Pinned: takes what the heading and disclaimer leave (shrinks, min-h-0) and hugs the window, so the
+              disclaimer below always sits right under it, never scaled and never clipped. */}
+          <FitStage enabled={pinned} hug onScale={onScale} className={pinned ? "mt-4" : "mt-6"}>
             <div className="mx-auto max-w-[1240px] [perspective-origin:50%_70%] [perspective:1800px]">
               <motion.div
                 data-theme="dark"
@@ -176,33 +190,43 @@ export function DashboardShowcase() {
                     id={DASHBOARD_PANEL_ID}
                     role="tabpanel"
                     aria-labelledby={tabId(nicheId)}
-                    className="mt-1.5 grid grid-cols-12 gap-1.5 rounded-glass [transform-style:preserve-3d] sm:mt-2 sm:gap-2 lg:grid-cols-[8.5rem_minmax(0,1fr)]"
+                    className="mt-1.5 grid grid-cols-12 gap-1.5 rounded-glass [transform-style:preserve-3d] sm:mt-2 sm:gap-2 lg:grid-cols-[10.25rem_minmax(0,1fr)]"
                   >
                     <motion.div className={`${PLATE} col-span-12 lg:col-span-1`} style={layerZ(zSidebar)}>
                       <Sidebar desktop={desktop} />
                     </motion.div>
                     <ViewPanel
                       desktop={desktop}
+                      pinned={pinned}
                       layers={{ kpi: layerZ(zKpi), mid: layerZ(zMid), bottom: layerZ(zBottom), rail: layerZ(zRail) }}
                     />
                   </div>
                 </DashboardViewProvider>
               </motion.div>
             </div>
-            <div className="mx-auto max-w-[1240px]">
-              <SimulationDisclaimer className="mt-3 lg:max-w-none" />
-            </div>
           </FitStage>
+          {/* FTC disclosure: outside the scaled stage, as wide as the (scaled) window. */}
+          <div
+            className="mx-auto shrink-0"
+            style={{ width: "calc(100% * var(--fit-scale, 1))", maxWidth: "calc(1240px * var(--fit-scale, 1))" }}
+          >
+            <SimulationDisclaimer className="mt-3 lg:max-w-none" />
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
+/**
+ * Title bar. The "Sample data" tag lives here so every section, the Overview
+ * included, is labelled as illustrative (FTC). On narrow windows the right
+ * group wraps onto its own line under the title.
+ */
 function WindowChrome() {
   const { t } = useLanguage();
   return (
-    <div className="flex items-center justify-between gap-3 px-2 py-3 sm:px-2.5 lg:py-2.5">
+    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-2 py-3 sm:px-2.5 lg:py-2.5">
       <div className="flex min-w-0 items-center gap-3">
         {/* Window controls (decorative): neutral glass beads, so the accent stays on the data. */}
         <span aria-hidden="true" className="flex shrink-0 gap-1.5 sm:gap-2">
@@ -214,14 +238,15 @@ function WindowChrome() {
           SermaWebDesign · {t.dashboard.windowTitle}
         </span>
       </div>
-      <div className="flex shrink-0 items-center gap-3 text-xs text-ash">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-ash">
         <span className="hidden sm:inline">{t.dashboard.period}</span>
-        <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-2.5 py-1 font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+        <SampleTag />
+        <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white/[0.07] px-2.5 py-1 font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
           <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
             <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
           </span>
-          {t.dashboard.live}
+          {t.dashboard.liveDemo}
         </span>
       </div>
     </div>
@@ -239,8 +264,10 @@ const VIEW_ICONS: Record<DashboardView, LucideIcon> = {
 
 /**
  * Dashboard sections as a WAI-ARIA tablist (automatic activation). Vertical
- * sidebar on lg+, a horizontally scrolling capsule row on smaller screens.
- * Arrow keys in either direction, Home and End move between sections.
+ * sidebar on lg+. Below lg a 3×2 grid (one row of six from sm) of stacked
+ * icon-over-label tabs, so all six sections are always visible and nothing
+ * scrolls or clips the focus ring. Arrow keys in either direction, Home and
+ * End move between sections.
  */
 function Sidebar({ desktop }: { desktop: boolean }) {
   const { t } = useLanguage();
@@ -274,7 +301,7 @@ function Sidebar({ desktop }: { desktop: boolean }) {
         aria-label={t.dashboard.sidebarLabel}
         aria-orientation={desktop ? "vertical" : "horizontal"}
         onKeyDown={onKeyDown}
-        className="flex gap-1 overflow-x-auto overscroll-x-contain [scrollbar-width:none] lg:flex-col lg:overflow-visible [&::-webkit-scrollbar]:hidden"
+        className="grid grid-cols-3 gap-1 sm:grid-cols-6 lg:flex lg:flex-col"
       >
         {DASHBOARD_VIEWS.map((v, i) => {
           const selected = v === view;
@@ -293,18 +320,22 @@ function Sidebar({ desktop }: { desktop: boolean }) {
               aria-controls={VIEW_PANEL_ID}
               tabIndex={selected ? 0 : -1}
               onClick={() => setView(v)}
-              className={`relative flex min-h-[44px] shrink-0 items-center gap-2 rounded-full px-3 text-sm ${
+              // Below lg: icon above label (radius concentric with the plate: 22 − 6px padding = 16).
+              // lg+: one capsule row; the 10.25rem track fits the longest label + badge ("Prospectos" 2) untruncated.
+              // Selection is a tint + shadow only, so forced colors get a system-colour outline.
+              className={`relative flex min-h-[52px] min-w-0 flex-col items-center justify-center gap-1 rounded-[16px] px-1.5 py-1.5 text-[0.8125rem] leading-tight lg:min-h-[44px] lg:flex-row lg:justify-start lg:gap-1.5 lg:rounded-full lg:px-2.5 lg:py-0 lg:text-sm ${
                 selected
-                  ? "bg-white/[0.08] font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.09),inset_0_0_0_1px_rgba(255,255,255,0.05)]"
+                  ? "bg-white/[0.08] font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.09),inset_0_0_0_1px_rgba(255,255,255,0.05)] forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]"
                   : "text-ash hover:bg-white/[0.05] hover:text-bone"
               }`}
             >
-              <Icon aria-hidden="true" size={15} strokeWidth={1.75} className={selected ? "text-aqua" : ""} />
-              <span className="whitespace-nowrap">{t.dashboard.sidebar[i]}</span>
+              <Icon aria-hidden="true" size={15} strokeWidth={1.75} className={`shrink-0 ${selected ? "text-aqua" : ""}`} />
+              <span className="min-w-0 max-w-full truncate">{t.dashboard.sidebar[i]}</span>
               {badge ? (
-                <span className="tabular ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-aqua px-1.5 text-[0.6875rem] font-semibold text-ink">
+                // A small capsule on the tab's top-right corner below lg; inline at the row's end on lg+.
+                <span className="tabular absolute right-1 top-1 grid h-[1.125rem] min-w-[1.125rem] shrink-0 place-items-center rounded-full bg-aqua px-1 text-[0.6875rem] font-semibold leading-none text-ink lg:static lg:ml-auto lg:h-5 lg:min-w-5 lg:px-1.5">
                   {badge}
-                  <span className="sr-only"> {t.dashboard.newItems}</span>
+                  <span className="sr-only"> {badge === 1 ? t.dashboard.newItemsOne : t.dashboard.newItems}</span>
                 </span>
               ) : selected ? (
                 <span aria-hidden="true" className="ml-auto hidden h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_rgba(61,219,201,0.7)] lg:block" />
@@ -327,32 +358,51 @@ const VIEW_COMPONENTS: Record<Exclude<DashboardView, "overview">, () => React.JS
 
 /**
  * The open section. Overview keeps its exploding plates (KPIs, chart, pipeline,
- * right rail). Every other section is one plate spanning the same area, locked
- * to the Overview's measured height on lg+ so the window never jumps or
- * rescales when switching (inner lists scroll instead).
+ * right rail). Every other section is one plate spanning the same area.
+ *
+ * On lg+ the Overview stays mounted in normal flow at all times and sizes the
+ * panel: while another section is open it is hidden (invisible + inert +
+ * aria-hidden) and the section plate sits over it (absolute inset-0). So a
+ * section always equals the current Overview height for the current language
+ * and industry (inner lists scroll instead), nothing is measured, and returning
+ * to the Overview never remounts it (no count-up from 0, no rescale). Below lg
+ * only the open view renders, at its natural height.
  */
 function ViewPanel({
   desktop,
+  pinned,
   layers,
 }: {
   desktop: boolean;
+  pinned: boolean;
   layers: { kpi?: object; mid?: object; bottom?: object; rail?: object };
 }) {
   const { view } = useDashboardView();
   const overviewRef = useRef<HTMLDivElement>(null);
-  const [lockedHeight, setLockedHeight] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const pinnedRef = useRef(pinned);
+  pinnedRef.current = pinned;
+  const shownView = useRef(view);
 
+  // Focus safety net: if the control that switched sections went away with the old
+  // section (focus fell back to <body>), land on the new section's heading instead.
   useEffect(() => {
-    const el = overviewRef.current;
-    if (view !== "overview" || !el) return;
-    const measure = () => setLockedHeight(el.offsetHeight || null);
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    measure();
-    return () => ro.disconnect();
+    if (shownView.current === view) return; // first mount (and StrictMode's re-run)
+    shownView.current = view;
+    const frame = requestAnimationFrame(() => {
+      const active = document.activeElement;
+      if (active && active !== document.body) return;
+      const heading = (view === "overview" ? overviewRef.current : sectionRef.current)?.querySelector("h3");
+      if (!heading) return;
+      if (!heading.hasAttribute("tabindex")) heading.tabIndex = -1;
+      // Pinned: the sticky stage is already on screen; scrolling would scrub the scene.
+      heading.focus({ preventScroll: pinnedRef.current });
+    });
+    return () => cancelAnimationFrame(frame);
   }, [view]);
 
-  const Inner = view === "overview" ? null : VIEW_COMPONENTS[view];
+  const overviewOpen = view === "overview";
+  const Inner = overviewOpen ? null : VIEW_COMPONENTS[view];
 
   return (
     <div
@@ -360,12 +410,16 @@ function ViewPanel({
       role="tabpanel"
       aria-labelledby={viewTabId(view)}
       tabIndex={-1}
-      className="col-span-12 [transform-style:preserve-3d] lg:col-span-1"
+      className="relative col-span-12 [transform-style:preserve-3d] lg:col-span-1"
     >
-      {view === "overview" ? (
+      {overviewOpen || desktop ? (
         <div
           ref={overviewRef}
-          className="grid grid-cols-12 gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)]"
+          inert={!overviewOpen}
+          aria-hidden={overviewOpen ? undefined : true}
+          className={`grid grid-cols-12 gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] ${
+            overviewOpen ? "" : "invisible"
+          }`}
         >
           <div className="col-span-12 grid content-start gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:col-span-1">
             <motion.div className={`${PLATE} p-1.5 sm:p-2`} style={layers.kpi}>
@@ -373,7 +427,7 @@ function ViewPanel({
             </motion.div>
             <motion.div className={`${PLATE} grid grid-cols-12 gap-1.5 p-1.5 sm:gap-2 sm:p-2`} style={layers.mid}>
               <RevenueChart />
-              <NichePreview />
+              <NichePreview idle={!overviewOpen} />
             </motion.div>
             <motion.div className={`${PLATE} p-1.5 sm:p-2`} style={layers.bottom}>
               <Pipeline />
@@ -388,24 +442,24 @@ function ViewPanel({
             <Modules />
           </motion.div>
         </div>
-      ) : (
+      ) : null}
+      {Inner ? (
         <motion.div
-          className={`${PLATE} flex flex-col p-1.5 sm:p-2`}
-          style={{ ...layers.mid, height: desktop && lockedHeight ? lockedHeight : undefined }}
+          ref={sectionRef}
+          className={`${PLATE} flex flex-col p-1.5 sm:p-2 ${desktop ? "absolute inset-0" : ""}`}
+          style={layers.mid}
         >
-          {Inner ? (
-            <motion.div
-              key={view}
-              className="flex min-h-0 flex-1 flex-col"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: EASE_EDITORIAL }}
-            >
-              <Inner />
-            </motion.div>
-          ) : null}
+          <motion.div
+            key={view}
+            className="flex min-h-0 flex-1 flex-col"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: EASE_EDITORIAL }}
+          >
+            <Inner />
+          </motion.div>
         </motion.div>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -512,7 +566,8 @@ function RevenueChart() {
   );
 }
 
-function NichePreview() {
+/** `idle`: the Overview is hidden behind another section (lg+), so the clip pauses. */
+function NichePreview({ idle = false }: { idle?: boolean }) {
   const { t, locale } = useLanguage();
   const { niche } = useNiche();
   const reduce = useReducedMotionSafe();
@@ -547,7 +602,7 @@ function NichePreview() {
               src={niche.media.src}
               poster={niche.media.poster}
               label={niche.media.alt[locale]}
-              paused={paused}
+              paused={paused || idle}
               showControl={false}
               className="h-full w-full"
             />
@@ -576,7 +631,7 @@ function NichePreview() {
 }
 
 function Pipeline() {
-  const { t, locale } = useLanguage();
+  const { t, locale, intlLocale } = useLanguage();
   const { niche } = useNiche();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
@@ -589,9 +644,16 @@ function Pipeline() {
       <ol className="mt-4 grid gap-4 sm:grid-cols-2 sm:gap-x-6 lg:mt-3 lg:grid-cols-4 lg:gap-x-5">
         {niche.pipeline.map((stage, i) => (
           <li key={i}>
+            {/* The count-up must not reflow the label: the number reserves the width of its
+                final value (tabular digits ≤ 1ch each), so the row is as tall at 0 as at the end. */}
             <div className="flex items-baseline justify-between gap-3 text-sm">
-              <span className="text-bone">{stage.stage[locale]}</span>
-              <AnimatedNumber value={stage.count} className="font-medium text-bone" />
+              <span className="min-w-0 text-bone">{stage.stage[locale]}</span>
+              <span
+                className="tabular shrink-0 text-right font-medium text-bone"
+                style={{ minWidth: `${formatMetric(stage.count, "number", intlLocale).length}ch` }}
+              >
+                <AnimatedNumber value={stage.count} />
+              </span>
             </div>
             {/* Capsule meter: the fill slides in (translate, not scale) so its rounded end stays crisp. */}
             <div

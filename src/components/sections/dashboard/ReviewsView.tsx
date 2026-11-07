@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { CornerDownRight, Megaphone, MessageSquareQuote, Reply, Send, Sparkles, Star } from "lucide-react";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -55,15 +55,15 @@ const COPY = {
   breakdownRowOne: { en: "1 star: {count} reviews ({pct})", es: "1 estrella: {count} reseñas ({pct})" },
   requestTitle: { en: "Get more reviews", es: "Consiga más reseñas" },
   requestBody: {
-    en: "Text a review link to the clients you saw this week. One tap takes them straight to your Google profile.",
-    es: "Envíe por texto un enlace para reseñar a los clientes que atendió esta semana. Con un toque llegan directo a su perfil de Google.",
+    en: "Text a review link to the clients you saw last week. One tap takes them straight to your Google profile.",
+    es: "Envíe por texto un enlace para reseñar a los clientes que atendió la semana pasada. Con un toque llegan directo a su perfil de Google.",
   },
   requestButton: { en: "Request reviews from recent clients", es: "Pedir reseñas a clientes recientes" },
-  requestDone: { en: "Sent to {count} recent clients (demo)", es: "Enviado a {count} clientes recientes (demo)" },
-  requestNames: { en: "{names} and {more} more", es: "{names} y {more} más" },
+  // Last week's clients only: today's and upcoming bookings (the Calendar) haven't been seen yet at 9:41 AM Monday.
+  requestDone: { en: "Sent to {count} clients from last week (demo)", es: "Enviado a {count} clientes de la semana pasada (demo)" },
   requestAnnounce: {
-    en: "Review requests sent to {count} recent clients. Demo only, nothing was sent.",
-    es: "Solicitudes de reseña enviadas a {count} clientes recientes. Es una demo: no se envió nada.",
+    en: "Review requests sent to {count} clients from last week. Demo only, nothing was sent.",
+    es: "Solicitudes de reseña enviadas a {count} clientes de la semana pasada. Es una demo: no se envió nada.",
   },
   listLabel: { en: "Latest reviews", es: "Reseñas más recientes" },
   reply: { en: "Reply", es: "Responder" },
@@ -87,6 +87,9 @@ const COPY = {
 } satisfies Record<string, L10n>;
 
 const PLATFORM: Record<ReviewPlatform, string> = { google: "Google", yelp: "Yelp", facebook: "Facebook" };
+
+/** The cross-link highlight ring is a box-shadow, which forced-colors mode drops: add a system-colour outline. */
+const HIGHLIGHT_FORCED = "forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]";
 
 type Filter = "all" | "five" | "needs";
 
@@ -136,10 +139,11 @@ function Stars({ value, label, size = 14 }: { value: number; label: string; size
         const part = Math.max(0, Math.min(1, value - i));
         return (
           <span key={i} aria-hidden="true" className="relative block shrink-0" style={{ width: size, height: size }}>
-            <Star size={size} strokeWidth={0} fill="currentColor" className="absolute inset-0 text-white/[0.16]" />
+            {/* Empty slots at white/40 (≈3.7:1 on the card); in forced colors GrayText vs CanvasText. */}
+            <Star size={size} strokeWidth={0} fill="currentColor" className="absolute inset-0 text-white/40 forced-colors:text-[GrayText]" />
             {part > 0 ? (
               <span className="absolute inset-0" style={part < 1 ? { clipPath: `inset(0 ${(1 - part) * 100}% 0 0)` } : undefined}>
-                <Star size={size} strokeWidth={0} fill="currentColor" className="text-aqua" />
+                <Star size={size} strokeWidth={0} fill="currentColor" className="text-aqua forced-colors:text-[CanvasText]" />
               </span>
             ) : null}
           </span>
@@ -283,9 +287,9 @@ function ReviewsBoard({ nicheId }: { nicheId: NicheId }) {
 
       <div className="grid min-h-0 flex-1 gap-1.5 sm:gap-2 lg:grid-cols-[20rem_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)]">
         {/* ---------- Summary column ---------- */}
-        <div className="grid content-start gap-1.5 sm:grid-cols-2 sm:gap-2 lg:min-h-0 lg:grid-cols-1 lg:overflow-y-auto lg:overscroll-contain">
+        <div className="grid content-start gap-1.5 sm:grid-cols-2 sm:gap-2 lg:min-h-0 lg:grid-cols-1 lg:overflow-y-auto">
           <RatingSummary average={average} avgText={avgText} totalText={totalText} distribution={distribution} />
-          <RequestReviews nicheId={nicheId} data={data} />
+          <RequestReviews nicheId={nicheId} />
         </div>
 
         {/* ---------- Review list ---------- */}
@@ -293,7 +297,7 @@ function ReviewsBoard({ nicheId }: { nicheId: NicheId }) {
           <ul
             ref={listRef}
             aria-label={COPY.listLabel[locale]}
-            className="relative flex flex-col gap-1.5 sm:gap-2 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain"
+            className="relative flex flex-col gap-1.5 sm:gap-2 lg:min-h-0 lg:overflow-y-auto"
           >
             {visible.map((r, i) => (
               <motion.li
@@ -400,12 +404,11 @@ function RatingSummary({
   );
 }
 
-function RequestReviews({ nicheId, data }: { nicheId: NicheId; data: NicheViews }) {
+function RequestReviews({ nicheId }: { nicheId: NicheId }) {
   const { locale } = useLanguage();
   const { isDone, markDone, announce } = useDashboardView();
   const key = `requestReviews:${nicheId}`;
   const done = isDone(key);
-  const names = Array.from(new Set(data.calendar.events.map((e) => e.client))).slice(0, 3);
   return (
     <section aria-labelledby="rv-request-title" className={`${CARD} flex flex-col`}>
       <h4 id="rv-request-title" className={`${LABEL} flex items-center gap-1.5`}>
@@ -424,19 +427,6 @@ function RequestReviews({ nicheId, data }: { nicheId: NicheId; data: NicheViews 
         icon={<Send aria-hidden="true" size={15} strokeWidth={2} />}
         className="mt-3 w-full !px-3 py-2 text-center !text-[0.8125rem] leading-tight"
       />
-      <AnimatePresence initial={false}>
-        {done && names.length ? (
-          <motion.p
-            key="names"
-            className="mt-2 text-xs leading-snug text-ash"
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
-          >
-            {fill(COPY.requestNames[locale], { names: names.join(", "), more: Math.max(0, RECENT_CLIENTS - names.length) })}
-          </motion.p>
-        ) : null}
-      </AnimatePresence>
     </section>
   );
 }
@@ -477,7 +467,10 @@ function ReviewCard({
       : "shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)]";
 
   return (
-    <article aria-labelledby={uid(r.id, "author")} className={`rounded-glass-sm bg-white/[0.04] p-4 sm:p-5 lg:p-4 ${edge}`}>
+    <article
+      aria-labelledby={uid(r.id, "author")}
+      className={`rounded-glass-sm bg-white/[0.04] p-4 sm:p-5 lg:p-4 ${edge} ${highlighted ? HIGHLIGHT_FORCED : ""}`}
+    >
       <div className="flex items-start gap-3">
         <Avatar name={r.author} />
         <div className="min-w-0 flex-1">

@@ -42,7 +42,7 @@ export const beautyViews: NicheViews = {
       value: 85,
       source: "missedCall",
       status: "new",
-      received: { en: "Today, 10:02 AM", es: "Hoy, 10:02 AM" },
+      received: { en: "Today, 9:12 AM", es: "Hoy, 9:12 AM" },
       note: {
         en: "Has lashes from another studio — asked if you can fill them",
         es: "Trae pestañas de otro estudio; preguntó si se las pueden rellenar",
@@ -84,7 +84,7 @@ export const beautyViews: NicheViews = {
       value: 95,
       source: "referral",
       status: "contacted",
-      received: { en: "Mon, 6:30 PM", es: "Lunes, 6:30 PM" },
+      received: { en: "Sat, 6:30 PM", es: "Sáb, 6:30 PM" },
       note: {
         en: "Referred by Kayla S. — wants brows done 2 days before a wedding",
         es: "Recomendada por Kayla S.; quiere las cejas listas 2 días antes de una boda",
@@ -112,10 +112,10 @@ export const beautyViews: NicheViews = {
       value: 85,
       source: "missedCall",
       status: "booked",
-      received: { en: "Mon, 4:12 PM", es: "Lunes, 4:12 PM" },
+      received: { en: "Sat, 4:12 PM", es: "Sáb, 4:12 PM" },
       note: {
-        en: "Missed call → text-back → booked Sat 10:15 AM with Mia",
-        es: "Llamada perdida → texto automático → agendó el sábado 10:15 AM con Mia",
+        en: "Missed call → text-back → booked this Sat 10:15 AM with Mia",
+        es: "Llamada perdida → texto automático → agendó para este sábado 10:15 AM con Mia",
       },
     },
     {
@@ -167,24 +167,23 @@ export const beautyViews: NicheViews = {
     {
       id: "bea-m1",
       kind: "textback",
-      from: "Alyssa R.",
-      fromEmail: "alyssa.r@example.net",
+      ...ALERTS,
       subject: {
         en: "Alyssa R. replied to your text-back: “Can you fill another studio's lashes?”",
-        es: "Alyssa R. respondió a su mensaje automático: “¿Rellenan pestañas de otro estudio?”",
+        es: "Alyssa R. respondió a su texto automático: “¿Rellenan pestañas de otro estudio?”",
       },
       preview: {
         en: "“My lashes are from another place. Can you fill them or do I need a new set?”",
         es: "“Mis pestañas son de otro lugar. ¿Me las pueden rellenar o necesito un juego nuevo?”",
       },
-      received: { en: "10:08 AM", es: "10:08 AM" },
+      received: { en: "9:18 AM", es: "9:18 AM" },
       unread: true,
       email: {
         greeting: HI,
         paragraphs: [
           {
-            en: "Alyssa called at 10:02 AM while you were in the middle of a set. Your automatic text went out 3 seconds later, and she replied at 10:07:",
-            es: "Alyssa llamó a las 10:02 AM mientras usted estaba a mitad de un juego de pestañas. Su texto automático salió 3 segundos después y ella respondió a las 10:07:",
+            en: "Alyssa R. called at 9:12 AM while you were setting up for your 10:00 client. Your automatic text went out 3 seconds later, and she wrote back at 9:17:",
+            es: "Alyssa R. llamó a las 9:12 AM mientras usted se preparaba para su clienta de las 10:00. Su texto automático salió 3 segundos después y ella respondió a las 9:17:",
           },
           {
             en: "“Hi! My lashes are from another place and I'm due for a fill. Can you fill them, or do I need a whole new set?”",
@@ -197,9 +196,9 @@ export const beautyViews: NicheViews = {
         ],
         details: [
           { label: { en: "Caller", es: "Llamada de" }, value: { en: "Alyssa R. · (713) 555-0131", es: "Alyssa R. · (713) 555-0131" } },
-          { label: { en: "Missed call", es: "Llamada perdida" }, value: { en: "10:02 AM", es: "10:02 AM" } },
-          { label: { en: "Auto-text sent", es: "Texto automático" }, value: { en: "10:02 AM · 3 sec later", es: "10:02 AM · 3 s después" } },
-          { label: { en: "Her reply", es: "Su respuesta" }, value: { en: "10:07 AM", es: "10:07 AM" } },
+          { label: { en: "Missed call", es: "Llamada perdida" }, value: { en: "9:12 AM", es: "9:12 AM" } },
+          { label: { en: "Auto-text sent", es: "Texto automático" }, value: { en: "9:12 AM · 3 sec later", es: "9:12 AM · 3 s después" } },
+          { label: { en: "Her reply", es: "Su respuesta" }, value: { en: "9:17 AM", es: "9:17 AM" } },
         ],
         primary: {
           label: { en: "Choose a quick reply", es: "Elegir una respuesta rápida" },
@@ -209,7 +208,7 @@ export const beautyViews: NicheViews = {
         quickReplies: [
           {
             en: "We can! If about half your lashes are still on, we'll do a foreign fill ($85, about 75 min). Vanessa has Thursday at 3 PM. Want it?",
-            es: "¡Sí se puede! Si todavía tiene más o menos la mitad de sus pestañas, le hacemos un relleno de otro estudio ($85, unos 75 min). Vanessa tiene el jueves a las 3 PM. ¿Se lo apartamos?",
+            es: "¡Claro que sí! Si todavía tiene más o menos la mitad de sus pestañas, le hacemos un relleno sobre las pestañas que trae ($85, unos 75 min). Vanessa tiene el jueves a las 3 PM. ¿Se lo apartamos?",
           },
           {
             en: "Send us a close-up photo of your lashes and we'll tell you whether a fill or a fresh set makes more sense.",
@@ -220,7 +219,7 @@ export const beautyViews: NicheViews = {
             es: "Cuando las pestañas son de otro estudio, empezamos con un juego completo nuevo para saber exactamente qué tiene puesto. El juego clásico cuesta $150. ¿Le buscamos un horario esta semana?",
           },
         ],
-        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su respuesta automática de SermaWebDesign" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
       },
     },
     {
@@ -265,7 +264,7 @@ export const beautyViews: NicheViews = {
         secondary: {
           label: { en: "View in calendar", es: "Ver en el calendario" },
           action: "openCalendar",
-          done: { en: "Shown in calendar", es: "Vista en el calendario" },
+          done: { en: "Opened in calendar", es: "Abierta en el calendario" },
         },
         calendarEventId: "bea-c4",
         signoff: { en: "— Your SermaWebDesign booking system", es: "— Su sistema de citas de SermaWebDesign" },
@@ -307,7 +306,7 @@ export const beautyViews: NicheViews = {
         primary: {
           label: { en: "Open lead", es: "Abrir prospecto" },
           action: "openLeads",
-          done: { en: "Lead opened", es: "Prospecto abierto" },
+          done: { en: "Opened in Leads", es: "Abierto en Prospectos" },
         },
         signoff: { en: "— SermaWebDesign lead alerts", es: "— Alertas de prospectos de SermaWebDesign" },
       },
@@ -317,12 +316,12 @@ export const beautyViews: NicheViews = {
       kind: "payment",
       ...ALERTS,
       subject: {
-        en: "Deposit received: $50 from Nicole A. for Fri 10:00 AM",
-        es: "Depósito recibido: $50 de Nicole A. para el viernes 10:00 AM",
+        en: "Deposit received: $40 from Nicole A. for Fri 10:00 AM",
+        es: "Depósito recibido: $40 de Nicole A. para el viernes 10:00 AM",
       },
       preview: {
-        en: "Volume lash full set with you. $160 balance due at checkout.",
-        es: "Juego de pestañas de volumen con usted. Saldo de $160 al pagar.",
+        en: "Volume lash full set with you. $170 balance due at checkout.",
+        es: "Juego de pestañas de volumen con usted. Saldo de $170 al pagar.",
       },
       received: { en: "Yesterday, 4:40 PM", es: "Ayer, 4:40 PM" },
       unread: false,
@@ -330,8 +329,8 @@ export const beautyViews: NicheViews = {
         greeting: HI,
         paragraphs: [
           {
-            en: "Nicole A. paid her deposit for a volume full set, so Friday morning is locked in. Under your policy, the deposit isn't refunded for cancellations with less than 48 hours' notice.",
-            es: "Nicole A. pagó su depósito para un juego de volumen, así que el viernes por la mañana queda asegurado. Según su política, el depósito no se reembolsa si cancela con menos de 48 horas de aviso.",
+            en: "Nicole A. paid her deposit for a volume full set, so Friday morning is locked in. Under your policy, the deposit isn't refunded for cancellations with less than 24 hours' notice.",
+            es: "Nicole A. pagó su depósito para un juego de volumen, así que el viernes por la mañana queda asegurado. Según su política, el depósito no se reembolsa si cancela con menos de 24 horas de aviso.",
           },
           {
             en: "Here's the receipt. The balance is collected at checkout, and her 2-week fill reminder is already scheduled.",
@@ -342,8 +341,8 @@ export const beautyViews: NicheViews = {
           { label: { en: "Receipt", es: "Recibo" }, value: { en: "#LQS-3062", es: "#LQS-3062" } },
           { label: { en: "Service", es: "Servicio" }, value: { en: "Volume lash full set · Vanessa", es: "Juego de pestañas de volumen · Vanessa" } },
           { label: { en: "Appointment", es: "Cita" }, value: { en: "Fri, 10:00 AM–12:30 PM", es: "Viernes, 10:00 AM–12:30 PM" } },
-          { label: { en: "Deposit paid", es: "Depósito pagado" }, value: { en: "$50.00", es: "$50.00" } },
-          { label: { en: "Balance at checkout", es: "Saldo al pagar" }, value: { en: "$160.00", es: "$160.00" } },
+          { label: { en: "Deposit paid", es: "Depósito pagado" }, value: { en: "$40.00", es: "$40.00" } },
+          { label: { en: "Balance at checkout", es: "Saldo al pagar" }, value: { en: "$170.00", es: "$170.00" } },
           { label: { en: "Card", es: "Tarjeta" }, value: { en: "Visa ending 2209", es: "Visa terminada en 2209" } },
         ],
         primary: {
@@ -354,7 +353,7 @@ export const beautyViews: NicheViews = {
         secondary: {
           label: { en: "Mark as handled", es: "Marcar como atendido" },
           action: "acknowledge",
-          done: { en: "Handled", es: "Atendido" },
+          done: { en: "Marked as handled", es: "Marcado como atendido" },
         },
         signoff: { en: "— SermaWebDesign payments", es: "— Pagos de SermaWebDesign" },
       },
@@ -395,9 +394,9 @@ export const beautyViews: NicheViews = {
           { label: { en: "Nail tech", es: "Técnica de uñas" }, value: { en: "Mia", es: "Mia" } },
         ],
         primary: {
-          label: { en: "Review & reply", es: "Ver y responder" },
+          label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened in Reviews", es: "Abierta en Reseñas" },
+          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
         },
         signoff: { en: "— SermaWebDesign review alerts", es: "— Alertas de reseñas de SermaWebDesign" },
       },

@@ -79,13 +79,13 @@ export const NICHES: Niche[] = [
       { stage: { en: "Requested", es: "Solicitadas" }, count: 64 },
       { stage: { en: "Deposit paid", es: "Depósito pagado" }, count: 51 },
       { stage: { en: "In the chair", es: "En la silla" }, count: 44 },
-      { stage: { en: "Re-booked", es: "Re-agendadas" }, count: 29 },
+      { stage: { en: "Re-booked", es: "Reagendadas" }, count: 29 },
     ],
     stream: [
-      { text: { en: "Marcus R. booked Skin Fade · Chair 2", es: "Marcus R. agendó Skin Fade · Silla 2" }, amount: 45, minutesAgo: 2 },
+      { text: { en: "Marcus R. booked Skin Fade · Chair 1 · Andre", es: "Marcus R. agendó Skin Fade · Silla 1 · Andre" }, amount: 45, minutesAgo: 2 },
       { text: { en: "No-show deposit captured", es: "Depósito por inasistencia cobrado" }, amount: 20, minutesAgo: 14 },
       { text: { en: "VIP reminder sent to Dre T. (3-week cycle)", es: "Recordatorio VIP enviado a Dre T. (ciclo de 3 sem)" }, minutesAgo: 31 },
-      { text: { en: "Missed call → text-back → Beard Trim booked", es: "Llamada perdida → texto → cita de Barba" }, amount: 25, minutesAgo: 48 },
+      { text: { en: "Missed call → text-back → Classic Cut booked", es: "Llamada perdida → texto automático → cita de Corte clásico" }, amount: 40, minutesAgo: 48 },
     ],
     simulator: {
       business: "Northside Barber Co.",
@@ -130,13 +130,13 @@ export const NICHES: Niche[] = [
       { stage: { en: "Consult requested", es: "Consulta solicitada" }, count: 48 },
       { stage: { en: "Booked", es: "Agendada" }, count: 41 },
       { stage: { en: "Serviced", es: "Atendida" }, count: 37 },
-      { stage: { en: "Re-booked", es: "Re-agendada" }, count: 25 },
+      { stage: { en: "Re-booked", es: "Reagendada" }, count: 25 },
     ],
     stream: [
       { text: { en: "Sofia L. booked Balayage + Gloss with Jenna", es: "Sofia L. agendó Balayage + Gloss con Jenna" }, amount: 240, minutesAgo: 4 },
-      { text: { en: "Re-booking reminder sent (6-week color cycle)", es: "Recordatorio enviado (ciclo de color de 6 sem)" }, minutesAgo: 18 },
-      { text: { en: "Keratin package sold — 3 sessions", es: "Paquete de keratina vendido — 3 sesiones" }, amount: 360, minutesAgo: 37 },
-      { text: { en: "Missed call → text-back → Trim booked", es: "Llamada perdida → texto → cita de Despunte" }, amount: 65, minutesAgo: 52 },
+      { text: { en: "Re-booking reminder sent (5-week color cycle)", es: "Recordatorio enviado (ciclo de color de 5 sem)" }, minutesAgo: 18 },
+      { text: { en: "Keratin package sold — 3 sessions", es: "Paquete de keratina vendido — 3 sesiones" }, amount: 810, minutesAgo: 37 },
+      { text: { en: "Missed call → text-back → Blowout booked", es: "Llamada perdida → texto automático → cita de Brushing" }, amount: 55, minutesAgo: 52 },
     ],
     simulator: {
       business: "Atelier Salon",
@@ -185,10 +185,10 @@ export const NICHES: Niche[] = [
       { stage: { en: "Fill booked", es: "Relleno agendado" }, count: 34 },
     ],
     stream: [
-      { text: { en: "Ana P. booked Gel-X Full Set with Mia", es: "Ana P. agendó Juego Gel-X con Mia" }, amount: 85, minutesAgo: 3 },
-      { text: { en: "Deposit received — Lash Lift", es: "Depósito recibido — Lifting de pestañas" }, amount: 25, minutesAgo: 11 },
+      { text: { en: "Imani J. booked Brow Lamination with Vanessa", es: "Imani J. agendó Laminado de cejas con Vanessa" }, amount: 75, minutesAgo: 3 },
+      { text: { en: "Deposit received — Lash Lift", es: "Depósito recibido — Lifting de pestañas" }, amount: 40, minutesAgo: 11 },
       { text: { en: "VIP win-back text sent to 12 clients (60+ days)", es: "Mensaje VIP enviado a 12 clientes (60+ días)" }, minutesAgo: 26 },
-      { text: { en: "Missed call → text-back → Lash Fill booked", es: "Llamada perdida → texto → Relleno de pestañas" }, amount: 65, minutesAgo: 44 },
+      { text: { en: "Missed call → text-back → Lash Fill booked", es: "Llamada perdida → texto automático → Relleno de pestañas" }, amount: 65, minutesAgo: 44 },
     ],
     simulator: {
       business: "Lacquer Studio",
@@ -239,7 +239,7 @@ export const NICHES: Niche[] = [
       { text: { en: "Online order #1042 — 2× Short Rib, 1× Burrata", es: "Pedido #1042 — 2× Short Rib, 1× Burrata" }, amount: 86, minutesAgo: 1 },
       { text: { en: "Table for 4 reserved — Fri 7:30 PM", es: "Mesa para 4 reservada — vie 7:30 PM" }, minutesAgo: 9 },
       { text: { en: "VIP Club broadcast sent to 1,460 members", es: "Mensaje del Club VIP enviado a 1,460 miembros" }, minutesAgo: 22 },
-      { text: { en: "Missed call → text-back → party of 6 booked", es: "Llamada perdida → texto → mesa para 6" }, amount: 270, minutesAgo: 41 },
+      { text: { en: "Missed call → text-back → party of 6 booked", es: "Llamada perdida → texto automático → mesa para 6" }, amount: 270, minutesAgo: 41 },
     ],
     simulator: {
       business: "Brasa Kitchen",
@@ -288,10 +288,10 @@ export const NICHES: Niche[] = [
       { stage: { en: "Won", es: "Ganado" }, count: 12 },
     ],
     stream: [
-      { text: { en: "Kitchen remodel estimate sent — R. Alvarez", es: "Presupuesto de cocina enviado — R. Alvarez" }, amount: 28500, minutesAgo: 6 },
-      { text: { en: "Crew 2 dispatched — roof repair, Oak St.", es: "Cuadrilla 2 asignada — reparación de techo, Oak St." }, minutesAgo: 17 },
-      { text: { en: "High-ticket lead flagged: ADU build", es: "Prospecto de alto valor: construcción de ADU" }, amount: 62000, minutesAgo: 33 },
-      { text: { en: "Missed call → text-back → site visit booked", es: "Llamada perdida → texto → visita agendada" }, minutesAgo: 51 },
+      { text: { en: "Primary bath estimate sent — Jenna P.", es: "Presupuesto de baño principal enviado — Jenna P." }, amount: 19500, minutesAgo: 6 },
+      { text: { en: "High-ticket lead flagged: kitchen refresh, Karen W.", es: "Prospecto de alto valor: renovación de cocina, Karen W." }, amount: 18500, minutesAgo: 12 },
+      { text: { en: "Crew B dispatched — ceiling repair, Derek S.", es: "Cuadrilla B asignada — reparación de cielo raso, Derek S." }, minutesAgo: 41 },
+      { text: { en: "Missed call → text-back → site visit booked", es: "Llamada perdida → texto automático → visita agendada" }, minutesAgo: 51 },
     ],
     simulator: {
       business: "Ridgeline Builders",
@@ -340,9 +340,9 @@ export const NICHES: Niche[] = [
     ],
     stream: [
       { text: { en: "New lead: AC tune-up request via website", es: "Nuevo prospecto: mantenimiento de A/C desde el sitio" }, amount: 149, minutesAgo: 2 },
-      { text: { en: "2-way SMS: J. Kim confirmed Tuesday window", es: "SMS: J. Kim confirmó el horario del martes" }, minutesAgo: 12 },
-      { text: { en: "Review request sent after job #318", es: "Solicitud de reseña enviada tras el trabajo #318" }, minutesAgo: 27 },
-      { text: { en: "Missed call → text-back → deep clean booked", es: "Llamada perdida → texto → limpieza profunda" }, amount: 220, minutesAgo: 45 },
+      { text: { en: "2-way SMS: Marisol V. confirmed Tuesday window", es: "SMS: Marisol V. confirmó el horario del martes" }, minutesAgo: 12 },
+      { text: { en: "Review request sent after job #322", es: "Solicitud de reseña enviada tras el trabajo #322" }, minutesAgo: 27 },
+      { text: { en: "Missed call → text-back → deep clean booked", es: "Llamada perdida → texto automático → limpieza profunda" }, amount: 220, minutesAgo: 45 },
     ],
     simulator: {
       business: "Clearline Home Services",

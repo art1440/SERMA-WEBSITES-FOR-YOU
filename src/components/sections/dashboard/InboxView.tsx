@@ -38,6 +38,7 @@ import type { NicheId } from "@/data/niches";
 import { fill, type L10n, type Locale } from "@/i18n/types";
 import { EASE_EDITORIAL } from "@/lib/motion";
 import { useDashboardView } from "./DashboardViewContext";
+import { findMentioned, leadTextMessage } from "./LeadsView";
 import {
   ACTION_PRIMARY,
   ACTION_SECONDARY,
@@ -72,7 +73,7 @@ const COPY = {
   title: { en: "Inbox", es: "Bandeja de entrada" },
   subtitle: {
     en: "Booking, payment and review alerts, plus replies to your text-backs.",
-    es: "Alertas de citas, pagos y reseñas, junto con las respuestas a sus mensajes automáticos.",
+    es: "Alertas de citas, pagos y reseñas, junto con las respuestas a sus textos automáticos.",
   },
   alertSettings: { en: "Alert settings", es: "Ajustes de alertas" },
   messages: { en: "Messages", es: "Mensajes" },
@@ -112,16 +113,18 @@ const COPY = {
   thread: { en: "Text thread with {name}", es: "Conversación por texto con {name}" },
   youJustNow: { en: "You · just now", es: "Usted · justo ahora" },
   sentDemo: { en: "Sent (demo)", es: "Enviado (demo)" },
+  sentFromLeads: { en: "Sent from Leads (demo)", es: "Enviado desde Prospectos (demo)" },
   theySaid: { en: "{name} wrote at {time}:", es: "{name} escribió a las {time}:" },
   youSent: { en: "You sent, just now (demo):", es: "Usted envió, justo ahora (demo):" },
+  youSentFromLeads: { en: "You sent from Leads, just now (demo):", es: "Usted envió desde Prospectos, justo ahora (demo):" },
   replySent: {
     en: "Reply sent to {name}. Demo only: nothing was actually sent.",
-    es: "Respuesta enviada a {name}. Es una demostración: en realidad no se envió nada.",
+    es: "Respuesta enviada a {name}. Es una demo: en realidad no se envió nada.",
   },
   theClient: { en: "the client", es: "el cliente" },
   confirmNote: {
     en: "Now shown as Confirmed in your Calendar. Demo only: no text went out.",
-    es: "Ahora aparece como confirmada en su Calendario. Es una demostración: no se envió ningún texto.",
+    es: "Ahora aparece como confirmada en su Calendario. Es una demo: no se envió ningún texto.",
   },
   receipt: { en: "Receipt", es: "Recibo" },
   paid: { en: "Paid", es: "Pagado" },
@@ -135,7 +138,7 @@ const COPY = {
 const KIND_LABEL: Record<InboxKind, L10n> = {
   booking: { en: "Booking", es: "Cita" },
   payment: { en: "Payment", es: "Pago" },
-  textback: { en: "Text-back", es: "Respuesta por texto" },
+  textback: { en: "Text-back", es: "Texto automático" },
   review: { en: "Review", es: "Reseña" },
   lead: { en: "Lead", es: "Prospecto" },
   system: { en: "Summary", es: "Resumen" },
@@ -219,29 +222,18 @@ function findNumber(details: NonNullable<InboxMessage["email"]["details"]>) {
   return details.findIndex((d) => /^#\S+$/.test(d.value.en.trim()));
 }
 
-/** The lead / review an email talks about (first name mentioned), for cross-section highlighting. */
-function findMentioned<T>(items: readonly T[], name: (item: T) => string, m: InboxMessage): T | undefined {
-  const haystack = [m.from, m.subject.en, m.preview.en, ...m.email.paragraphs.map((p) => p.en), ...(m.email.details ?? []).map((d) => d.value.en)].join("\n");
-  let best: T | undefined;
-  let at = Infinity;
-  for (const item of items) {
-    const i = haystack.indexOf(name(item));
-    if (i >= 0 && i < at) {
-      best = item;
-      at = i;
-    }
-  }
-  return best;
-}
-
 /** Everything the UI derives from the shared done flags for one message. */
 function messageState(m: InboxMessage, isDone: (key: string) => boolean, data: NicheViews) {
   const done = (slot: Slot | undefined) => slot !== undefined && isDone(slotKey(m, slot));
   const event = m.email.calendarEventId ? data.calendar.events.find((e) => e.id === m.email.calendarEventId) : undefined;
   const confirmSlot = slotOf(m, "confirm");
   const confirmed = confirmSlot !== undefined && (done(confirmSlot) || isDone(confirmKey(m)) || event?.status === "confirmed");
+  const replySlot = slotOf(m, "quickReply");
   const sent = (m.email.quickReplies ?? []).map((_, i) => i).filter((i) => isDone(`qr:${m.id}:${i}`));
-  const replied = sent.length > 0 || done(slotOf(m, "quickReply"));
+  // "Send text" on the same person in Leads (text:<leadId>) also answers this text-back.
+  const lead = replySlot ? findMentioned(data.leads, (l) => l.name, m) : undefined;
+  const fromLeads = sent.length === 0 && !done(replySlot) && lead !== undefined && isDone(`text:${lead.id}`);
+  const replied = sent.length > 0 || done(replySlot) || fromLeads;
   const handled = done(slotOf(m, "acknowledge"));
   const receiptShown = done(slotOf(m, "receipt"));
   const status: L10n | null = confirmed ? COPY.statusConfirmed : replied ? COPY.statusReplied : handled ? COPY.statusHandled : null;
@@ -253,7 +245,7 @@ function messageState(m: InboxMessage, isDone: (key: string) => boolean, data: N
     if (action === "acknowledge") return handled;
     return false;
   };
-  return { confirmed, sent, replied, handled, receiptShown, status, slotDone };
+  return { confirmed, sent, fromLeads, replied, handled, receiptShown, status, slotDone };
 }
 
 /** "8:47 AM" → "Today, 8:47 AM" in the reading pane; longer stamps are kept as written. */
@@ -420,7 +412,7 @@ function InboxClient({ nicheId }: { nicheId: NicheId }) {
           title={COPY.title[locale]}
           subtitle={COPY.subtitle[locale]}
           actions={
-            <button type="button" onClick={() => setView("settings")} className={ACTION_SECONDARY}>
+            <button type="button" onClick={() => setView("settings", "notifications")} className={ACTION_SECONDARY}>
               <Bell aria-hidden="true" size={15} strokeWidth={1.75} className="text-aqua" />
               {COPY.alertSettings[locale]}
             </button>
@@ -452,7 +444,7 @@ function InboxClient({ nicheId }: { nicheId: NicheId }) {
             </button>
           </div>
 
-          <div className={`min-h-0 flex-1 p-1.5 lg:overflow-y-auto lg:overscroll-contain ${SCROLLBAR}`}>
+          <div className={`min-h-0 flex-1 p-1.5 lg:overflow-y-auto ${SCROLLBAR}`}>
             {visible.length ? (
               <ul role="list" aria-labelledby={listHeadingId} className="space-y-0.5">
                 {visible.map((m) => (
@@ -480,12 +472,13 @@ function InboxClient({ nicheId }: { nicheId: NicheId }) {
 
         {/* ── Reading pane ── */}
         <div id={readerId} className={`${CARD_FLUSH} flex min-h-0 flex-col ${readerOpen ? "" : "max-lg:hidden"}`}>
-          <div ref={paneRef} className={`min-h-0 flex-1 lg:overflow-y-auto lg:overscroll-contain ${SCROLLBAR}`}>
+          <div ref={paneRef} className={`min-h-0 flex-1 lg:overflow-y-auto ${SCROLLBAR}`}>
             {selected ? (
               <Reader
                 key={selected.id}
                 m={selected}
                 data={data}
+                nicheId={nicheId}
                 owner={OWNER[nicheId]}
                 business={niche.simulator.business}
                 isLg={isLg}
@@ -646,6 +639,7 @@ type Reveal = "chips" | "receipt" | "thread" | null;
 function Reader({
   m,
   data,
+  nicheId,
   owner,
   business,
   isLg,
@@ -655,6 +649,7 @@ function Reader({
 }: {
   m: InboxMessage;
   data: NicheViews;
+  nicheId: NicheId;
   owner: string;
   business: string;
   isLg: boolean;
@@ -662,7 +657,7 @@ function Reader({
   paneRef: RefObject<HTMLDivElement | null>;
   onBack: () => void;
 }) {
-  const { locale } = useLanguage();
+  const { locale, intlLocale } = useLanguage();
   const { isDone, markDone, announce, setView } = useDashboardView();
   const state = messageState(m, isDone, data);
   const replies = m.email.quickReplies ?? [];
@@ -683,6 +678,12 @@ function Reader({
   const incoming = m.email.paragraphs.find((p) => isQuote(p.en)) ?? (isQuote(m.preview.en) ? m.preview : undefined);
   const details = m.email.details ?? [];
   const hasReceipt = slotOf(m, "receipt") !== undefined;
+  // Texted from Leads instead of a quick reply: the thread shows that text.
+  const leadText = state.fromLeads && lead ? leadTextMessage(lead, nicheId, business, data, locale, intlLocale) : null;
+  // A reply to the text-back also counts as texting that lead (Leads status + sidebar badge read text:<leadId>).
+  const markLeadTexted = () => {
+    if (lead) markDone(`text:${lead.id}`);
+  };
 
   // After a reveal renders: bring it into view inside the pane (and move focus to the sent thread).
   useEffect(() => {
@@ -717,6 +718,7 @@ function Reader({
       case "quickReply": {
         if (!replies.length) {
           markDone(key);
+          markLeadTexted();
           announce(b.done[locale]);
           return;
         }
@@ -750,6 +752,7 @@ function Reader({
     markDone(`qr:${m.id}:${index}`);
     const slot = slotOf(m, "quickReply");
     if (slot) markDone(slotKey(m, slot));
+    markLeadTexted();
     setRepliesOpen(false);
     setFresh((f) => ({ ...f, reply: index }));
     pendingReveal.current = "thread";
@@ -932,7 +935,7 @@ function Reader({
           {COPY.footer[locale]}{" "}
           <button
             type="button"
-            onClick={() => setView("settings")}
+            onClick={() => setView("settings", "notifications")}
             className="font-medium text-aqua underline decoration-aqua/40 underline-offset-2 hover:decoration-aqua"
           >
             {COPY.settings[locale]}
@@ -941,8 +944,8 @@ function Reader({
         </div>
       </div>
 
-      {/* ── Text thread (after a quick reply is sent) ── */}
-      {state.sent.length ? (
+      {/* ── Text thread (after a quick reply is sent, or the lead was texted from Leads) ── */}
+      {state.sent.length > 0 || leadText ? (
         <section ref={threadRef} aria-labelledby={`${chipsId}-thread`} className="mx-3 mt-5 sm:mx-5">
           <h5
             id={`${chipsId}-thread`}
@@ -985,6 +988,19 @@ function Reader({
                 </p>
               </motion.li>
             ))}
+            {leadText ? (
+              <li className="flex flex-col items-end">
+                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#6FE9DA_0%,#3DDBC9_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(61,219,201,0.6)]">
+                  <span className="sr-only">{COPY.youSentFromLeads[locale]} </span>
+                  {leadText}
+                </p>
+                <p aria-hidden="true" className="mt-1 inline-flex items-center gap-1 px-1 text-[0.6875rem] text-ash">
+                  {COPY.youJustNow[locale]} ·
+                  <CheckCheck size={12} strokeWidth={2} className="text-aqua" />
+                  {COPY.sentFromLeads[locale]}
+                </p>
+              </li>
+            ) : null}
           </ol>
         </section>
       ) : null}

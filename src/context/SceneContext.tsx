@@ -24,8 +24,14 @@ type SceneValue = {
   finale: Chapter;
   /** True when the visitor prefers reduced motion → chapters render static, unpinned. */
   reduce: boolean;
-  /** True on wide screens (≥1024px) where heavy UI chapters pin. Updated on resize only. */
+  /** True on wide screens (≥1024px): desktop layouts, and the chapters that pin there. Updated on resize only. */
   desktop: boolean;
+  /**
+   * True when the window is wide AND tall enough (≥1280×840) for the dashboard
+   * to pin and still render near full size. Same query as the `pin:` Tailwind
+   * variant (tailwind.config.ts), so CSS and JS agree. Updated on resize only.
+   */
+  pin: boolean;
 };
 
 const SceneContext = createContext<SceneValue | null>(null);
@@ -44,6 +50,7 @@ export function SceneProvider({ children }: { children: ReactNode }) {
   const finale = useChapter(["start end", "end end"]);
   const reduce = useReducedMotionSafe();
   const [desktop, setDesktop] = useState(false);
+  const [pin, setPin] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
@@ -53,7 +60,15 @@ export function SceneProvider({ children }: { children: ReactNode }) {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  return <SceneContext.Provider value={{ hero, system, finale, reduce, desktop }}>{children}</SceneContext.Provider>;
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1280px) and (min-height: 840px)");
+    const update = () => setPin(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  return <SceneContext.Provider value={{ hero, system, finale, reduce, desktop, pin }}>{children}</SceneContext.Provider>;
 }
 
 export function useScene(): SceneValue {

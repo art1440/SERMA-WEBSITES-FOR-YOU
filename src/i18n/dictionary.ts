@@ -22,7 +22,7 @@ const en = {
     playAll: "Play animations",
     scroll: "Scroll",
     simulationDisclaimer:
-      "Illustrative interactive simulation of the SermaWebDesign Client Portal. Actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
+      "Illustrative interactive simulation of the SermaWebDesign Client Portal. Actual lead volume, bookings, and revenue depend on market, industry, and business operations. The businesses, people, messages and reviews shown are fictional.",
   },
   nav: {
     primaryLabel: "Primary",
@@ -120,6 +120,8 @@ const en = {
     sidebarLabel: "Dashboard sections",
     sidebar: ["Overview", "Leads", "Calendar", "Inbox", "Reviews", "Settings"],
     period: "Last 30 days",
+    /** Window-chrome capsule; `live` stays for the activity-stream chip. */
+    liveDemo: "Live demo",
     live: "Live",
     revenueTitle: "Booked revenue by week",
     revenueTotal: "Booked revenue · 8 weeks",
@@ -133,6 +135,8 @@ const en = {
     vsPrevious: "vs. previous period",
     scrollHint: "Keep scrolling — see the dashboard for each kind of business.",
     newItems: "new",
+    /** Singular of `newItems` (screen-reader suffix of a sidebar badge showing 1). */
+    newItemsOne: "new",
   },
   simulator: {
     index: "(04)",
@@ -295,7 +299,7 @@ const es: Dictionary = {
     playAll: "Reanudar animaciones",
     scroll: "Desplácese",
     simulationDisclaimer:
-      "Simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
+      "Simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Los negocios, personas, mensajes y reseñas que se muestran son ficticios.",
   },
   nav: {
     primaryLabel: "Principal",
@@ -393,6 +397,7 @@ const es: Dictionary = {
     sidebarLabel: "Secciones del panel",
     sidebar: ["Resumen", "Prospectos", "Calendario", "Bandeja", "Reseñas", "Ajustes"],
     period: "Últimos 30 días",
+    liveDemo: "Demo en vivo",
     live: "En vivo",
     revenueTitle: "Ingresos agendados por semana",
     revenueTotal: "Ingresos agendados · 8 semanas",
@@ -406,6 +411,7 @@ const es: Dictionary = {
     vsPrevious: "vs. periodo anterior",
     scrollHint: "Siga desplazándose: vea el panel de cada tipo de negocio.",
     newItems: "nuevos",
+    newItemsOne: "nuevo",
   },
   simulator: {
     index: "(04)",
