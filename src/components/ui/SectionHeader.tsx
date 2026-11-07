@@ -8,6 +8,8 @@ type Props = {
   title: string | readonly string[];
   body?: string;
   headingId: string;
+  /** A wider headline measure (72rem instead of 64rem), e.g. for a pinned stage where a wrapped title costs height. */
+  wide?: boolean;
   /** Kept for API compatibility only: the site is dark-first, so every header renders the dark treatment. */
   tone?: "light" | "dark";
 };
@@ -41,10 +43,10 @@ export function SectionChip({ index, label, className }: SectionChipProps) {
  * Section header: the section chip floating above a calm, wide headline, with
  * the supporting line in a quieter tone. Always dark (bone headline, ash body).
  */
-export function SectionHeader({ index, eyebrow, title, body, headingId }: Props) {
+export function SectionHeader({ index, eyebrow, title, body, headingId, wide = false }: Props) {
   const lines = typeof title === "string" ? [title] : title;
   return (
-    <div className="max-w-5xl">
+    <div className={wide ? "max-w-6xl" : "max-w-5xl"}>
       <Reveal y={12}>
         <SectionChip index={index} label={eyebrow} />
       </Reveal>
