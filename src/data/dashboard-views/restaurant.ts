@@ -184,7 +184,7 @@ export const restaurantViews: NicheViews = {
         start: "16:00",
         durationMin: 30,
         client: "Marco D.",
-        service: { en: "Catering pickup: grill platters for 20", es: "Recolección de catering: bandejas a la parrilla para 20" },
+        service: { en: "Catering pickup: grill platters for 20", es: "Catering para recoger: bandejas a la parrilla para 20" },
         resource: CATERING,
         status: "confirmed",
         value: 560,
@@ -241,7 +241,7 @@ export const restaurantViews: NicheViews = {
         start: "11:30",
         durationMin: 30,
         client: "Bianca T.",
-        service: { en: "Catering drop-off: law office lunch for 40", es: "Entrega de catering: almuerzo para un despacho, 40 personas" },
+        service: { en: "Catering drop-off: law office lunch for 40", es: "Entrega de catering: almuerzo para un despacho de abogados, 40 personas" },
         resource: CATERING,
         status: "confirmed",
         value: 1400,
@@ -330,7 +330,7 @@ export const restaurantViews: NicheViews = {
         en: "Birthday dinner on the patio. One guest is gluten-free.",
         es: "Cena de cumpleaños en la terraza. Una persona come sin gluten.",
       },
-      received: { en: "11:02 AM", es: "11:02 AM" },
+      received: { en: "9:36 AM", es: "9:36 AM" },
       unread: true,
       email: {
         greeting: { en: "Hi Lucía,", es: "Hola, Lucía:" },
@@ -340,8 +340,8 @@ export const restaurantViews: NicheViews = {
             es: "Camila acaba de reservar en su sitio web: una cena de cumpleaños para 8 en la terraza este sábado. Agregó una nota: una de las personas come sin gluten.",
           },
           {
-            en: "The table is on hold until you confirm. Once you do, she gets a confirmation text and a reminder the afternoon before.",
-            es: "La mesa queda apartada hasta que usted confirme. Al hacerlo, ella recibe un texto de confirmación y un recordatorio la tarde anterior.",
+            en: "The table and her $160 deposit are on hold until you confirm. Once you do, she gets a confirmation text and a reminder the afternoon before.",
+            es: "La mesa y su depósito de $160 quedan retenidos hasta que usted confirme. Al hacerlo, ella recibe un texto de confirmación y un recordatorio la tarde anterior.",
           },
         ],
         details: [
@@ -350,7 +350,7 @@ export const restaurantViews: NicheViews = {
           { label: { en: "When", es: "Cuándo" }, value: { en: "Sat, 5:00–7:00 PM", es: "Sáb, 5:00–7:00 PM" } },
           { label: { en: "Area", es: "Área" }, value: { en: "Patio", es: "Terraza" } },
           { label: { en: "Note", es: "Nota" }, value: { en: "Birthday · 1 gluten-free guest", es: "Cumpleaños · 1 persona sin gluten" } },
-          { label: { en: "Card on file", es: "Tarjeta registrada" }, value: { en: "Yes (parties of 8+)", es: "Sí (grupos de 8 o más)" } },
+          { label: { en: "Deposit", es: "Depósito" }, value: { en: "$160 on hold · $20 per guest, parties of 8+", es: "$160 retenidos · $20 por persona, grupos de 8 o más" } },
         ],
         primary: {
           label: { en: "Confirm reservation", es: "Confirmar reservación" },
@@ -369,43 +369,48 @@ export const restaurantViews: NicheViews = {
     {
       id: "re-m2",
       kind: "textback",
-      from: "Kim T.",
-      fromEmail: "kim.t@example.net",
+      from: "SermaWebDesign Alerts",
+      fromEmail: "alerts@example.com",
       subject: {
-        en: "Kim T. replied to your missed-call text",
-        es: "Kim T. respondió a su texto de llamada perdida",
+        en: "Kim T. replied to your text-back: “Patio for 12 on Saturday?”",
+        es: "Kim T. respondió a su texto automático: “¿Terraza para 12 el sábado?”",
       },
       preview: {
         en: "“Can you fit 12 of us on the patio Saturday around 6? Can we bring a cake?”",
         es: "“¿Tienen lugar para 12 en la terraza el sábado como a las 6? ¿Podemos llevar pastel?”",
       },
-      received: { en: "10:26 AM", es: "10:26 AM" },
+      received: { en: "9:24 AM", es: "9:24 AM" },
       unread: true,
       email: {
-        greeting: { en: "Hi Lucía!", es: "¡Hola, Lucía!" },
+        greeting: { en: "Hi Lucía,", es: "Hola, Lucía:" },
         paragraphs: [
           {
-            en: "Thanks for texting me back last night. It's my sister's birthday and we're about 12 people. Can you fit us on the patio this Saturday around 6?",
-            es: "Gracias por responderme anoche. Es el cumpleaños de mi hermana y somos unas 12 personas. ¿Tienen lugar en la terraza este sábado como a las 6?",
+            en: "Kim T. called at 7:48 PM last night during the dinner rush. Your automatic text went out 5 seconds later, and she wrote back this morning at 9:24:",
+            es: "Kim T. llamó anoche a las 7:48 PM, en plena hora de la cena. Su texto automático salió 5 segundos después y ella respondió esta mañana a las 9:24:",
           },
           {
-            en: "Also, is it OK if we bring our own cake?",
-            es: "Y otra pregunta: ¿podemos llevar nuestro propio pastel?",
+            en: "“Thanks for texting me back last night! It's my sister's birthday and we're about 12 people. Can you fit us on the patio this Saturday around 6? Also, is it OK if we bring our own cake?”",
+            es: "“¡Gracias por responderme anoche! Es el cumpleaños de mi hermana y somos unas 12 personas. ¿Tienen lugar en la terraza este sábado como a las 6? Y otra pregunta: ¿podemos llevar nuestro propio pastel?”",
+          },
+          {
+            en: "Pick a reply below and it goes out from the restaurant's number. No typing needed.",
+            es: "Elija una respuesta abajo y se envía desde el número del restaurante. No hace falta escribir nada.",
           },
         ],
         details: [
+          { label: { en: "Caller", es: "Llamada de" }, value: { en: "Kim T. · (323) 555-0171", es: "Kim T. · (323) 555-0171" } },
           { label: { en: "Missed call", es: "Llamada perdida" }, value: { en: "Yesterday, 7:48 PM", es: "Ayer, 7:48 PM" } },
-          { label: { en: "Auto-text sent", es: "Texto automático" }, value: { en: "5 seconds later", es: "5 segundos después" } },
-          { label: { en: "Phone", es: "Teléfono" }, value: { en: "(323) 555-0171", es: "(323) 555-0171" } },
+          { label: { en: "Auto-text sent", es: "Texto automático" }, value: { en: "7:48 PM · 5 sec later", es: "7:48 PM · 5 s después" } },
+          { label: { en: "Her reply", es: "Su respuesta" }, value: { en: "9:24 AM", es: "9:24 AM" } },
           { label: { en: "Request", es: "Solicitud" }, value: { en: "Party of 12 · Sat ~6:00 PM", es: "Grupo de 12 · sáb ~6:00 PM" } },
         ],
         primary: {
-          label: { en: "Reply with a quick text", es: "Responder con un texto rápido" },
+          label: { en: "Choose a quick reply", es: "Elegir una respuesta rápida" },
           action: "quickReply",
           done: { en: "Reply sent", es: "Respuesta enviada" },
         },
         secondary: {
-          label: { en: "View lead", es: "Ver prospecto" },
+          label: { en: "Open lead", es: "Abrir prospecto" },
           action: "openLeads",
           done: { en: "Opened in Leads", es: "Abierto en Prospectos" },
         },
@@ -415,15 +420,15 @@ export const restaurantViews: NicheViews = {
             es: "Hola, Kim, habla Lucía de Brasa. La terraza ya está reservada el sábado por la tarde, pero podemos recibir a 12 personas en el salón principal a las 6:00 PM. ¿Se la aparto?",
           },
           {
-            en: "Of course you can bring your cake — we'll plate and serve it for $2 per guest. A $50 deposit holds a table for 12.",
-            es: "Claro que puede traer su pastel; nosotros lo servimos por $2 por persona. Con un depósito de $50 apartamos la mesa para 12.",
+            en: "Of course you can bring your cake — we'll plate and serve it for $2 per guest. A $20-per-guest deposit ($240) holds a table for 12.",
+            es: "Claro que puede traer su pastel; nosotros lo servimos por $2 por persona. Con un depósito de $20 por persona ($240) apartamos la mesa para 12.",
           },
           {
             en: "Thanks for the text, Kim! I'm prepping for lunch right now — I'll call you before 3 PM to set everything up.",
-            es: "¡Gracias por su mensaje, Kim! Estoy preparando el servicio del almuerzo; le llamo antes de las 3 PM para dejar todo listo.",
+            es: "¡Gracias por su mensaje, Kim! Estoy preparando el servicio del almuerzo; la llamo antes de las 3 PM para dejar todo listo.",
           },
         ],
-        signoff: { en: "— Kim T. (replied by text)", es: "— Kim T. (respondió por texto)" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
       },
     },
     {
@@ -449,8 +454,8 @@ export const restaurantViews: NicheViews = {
             es: "Natalie llenó el formulario de eventos privados en su sitio web. Está organizando una cena de ensayo para unas 30 personas un viernes de esta primavera y quiere saber si el salón privado tiene cupo y si ofrecen menú fijo.",
           },
           {
-            en: "It's one of the larger leads this month, so it's pinned to the top of your Leads list. A call or text today keeps it warm.",
-            es: "Es uno de los prospectos más grandes del mes, así que aparece primero en su lista de Prospectos. Una llamada o un texto hoy mantiene el interés.",
+            en: "It's one of the larger leads this month, so it's flagged as a high-value lead in your Leads list. A call or text today keeps it warm.",
+            es: "Es uno de los prospectos más grandes del mes, así que aparece marcado como prospecto de alto valor en su lista de Prospectos. Una llamada o un texto hoy mantiene el interés.",
           },
         ],
         details: [
@@ -461,7 +466,7 @@ export const restaurantViews: NicheViews = {
           { label: { en: "Source", es: "Origen" }, value: { en: "Website form", es: "Formulario del sitio web" } },
         ],
         primary: {
-          label: { en: "Open in Leads", es: "Abrir en Prospectos" },
+          label: { en: "Open lead", es: "Abrir prospecto" },
           action: "openLeads",
           done: { en: "Opened in Leads", es: "Abierto en Prospectos" },
         },
@@ -549,9 +554,9 @@ export const restaurantViews: NicheViews = {
           },
         ],
         primary: {
-          label: { en: "Reply in Reviews", es: "Responder en Reseñas" },
+          label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened Reviews", es: "Reseñas abiertas" },
+          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
         },
         signoff: SIGNOFF,
       },

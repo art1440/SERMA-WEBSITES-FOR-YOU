@@ -82,7 +82,7 @@ export const salonViews: NicheViews = {
       value: 240,
       source: "google",
       status: "contacted",
-      received: { en: "Mon, 5:50 PM", es: "Lunes, 5:50 PM" },
+      received: { en: "Sat, 5:50 PM", es: "Sáb, 5:50 PM" },
       note: {
         en: "Wants a lived-in blonde she only has to refresh twice a year",
         es: "Quiere un rubio natural que solo tenga que retocar dos veces al año",
@@ -110,10 +110,10 @@ export const salonViews: NicheViews = {
       value: 150,
       source: "referral",
       status: "booked",
-      received: { en: "Mon, 11:10 AM", es: "Lunes, 11:10 AM" },
+      received: { en: "Sat, 11:10 AM", es: "Sáb, 11:10 AM" },
       note: {
-        en: "Referred by her sister Camila R. — trial set for Sat 9:00 AM with Nadia",
-        es: "Recomendada por su hermana Camila R.; prueba el sábado 9:00 AM con Nadia",
+        en: "Referred by her sister Camila R. — trial set for this Sat 9:00 AM with Nadia",
+        es: "Recomendada por su hermana Camila R.; prueba este sábado 9:00 AM con Nadia",
       },
     },
     {
@@ -165,11 +165,10 @@ export const salonViews: NicheViews = {
     {
       id: "sal-m1",
       kind: "textback",
-      from: "Alexis R.",
-      fromEmail: "alexis.r@example.net",
+      ...ALERTS,
       subject: {
         en: "Alexis R. replied to your text-back: “Can you fix orange hair?”",
-        es: "Alexis R. respondió a su mensaje automático: “¿Pueden arreglar un tono naranja?”",
+        es: "Alexis R. respondió a su texto automático: “¿Pueden arreglar un tono naranja?”",
       },
       preview: {
         en: "“I tried boxed dye and it went orange. Do you do color corrections? How much?”",
@@ -181,15 +180,15 @@ export const salonViews: NicheViews = {
         greeting: HI,
         paragraphs: [
           {
-            en: "Alexis called at 9:03 AM while the front desk was with a client. Your automatic text went out 5 seconds later, and she replied at 9:09:",
-            es: "Alexis llamó a las 9:03 AM mientras la recepción atendía a una clienta. Su texto automático salió 5 segundos después y ella respondió a las 9:09:",
+            en: "Alexis R. called at 9:03 AM while the front desk was with a client. Your automatic text went out 5 seconds later, and she wrote back at 9:09:",
+            es: "Alexis R. llamó a las 9:03 AM mientras la recepción atendía a una clienta. Su texto automático salió 5 segundos después y ella respondió a las 9:09:",
           },
           {
             en: "“Hi! I tried boxed dye and it went orange. Do you do color corrections? How much would that be?”",
             es: "“¡Hola! Me puse un tinte de caja y me quedó naranja. ¿Hacen correcciones de color? ¿Más o menos cuánto saldría?”",
           },
           {
-            en: "Choose a reply below and it goes out from the salon's number. No typing needed.",
+            en: "Pick a reply below and it goes out from the salon's number. No typing needed.",
             es: "Elija una respuesta abajo y se envía desde el número del salón. No hace falta escribir nada.",
           },
         ],
@@ -218,7 +217,7 @@ export const salonViews: NicheViews = {
             es: "Sí, las hacemos. Las correcciones suelen costar entre $180 y $350, según el largo y el historial de color de su cabello. Use el enlace de nuestro mensaje anterior para agendar una consulta.",
           },
         ],
-        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su respuesta automática de SermaWebDesign" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
       },
     },
     {
@@ -263,7 +262,7 @@ export const salonViews: NicheViews = {
         secondary: {
           label: { en: "View in calendar", es: "Ver en el calendario" },
           action: "openCalendar",
-          done: { en: "Shown in calendar", es: "Vista en el calendario" },
+          done: { en: "Opened in calendar", es: "Abierta en el calendario" },
         },
         calendarEventId: "sal-c13",
         signoff: { en: "— Your SermaWebDesign booking system", es: "— Su sistema de citas de SermaWebDesign" },
@@ -292,7 +291,7 @@ export const salonViews: NicheViews = {
           },
           {
             en: "“Jenna took my brassy box-dye mess to a soft, buttery balayage in one visit, and she was honest that my ends needed a trim first. The whole afternoon flew by. Booking online at 11 PM was a bonus.”",
-            es: "“Jenna convirtió mi desastre de tinte de caja en un balayage suave y luminoso en una sola visita, y fue honesta en que primero había que cortar las puntas. La tarde se me pasó volando. Y poder agendar en línea a las 11 de la noche fue un plus.”",
+            es: "“Jenna convirtió mi desastre de tinte de caja en un balayage suave y luminoso en una sola visita, y fue honesta al decirme que primero había que cortar las puntas. La tarde se me pasó volando. Y poder agendar en línea a las 11 de la noche fue un plus.”",
           },
           {
             en: "We drafted a warm reply that mentions her gloss refresh. Look it over in Reviews and post it with one tap.",
@@ -305,11 +304,52 @@ export const salonViews: NicheViews = {
           { label: { en: "Stylist", es: "Estilista" }, value: { en: "Jenna", es: "Jenna" } },
         ],
         primary: {
-          label: { en: "Review & reply", es: "Ver y responder" },
+          label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened in Reviews", es: "Abierta en Reseñas" },
+          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
         },
         signoff: { en: "— SermaWebDesign review alerts", es: "— Alertas de reseñas de SermaWebDesign" },
+      },
+    },
+    {
+      id: "sal-m5",
+      kind: "system",
+      ...ALERTS,
+      subject: {
+        en: "Your weekly summary: 58 appointments, 11 color clients due back",
+        es: "Su resumen semanal: 58 citas y 11 retoques de color por agendar",
+      },
+      preview: {
+        en: "Jenna was booked solid. You have open time Wednesday afternoon and Friday morning.",
+        es: "Jenna tuvo la agenda llena. Usted tiene espacio el miércoles por la tarde y el viernes por la mañana.",
+      },
+      received: { en: "Yesterday, 6:00 PM", es: "Ayer, 6:00 PM" },
+      unread: false,
+      email: {
+        greeting: HI,
+        paragraphs: [
+          {
+            en: "Here's last week at Atelier Salon at a glance. Jenna had the fullest book, and most new clients found you through Google and Instagram.",
+            es: "Este es un vistazo rápido a la semana pasada en Atelier Salon. Jenna tuvo la agenda más llena y la mayoría de los clientes nuevos llegaron por Google e Instagram.",
+          },
+          {
+            en: "11 color clients reach their 5-week mark this week, and their rebooking reminders go out Tuesday morning. Your open Wednesday afternoon and Friday morning are a good fit for them.",
+            es: "Esta semana, 11 clientes cumplen 5 semanas desde su último color y sus recordatorios para volver a agendar salen el martes por la mañana. Sus espacios libres del miércoles por la tarde y del viernes por la mañana son ideales para ellos.",
+          },
+        ],
+        details: [
+          { label: { en: "Appointments", es: "Citas" }, value: { en: "58", es: "58" } },
+          { label: { en: "Booked online", es: "Agendadas en línea" }, value: { en: "33", es: "33" } },
+          { label: { en: "Rebooked before leaving", es: "Reagendadas antes de salir" }, value: { en: "21", es: "21" } },
+          { label: { en: "Missed calls answered by text", es: "Llamadas perdidas respondidas por texto" }, value: { en: "9", es: "9" } },
+          { label: { en: "No-shows", es: "Inasistencias" }, value: { en: "1 · deposit kept", es: "1 · depósito retenido" } },
+        ],
+        primary: {
+          label: { en: "Mark as reviewed", es: "Marcar como revisado" },
+          action: "acknowledge",
+          done: { en: "Marked as reviewed", es: "Marcado como revisado" },
+        },
+        signoff: { en: "— Your SermaWebDesign weekly summary", es: "— Su resumen semanal de SermaWebDesign" },
       },
     },
     {
@@ -354,50 +394,9 @@ export const salonViews: NicheViews = {
         secondary: {
           label: { en: "Mark as handled", es: "Marcar como atendido" },
           action: "acknowledge",
-          done: { en: "Handled", es: "Atendido" },
+          done: { en: "Marked as handled", es: "Marcado como atendido" },
         },
         signoff: { en: "— SermaWebDesign payments", es: "— Pagos de SermaWebDesign" },
-      },
-    },
-    {
-      id: "sal-m5",
-      kind: "system",
-      ...ALERTS,
-      subject: {
-        en: "Your weekly summary: 58 appointments, 11 color clients due back",
-        es: "Su resumen semanal: 58 citas y 11 retoques de color por agendar",
-      },
-      preview: {
-        en: "Jenna was booked solid. You have open time Wednesday afternoon and Friday morning.",
-        es: "Jenna tuvo la agenda llena. Usted tiene espacio el miércoles por la tarde y el viernes por la mañana.",
-      },
-      received: { en: "Sun, 6:00 PM", es: "Domingo, 6:00 PM" },
-      unread: false,
-      email: {
-        greeting: HI,
-        paragraphs: [
-          {
-            en: "Here's last week at Atelier Salon at a glance. Jenna had the fullest book, and most new clients found you through Google and Instagram.",
-            es: "Este es un vistazo rápido a la semana pasada en Atelier Salon. Jenna tuvo la agenda más llena y la mayoría de los clientes nuevos llegaron por Google e Instagram.",
-          },
-          {
-            en: "11 color clients reach their 5-week mark this week, and their rebooking reminders go out Tuesday morning. Your open Wednesday afternoon and Friday morning are a good fit for them.",
-            es: "Esta semana, 11 clientes cumplen 5 semanas desde su último color y sus recordatorios para volver a agendar salen el martes por la mañana. Sus espacios libres del miércoles por la tarde y del viernes por la mañana les quedan muy bien.",
-          },
-        ],
-        details: [
-          { label: { en: "Appointments", es: "Citas" }, value: { en: "58", es: "58" } },
-          { label: { en: "Booked online", es: "Agendadas en línea" }, value: { en: "33", es: "33" } },
-          { label: { en: "Rebooked before leaving", es: "Re-agendadas antes de salir" }, value: { en: "21", es: "21" } },
-          { label: { en: "Missed calls answered by text", es: "Llamadas perdidas respondidas por texto" }, value: { en: "9", es: "9" } },
-          { label: { en: "No-shows", es: "Inasistencias" }, value: { en: "1 · deposit kept", es: "1 · depósito retenido" } },
-        ],
-        primary: {
-          label: { en: "Mark as reviewed", es: "Marcar como revisado" },
-          action: "acknowledge",
-          done: { en: "Reviewed", es: "Revisado" },
-        },
-        signoff: { en: "— Your SermaWebDesign weekly summary", es: "— Su resumen semanal de SermaWebDesign" },
       },
     },
   ],
@@ -415,7 +414,7 @@ export const salonViews: NicheViews = {
         when: { en: "Yesterday", es: "Ayer" },
         text: {
           en: "Jenna took my brassy box-dye mess to a soft, buttery balayage in one visit, and she was honest that my ends needed a trim first. The whole afternoon flew by. Booking online at 11 PM was a bonus.",
-          es: "Jenna convirtió mi desastre de tinte de caja en un balayage suave y luminoso en una sola visita, y fue honesta en que primero había que cortar las puntas. La tarde se me pasó volando. Y poder agendar en línea a las 11 de la noche fue un plus.",
+          es: "Jenna convirtió mi desastre de tinte de caja en un balayage suave y luminoso en una sola visita, y fue honesta al decirme que primero había que cortar las puntas. La tarde se me pasó volando. Y poder agendar en línea a las 11 de la noche fue un plus.",
         },
         suggestedReply: {
           en: "Mariana, thank you! Jenna loved this transformation. Your gloss refresh reminder will arrive in about 8 weeks to keep that tone just right.",

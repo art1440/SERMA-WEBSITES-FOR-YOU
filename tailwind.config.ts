@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 /**
  * SermaWebDesign — "Liquid Glass" token system (see docs/design-system.md).
@@ -119,7 +120,14 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    /* `pin:` = the window can hold a pinned scroll scene near full size (wide AND tall).
+       A variant, not a screen: an extra screen would break the max-* screen variants.
+       Keep the query in sync with `pin` in src/context/SceneContext.tsx. */
+    plugin(({ addVariant }) => {
+      addVariant("pin", "@media (min-width: 1280px) and (min-height: 840px)");
+    }),
+  ],
 };
 
 export default config;

@@ -22,7 +22,15 @@ import {
 import { useEffect, useRef, useState, type KeyboardEvent, type RefObject } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
-import { NICHE_VIEWS, type CalendarEvent, type Lead, type LeadSource, type LeadStatus, type NicheViews } from "@/data/dashboard-views";
+import {
+  NICHE_VIEWS,
+  type CalendarEvent,
+  type InboxMessage,
+  type Lead,
+  type LeadSource,
+  type LeadStatus,
+  type NicheViews,
+} from "@/data/dashboard-views";
 import type { NicheId } from "@/data/niches";
 import { fill, type L10n, type Locale } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
@@ -49,7 +57,9 @@ import {
  * Leads: a demo CRM inbox for the selected industry.
  *
  * lg+: list (left) + detail card (right, 340px) inside the locked plate;
- *      each pane scrolls on its own, the header stays put.
+ *      each pane scrolls on its own, the header stays put. The list is a
+ *      5-column table only from xl (it needs ~456px); at lg it keeps the
+ *      compact row (name/service + value, chips on their own line).
  * <lg: one column. Tapping a lead swaps the list for its detail (Back /
  *      Escape returns to the row that opened it).
  *
@@ -61,7 +71,7 @@ import {
 
 const COPY = {
   title: { en: "Leads", es: "Prospectos" },
-  subtitle: { en: "{count} recent leads · {open} open, worth {value}", es: "{count} prospectos recientes · {open} abiertos, por {value}" },
+  subtitle: { en: "{count} recent leads · {open} open, worth {value}", es: "{count} prospectos recientes · {open} abiertos, con valor de {value}" },
   filterGroup: { en: "Filter leads by status", es: "Filtrar prospectos por estado" },
   filterAll: { en: "All", es: "Todos" },
   filterNew: { en: "New", es: "Nuevos" },
@@ -87,12 +97,12 @@ const COPY = {
   activity: { en: "Activity", es: "Actividad" },
   sendText: { en: "Send text", es: "Enviar texto" },
   textSent: { en: "Text sent", es: "Texto enviado" },
-  markBooked: { en: "Mark booked", es: "Marcar agendado" },
+  markBooked: { en: "Mark booked", es: "Marcar como agendado" },
   booked: { en: "Booked", es: "Agendado" },
   openCalendar: { en: "Open in calendar", es: "Abrir en el calendario" },
   demoNote: { en: "Demo: nothing is actually sent.", es: "Demo: en realidad no se envía nada." },
   textAnnounce: { en: "Text sent to {name}. Demo only, nothing was sent.", es: "Texto enviado a {name}. Es una demo: no se envió nada." },
-  bookedAnnounce: { en: "{name} marked as booked.", es: "{name} quedó marcado como agendado." },
+  bookedAnnounce: { en: "{name} marked as booked.", es: "Se marcó como agendado: {name}." },
   calendarAnnounce: { en: "Opening {name}'s appointment in the calendar.", es: "Abriendo la cita de {name} en el calendario." },
   // Timeline
   automatic: { en: "Automatic, seconds later", es: "Automático, segundos después" },
@@ -104,6 +114,7 @@ const COPY = {
   youTexted: { en: "You texted (demo)", es: "Usted envió un texto (demo)" },
   youBooked: { en: "You marked it booked", es: "Usted lo marcó como agendado" },
   justNow: { en: "Just now", es: "Ahora" },
+  justNowInbox: { en: "Just now · sent from the Inbox", es: "Ahora · enviado desde la Bandeja de entrada" },
   waiting: { en: "Waiting on you", es: "Pendiente de usted" },
   waitingMeta: { en: "Send a text to follow up", es: "Envíe un texto para dar seguimiento" },
 } satisfies Record<string, L10n>;
@@ -170,11 +181,11 @@ const CLOSER: Record<NicheId, L10n> = {
   beauty: { en: "We have openings this week. Want us to hold a time for you?", es: "Tenemos espacios esta semana. ¿Le apartamos un horario?" },
   restaurant: {
     en: "We'd love to host you. Want us to send a few open dates and our group menu?",
-    es: "Será un gusto recibirles. ¿Le enviamos algunas fechas disponibles y nuestro menú para grupos?",
+    es: "Será un gusto recibirlos. ¿Le enviamos algunas fechas disponibles y nuestro menú para grupos?",
   },
   contractor: {
-    en: "When works for a free on-site estimate this week?",
-    es: "¿Qué día le queda bien esta semana para un presupuesto gratis en su domicilio?",
+    en: "When works for an on-site estimate this week? The $150 visit fee is credited to your project.",
+    es: "¿Qué día le queda bien esta semana para un presupuesto en sitio? La visita de $150 se acredita a su proyecto.",
   },
   service: {
     en: "We can get a technician out this week. Want us to hold a time?",
@@ -200,10 +211,62 @@ export function leadStatus(lead: Lead, isDone: (key: string) => boolean): LeadSt
 const firstName = (name: string) => name.split(" ")[0] ?? name;
 const CLOCK_RE = /\d{1,2}:\d{2}\s?[AP]M/i;
 
-/** "Thu, 5:15 PM" for a demo-week event (day 0 = Monday 5 Jan 2026). */
+/**
+ * "Thu, 5:15 PM" for a demo-week event (day 0 = Monday 5 Jan 2026). Spanish keeps
+ * the weekday lowercase ("jue, 5:15 PM"), so "Agendado para el jue, …" reads right.
+ */
 function eventWhen(ev: CalendarEvent, intlLocale: string) {
   const weekday = new Intl.DateTimeFormat(intlLocale, { weekday: "short" }).format(new Date(2026, 0, 5 + ev.day));
-  return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)}, ${formatClock(ev.start, intlLocale)}`;
+  const day = intlLocale.startsWith("es") ? weekday.toLocaleLowerCase(intlLocale) : `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)}`;
+  return `${day}, ${formatClock(ev.start, intlLocale)}`;
+}
+
+/**
+ * The lead / review an Inbox email talks about: the one whose name appears first in it
+ * (sender, subject, preview, body, details). Works for system alerts that quote the
+ * client ("SermaWebDesign Alerts") and for emails sent by the client.
+ * Shared with the Inbox so both sections pair an email with the same lead.
+ */
+export function findMentioned<T>(items: readonly T[], name: (item: T) => string, m: InboxMessage): T | undefined {
+  const haystack = [m.from, m.subject.en, m.preview.en, ...m.email.paragraphs.map((p) => p.en), ...(m.email.details ?? []).map((d) => d.value.en)].join("\n");
+  let best: T | undefined;
+  let at = Infinity;
+  for (const item of items) {
+    const i = haystack.indexOf(name(item));
+    if (i >= 0 && i < at) {
+      best = item;
+      at = i;
+    }
+  }
+  return best;
+}
+
+const hasQuickReply = (m: InboxMessage) => m.email.primary.action === "quickReply" || m.email.secondary?.action === "quickReply";
+
+/** The text-back email about this lead (the one with quick replies), if there is one. */
+function textBackFor(lead: Lead, data: NicheViews): InboxMessage | undefined {
+  return data.inbox.find((m) => hasQuickReply(m) && findMentioned(data.leads, (l) => l.name, m)?.id === lead.id);
+}
+
+/** The lead's booking in the demo week, matched by name. */
+const eventFor = (lead: Lead, data: NicheViews) => data.calendar.events.find((e) => e.client === lead.name);
+
+/**
+ * The prewritten "Send text" message for a lead, built from its name and service.
+ * Also used by the Inbox to show the same words in the text-back thread when the
+ * lead was texted from here.
+ */
+export function leadTextMessage(lead: Lead, nicheId: NicheId, business: string, data: NicheViews, locale: Locale, intlLocale: string) {
+  const event = eventFor(lead, data);
+  const when = event ? eventWhen(event, intlLocale) : null;
+  const template = lead.status === "booked" ? TEXT_TEMPLATE.booked : lead.status === "lost" ? TEXT_TEMPLATE.lost : TEXT_TEMPLATE.open;
+  return fill(template[locale], {
+    first: firstName(lead.name),
+    business,
+    service: lead.service[locale],
+    closer: CLOSER[nicheId][locale],
+    when: when ? ` (${when})` : "",
+  }).replace(/\.\./g, "."); // "Northside Barber Co." + "." → one period
 }
 
 /** Cross-links may hand us a lead id, a calendar event id or an inbox message id. */
@@ -213,9 +276,7 @@ function resolveLead(id: string, data: NicheViews): Lead | undefined {
   const ev = data.calendar.events.find((e) => e.id === id);
   if (ev) return data.leads.find((l) => l.name === ev.client);
   const msg = data.inbox.find((m) => m.id === id);
-  if (!msg) return undefined;
-  const haystack = [msg.from, msg.subject.en, msg.preview.en, ...(msg.email.details ?? []).map((d) => d.value.en)].join(" ");
-  return data.leads.find((l) => haystack.includes(l.name));
+  return msg ? findMentioned(data.leads, (l) => l.name, msg) : undefined;
 }
 
 /** Focus a target without jolting the page: on lg+ only the pane's own scroller moves. */
@@ -365,7 +426,7 @@ function LeadsBoard({ nicheId }: { nicheId: NicheId }) {
         >
           <div
             aria-hidden="true"
-            className="hidden grid-cols-[2rem_minmax(0,1fr)_8.25rem_6.5rem_7.5rem] gap-x-3 px-4 pb-2 pt-3 text-[0.6875rem] font-medium text-ash lg:grid"
+            className="hidden grid-cols-[2rem_minmax(0,1fr)_8.25rem_6.5rem_7.5rem] gap-x-3 px-4 pb-2 pt-3 text-[0.6875rem] font-medium text-ash xl:grid"
           >
             <span />
             <span>{COPY.colLead[locale]}</span>
@@ -377,7 +438,7 @@ function LeadsBoard({ nicheId }: { nicheId: NicheId }) {
             <ul
               ref={listScrollRef}
               aria-label={COPY.listLabel[locale]}
-              className="relative flex flex-col gap-0.5 p-1.5 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pt-0"
+              className="relative flex flex-col gap-0.5 p-1.5 lg:min-h-0 lg:flex-1 lg:overflow-y-auto xl:pt-0"
             >
               {visible.map((lead, i) => (
                 <motion.li
@@ -426,7 +487,7 @@ function LeadsBoard({ nicheId }: { nicheId: NicheId }) {
             }}
             className={`${CARD_FLUSH} flex min-h-0 flex-col ${detailOpen ? "" : "max-lg:hidden"}`}
           >
-            <div ref={detailScrollRef} className="relative p-4 sm:p-5 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:p-4">
+            <div ref={detailScrollRef} className="relative p-4 sm:p-5 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:p-4">
               <button
                 type="button"
                 onClick={closeDetail}
@@ -495,6 +556,8 @@ function LeadRow({
 }) {
   const { locale, intlLocale } = useLanguage();
   const chip = <StatusChip tone={STATUS_TONE[status]}>{STATUS_WORD[status][locale]}</StatusChip>;
+  // Ash on the selected tint is too close to 4.5:1; bone/70 keeps the secondary lines readable.
+  const muted = selected ? "text-bone/70" : "text-ash";
   return (
     <button
       ref={buttonRef}
@@ -502,23 +565,23 @@ function LeadRow({
       onClick={onOpen}
       aria-controls={controls}
       aria-current={selected ? "true" : undefined}
-      className={`${ROW} ${selected ? ROW_SELECTED : ""} grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-x-3 px-2.5 py-2.5 text-left transition-colors duration-150 focus-visible:[outline-offset:-2px] lg:grid-cols-[2rem_minmax(0,1fr)_8.25rem_6.5rem_7.5rem] lg:py-2`}
+      className={`${ROW} ${selected ? ROW_SELECTED : ""} grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-x-3 px-2.5 py-2.5 text-left transition-colors duration-150 focus-visible:[outline-offset:-2px] xl:grid-cols-[2rem_minmax(0,1fr)_8.25rem_6.5rem_7.5rem] xl:py-2`}
     >
       <Avatar name={lead.name} tone={status === "new" ? "aqua" : "neutral"} />
       <span className="min-w-0">
         <span className="block truncate text-sm font-medium text-bone">{lead.name}</span>
-        <span className="mt-0.5 block truncate text-xs text-ash">{lead.service[locale]}</span>
+        <span className={`mt-0.5 block truncate text-xs ${muted}`}>{lead.service[locale]}</span>
       </span>
-      <span className="hidden min-w-0 lg:flex">
+      <span className="hidden min-w-0 xl:flex">
         <SourceChip source={lead.source} locale={locale} />
       </span>
-      <span className="hidden lg:flex">{chip}</span>
-      <span className="self-start text-right lg:self-center">
+      <span className="hidden xl:flex">{chip}</span>
+      <span className="self-start text-right xl:self-center">
         <span className="tabular block text-sm font-medium text-bone">{formatCurrency(lead.value, intlLocale)}</span>
-        <span className="mt-0.5 block whitespace-nowrap text-[0.6875rem] text-ash">{lead.received[locale]}</span>
+        <span className={`mt-0.5 block whitespace-nowrap text-[0.6875rem] ${muted}`}>{lead.received[locale]}</span>
       </span>
-      {/* Phones: the chips get their own full-width line under the name. */}
-      <span className="col-span-2 col-start-2 mt-1.5 flex flex-wrap gap-1.5 lg:hidden">
+      {/* Below xl (phones, and the narrow lg list beside the detail card): the chips get their own line under the name. */}
+      <span className="col-span-2 col-start-2 mt-1.5 flex flex-wrap gap-1.5 xl:hidden">
         <SourceChip source={lead.source} locale={locale} />
         {chip}
       </span>
@@ -571,17 +634,13 @@ function LeadDetail({
   const texted = isDone(`text:${lead.id}`);
   const bookedHere = isDone(`booked:${lead.id}`);
   const isBooked = status === "booked";
-  const event = data.calendar.events.find((e) => e.client === lead.name);
+  const event = eventFor(lead, data);
   const when = event ? eventWhen(event, intlLocale) : null;
 
-  const template = lead.status === "booked" ? TEXT_TEMPLATE.booked : lead.status === "lost" ? TEXT_TEMPLATE.lost : TEXT_TEMPLATE.open;
-  const message = fill(template[locale], {
-    first: firstName(lead.name),
-    business,
-    service: lead.service[locale],
-    closer: CLOSER[nicheId][locale],
-    when: when ? ` (${when})` : "",
-  }).replace(/\.\./g, "."); // "Northside Barber Co." + "." → one period
+  // Texted through a quick reply on the Inbox text-back email: show the words that went out.
+  const textBack = textBackFor(lead, data);
+  const inboxReply = textBack?.email.quickReplies?.find((_, i) => isDone(`qr:${textBack.id}:${i}`));
+  const message = inboxReply ? inboxReply[locale] : leadTextMessage(lead, nicheId, business, data, locale, intlLocale);
 
   const clock = lead.received[locale].match(CLOCK_RE)?.[0];
   const src = SOURCE[lead.source];
@@ -600,7 +659,15 @@ function LeadDetail({
       meta: event?.resource[locale],
     });
   if (lead.status === "lost") steps.push({ key: "lost", icon: XCircle, tone: "lost", title: COPY.lost[locale] });
-  if (texted) steps.push({ key: "you-text", icon: Send, tone: "you", title: COPY.youTexted[locale], meta: COPY.justNow[locale], bubble: message });
+  if (texted)
+    steps.push({
+      key: "you-text",
+      icon: Send,
+      tone: "you",
+      title: COPY.youTexted[locale],
+      meta: inboxReply ? COPY.justNowInbox[locale] : COPY.justNow[locale],
+      bubble: message,
+    });
   if (bookedHere && lead.status !== "booked")
     steps.push({ key: "you-book", icon: CalendarCheck, tone: "done", title: COPY.youBooked[locale], meta: COPY.justNow[locale] });
   if (status === "new")

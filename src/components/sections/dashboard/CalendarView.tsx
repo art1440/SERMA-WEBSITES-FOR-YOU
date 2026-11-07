@@ -38,31 +38,36 @@ import {
   StatusChip,
   ViewHeader,
   formatClock,
+  normalizeMeridiem,
 } from "./ui";
 
 /* ------------------------------------------------------------------ *
  * Calendar: the demo week (Mon–Sat) for the selected industry.
  *
- * lg+: a week grid (hour axis 8 AM–7 PM, one column per day, events
- *      positioned by start and duration) plus a 300px side card: the
- *      week at a glance, or the open booking's details.
- * <lg: an agenda grouped by day; a booking opens its details right
- *      below it (Back / Escape returns to the item).
+ * xl+ (1280px): a week grid (hour axis 8 AM–7 PM, one column per day,
+ *      events positioned by start and duration) plus a 300px side card:
+ *      the week at a glance, or the open booking's details.
+ * <xl: an agenda grouped by day; a booking opens its details right
+ *      below it (Back / Escape returns to the item). On lg (fixed-height
+ *      plate) the agenda list scrolls inside the plate.
  *
  * Status is DERIVED: data + the shared `confirm:<id>` flag, so a booking
  * confirmed from an Inbox email also reads "Confirmed" here (and back).
  * "Today" is Monday (day 0) and "now" is a fixed demo clock.
+ * The data is a sample of the week (the Overview counts every booking),
+ * so the counts and values here say "shown".
  * Nothing is sent: every action only flips local/context demo state.
  * ------------------------------------------------------------------ */
 
 const COPY = {
   title: { en: "Calendar", es: "Calendario" },
   week: { en: "This week", es: "Esta semana" },
-  subtitle: { en: "{week} · {range} · {count} · {value} booked", es: "{week} · {range} · {count} · {value} en total" },
+  subtitle: { en: "{week} · {range} · {count}, worth {value}", es: "{week} · {range} · {count}, con valor de {value}" },
   legend: { en: "Color key", es: "Leyenda de colores" },
   today: { en: "Today", es: "Hoy" },
   currentTime: { en: "Current time: {time}", es: "Hora actual: {time}" },
-  openSlot: { en: "Open — online booking available", es: "Libre — se puede reservar en línea" },
+  // {book}: "agendar" (appointments) / "reservar" (restaurant tables), see BOOK_VERB.
+  openSlot: { en: "Open — online booking available", es: "Libre — se puede {book} en línea" },
   // Details
   detailTitle: { en: "{Noun} details", es: "Detalles de la {noun}" },
   close: { en: "Close", es: "Cerrar" },
@@ -78,6 +83,10 @@ const COPY = {
   reminderSent: { en: "Reminder sent (demo)", es: "Recordatorio enviado (demo)" },
   reminderPreview: { en: "The text {first} gets", es: "El texto que recibe {first}" },
   reminderSentMeta: { en: "Sent just now · demo, nothing was sent", es: "Enviado ahora · demo, no se envió nada" },
+  noReminder: {
+    en: "This {noun} has already started, so there's no reminder to send.",
+    es: "Esta {noun} ya comenzó, así que no hay recordatorio que enviar.",
+  },
   related: { en: "Related", es: "Relacionado" },
   openLead: { en: "Open lead", es: "Abrir prospecto" },
   openEmail: { en: "Open email", es: "Abrir correo" },
@@ -92,26 +101,31 @@ const COPY = {
   // Week at a glance
   summaryTitle: { en: "This week", es: "Esta semana" },
   asOf: { en: "Updated {time}", es: "Actualizado {time}" },
-  statValue: { en: "Booked value", es: "Valor agendado" },
+  statValue: { en: "Value shown", es: "Valor mostrado" },
   statDeposits: { en: "Deposits held", es: "Depósitos retenidos" },
   statToConfirm: { en: "To confirm", es: "Por confirmar" },
   waiting: { en: "Waiting on you", es: "Pendientes de usted" },
   allConfirmed: { en: "Everything this week is confirmed.", es: "Todo lo de esta semana está confirmado." },
-  key: { en: "Status key", es: "Clave de estados" },
+  key: { en: "Status key", es: "Leyenda de estados" },
   onlineNote: {
     en: "Open times are bookable online 24/7, and every client gets an automatic reminder.",
-    es: "Los horarios libres se pueden reservar en línea 24/7 y cada cliente recibe un recordatorio automático.",
+    es: "Los horarios libres se pueden {book} en línea 24/7 y cada cliente recibe un recordatorio automático.",
   },
   pickHint: { en: "Pick a {noun} in the grid to see the details.", es: "Elija una {noun} en la cuadrícula para ver los detalles." },
 } satisfies Record<string, L10n>;
 
-/** What a booking is called in each industry (Spanish nouns are all feminine: "la cita", "la reserva"). */
+/** What a booking is called in each industry (Spanish nouns are all feminine: "la cita", "la reservación", as in the Inbox). */
 const NOUN = {
   default: { one: { en: "booking", es: "cita" }, many: { en: "bookings", es: "citas" } },
-  restaurant: { one: { en: "reservation", es: "reserva" }, many: { en: "reservations", es: "reservas" } },
+  restaurant: { one: { en: "reservation", es: "reservación" }, many: { en: "reservations", es: "reservaciones" } },
 } satisfies Record<string, { one: L10n; many: L10n }>;
 const nounFor = (id: NicheId) => (id === "restaurant" ? NOUN.restaurant : NOUN.default);
 const countOf = (n: number, id: NicheId, locale: Locale) => `${n} ${(n === 1 ? nounFor(id).one : nounFor(id).many)[locale]}`;
+/** "17 bookings shown" / "17 citas mostradas": the calendar holds a sample of the week, not every booking. */
+const shownOf = (n: number, id: NicheId, locale: Locale) =>
+  `${countOf(n, id, locale)} ${locale === "es" ? (n === 1 ? "mostrada" : "mostradas") : "shown"}`;
+/** Spanish verb for booking online: "reservar" a table (restaurant), "agendar" an appointment (every other industry). */
+const BOOK_VERB = (id: NicheId) => (id === "restaurant" ? "reservar" : "agendar");
 const cap = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
 const STATUS_WORD: Record<CalendarEventStatus, L10n> = {
@@ -130,21 +144,42 @@ const STATUS_ICON_TONE: Record<CalendarEventStatus, string> = { confirmed: "text
 /**
  * The prewritten reminder ("Send reminder"). Three shapes so every industry reads naturally:
  * appointments "with" a person, restaurant reservations, and crew / technician visits.
+ * `{who}` is " with Andre" / " con Andre" when the resource names a person, else empty;
+ * `{where}` is " on the patio" / " en la terraza" for a dining area, else empty.
  */
 const REMINDER: Record<"with" | "reservation" | "visit", L10n> = {
   with: {
-    en: "Hi {first}, this is {business}. Reminder: “{service}” with {resource}, {when}. Reply C to confirm or R to reschedule.",
-    es: "Hola, {first}, le escribe {business}. Le recordamos su cita: “{service}” con {resource}, {when}. Responda C para confirmar o R para cambiarla.",
+    en: "Hi {first}, this is {business}. Reminder: “{service}”{who}, {when}. Reply C to confirm or R to reschedule.",
+    es: "Hola, {first}, le escribe {business}. Le recordamos su cita: “{service}”{who}, {when}. Responda C para confirmar o R para cambiarla.",
   },
   reservation: {
-    en: "Hi {first}, this is {business}. Reminder of your reservation: “{service}”, {when} ({resource}). Reply C to confirm or R if your plans change.",
-    es: "Hola, {first}, le escribe {business}. Le recordamos su reserva: “{service}”, {when} ({resource}). Responda C para confirmar o R si cambian sus planes.",
+    en: "Hi {first}, this is {business}. Reminder of your reservation: “{service}”{where}, {when}. Reply C to confirm or R if your plans change.",
+    es: "Hola, {first}, le escribe {business}. Le recordamos su reservación: “{service}”{where}, {when}. Responda C para confirmar o R si cambian sus planes.",
   },
   visit: {
-    en: "Hi {first}, this is {business}. Reminder: your “{service}” is scheduled for {when} ({resource}). Reply C to confirm or R to reschedule.",
-    es: "Hola, {first}, le escribe {business}. Le recordamos su servicio agendado: “{service}”, {when} ({resource}). Responda C para confirmar o R para cambiar la fecha.",
+    en: "Hi {first}, this is {business}. Reminder: your “{service}”{who} is scheduled for {when}. Reply C to confirm or R to reschedule.",
+    es: "Hola, {first}, le escribe {business}. Le recordamos su servicio agendado: “{service}”{who}, {when}. Responda C para confirmar o R para cambiar la fecha.",
   },
 };
+const WITH: L10n = { en: " with {name}", es: " con {name}" };
+/** Restaurant areas as a guest would read them; anything else (e.g. "Catering") is left out of the text. */
+const WHERE: Record<string, L10n> = {
+  "Main room": { en: " in the main room", es: " en el salón principal" },
+  Patio: { en: " on the patio", es: " en la terraza" },
+  "Private room": { en: " in the private room", es: " en el salón privado" },
+};
+/** Resource words that are places, crews or service lines, never a person's name. */
+const NOT_A_PERSON = /^(chair|silla|crew|cuadrilla|team|equipo|table|mesa|nails|uñas|lashes|pestañas|brows|cejas|estimates|presupuestos|patio|terraza|catering|bar)$/i;
+/**
+ * The person a resource stands for: "Chair 1 · Andre" → "Andre", "Vanessa · Lashes" → "Vanessa",
+ * "Tech Mike (HVAC)" → "Mike". Crews, rooms and tables ("Crew A", "Patio") have none.
+ */
+function personOf(resource: string) {
+  return resource
+    .split(" · ")
+    .map((part) => part.replace(/\s*\(.*\)$/, "").replace(/^(Tech|Técnic[oa])\s+/, "").trim())
+    .find((part) => /^\p{Lu}\p{Ll}+$/u.test(part) && !NOT_A_PERSON.test(part));
+}
 const REMINDER_SHAPE: Record<NicheId, keyof typeof REMINDER> = {
   barbershop: "with",
   salon: "with",
@@ -182,21 +217,24 @@ const dayDate = (day: number, min = 0) => new Date(2026, 0, 5 + day, Math.floor(
 function weekday(day: number, intlLocale: string, style: "short" | "long") {
   return cap(new Intl.DateTimeFormat(intlLocale, { weekday: style }).format(dayDate(day)));
 }
+/* Every Intl time below goes through normalizeMeridiem: "AM"/"PM" in both languages, like the data. */
 function timeRange(ev: CalendarEvent, intlLocale: string) {
   const s = toMin(ev.start);
   const f = new Intl.DateTimeFormat(intlLocale, { hour: "numeric", minute: "2-digit" });
-  return f.formatRange(dayDate(ev.day, s), dayDate(ev.day, s + ev.durationMin));
+  return normalizeMeridiem(f.formatRange(dayDate(ev.day, s), dayDate(ev.day, s + ev.durationMin)));
 }
 function hourLabel(h: number, intlLocale: string) {
-  return new Intl.DateTimeFormat(intlLocale, { hour: "numeric" }).format(dayDate(0, h * 60));
+  return normalizeMeridiem(new Intl.DateTimeFormat(intlLocale, { hour: "numeric" }).format(dayDate(0, h * 60)));
 }
-/** "9:41" without the day period, for the compact now capsule on the hour axis. */
+/** "9:41" without the day period, for the compact now capsule and narrow blocks on the grid. */
 function shortClock(hhmm: string, intlLocale: string) {
   const parts = new Intl.DateTimeFormat(intlLocale, { hour: "numeric", minute: "2-digit" }).formatToParts(dayDate(0, toMin(hhmm)));
-  return parts
-    .filter((p) => p.type === "hour" || p.type === "minute" || (p.type === "literal" && p.value.trim() === ":"))
-    .map((p) => p.value.trim())
-    .join("");
+  return normalizeMeridiem(
+    parts
+      .filter((p) => p.type === "hour" || p.type === "minute" || (p.type === "literal" && p.value.trim() === ":"))
+      .map((p) => p.value.trim())
+      .join(""),
+  );
 }
 function duration(min: number) {
   const h = Math.floor(min / 60);
@@ -204,19 +242,38 @@ function duration(min: number) {
   if (!h) return `${m} min`;
   return m ? `${h} h ${m} min` : `${h} h`;
 }
-/** "Thursday at 10:30 AM" / "el jueves a las 10:30 a.m." ("a la 1:00 p.m."). */
+/**
+ * "today at 10:00 AM" / "hoy a las 10:00 AM", "tomorrow at …" / "mañana a las …", else
+ * "Thursday at 10:30 AM" / "el jueves a las 10:30 AM" ("a la 1:00 PM").
+ */
 function whenPhrase(ev: CalendarEvent, locale: Locale, intlLocale: string) {
-  const day = new Intl.DateTimeFormat(intlLocale, { weekday: "long" }).format(dayDate(ev.day));
   const time = formatClock(ev.start, intlLocale);
+  const offset = ev.day - TODAY;
   if (locale === "es") {
     const h = Math.floor(toMin(ev.start) / 60) % 12;
-    return `el ${day} a ${h === 1 ? "la" : "las"} ${time}`;
+    const at = `a ${h === 1 ? "la" : "las"} ${time}`;
+    if (offset === 0) return `hoy ${at}`;
+    if (offset === 1) return `mañana ${at}`;
+    return `el ${new Intl.DateTimeFormat(intlLocale, { weekday: "long" }).format(dayDate(ev.day))} ${at}`;
   }
-  return `${cap(day)} at ${time}`;
+  if (offset === 0) return `today at ${time}`;
+  if (offset === 1) return `tomorrow at ${time}`;
+  return `${cap(new Intl.DateTimeFormat(intlLocale, { weekday: "long" }).format(dayDate(ev.day)))} at ${time}`;
 }
 
 const isHappening = (ev: CalendarEvent) => ev.day === TODAY && toMin(ev.start) <= NOW_MIN && NOW_MIN < endMin(ev);
+/** Under way or already over at the demo's "now": too late for a reminder. */
+const hasStarted = (ev: CalendarEvent) => ev.day < TODAY || (ev.day === TODAY && toMin(ev.start) <= NOW_MIN);
 const firstName = (name: string) => name.split(" ")[0] ?? name;
+/** "Linda N." → "LN" (narrow grid blocks). */
+const initialsOf = (name: string) =>
+  name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
 
 /* ---------------------------- resource tints ---------------------------- */
 
@@ -234,6 +291,10 @@ const RES_TONES: readonly ResTone[] = [
   },
 ];
 const toneAt = (i: number) => RES_TONES[((i % RES_TONES.length) + RES_TONES.length) % RES_TONES.length];
+
+/** Selected grid block: the aqua ring, plus a system-colour outline (forced-colors mode drops rings/shadows). */
+const SELECTED_BLOCK =
+  "ring-1 ring-inset ring-aqua/80 forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]";
 
 /** The grid sits in a solid, slightly recessed well so the sticky day headers can match it exactly. */
 const WELL = "#191d1e";
@@ -344,18 +405,25 @@ function revealInScroller(el: HTMLElement | null, scroller: HTMLElement | null, 
   else if (bottom > scroller.clientHeight - pad) scroller.scrollTop += Math.min(bottom - scroller.clientHeight + pad, top - stickyTop - pad);
 }
 
-const LG_QUERY = "(min-width: 1024px)";
-function subscribeLg(onChange: () => void) {
-  const mql = window.matchMedia(LG_QUERY);
+/** The week grid needs room: below 1280px its columns cut names to a few letters, so the agenda shows instead. */
+const WIDE_QUERY = "(min-width: 1280px)";
+function subscribeWide(onChange: () => void) {
+  const mql = window.matchMedia(WIDE_QUERY);
   mql.addEventListener("change", onChange);
   return () => mql.removeEventListener("change", onChange);
 }
-function useIsLg() {
+function useIsWide() {
   return useSyncExternalStore(
-    subscribeLg,
-    () => window.matchMedia(LG_QUERY).matches,
+    subscribeWide,
+    () => window.matchMedia(WIDE_QUERY).matches,
     () => true,
   );
+}
+/** The agenda card scrolls on its own only on lg (fixed-height plate); below that the page scrolls. */
+function activeScroller(el: HTMLElement | null) {
+  if (!el) return null;
+  const { overflowY } = window.getComputedStyle(el);
+  return overflowY === "auto" || overflowY === "scroll" ? el : null;
 }
 
 type Status = CalendarEventStatus;
@@ -372,7 +440,7 @@ export function CalendarView() {
 function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
   const { locale, intlLocale } = useLanguage();
   const { focusId, clearFocus, isDone } = useDashboardView();
-  const isLg = useIsLg();
+  const isWide = useIsWide();
   const data = NICHE_VIEWS[nicheId];
   const { resources, events } = data.calendar;
 
@@ -385,6 +453,7 @@ function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const gridScrollRef = useRef<HTMLDivElement>(null);
   const asideRef = useRef<HTMLDivElement>(null);
+  const agendaScrollRef = useRef<HTMLDivElement>(null);
   const detailId = `calendar-detail-${nicheId}`;
 
   const statusOf = (ev: CalendarEvent): Status => (ev.status === "confirmed" || isDone(`confirm:${ev.id}`) ? "confirmed" : ev.status);
@@ -419,18 +488,24 @@ function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
     if (!request) return;
     focusRequest.current = null;
     const origin = originRefs.current.get(request.id) ?? null;
+    // On lg the agenda scrolls inside the plate: move only that pane, never the page.
+    const agendaPane = isWide ? null : activeScroller(agendaScrollRef.current);
     if (request.kind === "origin") {
-      origin?.focus({ preventScroll: isLg });
+      origin?.focus({ preventScroll: isWide || Boolean(agendaPane) });
+      if (agendaPane) revealInScroller(origin, agendaPane);
       return;
     }
     const heading = headingRef.current;
-    if (isLg) {
+    if (isWide) {
       if (asideRef.current) asideRef.current.scrollTop = 0;
       heading?.focus({ preventScroll: true });
-      if (request.reveal) revealInScroller(origin, gridScrollRef.current, 48);
+      // 56: the tallest sticky day header (narrow columns stack the "Today" pill).
+      if (request.reveal) revealInScroller(origin, gridScrollRef.current, 56);
     } else {
       heading?.focus({ preventScroll: true });
-      (itemRefs.current.get(request.id) ?? heading)?.scrollIntoView({ block: "nearest" });
+      const item = itemRefs.current.get(request.id) ?? heading;
+      if (agendaPane) revealInScroller(item, agendaPane);
+      else item?.scrollIntoView({ block: "nearest" });
     }
   });
 
@@ -482,7 +557,7 @@ function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
           subtitle={fill(COPY.subtitle[locale], {
             week: COPY.week[locale],
             range: `${weekday(0, intlLocale, "short")}–${weekday(5, intlLocale, "short")}`,
-            count: countOf(stats.count, nicheId, locale),
+            count: shownOf(stats.count, nicheId, locale),
             value: formatCurrency(stats.value, intlLocale),
           })}
           actions={
@@ -498,7 +573,7 @@ function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
         />
       </div>
 
-      {isLg ? (
+      {isWide ? (
         <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_300px] grid-rows-[minmax(0,1fr)] gap-2">
           <WeekGrid
             nicheId={nicheId}
@@ -515,7 +590,7 @@ function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
           <div
             ref={asideRef}
             id={detailId}
-            className={`${CARD_FLUSH} min-h-0 overflow-y-auto overscroll-contain [scrollbar-color:rgba(255,255,255,0.16)_transparent] [scrollbar-width:thin]`}
+            className={`${CARD_FLUSH} min-h-0 overflow-y-auto [scrollbar-color:rgba(255,255,255,0.16)_transparent] [scrollbar-width:thin]`}
           >
             <motion.div
               key={selected?.id ?? "summary"}
@@ -538,8 +613,9 @@ function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
           </div>
         </div>
       ) : (
-        <div className="grid gap-1.5 sm:gap-2">
-          <WeekStats nicheId={nicheId} stats={stats} />
+        // lg (1024–1279, fixed-height plate): the stats stay put and the agenda list scrolls.
+        <div className="flex flex-col gap-1.5 sm:gap-2 lg:min-h-0 lg:flex-1">
+          <WeekStats nicheId={nicheId} stats={stats} layout="strip" />
           <Agenda
             nicheId={nicheId}
             byDay={byDay}
@@ -548,6 +624,7 @@ function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
             selectedId={selectedId}
             pulse={pulse}
             detailId={detailId}
+            scrollRef={agendaScrollRef}
             registerOrigin={registerOrigin}
             registerItem={registerItem}
             onToggle={(id) => (id === selectedId ? close() : open(id))}
@@ -600,17 +677,20 @@ function WeekGrid({
   }, []);
 
   const nowPct = pct(NOW_MIN);
+  // Narrow day columns stack the "Today" pill under the weekday; every header (and the axis corner) grows to match.
+  const stackHead = track.w < 100;
+  const headH = stackHead ? "h-14" : "h-12";
 
   return (
     <div className="relative flex min-h-0 flex-col overflow-hidden rounded-glass-sm" style={{ background: WELL }}>
       <div
         ref={scrollRef}
-        className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain [scrollbar-color:rgba(255,255,255,0.16)_transparent] [scrollbar-width:thin]"
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto [scrollbar-color:rgba(255,255,255,0.16)_transparent] [scrollbar-width:thin]"
       >
         <div className="grid flex-1 grid-cols-[3.25rem_repeat(6,minmax(0,1fr))]">
           {/* Hour axis (decorative: every block carries its time in its accessible name). */}
           <div aria-hidden="true" className="flex flex-col">
-            <div className="sticky top-0 z-20 h-12 shrink-0 border-b border-white/[0.06]" style={{ background: WELL }} />
+            <div className={`sticky top-0 z-20 ${headH} shrink-0 border-b border-white/[0.06]`} style={{ background: WELL }} />
             <div className="relative min-h-[430px] flex-1">
               <div className="absolute inset-x-0 bottom-2 top-2.5">
                 {HOURS.map((h, i) =>
@@ -648,10 +728,15 @@ function WeekGrid({
                 style={today ? { background: WELL_TODAY } : undefined}
               >
                 <div
-                  className="sticky top-0 z-20 flex h-12 shrink-0 flex-col justify-center border-b border-white/[0.06] px-2.5"
+                  className={`sticky top-0 z-20 flex ${headH} shrink-0 flex-col justify-center border-b border-white/[0.06] px-2.5`}
                   style={{ background: today ? WELL_TODAY : WELL }}
                 >
-                  <h4 id={headingId} className={`flex items-center gap-1.5 text-[0.8125rem] font-medium leading-tight ${today ? "text-aqua" : "text-bone"}`}>
+                  <h4
+                    id={headingId}
+                    className={`flex text-[0.8125rem] font-medium leading-tight ${stackHead ? "flex-col items-start gap-0.5" : "items-center gap-1.5"} ${
+                      today ? "text-aqua" : "text-bone"
+                    }`}
+                  >
                     <span aria-hidden="true">{weekday(d, intlLocale, "short")}</span>
                     <span className="sr-only">{dayLong}</span>
                     {today ? (
@@ -698,7 +783,7 @@ function WeekGrid({
                         ))}
                       </ul>
                     ) : (
-                      <OpenSlot className="absolute inset-x-1.5 bottom-[16%] top-[16%]" />
+                      <OpenSlot nicheId={nicheId} className="absolute inset-x-1.5 bottom-[16%] top-[16%]" />
                     )}
 
                     {/* Now: a strong line on today, a faint guide across the other days. */}
@@ -802,7 +887,7 @@ function EventBlock({
         aria-current={selected ? "true" : undefined}
         className={`group relative flex h-full w-full flex-col overflow-hidden rounded-[7px] border text-left transition-transform duration-150 ease-editorial active:scale-[0.98] focus-visible:[outline-offset:1px] ${
           pending ? `${tone.soft} border-dashed border-signal/60` : `${tone.fill} border-transparent`
-        } ${selected ? "ring-1 ring-inset ring-aqua/80" : ""} ${centred ? "justify-center" : "pt-[3px]"} ${narrow ? "pl-[7px] pr-1" : "pl-[9px] pr-4"}`}
+        } ${selected ? SELECTED_BLOCK : ""} ${centred ? "justify-center" : "pt-[3px]"} ${narrow ? "pl-[7px] pr-1" : "pl-[9px] pr-4"}`}
       >
         <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-[3px] ${tone.bar}`} />
         <span
@@ -817,7 +902,21 @@ function EventBlock({
             className={`absolute right-1 ${centred ? "top-1/2 -translate-y-1/2" : "top-[5px]"} ${STATUS_ICON_TONE[status]}`}
           />
         ) : null}
-        {lines === 1 ? (
+        {narrow ? (
+          // Too narrow for a name: initials + start time (the accessible name below carries the full details).
+          lines === 1 ? (
+            // One row: the time wraps out of sight (clipped) rather than showing half of it.
+            <span aria-hidden="true" className="relative flex h-[13px] flex-wrap gap-x-1 overflow-hidden text-[0.6875rem] leading-[13px]">
+              <span className="font-medium text-bone">{initialsOf(ev.client)}</span>
+              <span className="tabular text-bone/75">{shortClock(ev.start, intlLocale)}</span>
+            </span>
+          ) : (
+            <span aria-hidden="true" className="relative block text-[0.6875rem] leading-[13px]">
+              <span className="block truncate font-medium text-bone">{initialsOf(ev.client)}</span>
+              <span className="tabular block overflow-hidden whitespace-nowrap text-bone/75">{shortClock(ev.start, intlLocale)}</span>
+            </span>
+          )
+        ) : lines === 1 ? (
           <span className="relative block truncate text-[0.6875rem] leading-[13px]">
             <span className="font-medium text-bone">{ev.client}</span>
             <span className="text-bone/75">
@@ -844,7 +943,7 @@ function EventBlock({
           </>
         )}
         <span className="sr-only">
-          , {dayLong} {range}, {ev.resource[locale]}, {STATUS_WORD[status][locale]}
+          {narrow ? `${ev.client}, ${ev.service[locale]}` : null}, {dayLong} {range}, {ev.resource[locale]}, {STATUS_WORD[status][locale]}
         </span>
       </button>
       {pulseTick ? <PulseRing key={pulseTick} className="-inset-[3px] rounded-[10px]" /> : null}
@@ -865,7 +964,7 @@ function PulseRing({ className }: { className: string }) {
   );
 }
 
-function OpenSlot({ className }: { className: string }) {
+function OpenSlot({ nicheId, className }: { nicheId: NicheId; className: string }) {
   const { locale } = useLanguage();
   return (
     <div
@@ -873,7 +972,7 @@ function OpenSlot({ className }: { className: string }) {
     >
       <span className="inline-flex flex-col items-center gap-1">
         <Globe aria-hidden="true" size={13} strokeWidth={1.9} className="text-aqua" />
-        {COPY.openSlot[locale]}
+        {fill(COPY.openSlot[locale], { book: BOOK_VERB(nicheId) })}
       </span>
     </div>
   );
@@ -883,7 +982,8 @@ function OpenSlot({ className }: { className: string }) {
 
 type Stats = { count: number; value: number; deposits: number; toConfirm: number };
 
-function WeekStats({ nicheId, stats }: { nicheId: NicheId; stats: Stats }) {
+/** `card`: 2×2 in the xl side card; `strip`: one row of four from sm up, above the agenda. */
+function WeekStats({ nicheId, stats, layout }: { nicheId: NicheId; stats: Stats; layout: "card" | "strip" }) {
   const { locale, intlLocale } = useLanguage();
   const tiles: { label: string; value: string; alert?: boolean }[] = [
     { label: cap(nounFor(nicheId).many[locale]), value: String(stats.count) },
@@ -892,7 +992,7 @@ function WeekStats({ nicheId, stats }: { nicheId: NicheId; stats: Stats }) {
     { label: COPY.statToConfirm[locale], value: String(stats.toConfirm), alert: stats.toConfirm > 0 },
   ];
   return (
-    <dl className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 lg:grid-cols-2">
+    <dl className={`grid shrink-0 grid-cols-2 gap-1.5 ${layout === "strip" ? "sm:grid-cols-4" : ""}`}>
       {tiles.map((t) => (
         <div key={t.label} className="rounded-[12px] bg-white/[0.04] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.04)]">
           <dt className="truncate text-[0.6875rem] font-medium text-ash">{t.label}</dt>
@@ -934,7 +1034,7 @@ function WeekSummary({
         <p className="text-[0.6875rem] text-ash">{fill(COPY.asOf[locale], { time: formatClock(NOW, intlLocale) })}</p>
       </div>
       <div className="mt-3">
-        <WeekStats nicheId={nicheId} stats={stats} />
+        <WeekStats nicheId={nicheId} stats={stats} layout="card" />
       </div>
 
       <h5 className={`${LABEL} mt-5`}>{COPY.waiting[locale]}</h5>
@@ -997,7 +1097,7 @@ function WeekSummary({
 
       <p className="mt-5 flex gap-2 border-t border-white/[0.07] pt-4 text-[0.75rem] leading-snug text-ash">
         <Globe aria-hidden="true" size={14} strokeWidth={1.9} className="mt-px shrink-0 text-aqua" />
-        {COPY.onlineNote[locale]}
+        {fill(COPY.onlineNote[locale], { book: BOOK_VERB(nicheId) })}
       </p>
       <p className="mt-2 text-[0.75rem] leading-snug text-ash">{fill(COPY.pickHint[locale], { noun })}</p>
     </section>
@@ -1050,14 +1150,19 @@ function EventDetail({
   const reminded = isDone(`reminder:${ev.id}`);
   const first = firstName(ev.client);
   const happening = isHappening(ev);
+  // Under way or over at "now": no reminder to offer.
+  const canRemind = !hasStarted(ev);
   const lead = data.leads.find((l) => l.name === ev.client);
   const email = data.inbox.find((m) => m.email.calendarEventId === ev.id);
 
+  // The text names the person ("with Andre"), never the resource label ("Chair 1 · Andre").
+  const person = personOf(ev.resource[locale]) ?? personOf(ev.resource.en);
   const reminder = fill(REMINDER[REMINDER_SHAPE[nicheId]][locale], {
     first,
     business: niche.simulator.business,
     service: ev.service[locale],
-    resource: ev.resource[locale],
+    who: person ? fill(WITH[locale], { name: person }) : "",
+    where: WHERE[ev.resource.en]?.[locale] ?? "",
     when: whenPhrase(ev, locale, intlLocale),
   }).replace(/\.\./g, "."); // "Northside Barber Co." + "." → one period
 
@@ -1148,58 +1253,69 @@ function EventDetail({
         ))}
       </dl>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        {wasPending ? (
-          <DoneButton
-            label={COPY.confirm[locale]}
-            doneLabel={COPY.confirmed[locale]}
-            done={confirmed}
-            onPress={() => {
-              markDone(`confirm:${ev.id}`);
-              announce(fill(COPY.confirmAnnounce[locale], { name: ev.client, noun }));
-            }}
-            icon={<CalendarCheck aria-hidden="true" size={15} strokeWidth={2} />}
-            className="flex-[1_1_auto]"
-          />
-        ) : null}
-        <DoneButton
-          label={COPY.sendReminder[locale]}
-          doneLabel={COPY.reminderSent[locale]}
-          done={reminded}
-          variant={wasPending && !confirmed ? "secondary" : "primary"}
-          onPress={() => {
-            markDone(`reminder:${ev.id}`);
-            announce(fill(COPY.reminderAnnounce[locale], { name: ev.client }));
-          }}
-          icon={<BellRing aria-hidden="true" size={15} strokeWidth={2} />}
-          className="flex-[1_1_auto]"
-        />
-      </div>
+      {wasPending || canRemind ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {wasPending ? (
+            <DoneButton
+              label={COPY.confirm[locale]}
+              doneLabel={COPY.confirmed[locale]}
+              done={confirmed}
+              onPress={() => {
+                markDone(`confirm:${ev.id}`);
+                announce(fill(COPY.confirmAnnounce[locale], { name: ev.client, noun }));
+              }}
+              icon={<CalendarCheck aria-hidden="true" size={15} strokeWidth={2} />}
+              className="flex-[1_1_auto]"
+            />
+          ) : null}
+          {canRemind ? (
+            <DoneButton
+              label={COPY.sendReminder[locale]}
+              doneLabel={COPY.reminderSent[locale]}
+              done={reminded}
+              variant={wasPending && !confirmed ? "secondary" : "primary"}
+              onPress={() => {
+                markDone(`reminder:${ev.id}`);
+                announce(fill(COPY.reminderAnnounce[locale], { name: ev.client }));
+              }}
+              icon={<BellRing aria-hidden="true" size={15} strokeWidth={2} />}
+              className="flex-[1_1_auto]"
+            />
+          ) : null}
+        </div>
+      ) : null}
 
       {/* The made-up reminder text: a preview before, the "sent" bubble after. */}
-      <div className="mt-4">
-        <p className="flex items-center gap-1.5 text-[0.6875rem] font-medium text-ash">
-          {reminded ? (
-            <Check aria-hidden="true" size={12} strokeWidth={2.4} className="text-aqua" />
-          ) : (
-            <MessageSquareText aria-hidden="true" size={12} strokeWidth={2} />
-          )}
-          {reminded ? COPY.reminderSentMeta[locale] : fill(COPY.reminderPreview[locale], { first })}
+      {canRemind ? (
+        <div className="mt-4">
+          <p className="flex items-center gap-1.5 text-[0.6875rem] font-medium text-ash">
+            {reminded ? (
+              <Check aria-hidden="true" size={12} strokeWidth={2.4} className="text-aqua" />
+            ) : (
+              <MessageSquareText aria-hidden="true" size={12} strokeWidth={2} />
+            )}
+            {reminded ? COPY.reminderSentMeta[locale] : fill(COPY.reminderPreview[locale], { first })}
+          </p>
+          <motion.p
+            key={reminded ? "sent" : "draft"}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
+            className={`mt-1.5 rounded-[12px] rounded-tl-[4px] px-3 py-2 text-[0.8125rem] leading-snug ${
+              reminded
+                ? "bg-aqua/[0.1] text-bone shadow-[inset_0_0_0_1px_rgba(61,219,201,0.22)]"
+                : "bg-white/[0.035] text-bone/85 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]"
+            }`}
+          >
+            {reminder}
+          </motion.p>
+        </div>
+      ) : (
+        <p className="mt-4 flex items-start gap-1.5 text-[0.75rem] leading-snug text-ash">
+          <BellRing aria-hidden="true" size={13} strokeWidth={2} className="mt-px shrink-0" />
+          {fill(COPY.noReminder[locale], { noun })}
         </p>
-        <motion.p
-          key={reminded ? "sent" : "draft"}
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
-          className={`mt-1.5 rounded-[12px] rounded-tl-[4px] px-3 py-2 text-[0.8125rem] leading-snug ${
-            reminded
-              ? "bg-aqua/[0.1] text-bone shadow-[inset_0_0_0_1px_rgba(61,219,201,0.22)]"
-              : "bg-white/[0.035] text-bone/85 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]"
-          }`}
-        >
-          {reminder}
-        </motion.p>
-      </div>
+      )}
 
       {lead || email ? (
         <div className="mt-4 border-t border-white/[0.07] pt-4">
@@ -1272,6 +1388,7 @@ function Agenda({
   selectedId,
   pulse,
   detailId,
+  scrollRef,
   registerOrigin,
   registerItem,
   onToggle,
@@ -1284,6 +1401,7 @@ function Agenda({
   selectedId: string | null;
   pulse: { id: string; tick: number } | null;
   detailId: string;
+  scrollRef: RefObject<HTMLDivElement | null>;
   registerOrigin: (id: string) => (el: HTMLButtonElement | null) => void;
   registerItem: (id: string) => (el: HTMLLIElement | null) => void;
   onToggle: (id: string) => void;
@@ -1292,7 +1410,10 @@ function Agenda({
   const { locale, intlLocale } = useLanguage();
 
   return (
-    <div className={`${CARD_FLUSH} px-1.5 py-1 sm:px-2`}>
+    <div
+      ref={scrollRef}
+      className={`${CARD_FLUSH} px-1.5 py-1 sm:px-2 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:[scrollbar-color:rgba(255,255,255,0.16)_transparent] lg:[scrollbar-width:thin]`}
+    >
       {DAYS.map((d) => {
         const today = d === TODAY;
         const list = byDay[d];
@@ -1338,7 +1459,7 @@ function Agenda({
                 {nowIndex === list.length ? <NowDivider /> : null}
               </ul>
             ) : (
-              <OpenSlot className="mx-1 mt-2 min-h-[56px] py-3" />
+              <OpenSlot nicheId={nicheId} className="mx-1 mt-2 min-h-[56px] py-3" />
             )}
           </section>
         );

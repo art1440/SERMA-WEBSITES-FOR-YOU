@@ -44,8 +44,8 @@ import { ACTION_SECONDARY, CARD, DoneButton, PILL, PILL_OFF, PILL_ON, ROW, Statu
 const COPY = {
   title: { en: "Settings", es: "Ajustes" },
   subtitle: { en: "{business} · Alerts, text-back, deposits and hours", es: "{business} · Alertas, texto automático, depósitos y horario" },
-  on: { en: "On", es: "Sí" },
-  off: { en: "Off", es: "No" },
+  on: { en: "On", es: "Activado" },
+  off: { en: "Off", es: "Desactivado" },
 
   notifTitle: { en: "Notifications", es: "Notificaciones" },
   notifBody: { en: "How and when we let you know.", es: "Cómo y cuándo le avisamos." },
@@ -155,7 +155,7 @@ type Trade = {
   who: L10n;
   /** The automatic text. `{business}` and `{link}` are filled in. */
   textBack: L10n;
-  /** Monday … Saturday, 24h "HH:MM" [open, close]. Sunday is closed. */
+  /** Monday … Saturday, 24h "HH:MM" [open, close]. Sunday is closed. Every Calendar booking fits inside these. */
   hours: [string, string][];
 };
 
@@ -164,7 +164,7 @@ const PER_APPOINTMENT: L10n = { en: "Per appointment", es: "Por cita" };
 const TRADE: Record<NicheId, Trade> = {
   barbershop: {
     deposit: {
-      label: { en: "Booking deposit", es: "Depósito de reserva" },
+      label: { en: "Booking deposit", es: "Depósito de cita" },
       unit: PER_APPOINTMENT,
       note: { en: "Credited to the cut at checkout.", es: "Se descuenta del corte al pagar." },
       value: 20,
@@ -175,12 +175,12 @@ const TRADE: Record<NicheId, Trade> = {
     who: { en: "client", es: "el cliente" },
     textBack: {
       en: "Hi, this is {business}. Sorry we missed your call! Grab the next open chair here: {link}, or just reply to this text.",
-      es: "Hola, le escribe {business}. ¡Disculpe que no pudimos contestar! Agende en la próxima silla disponible aquí: {link}, o simplemente responda a este mensaje.",
+      es: "Hola, le escribe {business}. ¡Disculpe que no hayamos podido contestar! Agende en la próxima silla disponible aquí: {link}, o simplemente responda a este mensaje.",
     },
     hours: [
-      ["10:00", "18:00"],
+      ["08:00", "18:00"],
       ["09:00", "19:00"],
-      ["09:00", "19:00"],
+      ["08:30", "19:00"],
       ["09:00", "19:00"],
       ["09:00", "19:00"],
       ["08:00", "16:00"],
@@ -188,10 +188,10 @@ const TRADE: Record<NicheId, Trade> = {
   },
   salon: {
     deposit: {
-      label: { en: "Booking deposit", es: "Depósito de reserva" },
+      label: { en: "Booking deposit", es: "Depósito de cita" },
       unit: PER_APPOINTMENT,
       note: { en: "Credited to the service total.", es: "Se descuenta del total del servicio." },
-      value: 40,
+      value: 50,
       step: 5,
       min: 10,
       max: 150,
@@ -199,12 +199,12 @@ const TRADE: Record<NicheId, Trade> = {
     who: { en: "client", es: "el cliente" },
     textBack: {
       en: "Hi, this is {business}. Sorry we missed your call! See your stylist's open times and book here: {link}, or reply and we'll help.",
-      es: "Hola, le escribe {business}. ¡Disculpe que no pudimos contestar! Vea los horarios de su estilista y agende aquí: {link}, o responda y con gusto le ayudamos.",
+      es: "Hola, le escribe {business}. ¡Disculpe que no hayamos podido contestar! Vea los horarios de su estilista y agende aquí: {link}, o responda y con gusto le ayudamos.",
     },
     hours: [
-      ["10:00", "18:00"],
-      ["10:00", "20:00"],
-      ["10:00", "20:00"],
+      ["09:00", "18:00"],
+      ["09:00", "20:00"],
+      ["09:00", "20:00"],
       ["10:00", "20:00"],
       ["09:00", "19:00"],
       ["09:00", "17:00"],
@@ -212,10 +212,10 @@ const TRADE: Record<NicheId, Trade> = {
   },
   beauty: {
     deposit: {
-      label: { en: "Booking deposit", es: "Depósito de reserva" },
+      label: { en: "Booking deposit", es: "Depósito de cita" },
       unit: PER_APPOINTMENT,
       note: { en: "Credited to the set or lash service.", es: "Se descuenta del servicio de uñas o pestañas." },
-      value: 25,
+      value: 40,
       step: 5,
       min: 10,
       max: 100,
@@ -223,12 +223,12 @@ const TRADE: Record<NicheId, Trade> = {
     who: { en: "client", es: "el cliente" },
     textBack: {
       en: "Hi, this is {business}. Sorry we missed your call! Book your nails or lashes here: {link}, or reply with any questions.",
-      es: "Hola, le escribe {business}. ¡Disculpe que no pudimos contestar! Agende uñas o pestañas aquí: {link}, o responda con sus preguntas.",
+      es: "Hola, le escribe {business}. ¡Disculpe que no hayamos podido contestar! Agende uñas o pestañas aquí: {link}, o responda con sus preguntas.",
     },
     hours: [
       ["10:00", "19:00"],
-      ["10:00", "19:00"],
-      ["10:00", "19:00"],
+      ["09:00", "19:00"],
+      ["09:00", "19:00"],
       ["10:00", "19:00"],
       ["10:00", "19:00"],
       ["09:00", "18:00"],
@@ -237,9 +237,9 @@ const TRADE: Record<NicheId, Trade> = {
   restaurant: {
     deposit: {
       label: { en: "Large-party deposit", es: "Depósito para grupos grandes" },
-      unit: { en: "Per guest, parties of 6+", es: "Por persona, grupos de 6 o más" },
+      unit: { en: "Per guest, parties of 8+", es: "Por persona, grupos de 8 o más" },
       note: { en: "Credited to the bill.", es: "Se descuenta de la cuenta." },
-      value: 10,
+      value: 20,
       step: 5,
       min: 5,
       max: 50,
@@ -247,15 +247,15 @@ const TRADE: Record<NicheId, Trade> = {
     who: { en: "party", es: "el grupo" },
     textBack: {
       en: "Hi, this is {business}. Sorry we missed your call! Reserve a table or order pickup here: {link}, or reply and we'll hold a spot for you.",
-      es: "Hola, le escribe {business}. ¡Disculpe que no pudimos contestar! Reserve una mesa o pida para recoger aquí: {link}, o responda y le apartamos un lugar.",
+      es: "Hola, le escribe {business}. ¡Disculpe que no hayamos podido contestar! Reserve una mesa o pida para recoger aquí: {link}, o responda y le apartamos un lugar.",
     },
     hours: [
-      ["11:30", "22:00"],
-      ["11:30", "22:00"],
-      ["11:30", "22:00"],
-      ["11:30", "22:00"],
-      ["11:30", "23:00"],
-      ["11:30", "23:00"],
+      ["11:00", "22:00"],
+      ["11:00", "22:00"],
+      ["11:00", "22:00"],
+      ["11:00", "22:00"],
+      ["11:00", "23:00"],
+      ["10:00", "23:00"],
     ],
   },
   contractor: {
@@ -271,20 +271,20 @@ const TRADE: Record<NicheId, Trade> = {
     who: { en: "customer", es: "el cliente" },
     textBack: {
       en: "Hi, this is {business}. Sorry we missed your call, we're on a job site. Request your estimate here: {link}, or reply with a few details about the project.",
-      es: "Hola, le escribe {business}. Disculpe que no pudimos contestar; estamos en una obra. Solicite su presupuesto aquí: {link}, o responda con algunos detalles del proyecto.",
+      es: "Hola, le escribe {business}. Disculpe que no hayamos podido contestar; estamos en una obra. Solicite su presupuesto aquí: {link}, o responda con algunos detalles del proyecto.",
     },
     hours: [
-      ["07:00", "17:00"],
-      ["07:00", "17:00"],
-      ["07:00", "17:00"],
-      ["07:00", "17:00"],
-      ["07:00", "17:00"],
+      ["07:00", "18:00"],
+      ["07:00", "18:00"],
+      ["07:00", "18:00"],
+      ["07:00", "18:00"],
+      ["07:00", "18:00"],
       ["08:00", "12:00"],
     ],
   },
   service: {
     deposit: {
-      label: { en: "Booking deposit", es: "Depósito de reserva" },
+      label: { en: "Booking deposit", es: "Depósito de cita" },
       unit: { en: "Per service call", es: "Por visita de servicio" },
       note: { en: "Credited to the final invoice.", es: "Se descuenta de la factura final." },
       value: 50,
@@ -295,7 +295,7 @@ const TRADE: Record<NicheId, Trade> = {
     who: { en: "customer", es: "el cliente" },
     textBack: {
       en: "Hi, this is {business}. Sorry we missed your call! Pick a service window here: {link}, or reply and a technician will text you back.",
-      es: "Hola, le escribe {business}. ¡Disculpe que no pudimos contestar! Elija un horario de servicio aquí: {link}, o responda y un técnico le escribirá.",
+      es: "Hola, le escribe {business}. ¡Disculpe que no hayamos podido contestar! Elija un horario de servicio aquí: {link}, o responda y un técnico le escribirá.",
     },
     hours: [
       ["08:00", "18:00"],
@@ -363,7 +363,8 @@ function countChanges(a: Settings, b: Settings): number {
 const SECTIONS = ["notifications", "textback", "language", "deposits", "modules", "hours"] as const;
 type SectionKey = (typeof SECTIONS)[number];
 
-const MISSED_AT = "14:41";
+/** Before the demo's "now" (Monday 9:41 AM), so "Today · Missed call 8:41 AM" reads true. */
+const MISSED_AT = "08:41";
 const DELAY_MINUTES: Record<Delay, number> = { instant: 0, "1m": 1, "5m": 5 };
 
 /** Fills `{business}`; a name that already ends in "." (e.g. "Northside Barber Co.") doesn't get a second one. */
@@ -443,6 +444,23 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
     requestAnimationFrame(() => saveRef.current?.querySelector("button")?.focus());
   };
 
+  // Below lg the save bar sticks to the bottom of the screen. Reserve its height (≈84px + 12px offset)
+  // so the browser scrolls a focused control clear of it (WCAG 2.4.11); restored on unmount and on lg.
+  useEffect(() => {
+    const root = document.documentElement;
+    const lg = window.matchMedia("(min-width: 1024px)");
+    const previous = root.style.scrollPaddingBottom;
+    const apply = () => {
+      root.style.scrollPaddingBottom = lg.matches ? previous : "7rem";
+    };
+    apply();
+    lg.addEventListener("change", apply);
+    return () => {
+      lg.removeEventListener("change", apply);
+      root.style.scrollPaddingBottom = previous;
+    };
+  }, []);
+
   // A cross-link may open Settings at one card (focusId = a section key): focus its heading.
   useEffect(() => {
     if (!focusId) return;
@@ -485,7 +503,8 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
 
       <div
         ref={scrollerRef}
-        className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:[scrollbar-color:rgba(255,255,255,0.18)_transparent] lg:[scrollbar-width:thin]"
+        // max-lg scroll-mb: focused controls stop above the sticky save bar (pairs with the scroll padding above).
+        className="max-lg:[&_button]:scroll-mb-28 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:[scrollbar-color:rgba(255,255,255,0.18)_transparent] lg:[scrollbar-width:thin]"
       >
         <div className="grid gap-1.5 sm:gap-2 lg:grid-cols-2 lg:items-start">
           {/* ---------------- Column 1 ---------------- */}
@@ -945,21 +964,27 @@ function SwitchRow({
   );
 }
 
-/** The switch capsule. State reads from the thumb position and the On/Off word, not colour alone. */
+/**
+ * The switch capsule. State reads from the thumb position and the On/Off word, not colour alone.
+ * Both words sit in one grid cell (only the current one visible), so the column is as wide as the
+ * longer word ("Off" / "Desactivado") and the switch never shifts when it flips.
+ * Forced colors: the track gets a CanvasText border and the thumb a CanvasText fill.
+ */
 function Toggle({ on, locale }: { on: boolean; locale: Locale }) {
   return (
     <span aria-hidden="true" className="flex shrink-0 items-center gap-2">
-      <span className={`w-6 text-right text-[0.6875rem] font-medium ${on ? "text-aqua" : "text-ash"}`}>
-        {on ? COPY.on[locale] : COPY.off[locale]}
+      <span className={`grid text-right text-[0.6875rem] font-medium ${on ? "text-aqua" : "text-ash"}`}>
+        <span className={`col-start-1 row-start-1 ${on ? "" : "invisible"}`}>{COPY.on[locale]}</span>
+        <span className={`col-start-1 row-start-1 ${on ? "invisible" : ""}`}>{COPY.off[locale]}</span>
       </span>
-      <span className="relative block h-[26px] w-[44px] rounded-full bg-white/[0.1] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16),inset_0_1px_2px_rgba(0,0,0,0.4)]">
+      <span className="relative block h-[26px] w-[44px] rounded-full bg-white/[0.1] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16),inset_0_1px_2px_rgba(0,0,0,0.4)] forced-colors:border forced-colors:border-[CanvasText]">
         <span
           className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,#6FE9DA_0%,#3DDBC9_55%,#2FCBB9_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(61,219,201,0.6)] transition-opacity duration-200 ease-editorial ${
             on ? "opacity-100" : "opacity-0"
           }`}
         />
         <motion.span
-          className="absolute left-[3px] top-[3px] block h-5 w-5 rounded-full bg-bone shadow-[0_1px_2px_rgba(0,0,0,0.45),0_3px_8px_-2px_rgba(0,0,0,0.45)]"
+          className="absolute left-[3px] top-[3px] block h-5 w-5 rounded-full bg-bone shadow-[0_1px_2px_rgba(0,0,0,0.45),0_3px_8px_-2px_rgba(0,0,0,0.45)] [forced-color-adjust:none] forced-colors:bg-[CanvasText]"
           initial={false}
           animate={{ x: on ? 18 : 0 }}
           transition={SPRING_SNAPPY}
@@ -969,7 +994,10 @@ function Toggle({ on, locale }: { on: boolean; locale: Locale }) {
   );
 }
 
-/** Equal-width segmented capsules (aria-pressed); the aqua indicator slides via transform. */
+/**
+ * Equal-width segmented capsules (aria-pressed); the aqua indicator slides via transform.
+ * Forced colors: the indicator keeps a Highlight fill and the pressed label turns HighlightText.
+ */
 function Segmented<T extends string>({
   labelledBy,
   describedBy,
@@ -996,7 +1024,7 @@ function Segmented<T extends string>({
     >
       <motion.span
         aria-hidden="true"
-        className="absolute bottom-1 left-1 top-1 rounded-full bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_14px_-6px_rgba(61,219,201,0.75)]"
+        className="absolute bottom-1 left-1 top-1 rounded-full bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_14px_-6px_rgba(61,219,201,0.75)] [forced-color-adjust:none] forced-colors:bg-[Highlight]"
         style={{ width: `calc((100% - 0.5rem) / ${options.length})` }}
         initial={false}
         animate={{ x: `${index * 100}%` }}
@@ -1012,7 +1040,7 @@ function Segmented<T extends string>({
             aria-pressed={on}
             onClick={() => onChange(o.value)}
             className={`relative min-h-[36px] whitespace-nowrap rounded-full px-1.5 text-[0.75rem] font-medium leading-tight sm:px-2 sm:text-[0.8125rem] ${
-              on ? "text-ink" : "text-bone/90 hover:bg-white/[0.06]"
+              on ? "text-ink forced-colors:text-[HighlightText]" : "text-bone/90 hover:bg-white/[0.06]"
             }`}
           >
             {o.label}
@@ -1055,7 +1083,7 @@ function StepButton({
       onClick={onPress}
       className={`grid h-11 w-11 place-items-center rounded-full transition-transform duration-200 ease-editorial ${
         atBound
-          ? "cursor-not-allowed text-bone/35"
+          ? "cursor-not-allowed text-bone/35 forced-colors:text-[GrayText]"
           : "bg-white/[0.07] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.1)] hover:bg-white/[0.12] active:scale-[0.94]"
       }`}
     >

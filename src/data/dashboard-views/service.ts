@@ -55,7 +55,7 @@ export const serviceViews: NicheViews = {
       received: { en: "Yesterday, 9:40 PM", es: "Ayer, 9:40 PM" },
       note: {
         en: "Two-story home under big oaks; has the gutters cleaned 3 times a year now",
-        es: "Casa de dos pisos bajo robles grandes; hoy limpia las canaletas 3 veces al año",
+        es: "Casa de dos pisos bajo robles grandes; actualmente manda limpiar las canaletas 3 veces al año",
       },
     },
     {
@@ -69,7 +69,7 @@ export const serviceViews: NicheViews = {
       received: { en: "Yesterday, 3:40 PM", es: "Ayer, 3:40 PM" },
       note: {
         en: "Her 50-gallon tank is 14 years old; comparing tankless vs. a new tank",
-        es: "Su tanque de 50 galones tiene 14 años; compara un sin tanque contra uno nuevo",
+        es: "Su tanque de 50 galones tiene 14 años; compara un calentador sin tanque con uno de tanque nuevo",
       },
     },
     {
@@ -365,15 +365,15 @@ export const serviceViews: NicheViews = {
     {
       id: "se-m2",
       kind: "textback",
-      from: "Keisha M.",
-      fromEmail: "keisha.m@example.net",
+      from: "SermaWebDesign Alerts",
+      fromEmail: "alerts@example.com",
       subject: {
-        en: "Keisha M. replied: “Can someone come today?”",
-        es: "Keisha M. respondió: “¿Puede venir alguien hoy?”",
+        en: "Keisha M. replied to your text-back: “Can someone come today?”",
+        es: "Keisha M. respondió a su texto automático: “¿Puede venir alguien hoy?”",
       },
       preview: {
-        en: "Missed call at 7:52 AM → auto-text → her furnace won't light.",
-        es: "Llamada perdida a las 7:52 AM → texto automático → su calefactor no enciende.",
+        en: "“Our furnace clicks but won't light, and it's 58 degrees in here with a toddler.”",
+        es: "“Nuestro calefactor hace clic pero no enciende, y la casa está a 58 grados con un niño pequeño.”",
       },
       received: { en: "8:05 AM", es: "8:05 AM" },
       unread: true,
@@ -381,34 +381,39 @@ export const serviceViews: NicheViews = {
         greeting: { en: "Hi Dana,", es: "Hola, Dana:" },
         paragraphs: [
           {
-            en: "Thanks for texting back so fast! Our furnace clicks but won't light, and it's 58 degrees in here with a toddler.",
-            es: "¡Gracias por responder tan rápido! Nuestro calefactor hace clic pero no enciende, y la casa está a 58 grados con un niño pequeño.",
+            en: "Keisha M. called at 7:52 AM, before you opened. Your automatic text went out 6 seconds later, and she wrote back at 8:05:",
+            es: "Keisha M. llamó a las 7:52 AM, antes de que usted abriera. Su texto automático salió 6 segundos después y ella respondió a las 8:05:",
           },
           {
-            en: "Can someone come out today? And what do you charge for a service call?",
-            es: "¿Puede venir alguien hoy? ¿Y cuánto cobran por la visita?",
+            en: "“Thanks for texting back so fast! Our furnace clicks but won't light, and it's 58 degrees in here with a toddler. Can someone come out today? And what do you charge for a service call?”",
+            es: "“¡Gracias por responder tan rápido! Nuestro calefactor hace clic pero no enciende, y la casa está a 58 grados con un niño pequeño. ¿Puede venir alguien hoy? ¿Y cuánto cobran por la visita?”",
+          },
+          {
+            en: "Pick a reply below and it goes out from your business number. No typing needed.",
+            es: "Elija una respuesta abajo y se envía desde el número de su negocio. No hace falta escribir nada.",
           },
         ],
         details: [
-          { label: { en: "Missed call", es: "Llamada perdida" }, value: { en: "Today, 7:52 AM", es: "Hoy, 7:52 AM" } },
-          { label: { en: "Auto-text sent", es: "Texto automático" }, value: { en: "6 seconds later", es: "6 segundos después" } },
-          { label: { en: "Phone", es: "Teléfono" }, value: { en: "(678) 555-0115", es: "(678) 555-0115" } },
+          { label: { en: "Caller", es: "Llamada de" }, value: { en: "Keisha M. · (678) 555-0115", es: "Keisha M. · (678) 555-0115" } },
+          { label: { en: "Missed call", es: "Llamada perdida" }, value: { en: "7:52 AM", es: "7:52 AM" } },
+          { label: { en: "Auto-text sent", es: "Texto automático" }, value: { en: "7:52 AM · 6 sec later", es: "7:52 AM · 6 s después" } },
+          { label: { en: "Her reply", es: "Su respuesta" }, value: { en: "8:05 AM", es: "8:05 AM" } },
           { label: { en: "System", es: "Equipo" }, value: { en: "Gas furnace, about 12 years old", es: "Calefactor de gas, unos 12 años" } },
         ],
         primary: {
-          label: { en: "Reply with a quick text", es: "Responder con un texto rápido" },
+          label: { en: "Choose a quick reply", es: "Elegir una respuesta rápida" },
           action: "quickReply",
           done: { en: "Reply sent", es: "Respuesta enviada" },
         },
         secondary: {
-          label: { en: "View lead", es: "Ver prospecto" },
+          label: { en: "Open lead", es: "Abrir prospecto" },
           action: "openLeads",
           done: { en: "Opened in Leads", es: "Abierto en Prospectos" },
         },
         quickReplies: [
           {
-            en: "Hi Keisha, it's Dana at Clearline. Mike can be there today between 2 and 4 PM. The service call is $89, and it's credited toward the repair if you go ahead.",
-            es: "Hola, Keisha, habla Dana de Clearline. Mike puede llegar hoy entre las 2 y las 4 PM. La visita cuesta $89 y se descuenta de la reparación si decide hacerla.",
+            en: "Hi Keisha, it's Dana at Clearline. Mike can be there today between 2 and 4 PM. A $50 deposit holds the visit, and it's credited toward the repair.",
+            es: "Hola, Keisha, habla Dana de Clearline. Mike puede llegar hoy entre las 2 y las 4 PM. Un depósito de $50 aparta la visita y se descuenta de la reparación.",
           },
           {
             en: "Today is full, but I can hold our first slot tomorrow, 8–10 AM. In the meantime, check that the furnace switch is on and the filter isn't clogged.",
@@ -416,10 +421,10 @@ export const serviceViews: NicheViews = {
           },
           {
             en: "So sorry about the cold! I'll call you in 5 minutes to walk you through a quick reset.",
-            es: "¡Lamento mucho el frío! Le llamo en 5 minutos para guiarla en un reinicio rápido.",
+            es: "¡Lamento mucho el frío! La llamo en 5 minutos para guiarla en un reinicio rápido.",
           },
         ],
-        signoff: { en: "— Keisha M. (replied by text)", es: "— Keisha M. (respondió por texto)" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
       },
     },
     {
@@ -458,12 +463,12 @@ export const serviceViews: NicheViews = {
           { label: { en: "Avg. text-back time", es: "Respuesta promedio" }, value: { en: "9 seconds", es: "9 segundos" } },
         ],
         primary: {
-          label: { en: "Mark as read", es: "Marcar como leído" },
+          label: { en: "Mark as reviewed", es: "Marcar como revisado" },
           action: "acknowledge",
-          done: { en: "Marked as read", es: "Marcado como leído" },
+          done: { en: "Marked as reviewed", es: "Marcado como revisado" },
         },
         secondary: {
-          label: { en: "Open Leads", es: "Abrir Prospectos" },
+          label: { en: "Open lead", es: "Abrir prospecto" },
           action: "openLeads",
           done: { en: "Opened in Leads", es: "Abierto en Prospectos" },
         },
@@ -502,9 +507,9 @@ export const serviceViews: NicheViews = {
           },
         ],
         primary: {
-          label: { en: "Reply in Reviews", es: "Responder en Reseñas" },
+          label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened Reviews", es: "Reseñas abiertas" },
+          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
         },
         signoff: SIGNOFF,
       },
