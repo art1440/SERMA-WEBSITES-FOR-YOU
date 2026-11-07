@@ -258,6 +258,10 @@ const eventFor = (lead: Lead, data: NicheViews) => data.calendar.events.find((e)
  * lead was texted from here.
  */
 export function leadTextMessage(lead: Lead, nicheId: NicheId, business: string, data: NicheViews, locale: Locale, intlLocale: string) {
+  // The lead already asked something in a text-back thread: answer that question (its first
+  // prewritten reply), so the Leads bubble and the Inbox thread show the same, relevant text.
+  const answer = textBackFor(lead, data)?.email.quickReplies?.[0];
+  if (answer) return answer[locale];
   const event = eventFor(lead, data);
   const when = event ? eventWhen(event, intlLocale) : null;
   const template = lead.status === "booked" ? TEXT_TEMPLATE.booked : lead.status === "lost" ? TEXT_TEMPLATE.lost : TEXT_TEMPLATE.open;
