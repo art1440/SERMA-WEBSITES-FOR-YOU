@@ -87,7 +87,10 @@ export function ClientLoginModal({ open, onClose }: Props) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35, ease: EASE_EDITORIAL }}
         >
-          <div className="absolute inset-0 bg-ink/75" onClick={onClose} aria-hidden="true" />
+          <div className="absolute inset-0 bg-ink/45" onClick={onClose} aria-hidden="true" />
+          {/* Dark glass sheet: real blur over the page from sm up (a bounded ~30% of the
+              viewport); on phones it is a near-full-height bottom sheet, so it drops the
+              blur and goes solid (blur budget + no ghosting of the page behind). */}
           <motion.div
             ref={dialogRef}
             role="dialog"
@@ -95,34 +98,35 @@ export function ClientLoginModal({ open, onClose }: Props) {
             aria-labelledby="login-title"
             aria-describedby="login-description"
             data-theme="dark"
-            className="relative max-h-[92vh] w-full max-w-xl overflow-y-auto border border-hairline-dark bg-ink text-bone"
+            className="glass-dark glass-solid relative flex max-h-[92svh] w-full max-w-xl flex-col rounded-t-glass-lg text-bone [--glass-blur:30px] max-sm:[-webkit-backdrop-filter:none] max-sm:[backdrop-filter:none] max-sm:![background:linear-gradient(160deg,#1f1e1b,#121210)] sm:rounded-glass-lg"
             initial={{ y: 48, opacity: 0, scale: 0.985 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 28, opacity: 0, scale: 0.99 }}
             transition={{ duration: 0.55, ease: EASE_EDITORIAL }}
           >
-            {/* Header rail */}
-            <div className="flex items-center justify-between border-b border-hairline-dark px-5 py-3">
-              <p className="eyebrow flex items-center gap-2 text-ash">
-                <Lock aria-hidden="true" size={13} strokeWidth={1.5} />
-                {t.login.eyebrow}
-              </p>
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label={t.login.close}
-                className="grid h-11 w-11 place-items-center border border-transparent text-bone hover:border-hairline-dark"
-              >
-                <X aria-hidden="true" size={18} strokeWidth={1.5} />
-              </button>
-            </div>
+            {/* Inner scroller: keeps the glass rim fixed while long content scrolls. */}
+            <div className="overflow-y-auto overscroll-contain px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4 sm:px-8 sm:pb-8 sm:pt-6">
+              {/* Header */}
+              <div className="flex items-center justify-between gap-4">
+                <p className="chip-dark glass-flat text-bone">
+                  <Lock aria-hidden="true" size={13} strokeWidth={1.75} className="text-signal" />
+                  {t.login.eyebrow}
+                </p>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label={t.login.close}
+                  className="btn-line-dark glass-flat -mr-1 h-11 w-11 min-h-[44px] shrink-0 p-0"
+                >
+                  <X aria-hidden="true" size={18} strokeWidth={1.75} />
+                </button>
+              </div>
 
-            <div className="px-5 pb-6 pt-6 sm:px-8 sm:pb-8">
               <h2
                 id="login-title"
                 data-autofocus
                 tabIndex={-1}
-                className="font-display text-4xl leading-[1.02] focus:outline-none sm:text-5xl"
+                className="mt-6 text-balance font-display text-[2.125rem] leading-[1.04] tracking-[-0.035em] focus:outline-none sm:mt-8 sm:text-[2.75rem]"
               >
                 {t.login.title}
               </h2>
@@ -131,16 +135,19 @@ export function ClientLoginModal({ open, onClose }: Props) {
               </p>
 
               {/* Decorative locked credential slots — not interactive, nothing is collected. */}
-              <div className="mt-6 border border-hairline-dark">
-                <div aria-hidden="true" className="grid grid-cols-1 divide-y divide-hairline-dark">
+              <div className="mt-7">
+                <div aria-hidden="true" className="grid grid-cols-1 gap-2">
                   {[t.login.fieldEmail, t.login.fieldKey].map((label) => (
-                    <div key={label} className="flex items-center justify-between px-4 py-3">
+                    <div
+                      key={label}
+                      className="flex min-h-[52px] items-center justify-between gap-4 rounded-glass-sm bg-white/[0.05] px-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] ring-1 ring-inset ring-white/[0.09]"
+                    >
                       <span className="eyebrow text-ash">{label}</span>
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1.5">
                         {Array.from({ length: 8 }).map((_, i) => (
                           <motion.span
                             key={i}
-                            className="h-1.5 w-1.5 bg-ink-500"
+                            className="h-1.5 w-1.5 rounded-full bg-bone/35"
                             initial={{ opacity: 0, y: 4 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.25 + i * 0.04, duration: 0.4, ease: EASE_EDITORIAL }}
@@ -150,34 +157,36 @@ export function ClientLoginModal({ open, onClose }: Props) {
                     </div>
                   ))}
                 </div>
-                <p className="flex items-center gap-2 border-t border-hairline-dark bg-ink-800 px-4 py-2.5 font-mono text-micro uppercase text-ash">
-                  <KeyRound aria-hidden="true" size={13} strokeWidth={1.5} className="text-signal" />
+                <p className="mt-3 flex items-center gap-2 px-1 text-[0.8125rem] leading-snug text-ash">
+                  <KeyRound aria-hidden="true" size={14} strokeWidth={1.75} className="shrink-0 text-signal" />
                   {t.login.lockedLabel}
                 </p>
               </div>
 
-              <h3 className="eyebrow mt-7 text-ash">{t.login.stepsLabel}</h3>
-              <ol className="mt-3 grid gap-px border border-hairline-dark bg-hairline-dark sm:grid-cols-3">
+              <h3 className="eyebrow mt-8 text-ash">{t.login.stepsLabel}</h3>
+              <ol className="mt-3 grid gap-2 sm:grid-cols-3">
                 {t.login.steps.map((step, i) => (
                   <motion.li
                     key={step}
-                    className="bg-ink p-3"
+                    className="flex items-start gap-3 rounded-glass-sm bg-white/[0.05] p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] ring-1 ring-inset ring-white/[0.09] sm:flex-col sm:gap-2.5"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + i * 0.08, duration: 0.5, ease: EASE_EDITORIAL }}
                   >
-                    <span className="block font-mono text-xs text-signal">0{i + 1}</span>
-                    <span className="mt-1 block text-sm leading-snug">{step}</span>
+                    <span className="tabular grid h-7 w-7 shrink-0 place-items-center rounded-full bg-signal text-xs font-semibold text-ink shadow-[inset_0_1px_0_rgba(255,220,190,0.6)]">
+                      0{i + 1}
+                    </span>
+                    <span className="block pt-1 text-sm leading-snug sm:pt-0">{step}</span>
                   </motion.li>
                 ))}
               </ol>
 
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <MagneticButton className="btn-bone w-full sm:w-auto" onClick={bookDemo}>
                   {t.login.primary}
-                  <ArrowRight aria-hidden="true" size={15} strokeWidth={1.5} />
+                  <ArrowRight aria-hidden="true" size={15} strokeWidth={1.75} />
                 </MagneticButton>
-                <button type="button" onClick={onClose} className="btn-line-dark w-full sm:w-auto">
+                <button type="button" onClick={onClose} className="btn-line-dark glass-flat w-full sm:w-auto">
                   {t.login.close}
                 </button>
               </div>
