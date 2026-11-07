@@ -56,12 +56,14 @@ export function Footer() {
               {t.footer.tagline}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
+              {/* Switch first: the badge beside it changes width with the language, so anything after
+                  it would jump away from the pointer after a tap. */}
+              <LanguageToggle tone="dark" />
               {/* Flat: the footer field is static and soft, so real blur would be invisible cost. */}
               <p className="chip-dark glass-flat min-h-[44px] text-bone">
                 <ShieldCheck aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0 text-aqua" />
                 {t.footer.privacyBadge}
               </p>
-              <LanguageToggle tone="dark" />
             </div>
           </div>
 
