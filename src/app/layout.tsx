@@ -14,17 +14,17 @@ const cspMeta = process.env.CSP_META === "true";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "SermaWebDesign — Websites That Give Local Business Owners Their Time Back",
+    default: "SermaWebDesign — Websites That Book Clients for You",
     template: "%s — SermaWebDesign",
   },
   description:
-    "Websites and quiet booking systems for barbershops, salons, beauty studios, restaurants, contractors and service businesses. Calls answered, appointments booked, customers back — so owners get their time back. English & Spanish.",
+    "Bilingual websites for barbershops, salons, restaurants and contractors, with missed-call text-back, 24/7 booking, deposits and reminders. Get your time back.",
   openGraph: {
     type: "website",
     siteName: "SermaWebDesign",
-    title: "SermaWebDesign — You started this for the craft, not the phone.",
+    title: "Websites that book clients for you",
     description:
-      "Calls answered, appointments booked, customers back — so you can get back to the work you love. Book a live walkthrough.",
+      "Missed calls get a text back. Clients book themselves, day or night, with deposits and reminders. You stay with the work you opened the doors for.",
     images: [{ url: asset("/media/hero-poster.jpg"), width: 1600, height: 900, alt: "SermaWebDesign" }],
     locale: "en_US",
     alternateLocale: ["es_US"],
