@@ -34,23 +34,23 @@ const posFromTicket = (ticket: number) =>
 /* ------------------------------------------------------------------ *
  * Liquid-glass materials for this section (see docs/design-system.md).
  * ------------------------------------------------------------------ */
-/** Idle preset capsule: a soft white pebble inside the glass panel (level 2: tint, not another glass). */
+/** Idle preset capsule: a faint light pebble inside the dark panel (level 2: tint, not another glass). */
 const PRESET_IDLE =
-  "bg-white/55 text-ink hover:bg-white/90 " +
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.95),inset_0_0_0_1px_rgba(13,13,11,0.08),0_1px_2px_rgba(13,13,11,0.05)]";
-/** Result card: dark flat glass (it sits in a preserve-3d chain) with a warm under-glow. */
+  "bg-white/[0.06] text-bone hover:bg-white/[0.12] " +
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.3)]";
+/** Result card: dark flat glass (it sits in a preserve-3d chain) with an aqua under-glow. */
 const RESULT_CARD =
   "glass-dark glass-flat flex h-full flex-col justify-between rounded-glass-lg p-6 text-bone sm:p-8 lg:p-9 " +
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_0_-1px_0_rgba(255,255,255,0.04),0_2px_6px_rgba(13,13,11,0.14),0_40px_80px_-32px_rgba(122,46,18,0.55),0_70px_140px_-60px_rgba(229,88,42,0.4)]";
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_0_-1px_0_rgba(255,255,255,0.04),0_2px_6px_rgba(0,0,0,0.3),0_40px_80px_-32px_rgba(0,0,0,0.75),0_70px_140px_-60px_rgba(61,219,201,0.32)]";
 const RESULT_GLOW =
   "pointer-events-none absolute inset-0 -z-10 rounded-[inherit] " +
-  "bg-[radial-gradient(90%_70%_at_88%_0%,rgba(240,163,92,0.2),transparent_60%),radial-gradient(70%_60%_at_0%_100%,rgba(229,88,42,0.12),transparent_65%)]";
+  "bg-[radial-gradient(90%_70%_at_88%_0%,rgba(61,219,201,0.16),transparent_60%),radial-gradient(70%_60%_at_0%_100%,rgba(18,165,148,0.12),transparent_65%)]";
 /** Inner tiles: concentric radius (card 30 − ~16px inset ≈ 14). */
 const TILE_BASE =
   "flex items-center justify-between gap-4 rounded-glass-sm px-4 py-3 ring-1 ring-inset " +
   "shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:block sm:p-4 lg:flex lg:px-4 lg:py-3 xl:block xl:p-4";
 const TILE = `${TILE_BASE} bg-white/[0.05] ring-white/[0.08]`;
-const TILE_ACCENT = `${TILE_BASE} bg-signal/[0.08] ring-signal/25`;
+const TILE_ACCENT = `${TILE_BASE} bg-aqua/[0.08] ring-aqua/25`;
 /* bone/70 keeps ≥ 4.5:1 on both tile tints. */
 const TILE_LABEL = "text-[0.8125rem] font-medium leading-snug text-bone/70";
 const TILE_VALUE =
@@ -87,7 +87,7 @@ export function RevenueCalculator() {
 
   return (
     <section id="calculator" aria-labelledby="calculator-title" className="relative isolate z-10 overflow-hidden py-24 lg:py-32">
-      <AmbientField tone="light" variant={2} />
+      <AmbientField variant={2} />
       <div className="frame">
         <SectionHeader
           headingId="calculator-title"
@@ -98,12 +98,12 @@ export function RevenueCalculator() {
         />
 
         <div className="mt-12 grid grid-cols-12 gap-4 lg:mt-16 lg:gap-5">
-          {/* Controls — light glass panel. Real blur only on desktop, where the panel is a
-              medium surface; on phones it is taller than the viewport, so it goes flat. */}
+          {/* Controls — dark glass panel with the dense tint and NO backdrop blur: it sits
+              over a static light field, where blur is invisible (measured) but still costs. */}
           <Reveal className="col-span-12 lg:col-span-6">
-            <div className="glass glass-solid h-full rounded-glass-lg p-5 [--glass-blur:20px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:p-7 lg:p-9">
+            <div className="glass-dark glass-solid h-full rounded-glass-lg p-5 [-webkit-backdrop-filter:none] [backdrop-filter:none] sm:p-7 lg:p-9">
               <fieldset>
-                <legend className="eyebrow text-muted">{t.calculator.presetLabel}</legend>
+                <legend className="eyebrow text-ash">{t.calculator.presetLabel}</legend>
                 <div className="mt-3.5 flex flex-wrap gap-2">
                   {NICHES.map((n) => {
                     const active = n.id === nicheId;
@@ -125,11 +125,11 @@ export function RevenueCalculator() {
                             aria-hidden="true"
                             // Radius set via style so Framer corrects it during the slide (no squashed ends).
                             style={{ borderRadius: 9999 }}
-                            className="absolute inset-0 -z-10 bg-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_18px_-8px_rgba(13,13,11,0.65),0_1px_2px_rgba(13,13,11,0.2)]"
+                            className="absolute inset-0 -z-10 bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_20px_-8px_rgba(61,219,201,0.6),0_1px_2px_rgba(0,0,0,0.3)]"
                             transition={SPRING_SOFT}
                           />
                         ) : null}
-                        <span className={active ? "text-bone" : "text-ink"}>{n.shortLabel[locale]}</span>
+                        <span className={active ? "text-ink" : "text-bone"}>{n.shortLabel[locale]}</span>
                       </motion.button>
                     );
                   })}
@@ -137,7 +137,7 @@ export function RevenueCalculator() {
               </fieldset>
 
               {/* Soft light-catching divider (decorative). */}
-              <div aria-hidden="true" className="my-7 h-px bg-gradient-to-r from-transparent via-ink/[0.12] to-transparent sm:my-8" />
+              <div aria-hidden="true" className="my-7 h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent sm:my-8" />
 
               <div className="space-y-6 sm:space-y-7">
                 <Slider
@@ -177,10 +177,10 @@ export function RevenueCalculator() {
           <Reveal className="col-span-12 lg:col-span-6" delay={0.1}>
             <TiltCard className="h-full" glare="rounded-glass-lg">
               <div data-theme="dark" className={RESULT_CARD}>
-                {/* Warm inner light: sits above the glass body, below the content (isolated stack). */}
+                {/* Aqua inner light: sits above the glass body, below the content (isolated stack). */}
                 <span aria-hidden="true" className={RESULT_GLOW} />
                 <div>
-                  {/* bone/70 (not ash): stays >= 4.5:1 where the warm inner light is strongest. */}
+                  {/* bone/70 (not ash): stays >= 4.5:1 where the aqua inner light is strongest. */}
                   <p className="eyebrow text-bone/70" id="calc-result-label">
                     {t.calculator.monthlyLabel}
                   </p>
@@ -205,8 +205,8 @@ export function RevenueCalculator() {
                     </div>
                     <div className={TILE_ACCENT}>
                       <dt className={TILE_LABEL}>{t.calculator.annualLabel}</dt>
-                      {/* Signal on the tinted tile is >= 3:1 and every size here is large text (>= 24px). */}
-                      <dd className={`${TILE_VALUE} text-signal`}>
+                      {/* Aqua on the tinted tile is >= 6:1 (and every size here is large text). */}
+                      <dd className={`${TILE_VALUE} text-aqua`}>
                         <AnimatedNumber value={annual} format="currency" />
                       </dd>
                     </div>
@@ -225,7 +225,7 @@ export function RevenueCalculator() {
                 <MagneticButton
                   href="#demo"
                   onClick={onCta}
-                  className="btn-bone mt-8 self-start whitespace-normal text-left leading-snug"
+                  className="btn-aqua mt-8 self-start whitespace-normal text-left leading-snug"
                 >
                   {t.calculator.cta}
                   <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} className="shrink-0" />
@@ -259,11 +259,11 @@ function Slider({ label, hint, value, min, max, step, display, onChange }: Slide
   return (
     <div>
       <div className="flex items-baseline justify-between gap-4">
-        <label htmlFor={id} className="text-[0.9375rem] font-medium leading-snug text-ink sm:text-base">
+        <label htmlFor={id} className="text-[0.9375rem] font-medium leading-snug text-bone sm:text-base">
           {label}
         </label>
         {/* aria-hidden: the slider's aria-valuetext already announces this value. */}
-        <output htmlFor={id} aria-hidden="true" className="tabular shrink-0 font-display text-[1.75rem] leading-none tracking-[-0.035em] text-ink sm:text-[2rem]">
+        <output htmlFor={id} aria-hidden="true" className="tabular shrink-0 font-display text-[1.75rem] leading-none tracking-[-0.035em] text-bone sm:text-[2rem]">
           {display}
         </output>
       </div>
@@ -281,7 +281,7 @@ function Slider({ label, hint, value, min, max, step, display, onChange }: Slide
         style={{ ["--fill" as string]: `${fillPct}%` }}
       />
       {hint ? (
-        <p id={hintId} className="mt-1 text-sm leading-relaxed text-muted">
+        <p id={hintId} className="mt-1 text-sm leading-relaxed text-ash">
           {hint}
         </p>
       ) : null}
