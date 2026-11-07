@@ -22,7 +22,8 @@
   }
 
   body {
-    @apply bg-bone font-sans text-ink antialiased;
+    @apply bg-ink font-sans text-bone antialiased;
+    color-scheme: dark;
     font-feature-settings: "ss01", "cv11";
   }
 
@@ -39,17 +40,18 @@
   }
 
   ::selection {
-    background: #0d0d0b;
-    color: #f1ede4;
+    background: #3ddbc9;
+    color: #0d0d0b;
   }
 
   /* Visible, high-contrast keyboard focus (WCAG 2.4.7 / 1.4.11). */
+  /* Dark-first site: aqua ring (11:1 on ink). Light surfaces opt back in with data-theme="light". */
   :focus-visible {
-    outline: 2px solid #b23f14;
+    outline: 2px solid #3ddbc9;
     outline-offset: 3px;
   }
-  [data-theme="dark"] :focus-visible {
-    outline-color: #e5582a;
+  [data-theme="light"] :focus-visible {
+    outline-color: #0b6e63;
   }
 
   /* Media never blocks layout / never overflows on phones. */
@@ -210,8 +212,12 @@
    *   .btn-signal accent (use at most once per view)
    * ================================================================ */
   .btn {
-    @apply relative isolate inline-flex min-h-[46px] select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-3 text-[0.9375rem] font-medium tracking-[-0.01em] disabled:cursor-not-allowed disabled:opacity-60;
+    @apply relative isolate inline-flex min-h-[50px] select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-7 py-3 text-[0.9375rem] font-medium tracking-[-0.01em] disabled:cursor-not-allowed disabled:opacity-60;
     transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* Two sizes only: .btn (in-page CTAs, 50px) and .btn-sm (nav, footer, legal, utility; 44px). */
+  .btn-sm {
+    @apply min-h-[44px] px-4 py-2 text-sm;
   }
   .btn:active {
     transform: scale(0.97);
@@ -247,6 +253,13 @@
     --btn-glow: rgba(255, 230, 200, 0.55);
     box-shadow: inset 0 1px 0 rgba(255, 220, 190, 0.6), 0 12px 30px -12px rgba(178, 63, 20, 0.7);
   }
+  /* Primary on the dark site: aqua capsule, ink text (11.3:1), soft aqua halo. */
+  .btn-aqua {
+    @apply btn text-ink;
+    background: linear-gradient(180deg, #6fe9da 0%, #3ddbc9 55%, #2fcbb9 100%);
+    --btn-glow: rgba(255, 255, 255, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 0 1px rgba(61, 219, 201, 0.35), 0 12px 32px -12px rgba(61, 219, 201, 0.55);
+  }
   .btn-line {
     @apply btn glass text-ink;
     --glass-blur: 16px;
@@ -268,7 +281,7 @@
 
   /* Form controls — rounded, glassy, 16px+ text (prevents iOS zoom). */
   .field {
-    @apply block w-full rounded-glass-sm border border-ink/15 bg-white/60 px-4 py-3 text-base text-ink placeholder:text-muted hover:border-ink/40 focus:border-ink;
+    @apply block w-full rounded-glass-sm border border-white/15 bg-white/[0.06] px-4 py-3 text-base text-bone placeholder:text-ash hover:border-white/35 focus:border-aqua;
   }
   .field[aria-invalid="true"] {
     @apply border-signal-deep;
@@ -281,17 +294,17 @@
   .range::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 999px;
-    background: linear-gradient(to right, #0d0d0b 0%, #0d0d0b var(--fill, 50%), rgba(13, 13, 11, 0.12) var(--fill, 50%), rgba(13, 13, 11, 0.12) 100%);
+    background: linear-gradient(to right, #12a594 0%, #3ddbc9 var(--fill, 50%), rgba(255, 255, 255, 0.16) var(--fill, 50%), rgba(255, 255, 255, 0.16) 100%);
   }
   .range::-moz-range-track {
     height: 6px;
     border-radius: 999px;
-    background: rgba(13, 13, 11, 0.12);
+    background: rgba(255, 255, 255, 0.16);
   }
   .range::-moz-range-progress {
     height: 6px;
     border-radius: 999px;
-    background: #0d0d0b;
+    background: linear-gradient(to right, #12a594, #3ddbc9);
   }
   .range::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -300,18 +313,18 @@
     height: 26px;
     width: 26px;
     border-radius: 999px;
-    border: 1px solid rgba(13, 13, 11, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     background: radial-gradient(circle at 35% 30%, #fff 0%, #f6f1e8 55%, #e3d9c8 100%);
-    box-shadow: inset 0 1px 0 #fff, 0 6px 14px -4px rgba(13, 13, 11, 0.35);
+    box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(61, 219, 201, 0.18), 0 6px 14px -4px rgba(0, 0, 0, 0.6);
     transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .range::-moz-range-thumb {
     height: 26px;
     width: 26px;
     border-radius: 999px;
-    border: 1px solid rgba(13, 13, 11, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     background: radial-gradient(circle at 35% 30%, #fff 0%, #f6f1e8 55%, #e3d9c8 100%);
-    box-shadow: inset 0 1px 0 #fff, 0 6px 14px -4px rgba(13, 13, 11, 0.35);
+    box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(61, 219, 201, 0.18), 0 6px 14px -4px rgba(0, 0, 0, 0.6);
     transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .range:active::-webkit-slider-thumb {

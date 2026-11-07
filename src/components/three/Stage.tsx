@@ -1,18 +1,19 @@
 "use client";
 
-import { motion, useMotionValueEvent, useTransform, type MotionValue } from "framer-motion";
+import { motion, useMotionValue, useMotionValueEvent, useTransform, type MotionValue } from "framer-motion";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
 import { asset } from "@/lib/asset";
+import { LightThreads } from "./LightThreads";
 
 const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
 
 /**
  * Fixed, full-screen backdrop shared by the transparent chapters (hero, system, finale).
- * Layer order (back → front):
- *   bone base → Higgsfield hero film (3D dive) → ink wash → Higgsfield architecture film → WebGL engine
+ * Dark-first. Layer order (back → front):
+ *   ink base → light threads (whole page) → hero film (3D dive) → architecture film → WebGL engine
  * Opaque chapters (dashboard, simulator, …) simply cover it; the engine's render loop
  * stops whenever none of the transparent chapters is on screen.
  */
@@ -20,8 +21,8 @@ export function Stage() {
   const { hero, system, finale, reduce, desktop } = useScene();
   const { paused } = useMotionPause();
 
-  // Backdrop colour follows raw scroll so text contrast never lags behind a fast jump.
-  const ink = useTransform(hero.raw, [0.6, 0.9], [0, 1]);
+  // The site is dark from the first frame (the engine reads 1 = ink backdrop).
+  const ink = useMotionValue(1);
   const filmOpacity = useTransform(hero.progress, [0.36, 0.48, 0.86, 0.97], [0, 1, 1, 0]);
   const filmScale = useTransform(hero.progress, [0.36, 0.8], [0.22, 1.08]);
   const filmRotateX = useTransform(hero.progress, [0.36, 0.8], [32, 0]);
@@ -62,7 +63,10 @@ export function Stage() {
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      <div className="absolute inset-0 bg-bone" />
+      <div className="absolute inset-0 bg-ink" />
+
+      {/* Light threads run behind every section; translucent sections let them glow through. */}
+      <LightThreads paused={paused} desktop={desktop} />
 
       {/* Hero film: flies up out of depth and fills the screen — the camera "dives" into it. */}
       <div className="absolute inset-0 [perspective:1100px]">
@@ -75,13 +79,13 @@ export function Stage() {
         </motion.div>
       </div>
 
-      <motion.div className="absolute inset-0 bg-ink" style={{ opacity: ink }} />
-
       <motion.div className="absolute inset-0" style={{ opacity: archOpacity }}>
         <LayerVideo src={asset("/media/architecture")} poster={asset("/media/architecture-poster.jpg")} visibility={archOpacity} paused={paused} />
       </motion.div>
 
+      {/* The engine's last frame stays on its canvas when it stops, so hide it off-chapter. */}
       {webgl ? (
+        <div className={`absolute inset-0 transition-opacity duration-500 ${active ? "opacity-100" : "opacity-0"}`}>
         <Engine3D
           active={active && !paused}
           desktop={desktop}
@@ -90,6 +94,7 @@ export function Stage() {
           finale={finale.progress}
           ink={ink}
         />
+        </div>
       ) : null}
 
       {/* Vignette (transform/opacity only) */}

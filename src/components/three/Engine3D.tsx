@@ -28,7 +28,9 @@ type Props = EngineInputs & { active: boolean; desktop: boolean };
 
 const INK = new THREE.Color("#0D0D0B");
 const BONE = new THREE.Color("#F1EDE4");
-const SIGNAL = new THREE.Color("#E5582A");
+/** Brand accent on the dark-first site (aqua). Particles keep a warm ember minority for depth. */
+const ACCENT = new THREE.Color("#3DDBC9");
+const EMBER = new THREE.Color("#E5582A");
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 /** Smoothstep of x between a and b. */
@@ -300,7 +302,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
           uSize: { value: desktop ? 40 : 34 },
           uPixelRatio: { value: Math.min(gl.getPixelRatio(), 2) },
           uColor: { value: INK.clone() },
-          uAccent: { value: SIGNAL.clone() },
+          uAccent: { value: ACCENT.clone() },
           uOpacity: { value: 0.85 },
         },
       }),
@@ -497,29 +499,29 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
       <ambientLight intensity={0.35} />
       <directionalLight ref={keyLight} position={[4, 5, 6]} intensity={2.4} color="#FFD9B0" />
       <directionalLight position={[-6, -2, -4]} intensity={1.4} color="#BFD3FF" />
-      <pointLight position={[0, 0, 0]} intensity={6} distance={4} color="#E5582A" />
+      <pointLight position={[0, 0, 0]} intensity={6} distance={4} color="#3DDBC9" />
 
       <group ref={root}>
         {/* Glowing heart, seen through the glass core */}
         <mesh ref={heart}>
           <icosahedronGeometry args={[0.3, 1]} />
-          <meshBasicMaterial color="#FF7A45" toneMapped={false} />
+          <meshBasicMaterial color="#7FF2E3" toneMapped={false} />
         </mesh>
         <sprite ref={heartGlow} scale={2.4}>
-          <spriteMaterial map={glowTexture} color="#E5582A" transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+          <spriteMaterial map={glowTexture} color="#3DDBC9" transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
         </sprite>
 
         <mesh ref={core} geometry={coreGeometry}>
           {desktop ? (
             // Dark refractive glass: bends the heart's light and the particles behind it.
             <meshPhysicalMaterial
-              color="#2A2622"
+              color="#1C2624"
               metalness={0.1}
               roughness={0.08}
               transmission={0.92}
               thickness={1.4}
               ior={1.5}
-              attenuationColor="#3B2216"
+              attenuationColor="#0E3B36"
               attenuationDistance={1.6}
               clearcoat={1}
               clearcoatRoughness={0.05}
@@ -535,12 +537,12 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
         <group rotation={[1.2, 0.3, 0]}>
           <mesh ref={ringA}>
             <torusGeometry args={[1.8, 0.014, 12, 160]} />
-            <meshBasicMaterial color={SIGNAL} toneMapped={false} />
+            <meshBasicMaterial color={ACCENT} toneMapped={false} />
           </mesh>
-          {/* Soft halo around the signal ring */}
+          {/* Soft halo around the accent ring */}
           <mesh ref={ringGlow}>
             <torusGeometry args={[1.8, 0.07, 12, 160]} />
-            <meshBasicMaterial color={SIGNAL} transparent opacity={0.12} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+            <meshBasicMaterial color={ACCENT} transparent opacity={0.12} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
           </mesh>
         </group>
         <group rotation={[-0.45, 0.9, 0]}>
@@ -556,7 +558,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
         <group rotation={[1.15, 0.25, 0]}>
           <mesh ref={wave}>
             <torusGeometry args={[0.95, 0.01, 8, 140]} />
-            <meshBasicMaterial color={SIGNAL} transparent opacity={0} depthWrite={false} />
+            <meshBasicMaterial color={EMBER} transparent opacity={0} depthWrite={false} />
           </mesh>
         </group>
 

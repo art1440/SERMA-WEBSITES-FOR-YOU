@@ -49,6 +49,13 @@ const config: Config = {
           DEFAULT: "#E5582A",
           deep: "#B23F14",
         },
+        /* Primary accent (dark-first theme): glow, CTAs, focus, data highlights.
+           aqua on ink 11.3:1 · ink on aqua 11.3:1 · aqua-deep on ink 6.3:1. Signal stays for small alerts. */
+        aqua: {
+          DEFAULT: "#3DDBC9",
+          deep: "#12A594",
+          glow: "#7FF2E3",
+        },
         /* Ambient light-field tints — decorative backgrounds only, never text. */
         sand: "#E8DCC6",
         amber: "#F0A35C",
