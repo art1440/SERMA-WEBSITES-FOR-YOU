@@ -75,6 +75,8 @@ const WINDOW =
   "[background:linear-gradient(165deg,#22231f_0%,#141513_36%,#0d0e0c_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.4),rgba(255,255,255,0.07)_28%,rgba(255,255,255,0.03)_68%,rgba(61,219,201,0.34))_border-box] " +
   "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_2px_6px_rgba(0,0,0,0.3),0_40px_80px_-28px_rgba(0,0,0,0.7),0_0_120px_-40px_rgba(61,219,201,0.22),0_90px_150px_-60px_rgba(0,0,0,0.6)]";
 const PLATE = "glass-dark glass-flat rounded-glass";
+/** The window's full width (its max-w); the pinned stage always lays it out at this width. */
+const WINDOW_W = 1240;
 const CARD =
   "rounded-glass-sm bg-white/[0.04] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)] sm:p-5 lg:p-4";
 /* Ash on the lightest plate corner is still ≥ 5:1. */
@@ -166,7 +168,9 @@ export function DashboardShowcase() {
 
           {/* Pinned: takes what the heading and disclaimer leave (shrinks, min-h-0) and hugs the window, so the
               disclaimer below always sits right under it, never scaled and never clipped. */}
-          <FitStage enabled={pinned} hug onScale={onScale} className={pinned ? "mt-4" : "mt-6"}>
+          {/* Pinned: always laid out at the full 1240px window width, so every screen gets the same
+              layout (and the same per-language height, see OVERVIEW_MIN_H); only the scale differs. */}
+          <FitStage enabled={pinned} hug onScale={onScale} width={pinned ? WINDOW_W : undefined} className={pinned ? "mt-4" : "mt-6"}>
             <div className="mx-auto max-w-[1240px] [perspective-origin:50%_70%] [perspective:1800px]">
               <motion.div
                 data-theme="dark"
@@ -208,7 +212,7 @@ export function DashboardShowcase() {
           {/* FTC disclosure: outside the scaled stage, as wide as the (scaled) window. */}
           <div
             className="mx-auto shrink-0"
-            style={{ width: "calc(100% * var(--fit-scale, 1))", maxWidth: "calc(1240px * var(--fit-scale, 1))" }}
+            style={{ width: "min(100%, calc(1240px * var(--fit-scale, 1)))" }}
           >
             <SimulationDisclaimer className="mt-3 lg:max-w-none" />
           </div>
@@ -319,7 +323,12 @@ function Sidebar({ desktop }: { desktop: boolean }) {
               aria-selected={selected}
               aria-controls={VIEW_PANEL_ID}
               tabIndex={selected ? 0 : -1}
-              onClick={() => setView(v)}
+              onClick={(e) => {
+                // Safari/iOS don't focus a clicked button; focus it so the panel's
+                // lost-focus safety net doesn't pull focus to the section heading.
+                e.currentTarget.focus({ preventScroll: true });
+                setView(v);
+              }}
               // Below lg: icon above label (radius concentric with the plate: 22 − 6px padding = 16).
               // lg+: one capsule row; the 10.25rem track fits the longest label + badge ("Prospectos" 2) untruncated.
               // Selection is a tint + shadow only, so forced colors get a system-colour outline.
@@ -368,6 +377,15 @@ const VIEW_COMPONENTS: Record<Exclude<DashboardView, "overview">, () => React.JS
  * to the Overview never remounts it (no count-up from 0, no rescale). Below lg
  * only the open view renders, at its natural height.
  */
+/**
+ * Pinned stage only (the window is always laid out at WINDOW_W, so this panel is 1050px wide):
+ * the Overview's minimum height per language = the tallest of the six industries. Switching
+ * industry (or the scroll-driven auto-cycle) then never rescales the window, and a language
+ * switch rescales once instead of following the staggered content swap. It is a minimum,
+ * so taller content still wins and nothing can clip. Re-measure after big copy changes.
+ */
+const OVERVIEW_MIN_H = { en: 626, es: 648 } as const;
+
 function ViewPanel({
   desktop,
   pinned,
@@ -378,6 +396,7 @@ function ViewPanel({
   layers: { kpi?: object; mid?: object; bottom?: object; rail?: object };
 }) {
   const { view } = useDashboardView();
+  const { locale } = useLanguage();
   const overviewRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const pinnedRef = useRef(pinned);
@@ -415,13 +434,15 @@ function ViewPanel({
       {overviewOpen || desktop ? (
         <div
           ref={overviewRef}
+          style={pinned ? { minHeight: OVERVIEW_MIN_H[locale] } : undefined}
           inert={!overviewOpen}
           aria-hidden={overviewOpen ? undefined : true}
           className={`grid grid-cols-12 gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] ${
             overviewOpen ? "" : "invisible"
           }`}
         >
-          <div className="col-span-12 grid content-start gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:col-span-1">
+          {/* lg: the pipeline plate takes any spare height, so the column never ends in a gap. */}
+          <div className="col-span-12 grid content-start gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:col-span-1 lg:grid-rows-[auto_auto_minmax(0,1fr)] lg:content-stretch">
             <motion.div className={`${PLATE} p-1.5 sm:p-2`} style={layers.kpi}>
               <KpiRow />
             </motion.div>

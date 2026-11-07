@@ -269,16 +269,16 @@ export const NICHES: Niche[] = [
       },
     },
     modules: [
-      { name: { en: "Missed-Call Instant Quote Recovery", es: "Recuperación Inmediata de Cotizaciones" }, detail: { en: "Callers get a quote-request link in seconds.", es: "Quien llama recibe un enlace de cotización en segundos." } },
+      { name: { en: "Missed-Call Instant Quote Recovery", es: "Recuperación Inmediata de Cotizaciones" }, detail: { en: "Callers get a quote-request link in seconds.", es: "Quien llama recibe al instante un enlace para cotizar." } },
       { name: { en: "Estimate Pipeline", es: "Embudo de Presupuestos" }, detail: { en: "From site visit to signed estimate.", es: "De la visita al presupuesto firmado." } },
       { name: { en: "Dispatched Jobs", es: "Trabajos Asignados" }, detail: { en: "Crews, addresses, and status in one view.", es: "Cuadrillas, direcciones y estado en una sola vista." } },
-      { name: { en: "High-Ticket Lead Tracking", es: "Seguimiento de Prospectos de Alto Valor" }, detail: { en: "Big jobs flagged and followed up first.", es: "Los trabajos grandes se marcan y se atienden primero." } },
+      { name: { en: "High-Ticket Lead Tracking", es: "Seguimiento de Prospectos de Alto Valor" }, detail: { en: "Big jobs flagged and followed up first.", es: "Los trabajos grandes se atienden primero." } },
     ],
     kpis: [
       { label: { en: "Quote requests recovered", es: "Cotizaciones recuperadas" }, value: 23, format: "number", delta: { en: "+8", es: "+8" } },
-      { label: { en: "Open estimate value", es: "Valor de presupuestos abiertos" }, value: 186400, format: "currency", delta: { en: "+$41.2k", es: "+$41.2k" } },
+      { label: { en: "Open estimate value", es: "Presupuestos abiertos" }, value: 186400, format: "currency", delta: { en: "+$41.2k", es: "+$41.2k" } },
       { label: { en: "Jobs dispatched", es: "Trabajos asignados" }, value: 41, format: "number", delta: { en: "+6", es: "+6" } },
-      { label: { en: "High-ticket leads (> $10k)", es: "Prospectos de alto valor (> $10k)" }, value: 9, format: "number", delta: { en: "+3", es: "+3" } },
+      { label: { en: "High-ticket leads (> $10k)", es: "Prospectos de más de $10k" }, value: 9, format: "number", delta: { en: "+3", es: "+3" } },
     ],
     weekly: [22000, 31000, 27000, 38000, 35000, 44000, 41000, 52000],
     pipeline: [
@@ -288,9 +288,9 @@ export const NICHES: Niche[] = [
       { stage: { en: "Won", es: "Ganado" }, count: 12 },
     ],
     stream: [
-      { text: { en: "Primary bath estimate sent — Jenna P.", es: "Presupuesto de baño principal enviado — Jenna P." }, amount: 19500, minutesAgo: 6 },
-      { text: { en: "High-ticket lead flagged: kitchen refresh, Karen W.", es: "Prospecto de alto valor: renovación de cocina, Karen W." }, amount: 18500, minutesAgo: 12 },
-      { text: { en: "Crew B dispatched — ceiling repair, Derek S.", es: "Cuadrilla B asignada — reparación de cielo raso, Derek S." }, minutesAgo: 41 },
+      { text: { en: "Primary bath estimate sent — Jenna P.", es: "Presupuesto de baño enviado — Jenna P." }, amount: 19500, minutesAgo: 6 },
+      { text: { en: "High-ticket lead flagged: kitchen refresh, Karen W.", es: "Prospecto de alto valor: cocina, Karen W." }, amount: 18500, minutesAgo: 12 },
+      { text: { en: "Crew B dispatched — ceiling repair, Derek S.", es: "Cuadrilla B asignada — cielo raso, Derek S." }, minutesAgo: 41 },
       { text: { en: "Missed call → text-back → site visit booked", es: "Llamada perdida → texto automático → visita agendada" }, minutesAgo: 51 },
     ],
     simulator: {
