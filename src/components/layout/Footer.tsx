@@ -1,13 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUp, ShieldCheck } from "lucide-react";
+import { ArrowUp, ArrowUpRight, ShieldCheck } from "lucide-react";
+import { AmbientField } from "@/components/ui/AmbientField";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { Reveal } from "@/components/ui/Reveal";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
 import { fill } from "@/i18n/types";
+
+/** Footer link: calm sans, with a small arrow that glides in on hover (transform + opacity). */
+function FooterLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="group inline-flex min-h-[44px] items-center gap-1.5 text-[1.0625rem] tracking-[-0.01em] text-bone/85 hover:text-bone"
+    >
+      {label}
+      <ArrowUpRight
+        aria-hidden="true"
+        size={14}
+        strokeWidth={1.75}
+        className="-translate-x-1 text-ash opacity-0 transition-[transform,opacity] duration-300 ease-editorial group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+      />
+    </Link>
+  );
+}
 
 export function Footer() {
   const { t } = useLanguage();
@@ -28,16 +47,19 @@ export function Footer() {
   ];
 
   return (
-    <footer data-theme="dark" className="bg-ink text-bone">
-      <div className="frame pb-10 pt-20">
-        <div className="grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+    <footer data-theme="dark" className="relative isolate overflow-hidden text-bone">
+      <AmbientField tone="dark" variant={2} />
+      <div className="frame pb-8 pt-24 lg:pt-28">
+        <div className="grid grid-cols-12 gap-x-4 gap-y-14 lg:gap-x-8">
           <div className="col-span-12 lg:col-span-5">
-            <p className="max-w-sm text-pretty leading-relaxed text-ash">{t.footer.tagline}</p>
-            <p className="mt-6 flex items-center gap-2 font-mono text-micro uppercase text-bone">
-              <ShieldCheck aria-hidden="true" size={15} strokeWidth={1.5} className="text-signal" />
-              {t.footer.privacyBadge}
+            <p className="max-w-md text-pretty font-display text-[1.625rem] leading-[1.18] tracking-[-0.03em] text-bone sm:text-[1.875rem]">
+              {t.footer.tagline}
             </p>
-            <div className="mt-6">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <p className="chip-dark min-h-[44px] text-bone">
+                <ShieldCheck aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0 text-signal" />
+                {t.footer.privacyBadge}
+              </p>
               <LanguageToggle layoutId="lang-pill-footer" tone="dark" />
             </div>
           </div>
@@ -46,12 +68,10 @@ export function Footer() {
             <h2 id="footer-explore" className="eyebrow text-ash">
               {t.footer.explore}
             </h2>
-            <ul className="mt-4 space-y-1">
+            <ul className="mt-3">
               {explore.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="inline-flex min-h-[40px] items-center text-bone hover:text-signal">
-                    {l.label}
-                  </Link>
+                  <FooterLink href={l.href} label={l.label} />
                 </li>
               ))}
             </ul>
@@ -61,27 +81,25 @@ export function Footer() {
             <h2 id="footer-legal" className="eyebrow text-ash">
               {t.footer.legal}
             </h2>
-            <ul className="mt-4 space-y-1">
+            <ul className="mt-3">
               {legal.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="inline-flex min-h-[40px] items-center text-bone hover:text-signal">
-                    {l.label}
-                  </Link>
+                  <FooterLink href={l.href} label={l.label} />
                 </li>
               ))}
             </ul>
           </nav>
         </div>
 
-        <Reveal className="mt-16 overflow-hidden border-t border-hairline-dark pt-6" y={60}>
+        <Reveal className="mt-20 overflow-hidden lg:mt-28" y={60}>
           <Wordmark tone="dark" size="xl" />
         </Reveal>
 
-        <div className="mt-8 flex flex-col gap-4 border-t border-hairline-dark pt-6 font-mono text-micro uppercase text-ash sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-4 border-t border-white/10 pt-6 text-[0.8125rem] text-ash sm:flex-row sm:items-center sm:justify-between">
           <p>{fill(t.footer.rights, { year, entity: siteConfig.legalEntity })}</p>
-          <a href="#top" className="inline-flex min-h-[44px] items-center gap-2 text-bone hover:text-signal">
+          <a href="#top" className="btn-line-dark min-h-[44px] self-start px-5 py-2 text-sm sm:self-auto">
             {t.footer.backToTop}
-            <ArrowUp aria-hidden="true" size={13} strokeWidth={1.5} />
+            <ArrowUp aria-hidden="true" size={14} strokeWidth={1.75} />
           </a>
         </div>
       </div>

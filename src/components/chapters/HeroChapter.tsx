@@ -3,6 +3,7 @@
 import { motion, useMotionValueEvent, useTransform, type MotionValue } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useState, type MouseEvent } from "react";
+import { AmbientField } from "@/components/ui/AmbientField";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
@@ -46,8 +47,11 @@ export function HeroChapter() {
     <section
       ref={hero.ref}
       aria-labelledby="hero-title"
-      className="relative motion-safe:h-[180vh] motion-reduce:bg-bone"
+      className="relative motion-safe:h-[180vh] motion-reduce:isolate motion-reduce:overflow-hidden"
     >
+      {/* Reduced motion: the 3D stage is off, so the glass sits in a warm light field instead. */}
+      <AmbientField tone="light" variant={0} className="hidden motion-reduce:block" />
+
       <div className="relative motion-safe:sticky motion-safe:top-0 motion-safe:h-[100svh] motion-safe:overflow-hidden">
         {/* Phones: soft bone fade behind the copy so the 3D engine never fights the headline */}
         <motion.div
@@ -56,13 +60,13 @@ export function HeroChapter() {
           className="pointer-events-none absolute inset-x-0 bottom-0 h-[74%] bg-gradient-to-t from-bone via-bone/90 to-transparent motion-reduce:hidden lg:hidden"
         />
         <div className="frame relative flex h-full flex-col pb-10 pt-8 motion-safe:justify-end motion-safe:lg:justify-center motion-safe:lg:pb-16">
-          {/* Meta rail */}
+          {/* Meta chips: what we do + live status */}
           <motion.div
             style={reduce ? undefined : { opacity: copyOpacity }}
-            className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/20 pb-4 lg:w-7/12"
+            className="flex flex-wrap items-center gap-2.5"
           >
-            <p className="eyebrow hidden text-muted sm:block">{t.hero.eyebrow}</p>
-            <p className="flex items-center gap-2.5 font-mono text-micro uppercase text-ink">
+            <p className="chip glass-flat hidden text-muted sm:inline-flex">{t.hero.eyebrow}</p>
+            <p className="chip text-ink">
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2F7D4F]" />
@@ -75,7 +79,7 @@ export function HeroChapter() {
           <div className="[perspective:900px]">
             <h1
               id="hero-title"
-              className="mt-6 font-display text-display-xl text-ink [transform-style:preserve-3d] lg:mt-10 lg:w-8/12 lg:text-[clamp(2.75rem,7.4vw,9rem)]"
+              className="mt-6 font-display text-display-xl text-ink [transform-style:preserve-3d] max-sm:text-[clamp(2.25rem,10.4vw,3rem)] lg:mt-9 lg:w-8/12 lg:text-[clamp(2.75rem,6.6vw,8rem)]"
             >
               {t.hero.headline.map((line, i) => (
                 <HeadlineLine key={i} index={i} progress={p} reduce={reduce} emphasis={t.hero.headlineEmphasis}>
@@ -88,7 +92,7 @@ export function HeroChapter() {
           <motion.div
             style={reduce ? undefined : { opacity: copyOpacity, y: copyY, pointerEvents: copyPointer }}
             inert={!reduce && copyHidden}
-            className="mt-8 lg:w-5/12"
+            className="mt-7 lg:mt-9 lg:w-5/12"
           >
             <motion.p
               className="max-w-md text-pretty text-base leading-relaxed text-muted sm:text-lg"
@@ -104,43 +108,50 @@ export function HeroChapter() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay: 0.6 }}
             >
-              <MagneticButton href="#demo" onClick={onDemoClick} className="btn-ink px-6 py-4 text-[0.8rem]">
+              {/* transition-none: the magnetic spring drives transform, so the CSS transform transition must not smooth it twice */}
+              <MagneticButton href="#demo" onClick={onDemoClick} className="btn-ink min-h-[50px] px-7 transition-none">
                 {t.common.bookDemo}
-                <ArrowUpRight aria-hidden="true" size={15} strokeWidth={1.5} />
+                <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} />
               </MagneticButton>
-              <a
-                href="#dashboard"
-                className="group inline-flex min-h-[44px] items-center gap-2 px-1 font-mono text-[0.75rem] uppercase tracking-[0.08em] text-ink"
-              >
+              <a href="#dashboard" className="btn-line group min-h-[50px] px-7">
                 {t.hero.secondaryCta}
-                <ArrowDown aria-hidden="true" size={14} strokeWidth={1.5} className="transition-transform duration-300 ease-editorial group-hover:translate-y-1" />
+                <ArrowDown
+                  aria-hidden="true"
+                  size={16}
+                  strokeWidth={1.75}
+                  className="transition-transform duration-300 ease-editorial group-hover:translate-y-0.5"
+                />
               </a>
             </motion.div>
           </motion.div>
 
           {/* Static stand-in for the 3D engine when motion is reduced */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset("/media/hero-poster.jpg")} alt="" className="mt-10 hidden aspect-[16/9] w-full border border-ink object-cover motion-reduce:block" />
+          <img
+            src={asset("/media/hero-poster.jpg")}
+            alt=""
+            className="mt-10 hidden aspect-[16/9] w-full rounded-glass-lg object-cover shadow-[0_30px_70px_-30px_rgba(60,40,20,0.5)] ring-1 ring-white/70 motion-reduce:block"
+          />
         </div>
 
         {/* Figure caption for the live engine (desktop) */}
         <motion.p
           aria-hidden="true"
           style={{ opacity: copyOpacity }}
-          className="absolute bottom-8 right-6 hidden font-mono text-micro uppercase text-muted motion-reduce:hidden lg:block lg:right-10"
+          className="eyebrow absolute bottom-8 right-6 hidden text-muted motion-reduce:hidden lg:block lg:right-10"
         >
           {t.hero.figure}
         </motion.p>
 
-        {/* Scroll cue */}
+        {/* Scroll cue (desktop: on phones the stacked CTAs already sit at the bottom edge) */}
         <motion.div
           aria-hidden="true"
           style={{ opacity: hintOpacity }}
-          className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-micro uppercase text-muted motion-safe:flex"
+          className="eyebrow absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2.5 text-muted motion-safe:lg:flex"
         >
           {t.hero.scrollHint}
-          <span className="relative block h-10 w-px overflow-hidden bg-ink/15">
-            <span className="absolute inset-x-0 top-0 block h-1/2 animate-scroll-cue bg-ink" />
+          <span className="relative block h-10 w-[3px] overflow-hidden rounded-full bg-ink/10">
+            <span className="absolute inset-x-0 top-0 block h-1/2 animate-scroll-cue rounded-full bg-ink/70" />
           </span>
         </motion.div>
 
@@ -152,7 +163,7 @@ export function HeroChapter() {
           >
             {t.hero.statement[0]}
             <br />
-            <em className="italic text-signal">{t.hero.statement[1]}</em>
+            <em className="font-serif font-normal italic tracking-[-0.01em] text-signal">{t.hero.statement[1]}</em>
           </motion.p>
         </div>
       </div>
@@ -198,7 +209,7 @@ function HeadlineLine({
         {parts ? (
           <>
             {parts[0]}
-            <em className="italic">{emphasis}</em>
+            <em className="font-serif font-normal italic tracking-[-0.01em]">{emphasis}</em>
             {parts.slice(1).join(emphasis)}
           </>
         ) : (
