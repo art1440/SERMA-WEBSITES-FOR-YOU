@@ -14,8 +14,8 @@ import { goToDemo } from "@/lib/scroll";
 import { ClientLoginModal } from "./ClientLoginModal";
 
 /** Controls inside the glass bar: flat glass pebbles (no nested blur), 44px tall. */
-const BAR_ICON = "btn-line glass-flat h-11 w-11 min-h-[44px] shrink-0 p-0";
-const BAR_BUTTON = "h-11 min-h-[44px] px-4 py-0 text-sm";
+const BAR_ICON = "btn-line-dark btn-sm glass-flat h-11 w-11 shrink-0 p-0";
+const BAR_BUTTON = "btn-sm h-11 py-0";
 
 /**
  * Floating navigation: a sticky Liquid Glass capsule that hovers over the 3D
@@ -67,30 +67,45 @@ export function Navbar() {
 
   return (
     <>
-      <header className="pointer-events-none sticky top-0 z-50 px-3 pt-2 sm:px-4 sm:pt-3 lg:px-5">
+      <header data-theme="dark" className="pointer-events-none sticky top-0 z-50 px-3 pt-2 sm:px-4 sm:pt-3 lg:px-5">
+        {/* Scrim behind the open menu: mutes the page (opacity only, no blur) and closes on tap. */}
+        <AnimatePresence>
+          {menuOpen ? (
+            <motion.div
+              key="menu-scrim"
+              aria-hidden="true"
+              onClick={closeMenu}
+              className="pointer-events-auto fixed inset-0 -z-10 bg-ink/70 [@media(min-width:80em)]:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
+            />
+          ) : null}
+        </AnimatePresence>
         <div className="relative mx-auto max-w-[87.5rem]">
-          <div className="glass glass-solid pointer-events-auto relative flex h-14 items-center justify-between gap-2 rounded-full pl-3.5 pr-1.5 [--glass-blur:20px] sm:pl-4 lg:pl-5">
+          <div className="glass-dark glass-solid pointer-events-auto relative flex h-14 items-center justify-between gap-2 rounded-full pl-3.5 pr-1.5 [--glass-blur:20px] sm:pl-4 lg:pl-5">
             {/* Reading-progress line along the capsule's lower edge (CSS scroll-driven; no JS).
                 The wrapper clips it to the capsule's rounded shape. */}
             <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
-              <span className="sd-progress absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-amber via-signal to-signal" />
+              <span className="sd-progress absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-aqua-deep via-aqua to-aqua-glow" />
             </span>
 
             <Link href="/" aria-label={t.common.homeLabel} className="-ml-1 flex min-h-[44px] shrink-0 items-center rounded-full px-1">
               <Wordmark />
             </Link>
 
-            <nav aria-label={t.nav.primaryLabel} className="hidden xl:block">
+            <nav aria-label={t.nav.primaryLabel} className="hidden [@media(min-width:80em)]:block">
               <ul className="flex items-center gap-0.5">
                 {links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="group relative isolate inline-flex min-h-[44px] items-center whitespace-nowrap rounded-full px-3 text-[0.84375rem] font-medium tracking-[-0.005em] text-ink/80 hover:text-ink"
+                      className="group relative isolate inline-flex min-h-[44px] items-center whitespace-nowrap rounded-full px-3 text-[0.84375rem] font-medium tracking-[-0.005em] text-bone/80 hover:text-bone"
                     >
                       <span
                         aria-hidden="true"
-                        className="absolute inset-x-0 inset-y-1 -z-10 rounded-full bg-ink/[0.06] opacity-0 transition-opacity duration-300 ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100"
+                        className="absolute inset-x-0 inset-y-1 -z-10 rounded-full bg-white/[0.08] opacity-0 transition-opacity duration-300 ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100"
                       />
                       {link.label}
                     </Link>
@@ -110,17 +125,17 @@ export function Navbar() {
               >
                 {paused ? <Play aria-hidden="true" size={14} strokeWidth={1.75} /> : <Pause aria-hidden="true" size={14} strokeWidth={1.75} />}
               </button>
-              <button type="button" onClick={openLogin} className={`btn-line glass-flat ${BAR_BUTTON} hidden md:inline-flex`}>
+              <button type="button" onClick={openLogin} className={`btn-line-dark glass-flat ${BAR_BUTTON} hidden md:inline-flex`}>
                 <Lock aria-hidden="true" size={13} strokeWidth={1.75} className="hidden lg:block" />
                 {t.nav.clientLogin}
               </button>
-              <MagneticButton href="#demo" onClick={onDemoClick} className={`btn-ink ${BAR_BUTTON} hidden md:inline-flex`}>
+              <MagneticButton href="#demo" onClick={onDemoClick} className={`btn-aqua ${BAR_BUTTON} hidden md:inline-flex`}>
                 {t.common.bookDemoShort}
                 <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.75} className="hidden lg:block" />
               </MagneticButton>
               {/* Language switch sits right of the CTAs: their labels change width with the language,
                   so anything left of them would jump away from the pointer after a tap. */}
-              <LanguageToggle />
+              <LanguageToggle tone="dark" />
               <button
                 ref={menuButtonRef}
                 type="button"
@@ -128,7 +143,7 @@ export function Navbar() {
                 aria-expanded={menuOpen}
                 aria-controls="mobile-menu"
                 aria-label={menuOpen ? t.nav.closeMenu : t.nav.openMenu}
-                className={`${BAR_ICON} xl:hidden`}
+                className={`${BAR_ICON} [@media(min-width:80em)]:hidden`}
               >
                 {menuOpen ? <X aria-hidden="true" size={18} strokeWidth={1.75} /> : <Menu aria-hidden="true" size={18} strokeWidth={1.75} />}
               </button>
@@ -140,7 +155,7 @@ export function Navbar() {
               <motion.div
                 id="mobile-menu"
                 key="mobile-menu"
-                className="glass glass-solid pointer-events-auto absolute inset-x-0 top-full mt-2 rounded-glass-lg [--glass-blur:18px] sm:left-auto sm:w-[23rem] xl:hidden"
+                className="glass-dark glass-solid pointer-events-auto absolute inset-x-0 top-full mt-2 rounded-glass-lg [--glass-blur:18px] max-sm:glass-flat sm:left-auto sm:w-[23rem] [@media(min-width:80em)]:hidden"
                 style={{ transformOrigin: "top right" }}
                 initial={{ opacity: 0, y: -12, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -160,26 +175,26 @@ export function Navbar() {
                         <Link
                           href={link.href}
                           onClick={closeMenu}
-                          className="flex min-h-[56px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.5rem] leading-tight tracking-[-0.03em] hover:bg-ink/[0.05]"
+                          className="flex min-h-[56px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.5rem] leading-tight tracking-[-0.03em] hover:bg-white/[0.06]"
                         >
                           {link.label}
-                          <span aria-hidden="true" className="tabular text-sm font-medium tracking-normal text-ink/65">
+                          <span aria-hidden="true" className="tabular text-sm font-medium tracking-normal text-ash">
                             0{i + 1}
                           </span>
                         </Link>
                       </motion.li>
                     ))}
                   </ul>
-                  <div className="mx-2 mt-2 grid gap-2 border-t border-ink/[0.08] pb-2 pt-4">
-                    <button type="button" onClick={toggleMotion} aria-pressed={paused} className="btn-line glass-flat w-full sm:hidden">
+                  <div className="mx-2 mt-2 grid gap-2 border-t border-white/10 pb-2 pt-4">
+                    <button type="button" onClick={toggleMotion} aria-pressed={paused} className="btn-line-dark glass-flat w-full sm:hidden">
                       {paused ? <Play aria-hidden="true" size={13} strokeWidth={1.75} /> : <Pause aria-hidden="true" size={13} strokeWidth={1.75} />}
                       {paused ? t.common.playAll : t.common.pauseAll}
                     </button>
-                    <button type="button" onClick={openLogin} className="btn-line glass-flat w-full">
+                    <button type="button" onClick={openLogin} className="btn-line-dark glass-flat w-full">
                       <Lock aria-hidden="true" size={13} strokeWidth={1.75} />
                       {t.nav.clientLogin}
                     </button>
-                    <a href="#demo" onClick={onDemoClick} className="btn-ink w-full">
+                    <a href="#demo" onClick={onDemoClick} className="btn-aqua w-full">
                       {t.common.bookDemo}
                     </a>
                   </div>
