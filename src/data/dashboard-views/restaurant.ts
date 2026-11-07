@@ -39,10 +39,10 @@ export const restaurantViews: NicheViews = {
       value: 620,
       source: "missedCall",
       status: "new",
-      received: { en: "Yesterday, 7:48 PM", es: "Ayer, 7:48 PM" },
+      received: { en: "Sat, 7:48 PM", es: "Sáb, 7:48 PM" },
       note: {
-        en: "Called during the dinner rush; auto-text sent. Wants the patio Saturday",
-        es: "Llamó en plena hora de la cena; se le envió un texto. Quiere la terraza el sábado",
+        en: "Called during the dinner rush; auto-text sent. Wants the patio this Saturday",
+        es: "Llamó en plena hora de la cena; se le envió un texto. Quiere la terraza este sábado",
       },
     },
     {
@@ -341,7 +341,7 @@ export const restaurantViews: NicheViews = {
           },
           {
             en: "The table and her $160 deposit are on hold until you confirm. Once you do, she gets a confirmation text and a reminder the afternoon before.",
-            es: "La mesa y su depósito de $160 quedan retenidos hasta que usted confirme. Al hacerlo, ella recibe un texto de confirmación y un recordatorio la tarde anterior.",
+            es: "La mesa queda apartada y su depósito de $160 retenido hasta que usted confirme. Al hacerlo, ella recibe un texto de confirmación y un recordatorio la tarde anterior.",
           },
         ],
         details: [
@@ -385,12 +385,12 @@ export const restaurantViews: NicheViews = {
         greeting: { en: "Hi Lucía,", es: "Hola, Lucía:" },
         paragraphs: [
           {
-            en: "Kim T. called at 7:48 PM last night during the dinner rush. Your automatic text went out 5 seconds later, and she wrote back this morning at 9:24:",
-            es: "Kim T. llamó anoche a las 7:48 PM, en plena hora de la cena. Su texto automático salió 5 segundos después y ella respondió esta mañana a las 9:24:",
+            en: "Kim T. called Saturday at 7:48 PM during the dinner rush. Your automatic text went out 5 seconds later, and she wrote back this morning at 9:24:",
+            es: "Kim T. llamó el sábado a las 7:48 PM, en plena hora de la cena. Su texto automático salió 5 segundos después y ella respondió esta mañana a las 9:24:",
           },
           {
-            en: "“Thanks for texting me back last night! It's my sister's birthday and we're about 12 people. Can you fit us on the patio this Saturday around 6? Also, is it OK if we bring our own cake?”",
-            es: "“¡Gracias por responderme anoche! Es el cumpleaños de mi hermana y somos unas 12 personas. ¿Tienen lugar en la terraza este sábado como a las 6? Y otra pregunta: ¿podemos llevar nuestro propio pastel?”",
+            en: "“Thanks for texting me back Saturday night! It's my sister's birthday and we're about 12 people. Can you fit us on the patio this Saturday around 6? Also, is it OK if we bring our own cake?”",
+            es: "“¡Gracias por responderme el sábado en la noche! Es el cumpleaños de mi hermana y somos unas 12 personas. ¿Tienen lugar en la terraza este sábado como a las 6? Y otra pregunta: ¿podemos llevar nuestro propio pastel?”",
           },
           {
             en: "Pick a reply below and it goes out from the restaurant's number. No typing needed.",
@@ -399,7 +399,7 @@ export const restaurantViews: NicheViews = {
         ],
         details: [
           { label: { en: "Caller", es: "Llamada de" }, value: { en: "Kim T. · (323) 555-0171", es: "Kim T. · (323) 555-0171" } },
-          { label: { en: "Missed call", es: "Llamada perdida" }, value: { en: "Yesterday, 7:48 PM", es: "Ayer, 7:48 PM" } },
+          { label: { en: "Missed call", es: "Llamada perdida" }, value: { en: "Sat, 7:48 PM", es: "Sáb, 7:48 PM" } },
           { label: { en: "Auto-text sent", es: "Texto automático" }, value: { en: "7:48 PM · 5 sec later", es: "7:48 PM · 5 s después" } },
           { label: { en: "Her reply", es: "Su respuesta" }, value: { en: "9:24 AM", es: "9:24 AM" } },
           { label: { en: "Request", es: "Solicitud" }, value: { en: "Party of 12 · Sat ~6:00 PM", es: "Grupo de 12 · sáb ~6:00 PM" } },
@@ -454,8 +454,8 @@ export const restaurantViews: NicheViews = {
             es: "Natalie llenó el formulario de eventos privados en su sitio web. Está organizando una cena de ensayo para unas 30 personas un viernes de esta primavera y quiere saber si el salón privado tiene cupo y si ofrecen menú fijo.",
           },
           {
-            en: "It's one of the larger leads this month, so it's flagged as a high-value lead in your Leads list. A call or text today keeps it warm.",
-            es: "Es uno de los prospectos más grandes del mes, así que aparece marcado como prospecto de alto valor en su lista de Prospectos. Una llamada o un texto hoy mantiene el interés.",
+            en: "At $3,200 it's one of your highest-value leads this month; it's waiting in Leads. A call or text today keeps it warm.",
+            es: "Con $3,200 es uno de sus prospectos de mayor valor del mes; lo encuentra en Prospectos. Una llamada o un texto hoy mantiene el interés.",
           },
         ],
         details: [
@@ -556,7 +556,7 @@ export const restaurantViews: NicheViews = {
         primary: {
           label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
+          done: { en: "Opened in Reviews", es: "Abierta en Reseñas" },
         },
         signoff: SIGNOFF,
       },

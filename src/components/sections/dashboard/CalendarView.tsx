@@ -29,6 +29,8 @@ import {
   ACTION_SECONDARY,
   Avatar,
   CARD_FLUSH,
+  DEMO_NOW,
+  DEMO_TODAY,
   DoneButton,
   LABEL,
   PILL,
@@ -38,8 +40,10 @@ import {
   StatusChip,
   ViewHeader,
   formatClock,
+  hasStarted,
   normalizeMeridiem,
   revealInPage,
+  whenPhrase,
 } from "./ui";
 
 /* ------------------------------------------------------------------ *
@@ -194,9 +198,9 @@ const REMINDER_SHAPE: Record<NicheId, keyof typeof REMINDER> = {
 
 type Day = CalendarEvent["day"];
 const DAYS: readonly Day[] = [0, 1, 2, 3, 4, 5];
-/** The demo week's "today" (Monday: every industry's inbox and lead copy is written around it) and "now". */
-const TODAY: Day = 0;
-const NOW = "09:41";
+/** The demo week's "today" (Monday) and "now", shared with Leads (ui.tsx: DEMO_TODAY / DEMO_NOW, whenPhrase, hasStarted). */
+const TODAY: Day = DEMO_TODAY;
+const NOW = DEMO_NOW;
 const DAY_START = 8 * 60;
 const DAY_END = 19 * 60;
 const SPAN = DAY_END - DAY_START;
@@ -243,28 +247,7 @@ function duration(min: number) {
   if (!h) return `${m} min`;
   return m ? `${h} h ${m} min` : `${h} h`;
 }
-/**
- * "today at 10:00 AM" / "hoy a las 10:00 AM", "tomorrow at …" / "mañana a las …", else
- * "Thursday at 10:30 AM" / "el jueves a las 10:30 AM" ("a la 1:00 PM").
- */
-function whenPhrase(ev: CalendarEvent, locale: Locale, intlLocale: string) {
-  const time = formatClock(ev.start, intlLocale);
-  const offset = ev.day - TODAY;
-  if (locale === "es") {
-    const h = Math.floor(toMin(ev.start) / 60) % 12;
-    const at = `a ${h === 1 ? "la" : "las"} ${time}`;
-    if (offset === 0) return `hoy ${at}`;
-    if (offset === 1) return `mañana ${at}`;
-    return `el ${new Intl.DateTimeFormat(intlLocale, { weekday: "long" }).format(dayDate(ev.day))} ${at}`;
-  }
-  if (offset === 0) return `today at ${time}`;
-  if (offset === 1) return `tomorrow at ${time}`;
-  return `${cap(new Intl.DateTimeFormat(intlLocale, { weekday: "long" }).format(dayDate(ev.day)))} at ${time}`;
-}
-
 const isHappening = (ev: CalendarEvent) => ev.day === TODAY && toMin(ev.start) <= NOW_MIN && NOW_MIN < endMin(ev);
-/** Under way or already over at the demo's "now": too late for a reminder. */
-const hasStarted = (ev: CalendarEvent) => ev.day < TODAY || (ev.day === TODAY && toMin(ev.start) <= NOW_MIN);
 const firstName = (name: string) => name.split(" ")[0] ?? name;
 /** "Linda N." → "LN" (narrow grid blocks). */
 const initialsOf = (name: string) =>
@@ -1282,7 +1265,7 @@ function EventDetail({
               variant={wasPending && !confirmed ? "secondary" : "primary"}
               onPress={() => {
                 markDone(`reminder:${ev.id}`);
-                announce(fill(COPY.reminderAnnounce[locale], { name: ev.client }));
+                announce(fill(COPY.reminderAnnounce[locale], { name: ev.client }).replace(/\.\./g, ".")); // "Derek S." + "." → one period
               }}
               icon={<BellRing aria-hidden="true" size={15} strokeWidth={2} />}
               className="flex-[1_1_auto]"

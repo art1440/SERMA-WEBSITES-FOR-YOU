@@ -28,7 +28,7 @@ export const contractorViews: NicheViews = {
       received: { en: "Today, 9:29 AM", es: "Hoy, 9:29 AM" },
       note: {
         en: "Referred by Linda N.; booked a site visit online for Wed 8:30 AM",
-        es: "Recomendada por Linda N.; agendó en línea una visita para el miércoles 8:30 AM",
+        es: "Recomendada por Linda N.; agendó en línea una visita para el miércoles a las 8:30 AM",
       },
     },
     {
@@ -84,7 +84,7 @@ export const contractorViews: NicheViews = {
       received: { en: "Fri, 12:10 PM", es: "Vie, 12:10 PM" },
       note: {
         en: "Called while you were on a roof; auto-text sent and she replied this morning",
-        es: "Llamó mientras usted estaba en un techo; se le envió un texto y respondió esta mañana",
+        es: "Llamó mientras usted trabajaba en un techo; se le envió un texto y respondió esta mañana",
       },
     },
     {
@@ -329,6 +329,10 @@ export const contractorViews: NicheViews = {
             en: "Wednesday at 8:30 AM is on hold for her. Once you confirm, she gets a text with your arrival window and a short list of what to have ready (photos of the current layout and any inspiration pictures).",
             es: "El miércoles a las 8:30 AM queda apartado para ella. Cuando usted confirme, recibirá un texto con su horario de llegada y una lista breve de lo que conviene tener a mano (fotos de la distribución actual e ideas que le gusten).",
           },
+          {
+            en: "Her $150 site-visit deposit is on hold and is charged when you confirm. It's credited to the job when she signs the estimate.",
+            es: "Su depósito de $150 por la visita queda retenido y se cobra cuando usted confirme; se acredita al trabajo cuando ella firme el presupuesto.",
+          },
         ],
         details: [
           { label: { en: "Client", es: "Cliente" }, value: { en: "Karen W. · (602) 555-0131", es: "Karen W. · (602) 555-0131" } },
@@ -336,6 +340,7 @@ export const contractorViews: NicheViews = {
           { label: { en: "Budget", es: "Presupuesto" }, value: { en: "$15,000–$20,000", es: "$15,000–$20,000" } },
           { label: { en: "Visit", es: "Visita" }, value: { en: "Wed, 8:30–10:00 AM", es: "Mié, 8:30–10:00 AM" } },
           { label: { en: "Referred by", es: "Recomendada por" }, value: { en: "Linda N.", es: "Linda N." } },
+          { label: { en: "Deposit", es: "Depósito" }, value: { en: "$150 on hold · credited to the job", es: "$150 retenidos · se acredita al trabajo" } },
         ],
         primary: {
           label: { en: "Confirm site visit", es: "Confirmar visita" },
@@ -371,7 +376,7 @@ export const contractorViews: NicheViews = {
         paragraphs: [
           {
             en: "Monica D. called Friday at 12:10 PM while you were on a roof. Your automatic text went out 7 seconds later, and she wrote back this morning at 9:05:",
-            es: "Monica D. llamó el viernes a las 12:10 PM mientras usted estaba en un techo. Su texto automático salió 7 segundos después y ella respondió esta mañana a las 9:05:",
+            es: "Monica D. llamó el viernes a las 12:10 PM mientras usted trabajaba en un techo. Su texto automático salió 7 segundos después y ella respondió esta mañana a las 9:05:",
           },
           {
             en: "“Thanks for the text on Friday! We'd like to turn our hall bathtub into a curbless walk-in shower, mostly so my dad can use it safely. How soon could you start, and do you pull the permit or do we?”",
@@ -439,8 +444,8 @@ export const contractorViews: NicheViews = {
             es: "Sandra llenó el formulario de cotización en su sitio web a las 7:42 AM. Quiere convertir su garaje para dos autos en una ADU de una recámara y ya tiene los planos de su arquitecto.",
           },
           {
-            en: "Because the estimated value is over $10,000, she's flagged as a high-ticket lead in your Leads list.",
-            es: "Como el valor estimado supera los $10,000, aparece marcada como prospecto de alto valor en su lista de Prospectos.",
+            en: "At $62,000 it's one of your highest-value leads; it's waiting in Leads.",
+            es: "Con $62,000 es uno de sus prospectos de mayor valor; lo encuentra en Prospectos.",
           },
         ],
         details: [
@@ -541,7 +546,7 @@ export const contractorViews: NicheViews = {
         primary: {
           label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
+          done: { en: "Opened in Reviews", es: "Abierta en Reseñas" },
         },
         signoff: SIGNOFF,
       },

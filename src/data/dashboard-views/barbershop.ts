@@ -96,7 +96,7 @@ export const barbershopViews: NicheViews = {
       received: { en: "Today, 7:58 AM", es: "Hoy, 7:58 AM" },
       note: {
         en: "Booked online before opening — Thu 5:15 PM with Andre",
-        es: "Agendó en línea antes de abrir: jueves 5:15 PM con Andre",
+        es: "Agendó en línea antes de abrir: el jueves a las 5:15 PM con Andre",
       },
     },
     {
@@ -110,7 +110,7 @@ export const barbershopViews: NicheViews = {
       received: { en: "Sat, 3:15 PM", es: "Sáb, 3:15 PM" },
       note: {
         en: "Referred by Luis G. — booked this Sat 10:00 AM with Tony",
-        es: "Recomendado por Luis G.; agendó para este sábado 10:00 AM con Tony",
+        es: "Recomendado por Luis G.; agendó para este sábado a las 10:00 AM con Tony",
       },
     },
     {
@@ -343,7 +343,7 @@ export const barbershopViews: NicheViews = {
         primary: {
           label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
+          done: { en: "Opened in Reviews", es: "Abierta en Reseñas" },
         },
         signoff: { en: "— SermaWebDesign review alerts", es: "— Alertas de reseñas de SermaWebDesign" },
       },
@@ -354,7 +354,7 @@ export const barbershopViews: NicheViews = {
       ...ALERTS,
       subject: {
         en: "Deposit received: $20 from Keith B. for Fri 9:30 AM",
-        es: "Depósito recibido: $20 de Keith B. para el viernes 9:30 AM",
+        es: "Depósito recibido: $20 de Keith B. para el viernes a las 9:30 AM",
       },
       preview: {
         en: "Cut + beard with Tony. $40 balance due at the chair.",

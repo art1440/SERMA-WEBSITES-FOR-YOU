@@ -235,7 +235,7 @@ export function RevenueCalculator() {
           </Reveal>
         </div>
 
-        <SimulationDisclaimer className="mt-6" />
+        <SimulationDisclaimer variant="calculator" className="mt-6" />
       </div>
     </section>
   );

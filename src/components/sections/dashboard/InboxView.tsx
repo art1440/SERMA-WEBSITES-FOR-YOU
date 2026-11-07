@@ -759,7 +759,7 @@ function Reader({
     setRepliesOpen(false);
     setFresh((f) => ({ ...f, reply: index }));
     pendingReveal.current = "thread";
-    announce(fill(COPY.replySent[locale], { name: contact }));
+    announce(fill(COPY.replySent[locale], { name: contact }).replace(/\.\./g, ".")); // "Kim T." + "." → one period
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {

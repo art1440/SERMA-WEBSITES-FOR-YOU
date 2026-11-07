@@ -272,7 +272,7 @@ export const NICHES: Niche[] = [
       { name: { en: "Missed-Call Instant Quote Recovery", es: "Recuperación Inmediata de Cotizaciones" }, detail: { en: "Callers get a quote-request link in seconds.", es: "Quien llama recibe al instante un enlace para cotizar." } },
       { name: { en: "Estimate Pipeline", es: "Embudo de Presupuestos" }, detail: { en: "From site visit to signed estimate.", es: "De la visita al presupuesto firmado." } },
       { name: { en: "Dispatched Jobs", es: "Trabajos Asignados" }, detail: { en: "Crews, addresses, and status in one view.", es: "Cuadrillas, direcciones y estado en una sola vista." } },
-      { name: { en: "High-Ticket Lead Tracking", es: "Seguimiento de Prospectos de Alto Valor" }, detail: { en: "Big jobs flagged and followed up first.", es: "Los trabajos grandes se atienden primero." } },
+      { name: { en: "High-Ticket Lead Tracking", es: "Seguimiento de Prospectos de Alto Valor" }, detail: { en: "Big jobs get followed up first.", es: "Los trabajos grandes se atienden primero." } },
     ],
     kpis: [
       { label: { en: "Quote requests recovered", es: "Cotizaciones recuperadas" }, value: 23, format: "number", delta: { en: "+8", es: "+8" } },
@@ -289,7 +289,7 @@ export const NICHES: Niche[] = [
     ],
     stream: [
       { text: { en: "Primary bath estimate sent — Jenna P.", es: "Presupuesto de baño enviado — Jenna P." }, amount: 19500, minutesAgo: 6 },
-      { text: { en: "High-ticket lead flagged: kitchen refresh, Karen W.", es: "Prospecto de alto valor: cocina, Karen W." }, amount: 18500, minutesAgo: 12 },
+      { text: { en: "High-ticket lead: kitchen refresh, Karen W.", es: "Prospecto de alto valor: cocina, Karen W." }, amount: 18500, minutesAgo: 12 },
       { text: { en: "Crew B dispatched — ceiling repair, Derek S.", es: "Cuadrilla B asignada — cielo raso, Derek S." }, minutesAgo: 41 },
       { text: { en: "Missed call → text-back → site visit booked", es: "Llamada perdida → texto automático → visita agendada" }, minutesAgo: 51 },
     ],

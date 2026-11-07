@@ -368,7 +368,7 @@ export function MissedCallSimulator() {
           </motion.div>
         </div>
 
-        <SimulationDisclaimer className={scrubbed ? "mt-4" : "mt-8"} />
+        <SimulationDisclaimer variant="simulator" className={scrubbed ? "mt-4" : "mt-8"} />
       </FitStage>
       </div>
     </section>

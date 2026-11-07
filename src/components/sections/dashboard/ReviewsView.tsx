@@ -250,7 +250,7 @@ function ReviewsBoard({ nicheId }: { nicheId: NicheId }) {
     markDone(`reply:${r.id}`);
     setKept((prev) => new Set(prev).add(r.id));
     setDraftId(null);
-    announce(fill(COPY.postedAnnounce[locale], { name: r.author }));
+    announce(fill(COPY.postedAnnounce[locale], { name: r.author }).replace(/\.\./g, ".")); // "Sophie A." + "." → one period
     requestFocus(uid(r.id, "owner"));
   };
 
