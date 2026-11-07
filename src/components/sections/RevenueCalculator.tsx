@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useId, useState, type MouseEvent } from "react";
+import { AmbientField } from "@/components/ui/AmbientField";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Reveal } from "@/components/ui/Reveal";
@@ -29,6 +30,31 @@ const ticketFromPos = (pos: number) => {
 };
 const posFromTicket = (ticket: number) =>
   Math.round((Math.log(ticket / TICKET_MIN) / Math.log(TICKET_MAX / TICKET_MIN)) * 1000);
+
+/* ------------------------------------------------------------------ *
+ * Liquid-glass materials for this section (see docs/design-system.md).
+ * ------------------------------------------------------------------ */
+/** Idle preset capsule: a soft white pebble inside the glass panel (level 2: tint, not another glass). */
+const PRESET_IDLE =
+  "bg-white/55 text-ink hover:bg-white/90 " +
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.95),inset_0_0_0_1px_rgba(13,13,11,0.08),0_1px_2px_rgba(13,13,11,0.05)]";
+/** Result card: dark flat glass (it sits in a preserve-3d chain) with a warm under-glow. */
+const RESULT_CARD =
+  "glass-dark glass-flat flex h-full flex-col justify-between rounded-glass-lg p-6 text-bone sm:p-8 lg:p-9 " +
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_0_-1px_0_rgba(255,255,255,0.04),0_2px_6px_rgba(13,13,11,0.14),0_40px_80px_-32px_rgba(122,46,18,0.55),0_70px_140px_-60px_rgba(229,88,42,0.4)]";
+const RESULT_GLOW =
+  "pointer-events-none absolute inset-0 -z-10 rounded-[inherit] " +
+  "bg-[radial-gradient(90%_70%_at_88%_0%,rgba(240,163,92,0.2),transparent_60%),radial-gradient(70%_60%_at_0%_100%,rgba(229,88,42,0.12),transparent_65%)]";
+/** Inner tiles: concentric radius (card 30 − ~16px inset ≈ 14). */
+const TILE_BASE =
+  "flex items-center justify-between gap-4 rounded-glass-sm px-4 py-3 ring-1 ring-inset " +
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:block sm:p-4 lg:flex lg:px-4 lg:py-3 xl:block xl:p-4";
+const TILE = `${TILE_BASE} bg-white/[0.05] ring-white/[0.08]`;
+const TILE_ACCENT = `${TILE_BASE} bg-signal/[0.08] ring-signal/25`;
+/* bone/70 keeps ≥ 4.5:1 on both tile tints. */
+const TILE_LABEL = "text-[0.8125rem] font-medium leading-snug text-bone/70";
+const TILE_VALUE =
+  "font-display text-2xl leading-none tracking-[-0.03em] sm:mt-2.5 sm:text-[1.75rem] lg:mt-0 lg:text-2xl xl:mt-2.5 xl:text-[1.75rem]";
 
 export function RevenueCalculator() {
   const { t, locale, intlLocale } = useLanguage();
@@ -60,7 +86,8 @@ export function RevenueCalculator() {
   };
 
   return (
-    <section id="calculator" aria-labelledby="calculator-title" className="relative z-10 bg-bone py-24 lg:py-32">
+    <section id="calculator" aria-labelledby="calculator-title" className="relative isolate z-10 overflow-hidden py-24 lg:py-32">
+      <AmbientField tone="light" variant={2} />
       <div className="frame">
         <SectionHeader
           headingId="calculator-title"
@@ -70,119 +97,140 @@ export function RevenueCalculator() {
           body={t.calculator.body}
         />
 
-        <div className="mt-14 grid grid-cols-12 gap-x-4 gap-y-12 border-t border-ink lg:mt-20 lg:gap-x-10">
-          {/* Controls */}
-          <Reveal className="col-span-12 pt-8 lg:col-span-6">
-            <fieldset>
-              <legend className="eyebrow text-muted">{t.calculator.presetLabel}</legend>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {NICHES.map((n) => {
-                  const active = n.id === nicheId;
-                  return (
-                    <motion.button
-                      key={n.id}
-                      type="button"
-                      aria-pressed={active}
-                      onClick={() => loadPreset(n.id)}
-                      whileHover={active ? undefined : { y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`relative isolate min-h-[44px] border px-3 py-2 text-sm ${active ? "border-ink" : "border-hairline-light"}`}
-                    >
-                      {active ? (
-                        <motion.span
-                          layoutId="calc-preset-indicator"
-                          aria-hidden="true"
-                          className="absolute inset-0 -z-10 bg-ink"
-                          transition={SPRING_SOFT}
-                        />
-                      ) : null}
-                      <span className={active ? "text-bone" : "text-ink"}>{n.shortLabel[locale]}</span>
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </fieldset>
+        <div className="mt-12 grid grid-cols-12 gap-4 lg:mt-16 lg:gap-5">
+          {/* Controls — light glass panel. Real blur only on desktop, where the panel is a
+              medium surface; on phones it is taller than the viewport, so it goes flat. */}
+          <Reveal className="col-span-12 lg:col-span-6">
+            <div className="glass glass-solid h-full rounded-glass-lg p-5 [--glass-blur:20px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:p-7 lg:p-9">
+              <fieldset>
+                <legend className="eyebrow text-muted">{t.calculator.presetLabel}</legend>
+                <div className="mt-3.5 flex flex-wrap gap-2">
+                  {NICHES.map((n) => {
+                    const active = n.id === nicheId;
+                    return (
+                      <motion.button
+                        key={n.id}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => loadPreset(n.id)}
+                        whileHover={active ? undefined : { y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`relative isolate min-h-[44px] rounded-full px-4 py-2 text-sm font-medium tracking-[-0.01em] ${
+                          active ? "z-10" : `z-0 ${PRESET_IDLE}`
+                        }`}
+                      >
+                        {active ? (
+                          <motion.span
+                            layoutId="calc-preset-indicator"
+                            aria-hidden="true"
+                            // Radius set via style so Framer corrects it during the slide (no squashed ends).
+                            style={{ borderRadius: 9999 }}
+                            className="absolute inset-0 -z-10 bg-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_18px_-8px_rgba(13,13,11,0.65),0_1px_2px_rgba(13,13,11,0.2)]"
+                            transition={SPRING_SOFT}
+                          />
+                        ) : null}
+                        <span className={active ? "text-bone" : "text-ink"}>{n.shortLabel[locale]}</span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </fieldset>
 
-            <div className="mt-10 space-y-9">
-              <Slider
-                label={t.calculator.missedCalls}
-                value={missedCalls}
-                min={1}
-                max={60}
-                step={1}
-                onChange={setMissedCalls}
-                display={fill(t.calculator.perWeek, { n: missedCalls })}
-              />
-              <Slider
-                label={t.calculator.avgTicket}
-                value={ticketPos}
-                min={0}
-                max={1000}
-                step={1}
-                onChange={setTicketPos}
-                display={formatCurrency(avgTicket, intlLocale)}
-              />
-              <Slider
-                label={t.calculator.bookingRate}
-                hint={t.calculator.bookingRateHint}
-                value={bookingRate}
-                min={5}
-                max={80}
-                step={1}
-                onChange={setBookingRate}
-                display={`${bookingRate}%`}
-              />
+              {/* Soft light-catching divider (decorative). */}
+              <div aria-hidden="true" className="my-7 h-px bg-gradient-to-r from-transparent via-ink/[0.12] to-transparent sm:my-8" />
+
+              <div className="space-y-6 sm:space-y-7">
+                <Slider
+                  label={t.calculator.missedCalls}
+                  value={missedCalls}
+                  min={1}
+                  max={60}
+                  step={1}
+                  onChange={setMissedCalls}
+                  display={fill(t.calculator.perWeek, { n: missedCalls })}
+                />
+                <Slider
+                  label={t.calculator.avgTicket}
+                  value={ticketPos}
+                  min={0}
+                  max={1000}
+                  step={1}
+                  onChange={setTicketPos}
+                  display={formatCurrency(avgTicket, intlLocale)}
+                />
+                <Slider
+                  label={t.calculator.bookingRate}
+                  hint={t.calculator.bookingRateHint}
+                  value={bookingRate}
+                  min={5}
+                  max={80}
+                  step={1}
+                  onChange={setBookingRate}
+                  display={`${bookingRate}%`}
+                />
+              </div>
             </div>
           </Reveal>
 
-          {/* Result */}
-          <Reveal className="col-span-12 lg:col-span-6 lg:pt-8" delay={0.1}>
-            <TiltCard className="h-full">
-            <div data-theme="dark" className="flex h-full flex-col justify-between bg-ink p-6 text-bone sm:p-8">
-              <div>
-                <p className="eyebrow text-ash" id="calc-result-label">
-                  {t.calculator.monthlyLabel}
-                </p>
-                <p className="mt-4 font-display text-[clamp(3.25rem,8vw,6.5rem)] leading-[0.9]">
-                  <AnimatedNumber value={monthly} format="currency" />
-                </p>
+          {/* Result — dark glass card. It lives inside TiltCard's preserve-3d chain, so it is
+              glass-flat (backdrop blur would flatten the tilt) and never overflow-hidden. */}
+          <Reveal className="col-span-12 lg:col-span-6" delay={0.1}>
+            <TiltCard className="h-full" glare="rounded-glass-lg">
+              <div data-theme="dark" className={RESULT_CARD}>
+                {/* Warm inner light: sits above the glass body, below the content (isolated stack). */}
+                <span aria-hidden="true" className={RESULT_GLOW} />
+                <div>
+                  {/* bone/70 (not ash): stays >= 4.5:1 where the warm inner light is strongest. */}
+                  <p className="eyebrow text-bone/70" id="calc-result-label">
+                    {t.calculator.monthlyLabel}
+                  </p>
+                  <p className="mt-3 font-display text-[clamp(2.75rem,11vw,4.5rem)] leading-[0.95] tracking-[-0.05em] md:text-[5.5rem] lg:text-[clamp(3.5rem,6vw,6rem)]">
+                    <AnimatedNumber value={monthly} format="currency" />
+                  </p>
 
-                <dl className="mt-8 grid grid-cols-3 border-y border-hairline-dark">
-                  <div className="border-r border-hairline-dark py-4 pr-3">
-                    <dt className="font-mono text-[0.62rem] uppercase leading-tight text-ash">{t.calculator.callsLabel}</dt>
-                    <dd className="mt-2 font-display text-2xl sm:text-3xl">
-                      <AnimatedNumber value={callsPerMonth} />
-                    </dd>
-                  </div>
-                  <div className="border-r border-hairline-dark px-3 py-4">
-                    <dt className="font-mono text-[0.62rem] uppercase leading-tight text-ash">{t.calculator.bookingsLabel}</dt>
-                    <dd className="mt-2 font-display text-2xl sm:text-3xl">
-                      <AnimatedNumber value={bookingsPerMonth} />
-                    </dd>
-                  </div>
-                  <div className="py-4 pl-3">
-                    <dt className="font-mono text-[0.62rem] uppercase leading-tight text-ash">{t.calculator.annualLabel}</dt>
-                    <dd className="mt-2 font-display text-2xl text-signal sm:text-3xl">
-                      <AnimatedNumber value={annual} format="currency" />
-                    </dd>
-                  </div>
-                </dl>
+                  {/* Three soft inner tiles. Rows on phones and on the half-width lg card;
+                      columns where the card is wide enough for large figures. */}
+                  <dl className="mt-7 grid grid-cols-1 gap-2 sm:mt-8 sm:grid-cols-3 sm:gap-3 lg:grid-cols-1 lg:gap-2 xl:grid-cols-3 xl:gap-3">
+                    <div className={TILE}>
+                      <dt className={TILE_LABEL}>{t.calculator.callsLabel}</dt>
+                      <dd className={TILE_VALUE}>
+                        <AnimatedNumber value={callsPerMonth} />
+                      </dd>
+                    </div>
+                    <div className={TILE}>
+                      <dt className={TILE_LABEL}>{t.calculator.bookingsLabel}</dt>
+                      <dd className={TILE_VALUE}>
+                        <AnimatedNumber value={bookingsPerMonth} />
+                      </dd>
+                    </div>
+                    <div className={TILE_ACCENT}>
+                      <dt className={TILE_LABEL}>{t.calculator.annualLabel}</dt>
+                      {/* Signal on the tinted tile is >= 3:1 and every size here is large text (>= 24px). */}
+                      <dd className={`${TILE_VALUE} text-signal`}>
+                        <AnimatedNumber value={annual} format="currency" />
+                      </dd>
+                    </div>
+                  </dl>
 
-                <p className="mt-6 break-words font-mono text-xs leading-relaxed text-ash">
-                  {fill(t.calculator.formula, {
-                    calls: missedCalls,
-                    rate: bookingRate,
-                    ticket: formatCurrency(avgTicket, intlLocale),
-                  })}
-                </p>
-                <p className="mt-2 text-xs leading-relaxed text-ash">{t.calculator.assumption}</p>
+                  <p className="mt-6 break-words font-mono text-xs leading-relaxed text-bone/70">
+                    {fill(t.calculator.formula, {
+                      calls: missedCalls,
+                      rate: bookingRate,
+                      ticket: formatCurrency(avgTicket, intlLocale),
+                    })}
+                  </p>
+                  <p className="mt-2 text-xs leading-relaxed text-bone/70">{t.calculator.assumption}</p>
+                </div>
+
+                <MagneticButton
+                  href="#demo"
+                  onClick={onCta}
+                  className="btn-bone mt-8 self-start whitespace-normal text-left leading-snug"
+                >
+                  {t.calculator.cta}
+                  <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} className="shrink-0" />
+                </MagneticButton>
               </div>
-
-              <MagneticButton href="#demo" onClick={onCta} className="btn-bone mt-8 self-start px-6 py-4">
-                {t.calculator.cta}
-                <ArrowUpRight aria-hidden="true" size={15} strokeWidth={1.5} />
-              </MagneticButton>
-            </div>
             </TiltCard>
           </Reveal>
         </div>
@@ -211,18 +259,18 @@ function Slider({ label, hint, value, min, max, step, display, onChange }: Slide
   return (
     <div>
       <div className="flex items-baseline justify-between gap-4">
-        <label htmlFor={id} className="text-base text-ink">
+        <label htmlFor={id} className="text-[0.9375rem] font-medium leading-snug text-ink sm:text-base">
           {label}
         </label>
         {/* aria-hidden: the slider's aria-valuetext already announces this value. */}
-        <output htmlFor={id} aria-hidden="true" className="tabular font-display text-3xl leading-none text-ink">
+        <output htmlFor={id} aria-hidden="true" className="tabular shrink-0 font-display text-[1.75rem] leading-none tracking-[-0.035em] text-ink sm:text-[2rem]">
           {display}
         </output>
       </div>
       <input
         id={id}
         type="range"
-        className="range mt-2"
+        className="range mt-1.5"
         min={min}
         max={max}
         step={step}
