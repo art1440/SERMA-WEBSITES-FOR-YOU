@@ -14,6 +14,8 @@
 
   html {
     scroll-behavior: smooth;
+    /* Keep focused controls and anchor targets clear of the sticky header (64–68px), WCAG 2.4.11. */
+    scroll-padding-top: 5.5rem;
     /* Reserve the scrollbar lane so locking scroll (modals) never shifts layout. */
     scrollbar-gutter: stable;
     -webkit-text-size-adjust: 100%;
@@ -382,6 +384,17 @@
 
   .tabular {
     font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Windows Contrast themes (forced colors): selected / pressed / current items draw a
+ * 2px inset Highlight outline, which would otherwise hide the focus ring on them.
+ * Focus there becomes a thicker CanvasText ring, kept inset so scroll lists can't clip it.
+ * Unlayered and higher specificity (0,2,0) so it beats the forced-colors utilities. */
+@media (forced-colors: active) {
+  :is([aria-selected="true"], [aria-pressed="true"], [aria-current="true"], [aria-expanded="true"]):focus-visible {
+    outline: 4px solid CanvasText;
+    outline-offset: -4px;
   }
 }
 

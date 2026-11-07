@@ -52,6 +52,7 @@ import {
   ROW_SELECTED,
   StatusChip,
   ViewHeader,
+  revealInPage,
 } from "./ui";
 
 /* ------------------------------------------------------------------ *
@@ -295,7 +296,7 @@ export function InboxView() {
 function InboxClient({ nicheId }: { nicheId: NicheId }) {
   const { locale } = useLanguage();
   const { niche } = useNiche();
-  const { isDone, markDone, announce, setView, focusId, clearFocus } = useDashboardView();
+  const { isDone, markDone, announce, setView, focusId, clearFocus, pinned } = useDashboardView();
   const isLg = useIsLg();
   const data = NICHE_VIEWS[nicheId];
   const messages = data.inbox;
@@ -373,6 +374,8 @@ function InboxClient({ nicheId }: { nicheId: NicheId }) {
     if (request.kind === "heading") {
       if (isLg && paneRef.current) paneRef.current.scrollTop = 0;
       headingRef.current?.focus({ preventScroll: isLg });
+      // Unpinned laptops: the pane itself may sit under the sticky header.
+      if (isLg) revealInPage(headingRef.current, pinned);
     } else {
       rowRefs.current.get(request.id)?.focus();
     }

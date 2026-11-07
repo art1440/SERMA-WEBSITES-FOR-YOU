@@ -160,6 +160,26 @@ export function DoneButton({
   );
 }
 
+/** Sticky site header (64–68px) plus breathing room; matches `html { scroll-padding-top }`. */
+const HEADER_CLEARANCE_PX = 88;
+
+/**
+ * After a `focus({ preventScroll: true })` + pane scroll, make sure the target is
+ * really on screen (WCAG 2.4.11). On the pinned stage the window is always in view
+ * and scrolling the page would scrub the scene, so this is a no-op there. Otherwise
+ * (unpinned laptops, short screens) nudge the page just enough to clear the sticky
+ * header or the bottom edge.
+ */
+export function revealInPage(el: Element | null | undefined, pinned: boolean) {
+  if (!el || pinned) return;
+  const r = el.getBoundingClientRect();
+  const bottomLimit = window.innerHeight - 16;
+  let dy = 0;
+  if (r.top < HEADER_CLEARANCE_PX) dy = r.top - HEADER_CLEARANCE_PX;
+  else if (r.bottom > bottomLimit) dy = Math.min(r.bottom - bottomLimit, r.top - HEADER_CLEARANCE_PX);
+  if (Math.abs(dy) >= 1) window.scrollBy({ top: dy });
+}
+
 /**
  * Spanish Intl output writes "a. m." / "p. m."; the sample data and the rest of
  * the site use "AM" / "PM" in both languages, so normalise to one style.

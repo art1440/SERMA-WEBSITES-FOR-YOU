@@ -25,7 +25,19 @@ import { fill, type L10n, type Locale } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
 import { useDashboardView } from "./DashboardViewContext";
-import { ACTION_SECONDARY, CARD, DoneButton, PILL, PILL_OFF, PILL_ON, ROW, StatusChip, ViewHeader, formatClock } from "./ui";
+import {
+  ACTION_SECONDARY,
+  CARD,
+  DoneButton,
+  PILL,
+  PILL_OFF,
+  PILL_ON,
+  ROW,
+  StatusChip,
+  ViewHeader,
+  formatClock,
+  revealInPage,
+} from "./ui";
 
 /* ------------------------------------------------------------------ *
  * Settings: believable, working settings for the demo business.
@@ -389,7 +401,9 @@ export function SettingsView() {
 
 function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
   const { locale, intlLocale } = useLanguage();
-  const { markDone, announce, focusId, clearFocus } = useDashboardView();
+  const { markDone, announce, focusId, clearFocus, pinned } = useDashboardView();
+  const pinnedRef = useRef(pinned);
+  pinnedRef.current = pinned;
   const uid = useId();
   const id = (part: string) => `st${uid}${part}`;
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -479,6 +493,8 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
     const scale = box.height / (scroller.offsetHeight || 1) || 1;
     const top = (el.closest("section") ?? el).getBoundingClientRect().top;
     scroller.scrollTop += (top - box.top) / scale - 8;
+    // Unpinned laptops: the pane itself may sit under the sticky header or off screen.
+    revealInPage(el, pinnedRef.current);
   }, [focusId, clearFocus, uid]);
 
   /* ---- derived copy ---- */
@@ -506,9 +522,10 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
         // max-lg scroll-mb: focused controls stop above the sticky save bar (pairs with the scroll padding above).
         className="max-lg:[&_button]:scroll-mb-28 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:[scrollbar-color:rgba(255,255,255,0.18)_transparent] lg:[scrollbar-width:thin]"
       >
-        <div className="grid gap-1.5 sm:gap-2 lg:grid-cols-2 lg:items-start">
+        {/* grid-cols-1 = minmax(0,1fr): cards shrink to the screen instead of growing to their longest word. */}
+        <div className="grid grid-cols-1 gap-1.5 sm:gap-2 lg:grid-cols-2 lg:items-start">
           {/* ---------------- Column 1 ---------------- */}
-          <div className="grid content-start gap-1.5 sm:gap-2">
+          <div className="grid grid-cols-1 content-start gap-1.5 sm:gap-2">
             {/* Notifications */}
             <section aria-labelledby={heading("notifications")} className={CARD}>
               <CardHead id={heading("notifications")} icon={BellRing} title={COPY.notifTitle[locale]} description={COPY.notifBody[locale]} />
@@ -698,7 +715,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
           </div>
 
           {/* ---------------- Column 2 ---------------- */}
-          <div className="grid content-start gap-1.5 sm:gap-2">
+          <div className="grid grid-cols-1 content-start gap-1.5 sm:gap-2">
             {/* Deposits & reminders */}
             <section aria-labelledby={heading("deposits")} className={CARD}>
               <CardHead id={heading("deposits")} icon={ShieldCheck} title={COPY.depTitle[locale]} description={COPY.depBody[locale]} />
@@ -950,7 +967,7 @@ function SwitchRow({
       className={`${ROW} flex min-h-[52px] w-full items-center gap-3 px-2.5 py-2 text-left`}
     >
       <span className="min-w-0 flex-1">
-        <span id={`${id}-label`} className="block text-[0.8125rem] font-medium leading-snug text-bone">
+        <span id={`${id}-label`} className="block text-[0.8125rem] font-medium leading-snug text-bone [overflow-wrap:anywhere]">
           {label}
         </span>
         {description ? (
@@ -972,7 +989,11 @@ function SwitchRow({
  */
 function Toggle({ on, locale }: { on: boolean; locale: Locale }) {
   return (
-    <span aria-hidden="true" className="flex shrink-0 items-center gap-2">
+    // Under 360px (e.g. 400% zoom) the word sits under the capsule so long Spanish labels still fit.
+    <span
+      aria-hidden="true"
+      className="flex shrink-0 flex-col-reverse items-end gap-1 min-[360px]:flex-row min-[360px]:items-center min-[360px]:gap-2"
+    >
       <span className={`grid text-right text-[0.6875rem] font-medium ${on ? "text-aqua" : "text-ash"}`}>
         <span className={`col-start-1 row-start-1 ${on ? "" : "invisible"}`}>{COPY.on[locale]}</span>
         <span className={`col-start-1 row-start-1 ${on ? "invisible" : ""}`}>{COPY.off[locale]}</span>
@@ -1040,7 +1061,8 @@ function Segmented<T extends string>({
             aria-pressed={on}
             onClick={() => onChange(o.value)}
             className={`relative min-h-[36px] whitespace-nowrap rounded-full px-1.5 text-[0.75rem] font-medium leading-tight sm:px-2 sm:text-[0.8125rem] ${
-              on ? "text-ink forced-colors:text-[HighlightText]" : "text-bone/90 hover:bg-white/[0.06]"
+              // No backplate on the pressed label, so HighlightText sits on the Highlight indicator (as in LanguageToggle).
+              on ? "text-ink forced-colors:text-[HighlightText] forced-colors:[forced-color-adjust:none]" : "text-bone/90 hover:bg-white/[0.06]"
             }`}
           >
             {o.label}
