@@ -6,6 +6,7 @@ import { startTransition, useMemo, useState } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { CurvedCarousel, type CarouselItem } from "@/components/ui/CurvedCarousel";
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
+import { SectionChip } from "@/components/ui/SectionHeader";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
 import { NICHES } from "@/data/niches";
@@ -46,7 +47,6 @@ export function IndustriesChapter() {
   };
 
   const niche = NICHES[active];
-  const index = t.industries.index.replace(/[()]/g, "");
 
   return (
     <section
@@ -61,13 +61,7 @@ export function IndustriesChapter() {
           <div className="frame grid grid-cols-12 items-end gap-x-4 gap-y-6 lg:gap-x-8">
             <div className="col-span-12 lg:col-span-7">
               <Reveal y={12}>
-                {/* Flat chip: the light field behind is soft, so real blur would be invisible cost. */}
-                <p className="chip-dark glass-flat text-ash">
-                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-signal shadow-[0_0_8px_1px_rgba(229,88,42,0.6)]" />
-                  <span className="tabular text-bone">{index}</span>
-                  <span>·</span>
-                  <span>{t.industries.eyebrow}</span>
-                </p>
+                <SectionChip index={t.industries.index} label={t.industries.eyebrow} />
               </Reveal>
               <RevealLines
                 id="industries-title"
@@ -79,7 +73,7 @@ export function IndustriesChapter() {
             <div className="col-span-12 lg:col-span-5">
               <p className="max-w-md text-pretty leading-relaxed text-ash">{t.industries.body}</p>
               <p className="chip-dark glass-flat mt-4 text-ash">
-                <MoveHorizontal aria-hidden="true" size={15} strokeWidth={1.75} className="text-signal" />
+                <MoveHorizontal aria-hidden="true" size={15} strokeWidth={1.75} className="text-aqua" />
                 {t.industries.swipeHint}
               </p>
             </div>
@@ -108,7 +102,8 @@ export function IndustriesChapter() {
                 {niche.tagline[locale]}
               </motion.p>
             </AnimatePresence>
-            <button type="button" onClick={openDashboard} className="btn-line-dark">
+            {/* Flat: sits over the static dark field, so real blur would be invisible cost (blur budget). */}
+            <button type="button" onClick={openDashboard} className="btn-line-dark glass-flat">
               {t.industries.explore}
               <ArrowDown aria-hidden="true" size={16} strokeWidth={1.75} />
             </button>

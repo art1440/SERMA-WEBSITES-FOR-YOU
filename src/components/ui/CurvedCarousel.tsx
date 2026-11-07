@@ -252,23 +252,24 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
       </motion.div>
 
       <div className="mt-3 flex items-center justify-center gap-3">
-        <button type="button" onClick={() => nudge(-1)} aria-label={prevLabel} className="btn-line-dark h-12 w-12 p-0">
+        <button type="button" onClick={() => nudge(-1)} aria-label={prevLabel} className="btn-line-dark glass-flat h-[50px] w-[50px] p-0">
           <ArrowLeft aria-hidden="true" size={18} strokeWidth={1.75} />
         </button>
-        {/* Capsule pagination: the active dot stretches into a signal pill and glides (layout = transform). */}
+        {/* Arrows are flat glass (static dark gradient behind: blur would be invisible cost).
+            Capsule pagination: the active dot stretches into an aqua pill and glides (layout = transform). */}
         <ol aria-hidden="true" className="flex items-center gap-4 rounded-full bg-white/[0.05] px-5 py-3.5 ring-1 ring-inset ring-white/10">
           {items.map((item, i) => (
             <li key={item.id} className="relative h-2 w-2 rounded-full bg-bone/25">
               {i === active ? (
                 <motion.span
                   layoutId="carousel-dot"
-                  className="absolute -inset-x-1.5 inset-y-0 rounded-full bg-signal shadow-[0_0_10px_rgba(229,88,42,0.55)]"
+                  className="absolute -inset-x-1.5 inset-y-0 rounded-full bg-aqua shadow-[0_0_10px_rgba(61,219,201,0.55)]"
                 />
               ) : null}
             </li>
           ))}
         </ol>
-        <button type="button" onClick={() => nudge(1)} aria-label={nextLabel} className="btn-line-dark h-12 w-12 p-0">
+        <button type="button" onClick={() => nudge(1)} aria-label={nextLabel} className="btn-line-dark glass-flat h-[50px] w-[50px] p-0">
           <ArrowRight aria-hidden="true" size={18} strokeWidth={1.75} />
         </button>
       </div>

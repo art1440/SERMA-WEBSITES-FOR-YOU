@@ -5,6 +5,7 @@ import { AmbientField } from "@/components/ui/AmbientField";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
+import { SectionChip } from "@/components/ui/SectionHeader";
 
 /**
  * The System — pinned while scroll drives the 3D engine through four
@@ -20,7 +21,6 @@ export function SystemChapter() {
   const { t } = useLanguage();
   const { system, reduce } = useScene();
   const steps = t.system.steps;
-  const index = t.system.index.replace(/[()]/g, "");
 
   return (
     <section
@@ -40,12 +40,7 @@ export function SystemChapter() {
         <div className="frame relative flex h-full flex-col pb-4 pt-20 motion-safe:justify-end sm:pb-10 sm:pt-24 lg:pb-6 lg:pt-20 lg:motion-safe:justify-center">
           <div className="glass-dark glass-solid w-full rounded-glass p-4 [--glass-blur:26px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:max-w-[34rem] sm:rounded-glass-lg sm:p-8 lg:w-6/12 lg:max-w-[36rem]">
             <Reveal y={12}>
-              <p className="chip-dark glass-flat text-ash">
-                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-signal shadow-[0_0_8px_1px_rgba(229,88,42,0.6)]" />
-                <span className="tabular text-bone">{index}</span>
-                <span>·</span>
-                <span>{t.system.eyebrow}</span>
-              </p>
+              <SectionChip index={t.system.index} label={t.system.eyebrow} />
             </Reveal>
             <RevealLines
               id="system-title"
@@ -56,8 +51,8 @@ export function SystemChapter() {
 
             <p className="mt-3 text-pretty text-[0.8125rem] font-medium leading-6 text-ash sm:mt-4">
               {t.system.inputs.join(" · ")} →{" "}
-              <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-signal/15 px-2.5 py-0.5 leading-5 text-bone ring-1 ring-inset ring-signal/40">
-                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-signal shadow-[0_0_8px_2px_rgba(229,88,42,0.55)]" />
+              <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-aqua/[0.12] px-2.5 py-0.5 leading-5 text-bone ring-1 ring-inset ring-aqua/40">
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_2px_rgba(61,219,201,0.55)]" />
                 {t.system.core}
               </span>{" "}
               → {t.system.outputs.join(" · ")}
@@ -67,7 +62,7 @@ export function SystemChapter() {
               <ol className="mt-6 space-y-6 border-t border-white/10 pt-6">
                 {steps.map((step, i) => (
                   <li key={step.title} className="grid grid-cols-[2.75rem_1fr] gap-x-4">
-                    <span className="grid h-9 w-9 place-items-center rounded-full bg-white/[0.06] text-sm font-medium tabular text-bone ring-1 ring-inset ring-signal/50">
+                    <span className="grid h-9 w-9 place-items-center rounded-full bg-white/[0.06] text-sm font-medium tabular text-bone ring-1 ring-inset ring-aqua/50">
                       0{i + 1}
                     </span>
                     <div>
@@ -128,13 +123,13 @@ function Step({
   );
 }
 
-/** Slim rounded track: warm fill grows with scroll; each round marker lights as the fill reaches it. */
+/** Slim rounded track: aqua fill grows with scroll; each round marker lights as the fill reaches it. */
 function StepRail({ progress, count }: { progress: MotionValue<number>; count: number }) {
   const fill = useTransform(progress, [0, 1], [0, 1]);
   return (
     <div aria-hidden="true" className="relative h-[11.5rem] w-[3px] rounded-full bg-white/10 sm:h-[10.5rem]">
       <motion.span
-        className="absolute inset-0 block origin-top rounded-full bg-gradient-to-b from-amber to-signal"
+        className="absolute inset-0 block origin-top rounded-full bg-gradient-to-b from-aqua-deep to-aqua"
         style={{ scaleY: fill }}
       />
       {Array.from({ length: count }).map((_, i) => (
@@ -148,11 +143,11 @@ function RailMarker({ progress, at }: { progress: MotionValue<number>; at: numbe
   const lit = useTransform(progress, [at - 0.03, at], [0, 1]);
   return (
     <span
-      className="absolute left-1/2 grid h-3 w-3 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#1c1b18] ring-1 ring-inset ring-white/25"
+      className="absolute left-1/2 grid h-3 w-3 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-ink-800 ring-1 ring-inset ring-white/25"
       style={{ top: `${at * 100}%` }}
     >
       <motion.span
-        className="block h-1.5 w-1.5 rounded-full bg-signal shadow-[0_0_8px_1px_rgba(229,88,42,0.7)]"
+        className="block h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(61,219,201,0.7)]"
         style={{ opacity: lit }}
       />
     </span>

@@ -88,9 +88,10 @@ export function ClientLoginModal({ open, onClose }: Props) {
           transition={{ duration: 0.35, ease: EASE_EDITORIAL }}
         >
           <div className="absolute inset-0 bg-ink/45" onClick={onClose} aria-hidden="true" />
-          {/* Dark glass sheet: real blur over the page from sm up (a bounded ~30% of the
-              viewport); on phones it is a near-full-height bottom sheet, so it drops the
-              blur and goes solid (blur budget + no ghosting of the page behind). */}
+          {/* Dark glass sheet: real blur only on large, tall screens (lg+ and taller than
+              820px), where the dialog stays under ~40% of the viewport. On phones, tablets
+              and short laptops it covers more than that, so it drops the blur and goes
+              solid (blur budget + no ghosting of the page behind). */}
           <motion.div
             ref={dialogRef}
             role="dialog"
@@ -98,7 +99,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
             aria-labelledby="login-title"
             aria-describedby="login-description"
             data-theme="dark"
-            className="glass-dark glass-solid relative flex max-h-[92svh] w-full max-w-xl flex-col rounded-t-glass-lg text-bone [--glass-blur:30px] max-sm:[-webkit-backdrop-filter:none] max-sm:[backdrop-filter:none] max-sm:![background:linear-gradient(160deg,#1f1e1b,#121210)] sm:rounded-glass-lg"
+            className="glass-dark glass-solid relative flex max-h-[92svh] w-full max-w-xl flex-col rounded-t-glass-lg text-bone [--glass-blur:30px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] max-lg:![background:linear-gradient(160deg,#1f1e1b,#121210)] [@media(max-height:820px)]:[-webkit-backdrop-filter:none] [@media(max-height:820px)]:[backdrop-filter:none] [@media(max-height:820px)]:![background:linear-gradient(160deg,#1f1e1b,#121210)] sm:rounded-glass-lg"
             initial={{ y: 48, opacity: 0, scale: 0.985 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 28, opacity: 0, scale: 0.99 }}
@@ -109,14 +110,14 @@ export function ClientLoginModal({ open, onClose }: Props) {
               {/* Header */}
               <div className="flex items-center justify-between gap-4">
                 <p className="chip-dark glass-flat text-bone">
-                  <Lock aria-hidden="true" size={13} strokeWidth={1.75} className="text-signal" />
+                  <Lock aria-hidden="true" size={13} strokeWidth={1.75} className="text-aqua" />
                   {t.login.eyebrow}
                 </p>
                 <button
                   type="button"
                   onClick={onClose}
                   aria-label={t.login.close}
-                  className="btn-line-dark glass-flat -mr-1 h-11 w-11 min-h-[44px] shrink-0 p-0"
+                  className="btn-line-dark btn-sm glass-flat -mr-1 h-11 w-11 shrink-0 p-0"
                 >
                   <X aria-hidden="true" size={18} strokeWidth={1.75} />
                 </button>
@@ -158,7 +159,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
                   ))}
                 </div>
                 <p className="mt-3 flex items-center gap-2 px-1 text-[0.8125rem] leading-snug text-ash">
-                  <KeyRound aria-hidden="true" size={14} strokeWidth={1.75} className="shrink-0 text-signal" />
+                  <KeyRound aria-hidden="true" size={14} strokeWidth={1.75} className="shrink-0 text-aqua" />
                   {t.login.lockedLabel}
                 </p>
               </div>
@@ -173,7 +174,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + i * 0.08, duration: 0.5, ease: EASE_EDITORIAL }}
                   >
-                    <span className="tabular grid h-7 w-7 shrink-0 place-items-center rounded-full bg-signal text-xs font-semibold text-ink shadow-[inset_0_1px_0_rgba(255,220,190,0.6)]">
+                    <span className="tabular grid h-7 w-7 shrink-0 place-items-center rounded-full bg-aqua text-xs font-semibold text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_0_10px_rgba(61,219,201,0.35)]">
                       0{i + 1}
                     </span>
                     <span className="block pt-1 text-sm leading-snug sm:pt-0">{step}</span>
@@ -182,7 +183,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
               </ol>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <MagneticButton className="btn-bone w-full sm:w-auto" onClick={bookDemo}>
+                <MagneticButton className="btn-aqua w-full sm:w-auto" onClick={bookDemo}>
                   {t.login.primary}
                   <ArrowRight aria-hidden="true" size={15} strokeWidth={1.75} />
                 </MagneticButton>
