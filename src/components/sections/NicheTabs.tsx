@@ -12,7 +12,7 @@ export const tabId = (id: string) => `niche-tab-${id}`;
 
 /**
  * WAI-ARIA tablist (automatic activation): ←/→/Home/End move between
- * industries. Styled as a recessed capsule segmented control: a raised bone
+ * industries. Styled as a recessed capsule segmented control: a raised aqua
  * pill slides between tabs via `layoutId` (transform-only). One row on
  * desktop; wraps to a 2/3-column grid of capsules on smaller screens, with
  * the track radius kept concentric (tab radius 22 + 4px padding = 26).
@@ -70,12 +70,13 @@ export function NicheTabs() {
                 aria-hidden="true"
                 // Radius set via style so Framer corrects it during the layout slide (no squashed ends).
                 style={{ borderRadius: 22 }}
-                className="absolute inset-0 -z-10 bg-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.95),inset_0_-1px_0_rgba(13,13,11,0.06),0_8px_18px_-8px_rgba(0,0,0,0.75),0_1px_2px_rgba(0,0,0,0.3)]"
+                className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#6FE9DA_0%,#3DDBC9_55%,#2FCBB9_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_-1px_0_rgba(13,13,11,0.08),0_0_0_1px_rgba(61,219,201,0.35),0_8px_22px_-8px_rgba(61,219,201,0.55),0_1px_2px_rgba(0,0,0,0.3)]"
                 transition={SPRING_SOFT}
               />
             ) : null}
-            {/* Alpha tints (bone/60, bone/90) keep ≥4.5:1 on the recessed track wherever the plate gradient sits. */}
-            <span className={`tabular text-xs font-medium ${selected ? "text-signal-deep" : "text-bone/60"}`}>0{i + 1}</span>
+            {/* Alpha tints (bone/60, bone/90) keep ≥4.5:1 on the recessed track wherever the plate gradient sits;
+                ink/70 on the aqua pill is ≥5:1 (ink 11:1). */}
+            <span className={`tabular text-xs font-medium ${selected ? "text-ink/70" : "text-bone/60"}`}>0{i + 1}</span>
             <span className={`text-sm font-medium leading-tight tracking-[-0.01em] ${selected ? "text-ink" : "text-bone/90"}`}>
               {niche.label[locale]}
             </span>
