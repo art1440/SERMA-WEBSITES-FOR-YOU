@@ -153,12 +153,13 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
         {announce}
       </p>
 
+      {/* Soft edge fade (mask on the perspective parent, never on the preserve-3d ring). */}
       <motion.div
         ref={stageRef}
         onPanStart={onPanStart}
         onPan={onPan}
         onPanEnd={onPanEnd}
-        className="relative w-full cursor-grab select-none overflow-hidden active:cursor-grabbing"
+        className="relative w-full cursor-grab select-none overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_7%,#000_93%,transparent)] active:cursor-grabbing"
         style={{ height: dims.h + 90, perspective: dims.p, touchAction: "pan-y" }}
       >
         <motion.div
@@ -197,7 +198,7 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
                     if (dragged.current) return;
                     goTo(i, true);
                   }}
-                  className="group relative block h-full w-full overflow-hidden rounded-[10px] bg-ink-800 text-left outline-offset-4"
+                  className="group relative isolate block h-full w-full overflow-hidden rounded-glass bg-ink-800 text-left shadow-[0_30px_60px_-30px_rgba(0,0,0,0.85)] outline-offset-4 xl:rounded-glass-lg"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -223,12 +224,25 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
                       <source src={`${item.video}.mp4`} type="video/mp4" />
                     </video>
                   ) : null}
-                  <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-ink/90 to-transparent" />
-                  <span className="absolute bottom-3 left-3 right-10 font-display text-xl leading-tight text-bone sm:text-2xl">
-                    {item.title}
-                  </span>
-                  <span aria-hidden="true" className="absolute bottom-3.5 right-3 font-mono text-[0.65rem] text-bone/80">
-                    0{i + 1}
+                  <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/75 via-ink/25 to-transparent" />
+                  {/* Light-catching edge: specular top rim + soft inner ring */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_1px_0_rgba(255,255,255,0.32),inset_0_0_0_1px_rgba(255,255,255,0.12)]"
+                  />
+                  {/* Caption bar: flat glass (cards are 3D-transformed, so no backdrop blur in here).
+                      Radius is concentric with the card (outer radius minus the inset). Sizes step up at
+                      xl, where cards reach ~256px+ (card width follows the viewport, see `measure`). */}
+                  <span className="glass-dark glass-flat absolute inset-x-2 bottom-2 flex items-center justify-between gap-2 rounded-glass-sm py-2 pl-3 pr-2 xl:inset-x-3 xl:bottom-3 xl:gap-3 xl:rounded-[18px] xl:py-3 xl:pl-4 xl:pr-3">
+                    <span className="min-w-0 font-display text-[0.9375rem] leading-tight text-bone [overflow-wrap:anywhere] xl:text-xl">
+                      {item.title}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white/10 text-[0.625rem] font-medium tabular text-bone/85 ring-1 ring-inset ring-white/15 xl:h-7 xl:w-7 xl:text-[0.6875rem]"
+                    >
+                      0{i + 1}
+                    </span>
                   </span>
                 </button>
               </div>
@@ -237,29 +251,26 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
         </motion.div>
       </motion.div>
 
-      <div className="mt-2 flex items-center justify-center gap-3">
-        <button
-          type="button"
-          onClick={() => nudge(-1)}
-          aria-label={prevLabel}
-          className="grid h-11 w-11 place-items-center border border-bone/40 text-bone hover:border-bone"
-        >
-          <ArrowLeft aria-hidden="true" size={16} strokeWidth={1.5} />
+      <div className="mt-3 flex items-center justify-center gap-3">
+        <button type="button" onClick={() => nudge(-1)} aria-label={prevLabel} className="btn-line-dark glass-flat h-[50px] w-[50px] p-0">
+          <ArrowLeft aria-hidden="true" size={18} strokeWidth={1.75} />
         </button>
-        <ol aria-hidden="true" className="flex items-center gap-1.5">
+        {/* Arrows are flat glass (static dark gradient behind: blur would be invisible cost).
+            Capsule pagination: the active dot stretches into an aqua pill and glides (layout = transform). */}
+        <ol aria-hidden="true" className="flex items-center gap-4 rounded-full bg-white/[0.05] px-5 py-3.5 ring-1 ring-inset ring-white/10">
           {items.map((item, i) => (
-            <li key={item.id} className="relative h-1 w-6 overflow-hidden bg-bone/20">
-              {i === active ? <motion.span layoutId="carousel-dot" className="absolute inset-0 bg-signal" /> : null}
+            <li key={item.id} className="relative h-2 w-2 rounded-full bg-bone/25">
+              {i === active ? (
+                <motion.span
+                  layoutId="carousel-dot"
+                  className="absolute -inset-x-1.5 inset-y-0 rounded-full bg-aqua shadow-[0_0_10px_rgba(61,219,201,0.55)]"
+                />
+              ) : null}
             </li>
           ))}
         </ol>
-        <button
-          type="button"
-          onClick={() => nudge(1)}
-          aria-label={nextLabel}
-          className="grid h-11 w-11 place-items-center border border-bone/40 text-bone hover:border-bone"
-        >
-          <ArrowRight aria-hidden="true" size={16} strokeWidth={1.5} />
+        <button type="button" onClick={() => nudge(1)} aria-label={nextLabel} className="btn-line-dark glass-flat h-[50px] w-[50px] p-0">
+          <ArrowRight aria-hidden="true" size={18} strokeWidth={1.75} />
         </button>
       </div>
     </div>

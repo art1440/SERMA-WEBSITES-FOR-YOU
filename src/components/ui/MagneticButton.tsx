@@ -58,7 +58,8 @@ export function MagneticButton({ children, className, onClick, href, type = "but
   };
 
   const shared = {
-    className,
+    // The spring drives `transform` every frame; a CSS transform transition (.btn) would smooth it twice and lag.
+    className: `${className ?? ""} transition-none`,
     style: { x: sx, y: sy },
     onPointerEnter: onEnter,
     onPointerMove: onMove,

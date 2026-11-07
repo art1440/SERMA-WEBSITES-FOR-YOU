@@ -1,7 +1,10 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 /**
- * "Tactile Swiss / Quiet Luxury" token system.
+ * SermaWebDesign — "Liquid Glass" token system (see docs/design-system.md).
+ * Warm brand palette (ink · bone · signal) rendered through translucent,
+ * light-catching glass surfaces. No purple / neon.
  * Contrast (WCAG 2.1 AA) verified for every text pairing used:
  *  - ink on bone ........ 16.6:1   - muted on bone ...... 6.1:1
  *  - bone on ink ........ 16.6:1   - ash on ink ......... 7.7:1
@@ -47,21 +50,43 @@ const config: Config = {
           DEFAULT: "#E5582A",
           deep: "#B23F14",
         },
+        /* Primary accent (dark-first theme): glow, CTAs, focus, data highlights.
+           aqua on ink 11.3:1 · ink on aqua 11.3:1 · aqua-deep on ink 6.3:1. Signal stays for small alerts. */
+        aqua: {
+          DEFAULT: "#3DDBC9",
+          deep: "#12A594",
+          glow: "#7FF2E3",
+        },
+        /* Ambient light-field tints — decorative backgrounds only, never text. */
+        sand: "#E8DCC6",
+        amber: "#F0A35C",
+        ember: "#7A2E12",
         live: "#5DB37E",
       },
       fontFamily: {
-        display: ["var(--font-display)", "ui-serif", "Georgia", "serif"],
+        /* Display = Geist at a heavier optical weight (modern, Apple-like headlines). */
+        display: [
+          ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+          { fontVariationSettings: '"wght" 580' },
+        ],
+        /* Serif = Instrument Serif — used ONLY for italic accent words. */
+        serif: ["var(--font-display)", "ui-serif", "Georgia", "serif"],
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       fontSize: {
-        "display-xl": ["clamp(2.75rem, 9vw, 9.5rem)", { lineHeight: "0.9", letterSpacing: "-0.02em" }],
-        "display-lg": ["clamp(2.6rem, 6vw, 6rem)", { lineHeight: "0.95", letterSpacing: "-0.015em" }],
-        "display-md": ["clamp(2rem, 4vw, 3.75rem)", { lineHeight: "1", letterSpacing: "-0.01em" }],
+        "display-xl": ["clamp(2.6rem, 8vw, 8.25rem)", { lineHeight: "0.94", letterSpacing: "-0.055em" }],
+        "display-lg": ["clamp(2.4rem, 5.4vw, 5.5rem)", { lineHeight: "0.98", letterSpacing: "-0.045em" }],
+        "display-md": ["clamp(1.9rem, 3.6vw, 3.4rem)", { lineHeight: "1.04", letterSpacing: "-0.035em" }],
         micro: ["0.6875rem", { lineHeight: "1rem", letterSpacing: "0.08em" }],
       },
       maxWidth: {
         frame: "90rem",
+      },
+      borderRadius: {
+        "glass-sm": "14px",
+        glass: "22px",
+        "glass-lg": "30px",
       },
       transitionTimingFunction: {
         editorial: "cubic-bezier(0.22, 1, 0.36, 1)",
@@ -95,7 +120,14 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    /* `pin:` = the window can hold a pinned scroll scene near full size (wide AND tall).
+       A variant, not a screen: an extra screen would break the max-* screen variants.
+       Keep the query in sync with `pin` in src/context/SceneContext.tsx. */
+    plugin(({ addVariant }) => {
+      addVariant("pin", "@media (min-width: 1280px) and (min-height: 840px)");
+    }),
+  ],
 };
 
 export default config;

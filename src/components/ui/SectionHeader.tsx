@@ -8,39 +8,52 @@ type Props = {
   title: string | readonly string[];
   body?: string;
   headingId: string;
+  /** Kept for API compatibility only: the site is dark-first, so every header renders the dark treatment. */
   tone?: "light" | "dark";
 };
 
+type SectionChipProps = {
+  /** Section index as it appears in the dictionary, e.g. "(02)" or "02". Parentheses are stripped. */
+  index: string;
+  /** Eyebrow label, e.g. "Built for". */
+  label: string;
+  className?: string;
+};
+
 /**
- * Asymmetric Swiss header: a narrow index rail on the left (mono), a wide
- * editorial headline on the right, separated by an exposed 1px hairline.
+ * Section eyebrow chip, the one grammar used for every section index:
+ * "02 ● Label". Flat dark glass (no backdrop blur: chips sit over soft fields
+ * or inside other glass, where blur is invisible cost). The number is bone,
+ * the label ash (5.8:1 on the flat tint), the dot is the aqua accent.
  */
-export function SectionHeader({ index, eyebrow, title, body, headingId, tone = "light" }: Props) {
-  const dark = tone === "dark";
+export function SectionChip({ index, label, className }: SectionChipProps) {
+  const number = index.replace(/[()]/g, "").trim();
+  return (
+    <p className={`chip-dark glass-flat text-ash${className ? ` ${className}` : ""}`}>
+      <span className="tabular text-bone">{number}</span>
+      <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(61,219,201,0.6)]" />
+      <span>{label}</span>
+    </p>
+  );
+}
+
+/**
+ * Section header: the section chip floating above a calm, wide headline, with
+ * the supporting line in a quieter tone. Always dark (bone headline, ash body).
+ */
+export function SectionHeader({ index, eyebrow, title, body, headingId }: Props) {
   const lines = typeof title === "string" ? [title] : title;
   return (
-    <div className={`grid grid-cols-12 gap-x-4 gap-y-6 border-t pt-6 lg:gap-x-8 ${dark ? "border-hairline-dark" : "border-hairline-light"}`}>
-      <Reveal className="col-span-12 md:col-span-3" y={12}>
-        <p className={`eyebrow flex items-baseline gap-3 ${dark ? "text-ash" : "text-muted"}`}>
-          <span className={dark ? "text-signal" : "text-signal-deep"}>{index}</span>
-          <span aria-hidden="true" className={`inline-block h-px w-6 translate-y-[-3px] ${dark ? "bg-ash" : "bg-muted"}`} />
-          <span>{eyebrow}</span>
-        </p>
+    <div className="max-w-5xl">
+      <Reveal y={12}>
+        <SectionChip index={index} label={eyebrow} />
       </Reveal>
-      <div className="col-span-12 md:col-span-9">
-        <RevealLines
-          id={headingId}
-          lines={lines}
-          className={`font-display text-display-md text-balance ${dark ? "text-bone" : "text-ink"}`}
-        />
-        {body ? (
-          <Reveal delay={0.15} y={16}>
-            <p className={`mt-5 max-w-2xl text-pretty text-base leading-relaxed md:text-lg ${dark ? "text-ash" : "text-muted"}`}>
-              {body}
-            </p>
-          </Reveal>
-        ) : null}
-      </div>
+      <RevealLines id={headingId} lines={lines} className="mt-5 font-display text-display-md text-balance text-bone lg:mt-6" />
+      {body ? (
+        <Reveal delay={0.15} y={16}>
+          <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ash md:text-lg">{body}</p>
+        </Reveal>
+      ) : null}
     </div>
   );
 }

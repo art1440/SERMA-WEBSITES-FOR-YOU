@@ -1,10 +1,12 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, MoveHorizontal } from "lucide-react";
 import { startTransition, useMemo, useState } from "react";
+import { AmbientField } from "@/components/ui/AmbientField";
 import { CurvedCarousel, type CarouselItem } from "@/components/ui/CurvedCarousel";
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
+import { SectionChip } from "@/components/ui/SectionHeader";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
 import { NICHES } from "@/data/niches";
@@ -51,33 +53,33 @@ export function IndustriesChapter() {
       id="industries"
       aria-labelledby="industries-title"
       data-theme="dark"
-      className="relative z-10 bg-ink py-24 text-bone lg:py-32"
+      className="relative isolate z-10 overflow-hidden py-24 text-bone lg:py-32"
     >
+      <AmbientField tone="dark" variant={0} />
       <div className="relative">
         <div className="flex flex-col">
-          <div className="frame grid grid-cols-12 items-end gap-x-4 gap-y-4 lg:gap-x-8">
+          <div className="frame grid grid-cols-12 items-end gap-x-4 gap-y-6 lg:gap-x-8">
             <div className="col-span-12 lg:col-span-7">
               <Reveal y={12}>
-                <p className="eyebrow flex items-baseline gap-3 text-ash">
-                  <span className="text-signal">{t.industries.index}</span>
-                  <span aria-hidden="true" className="inline-block h-px w-6 translate-y-[-3px] bg-ash" />
-                  <span>{t.industries.eyebrow}</span>
-                </p>
+                <SectionChip index={t.industries.index} label={t.industries.eyebrow} />
               </Reveal>
               <RevealLines
                 id="industries-title"
                 lines={t.industries.title}
                 emphasis={t.industries.titleEmphasis}
-                className="mt-4 font-display text-display-md"
+                className="mt-5 font-display text-display-md"
               />
             </div>
             <div className="col-span-12 lg:col-span-5">
               <p className="max-w-md text-pretty leading-relaxed text-ash">{t.industries.body}</p>
-              <p className="mt-3 font-mono text-micro uppercase text-signal">{t.industries.swipeHint}</p>
+              <p className="chip-dark glass-flat mt-4 text-ash">
+                <MoveHorizontal aria-hidden="true" size={15} strokeWidth={1.75} className="text-aqua" />
+                {t.industries.swipeHint}
+              </p>
             </div>
           </div>
 
-          <div className="mt-6 lg:mt-8">
+          <div className="mt-8 lg:mt-10">
             <CurvedCarousel
               items={items}
               onActiveChange={onActiveChange}
@@ -87,11 +89,11 @@ export function IndustriesChapter() {
             />
           </div>
 
-          <div className="frame mt-4 flex flex-col items-center gap-3 text-center">
+          <div className="frame mt-6 flex flex-col items-center gap-4 text-center">
             <AnimatePresence mode="wait" initial={false}>
               <motion.p
                 key={`${niche.id}-${locale}`}
-                className="font-display text-2xl text-bone sm:text-3xl"
+                className="font-display text-2xl text-bone text-balance sm:text-3xl"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
@@ -100,9 +102,10 @@ export function IndustriesChapter() {
                 {niche.tagline[locale]}
               </motion.p>
             </AnimatePresence>
-            <button type="button" onClick={openDashboard} className="btn-line-dark">
+            {/* Flat: sits over the static dark field, so real blur would be invisible cost (blur budget). */}
+            <button type="button" onClick={openDashboard} className="btn-line-dark glass-flat">
               {t.industries.explore}
-              <ArrowDown aria-hidden="true" size={14} strokeWidth={1.5} />
+              <ArrowDown aria-hidden="true" size={16} strokeWidth={1.75} />
             </button>
           </div>
         </div>

@@ -9,7 +9,7 @@ import type { Locale, Widen } from "./types";
  */
 const en = {
   meta: {
-    title: "SermaWebDesign — Websites That Give Local Business Owners Their Time Back",
+    title: "SermaWebDesign — Websites That Book Clients for You",
   },
   common: {
     skipToContent: "Skip to main content",
@@ -22,7 +22,7 @@ const en = {
     playAll: "Play animations",
     scroll: "Scroll",
     simulationDisclaimer:
-      "Illustrative interactive simulation of the SermaWebDesign Client Portal. Actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
+      "Illustrative interactive simulation of the SermaWebDesign Client Portal. Actual lead volume, bookings, and revenue depend on market, industry, and business operations. The businesses, people, messages and reviews shown are fictional.",
   },
   nav: {
     primaryLabel: "Primary",
@@ -36,7 +36,8 @@ const en = {
     clientLogin: "Client Login",
     openMenu: "Open menu",
     closeMenu: "Close menu",
-    languageGroup: "Language",
+    switchLanguage: "Switch to",
+    languageChanged: "Language: English",
     english: "English",
     spanish: "Español",
   },
@@ -53,18 +54,28 @@ const en = {
     close: "Close",
   },
   hero: {
-    eyebrow: "Websites and booking systems for local businesses",
-    headline: ["You started this", "for the craft,", "not the phone."],
-    headlineEmphasis: "craft",
-    sub: "We build your website and the quiet system behind it. Calls get answered, appointments get booked, customers come back — and you get back to the work you actually opened the doors for.",
-    status: "Working while you work",
+    eyebrow: "For barbershops, salons, restaurants and the trades",
+    headline: ["Websites that", "book clients", "for you."],
+    headlineEmphasis: "for you",
+    sub: "Missed calls get a text back in seconds. Clients book themselves 24/7, with deposits and reminders built in. Regulars get a nudge when they’re due. And your hands stay on the work you opened the doors for.",
+    status: "Booking while you work",
     statusDetail: "Calls · Bookings · Follow-ups",
     secondaryCta: "See how it works",
     figure: "Fig. 01 — The quiet part of your business.",
-    statement: ["While you're with a client,", "the next one is already booked."],
+    statement: ["While you’re with a client,", "your site books the next one."],
     scrollHint: "Scroll to see how",
     videoLabel: "Ambient abstract motion: folded black paper and brushed metal swept by a thin line of warm light.",
     builtFor: "Built for",
+    flow: {
+      title: "A missed call, start to finish",
+      caption: "Illustration of the automated flow",
+      steps: [
+        { label: "Missed call", meta: "You’re with a client" },
+        { label: "Text sent back", meta: "Seconds later, automatically" },
+        { label: "Appointment booked", meta: "They pick the time" },
+        { label: "Reminder scheduled", meta: "The day before" },
+      ],
+    },
     stack: ["A website that books", "Calls that get answered", "Reminders that send themselves", "Customers who come back", "Evenings that stay yours"],
   },
   system: {
@@ -109,6 +120,8 @@ const en = {
     sidebarLabel: "Dashboard sections",
     sidebar: ["Overview", "Leads", "Calendar", "Inbox", "Reviews", "Settings"],
     period: "Last 30 days",
+    /** Window-chrome capsule; `live` stays for the activity-stream chip. */
+    liveDemo: "Live demo",
     live: "Live",
     revenueTitle: "Booked revenue by week",
     revenueTotal: "Booked revenue · 8 weeks",
@@ -121,6 +134,9 @@ const en = {
     minutesAgo: "{n} min ago",
     vsPrevious: "vs. previous period",
     scrollHint: "Keep scrolling — see the dashboard for each kind of business.",
+    newItems: "new",
+    /** Singular of `newItems` (screen-reader suffix of a sidebar badge showing 1). */
+    newItemsOne: "new",
   },
   simulator: {
     index: "(04)",
@@ -270,7 +286,7 @@ export type Dictionary = Widen<typeof en>;
 
 const es: Dictionary = {
   meta: {
-    title: "SermaWebDesign — Sitios web que le devuelven el tiempo a los dueños de negocios locales",
+    title: "SermaWebDesign — Sitios web que agendan citas por usted",
   },
   common: {
     skipToContent: "Saltar al contenido principal",
@@ -283,7 +299,7 @@ const es: Dictionary = {
     playAll: "Reanudar animaciones",
     scroll: "Desplácese",
     simulationDisclaimer:
-      "Simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
+      "Simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Los negocios, personas, mensajes y reseñas que se muestran son ficticios.",
   },
   nav: {
     primaryLabel: "Principal",
@@ -297,7 +313,8 @@ const es: Dictionary = {
     clientLogin: "Acceso a Clientes",
     openMenu: "Abrir menú",
     closeMenu: "Cerrar menú",
-    languageGroup: "Idioma",
+    switchLanguage: "Cambiar a",
+    languageChanged: "Idioma: español",
     english: "English",
     spanish: "Español",
   },
@@ -314,18 +331,28 @@ const es: Dictionary = {
     close: "Cerrar",
   },
   hero: {
-    eyebrow: "Sitios web y sistemas de citas para negocios locales",
-    headline: ["Usted empezó esto", "por su oficio,", "no por el teléfono."],
-    headlineEmphasis: "oficio",
-    sub: "Creamos su sitio web y el sistema silencioso que trabaja detrás. Las llamadas se contestan, las citas se agendan, los clientes regresan, y usted vuelve al trabajo por el que abrió su negocio.",
-    status: "Trabajando mientras usted trabaja",
+    eyebrow: "Para barberías, salones, restaurantes y contratistas",
+    headline: ["Sitios web que", "agendan citas", "por usted."],
+    headlineEmphasis: "por usted",
+    sub: "Las llamadas perdidas reciben un mensaje de texto en segundos. Sus clientes agendan solos, 24/7, con depósito y recordatorios. Los clientes fijos reciben un aviso cuando les toca volver. Y usted sigue en lo suyo: el trabajo por el que abrió su negocio.",
+    status: "Agendando mientras usted trabaja",
     statusDetail: "Llamadas · Citas · Seguimiento",
     secondaryCta: "Vea cómo funciona",
     figure: "Fig. 01 — La parte silenciosa de su negocio.",
-    statement: ["Mientras atiende a un cliente,", "el siguiente ya está agendado."],
+    statement: ["Mientras atiende a un cliente,", "su sitio agenda al siguiente."],
     scrollHint: "Desplácese para ver cómo",
     videoLabel: "Movimiento abstracto ambiental: papel negro plegado y metal cepillado recorridos por una delgada línea de luz cálida.",
     builtFor: "Diseñado para",
+    flow: {
+      title: "Una llamada perdida, de principio a fin",
+      caption: "Ilustración del flujo automático",
+      steps: [
+        { label: "Llamada perdida", meta: "Usted está con un cliente" },
+        { label: "Mensaje enviado", meta: "Segundos después, solo" },
+        { label: "Cita agendada", meta: "El cliente elige la hora" },
+        { label: "Recordatorio programado", meta: "Un día antes" },
+      ],
+    },
     stack: ["Un sitio que agenda", "Llamadas que se contestan", "Recordatorios que se envían solos", "Clientes que regresan", "Noches que siguen siendo suyas"],
   },
   system: {
@@ -370,6 +397,7 @@ const es: Dictionary = {
     sidebarLabel: "Secciones del panel",
     sidebar: ["Resumen", "Prospectos", "Calendario", "Bandeja", "Reseñas", "Ajustes"],
     period: "Últimos 30 días",
+    liveDemo: "Demo en vivo",
     live: "En vivo",
     revenueTitle: "Ingresos agendados por semana",
     revenueTotal: "Ingresos agendados · 8 semanas",
@@ -382,6 +410,8 @@ const es: Dictionary = {
     minutesAgo: "hace {n} min",
     vsPrevious: "vs. periodo anterior",
     scrollHint: "Siga desplazándose: vea el panel de cada tipo de negocio.",
+    newItems: "nuevos",
+    newItemsOne: "nuevo",
   },
   simulator: {
     index: "(04)",
