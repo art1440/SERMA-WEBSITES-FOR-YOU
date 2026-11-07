@@ -10,6 +10,17 @@ Source of truth: `src/app/globals.css` (materials, buttons, chips, fallbacks),
 
 ---
 
+## 0. Theme: dark-first, aqua accent
+
+- The whole site is dark (ink `#0D0D0B`). There are no light surfaces: use `glass-dark`, `chip-dark`, `btn-line-dark`, and bone / ash text. Never use `muted` on dark.
+- **Accent = aqua** (`aqua` #3DDBC9, `aqua-deep` #12A594, `aqua-glow` #7FF2E3), used for primary CTAs, focus rings, active states, fills, rails, rings and glows.
+  - aqua on ink is 11.3:1, ink on aqua is 11.3:1, and aqua-deep on ink is 6.3:1.
+  - **Signal orange** is a small secondary accent, for alert or problem states only: missed call, the "New" badge, and the "website that waits" side of the comparison.
+- Buttons come in two sizes only: `.btn` (50px, in-page CTAs) and `.btn btn-sm` (44px, for nav, footer, legal and utility use). The primary button is `btn-aqua`.
+- Section labels: always `<SectionHeader>` or `<SectionChip index label />` (number · aqua dot · label).
+- **Backdrop:** `<Stage>` = ink base → `<LightThreads>` (a page-wide aqua strand bundle, a single shader at reduced resolution, dimmed over the reading column, stopped by Pause) → films → 3D engine. `AmbientField` is a translucent ink wash, so the threads glow faintly through opaque sections.
+- The hero shows the product working via `HeroFlowCard`, captioned as an illustration (FTC).
+
 ## 1. Materials
 
 | Class | Use | Notes |
