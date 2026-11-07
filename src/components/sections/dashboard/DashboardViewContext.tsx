@@ -28,11 +28,21 @@ type DashboardViewValue = {
   markDone: (key: string) => void;
   /** Speak a short confirmation to screen readers (polite live region). */
   announce: (message: string) => void;
+  /** True while the stage is pinned (sticky, always on screen): focus moves must never scroll the page. */
+  pinned: boolean;
 };
 
 const Ctx = createContext<DashboardViewValue | null>(null);
 
-export function DashboardViewProvider({ children, onInteract }: { children: ReactNode; onInteract?: () => void }) {
+export function DashboardViewProvider({
+  children,
+  onInteract,
+  pinned = false,
+}: {
+  children: ReactNode;
+  onInteract?: () => void;
+  pinned?: boolean;
+}) {
   const [view, setViewState] = useState<DashboardView>("overview");
   const [focusId, setFocusId] = useState<string | null>(null);
   const [done, setDone] = useState<ReadonlySet<string>>(() => new Set());
@@ -59,8 +69,8 @@ export function DashboardViewProvider({ children, onInteract }: { children: Reac
   }, []);
 
   const value = useMemo(
-    () => ({ view, setView, focusId, clearFocus, isDone, markDone, announce }),
-    [view, setView, focusId, clearFocus, isDone, markDone, announce],
+    () => ({ view, setView, focusId, clearFocus, isDone, markDone, announce, pinned }),
+    [view, setView, focusId, clearFocus, isDone, markDone, announce, pinned],
   );
 
   return (

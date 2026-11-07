@@ -22,6 +22,7 @@ import {
   PILL_ON,
   StatusChip,
   ViewHeader,
+  revealInPage,
 } from "./ui";
 
 /* ------------------------------------------------------------------ *
@@ -108,7 +109,7 @@ function resolveReview(id: string, data: NicheViews): Review | undefined {
  * Focus a target without jolting the page: on lg+ only the list's own scroller
  * moves, revealing `area` (the block around the target: its draft, its card…).
  */
-function focusInPane(el: HTMLElement | null, scroller: HTMLElement | null, area: HTMLElement | null = el, alignTop = false) {
+function focusInPane(el: HTMLElement | null, scroller: HTMLElement | null, area: HTMLElement | null, alignTop: boolean, pinned: boolean) {
   if (!el) return;
   const box = area ?? el;
   const lg = window.matchMedia("(min-width: 1024px)").matches;
@@ -117,6 +118,13 @@ function focusInPane(el: HTMLElement | null, scroller: HTMLElement | null, area:
     box.scrollIntoView({ block: alignTop ? "start" : "nearest" });
     return;
   }
+  scrollPaneTo(box, scroller, alignTop);
+  // Unpinned laptops: the list itself may sit under the sticky header or below the fold.
+  revealInPage(el, pinned);
+}
+
+/** Move only the list's scroller so `box` is inside it (lg+). */
+function scrollPaneTo(box: HTMLElement, scroller: HTMLElement | null, alignTop: boolean) {
   if (!scroller) return;
   let top = 0;
   let node: HTMLElement | null = box;
@@ -170,7 +178,9 @@ export function ReviewsView() {
 function ReviewsBoard({ nicheId }: { nicheId: NicheId }) {
   const { locale, intlLocale } = useLanguage();
   const { niche } = useNiche();
-  const { isDone, markDone, announce, focusId, clearFocus } = useDashboardView();
+  const { isDone, markDone, announce, focusId, clearFocus, pinned } = useDashboardView();
+  const pinnedRef = useRef(pinned);
+  pinnedRef.current = pinned;
   const data = NICHE_VIEWS[nicheId];
   const { average, total, distribution, items } = data.reviews;
   const business = niche.simulator.business;
@@ -200,7 +210,7 @@ function ReviewsBoard({ nicheId }: { nicheId: NicheId }) {
     if (!focusReq) return;
     const el = document.getElementById(focusReq.id);
     const area = focusReq.area === "card" ? el?.closest<HTMLElement>("article") : el?.closest<HTMLElement>("[data-reveal]");
-    focusInPane(el, listRef.current, area ?? el, focusReq.area === "card");
+    focusInPane(el, listRef.current, area ?? el, focusReq.area === "card", pinnedRef.current);
   }, [focusReq]);
 
   // Cross-links ("Review & reply" in an Inbox email) open that review's draft. Only focusId triggers it.

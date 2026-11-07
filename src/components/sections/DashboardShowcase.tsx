@@ -185,7 +185,7 @@ export function DashboardShowcase() {
                   <WindowChrome />
                   <NicheTabs />
                 </motion.div>
-                <DashboardViewProvider onInteract={lockNiche}>
+                <DashboardViewProvider onInteract={lockNiche} pinned={pinned}>
                   <div
                     id={DASHBOARD_PANEL_ID}
                     role="tabpanel"

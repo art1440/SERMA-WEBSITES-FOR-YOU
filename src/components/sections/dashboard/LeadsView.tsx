@@ -50,6 +50,7 @@ import {
   StatusChip,
   ViewHeader,
   formatClock,
+  revealInPage,
   type Tone,
 } from "./ui";
 
@@ -280,7 +281,7 @@ function resolveLead(id: string, data: NicheViews): Lead | undefined {
 }
 
 /** Focus a target without jolting the page: on lg+ only the pane's own scroller moves. */
-function focusInPane(el: HTMLElement | null, scroller: HTMLElement | null, toTop = false) {
+function focusInPane(el: HTMLElement | null, scroller: HTMLElement | null, toTop: boolean, pinned: boolean) {
   if (!el) return;
   const lg = window.matchMedia("(min-width: 1024px)").matches;
   el.focus({ preventScroll: true });
@@ -288,6 +289,13 @@ function focusInPane(el: HTMLElement | null, scroller: HTMLElement | null, toTop
     el.scrollIntoView({ block: "nearest" });
     return;
   }
+  scrollPaneTo(el, scroller, toTop);
+  // Unpinned laptops: the pane itself may sit under the sticky header or below the fold.
+  revealInPage(el, pinned);
+}
+
+/** Move only the pane's scroller so `el` is inside it (lg+). */
+function scrollPaneTo(el: HTMLElement, scroller: HTMLElement | null, toTop: boolean) {
   if (!scroller) return;
   if (toTop) {
     scroller.scrollTop = 0;
@@ -315,7 +323,9 @@ export function LeadsView() {
 function LeadsBoard({ nicheId }: { nicheId: NicheId }) {
   const { locale, intlLocale } = useLanguage();
   const { niche } = useNiche();
-  const { isDone, markDone, announce, setView, focusId, clearFocus } = useDashboardView();
+  const { isDone, markDone, announce, setView, focusId, clearFocus, pinned } = useDashboardView();
+  const pinnedRef = useRef(pinned);
+  pinnedRef.current = pinned;
   const data = NICHE_VIEWS[nicheId];
   const leads = data.leads;
 
@@ -353,8 +363,9 @@ function LeadsBoard({ nicheId }: { nicheId: NicheId }) {
   selectedRef.current = selectedId;
   useEffect(() => {
     if (!focusReq.tick) return;
-    if (focusReq.target === "heading") focusInPane(headingRef.current, detailScrollRef.current, true);
-    else if (selectedRef.current) focusInPane(rowRefs.current.get(selectedRef.current) ?? null, listScrollRef.current);
+    if (focusReq.target === "heading") focusInPane(headingRef.current, detailScrollRef.current, true, pinnedRef.current);
+    else if (selectedRef.current)
+      focusInPane(rowRefs.current.get(selectedRef.current) ?? null, listScrollRef.current, false, pinnedRef.current);
   }, [focusReq]);
 
   // Cross-links ("Open lead" in an Inbox email, a calendar event…) open that lead directly.

@@ -39,6 +39,7 @@ import {
   ViewHeader,
   formatClock,
   normalizeMeridiem,
+  revealInPage,
 } from "./ui";
 
 /* ------------------------------------------------------------------ *
@@ -439,7 +440,7 @@ export function CalendarView() {
 
 function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
   const { locale, intlLocale } = useLanguage();
-  const { focusId, clearFocus, isDone } = useDashboardView();
+  const { focusId, clearFocus, isDone, pinned } = useDashboardView();
   const isWide = useIsWide();
   const data = NICHE_VIEWS[nicheId];
   const { resources, events } = data.calendar;
@@ -493,6 +494,8 @@ function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
     if (request.kind === "origin") {
       origin?.focus({ preventScroll: isWide || Boolean(agendaPane) });
       if (agendaPane) revealInScroller(origin, agendaPane);
+      // Unpinned laptops: the plate itself may sit under the sticky header.
+      if (isWide || agendaPane) revealInPage(origin, pinned);
       return;
     }
     const heading = headingRef.current;
@@ -501,11 +504,14 @@ function CalendarBoard({ nicheId }: { nicheId: NicheId }) {
       heading?.focus({ preventScroll: true });
       // 56: the tallest sticky day header (narrow columns stack the "Today" pill).
       if (request.reveal) revealInScroller(origin, gridScrollRef.current, 56);
+      revealInPage(heading, pinned);
     } else {
       heading?.focus({ preventScroll: true });
       const item = itemRefs.current.get(request.id) ?? heading;
-      if (agendaPane) revealInScroller(item, agendaPane);
-      else item?.scrollIntoView({ block: "nearest" });
+      if (agendaPane) {
+        revealInScroller(item, agendaPane);
+        revealInPage(item, pinned);
+      } else item?.scrollIntoView({ block: "nearest" });
     }
   });
 
