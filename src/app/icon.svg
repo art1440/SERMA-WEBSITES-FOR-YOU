@@ -2,13 +2,13 @@
   <!-- SermaWebDesign mark: the engine — faceted core inside the signal orbit -->
   <rect width="64" height="64" rx="12" fill="#0D0D0B"/>
   <g transform="rotate(-22 32 32)">
-    <ellipse cx="32" cy="32" rx="26" ry="9.5" fill="none" stroke="#E5582A" stroke-width="3.2" stroke-dasharray="58 8" stroke-dashoffset="-34"/>
+    <ellipse cx="32" cy="32" rx="26" ry="9.5" fill="none" stroke="#3DDBC9" stroke-width="3.2" stroke-dasharray="58 8" stroke-dashoffset="-34"/>
   </g>
   <polygon points="32,14 47,26 42,46 22,46 17,26" fill="#F1EDE4"/>
   <polygon points="32,14 47,26 32,31" fill="#D6CFC0"/>
   <polygon points="17,26 32,31 22,46" fill="#A8A296"/>
   <polygon points="32,31 42,46 22,46" fill="#E6E0D4"/>
   <g transform="rotate(-22 32 32)">
-    <path d="M6 32 A26 9.5 0 0 0 58 32" fill="none" stroke="#E5582A" stroke-width="3.2"/>
+    <path d="M6 32 A26 9.5 0 0 0 58 32" fill="none" stroke="#3DDBC9" stroke-width="3.2"/>
   </g>
 </svg>

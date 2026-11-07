@@ -22,7 +22,7 @@ function FooterLink({ href, label }: { href: string; label: string }) {
         aria-hidden="true"
         size={14}
         strokeWidth={1.75}
-        className="-translate-x-1 text-ash opacity-0 transition-[transform,opacity] duration-300 ease-editorial group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+        className="-translate-x-1 text-aqua opacity-0 transition-[transform,opacity] duration-300 ease-editorial group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
       />
     </Link>
   );
@@ -56,8 +56,9 @@ export function Footer() {
               {t.footer.tagline}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <p className="chip-dark min-h-[44px] text-bone">
-                <ShieldCheck aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0 text-signal" />
+              {/* Flat: the footer field is static and soft, so real blur would be invisible cost. */}
+              <p className="chip-dark glass-flat min-h-[44px] text-bone">
+                <ShieldCheck aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0 text-aqua" />
                 {t.footer.privacyBadge}
               </p>
               <LanguageToggle tone="dark" />
@@ -97,7 +98,7 @@ export function Footer() {
 
         <div className="mt-8 flex flex-col gap-4 border-t border-white/10 pt-6 text-[0.8125rem] text-ash sm:flex-row sm:items-center sm:justify-between">
           <p>{fill(t.footer.rights, { year, entity: siteConfig.legalEntity })}</p>
-          <a href="#top" className="btn-line-dark min-h-[44px] self-start px-5 py-2 text-sm sm:self-auto">
+          <a href="#top" className="btn-line-dark btn-sm glass-flat self-start sm:self-auto">
             {t.footer.backToTop}
             <ArrowUp aria-hidden="true" size={14} strokeWidth={1.75} />
           </a>

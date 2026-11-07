@@ -133,7 +133,7 @@
     background: linear-gradient(140deg, rgba(252, 250, 246, 0.9), rgba(246, 242, 234, 0.8));
   }
   .glass-dark.glass-solid {
-    background: linear-gradient(140deg, rgba(30, 29, 26, 0.86), rgba(16, 16, 14, 0.82));
+    background: linear-gradient(140deg, rgba(24, 28, 29, 0.86), rgba(12, 14, 15, 0.82));
   }
   /* Flat = no backdrop blur (cheap). Tint slightly denser to compensate.
      One selector per rule on purpose: Tailwind turns a selector *list* into a
@@ -147,14 +147,14 @@
   .glass-dark.glass-flat {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    background: linear-gradient(140deg, rgba(44, 42, 38, 0.92) 0%, rgba(24, 23, 21, 0.9) 55%, rgba(34, 32, 29, 0.92) 100%);
+    background: linear-gradient(140deg, rgba(36, 41, 42, 0.92) 0%, rgba(19, 22, 23, 0.9) 55%, rgba(28, 32, 33, 0.92) 100%);
   }
   /* Flat + solid: text-heavy panels without blur keep the dense tint. */
   .glass.glass-solid.glass-flat {
     background: linear-gradient(140deg, rgba(252, 250, 246, 0.94), rgba(246, 242, 234, 0.88));
   }
   .glass-dark.glass-solid.glass-flat {
-    background: linear-gradient(140deg, rgba(30, 29, 26, 0.94), rgba(16, 16, 14, 0.92));
+    background: linear-gradient(140deg, rgba(24, 28, 29, 0.94), rgba(12, 14, 15, 0.92));
   }
 
   /* Specular rim: a light-catching gradient border (masked ring). */
@@ -173,7 +173,7 @@
     pointer-events: none;
   }
   .glass-dark::before {
-    background: linear-gradient(150deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 70%, rgba(240, 163, 92, 0.28));
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 70%, rgba(61, 219, 201, 0.3));
   }
   /* Pointer sheen: a soft highlight that follows the cursor (set by <GlassSheen/>). */
   .glass::after,
@@ -214,10 +214,6 @@
   .btn {
     @apply relative isolate inline-flex min-h-[50px] select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-7 py-3 text-[0.9375rem] font-medium tracking-[-0.01em] disabled:cursor-not-allowed disabled:opacity-60;
     transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  /* Two sizes only: .btn (in-page CTAs, 50px) and .btn-sm (nav, footer, legal, utility; 44px). */
-  .btn-sm {
-    @apply min-h-[44px] px-4 py-2 text-sm;
   }
   .btn:active {
     transform: scale(0.97);
@@ -267,6 +263,13 @@
   .btn-line-dark {
     @apply btn glass-dark text-bone;
     --glass-blur: 16px;
+  }
+
+  /* Two sizes only: .btn (in-page CTAs, 50px) and .btn-sm (nav, footer, legal, utility; 44px).
+     Declared after every .btn-* variant (and doubled for specificity) so it always wins over the
+     size each variant copies in from .btn. */
+  .btn-sm.btn-sm {
+    @apply min-h-[44px] px-4 py-2 text-sm;
   }
 
   /* Small glass capsule for labels/status ("chips"). */
