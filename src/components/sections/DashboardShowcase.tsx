@@ -399,6 +399,16 @@ function ViewPanel({
 }) {
   const { view } = useDashboardView();
   const { locale } = useLanguage();
+  // Grow at once (EN → ES), but shrink only after the staggered text swap has played
+  // out (ES → EN): otherwise the old, taller text briefly sets the height and the
+  // window rescales twice.
+  const [minH, setMinH] = useState<number>(OVERVIEW_MIN_H[locale]);
+  useEffect(() => {
+    const next = OVERVIEW_MIN_H[locale];
+    setMinH((prev) => Math.max(prev, next));
+    const id = window.setTimeout(() => setMinH(next), 1600);
+    return () => window.clearTimeout(id);
+  }, [locale]);
   const overviewRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const pinnedRef = useRef(pinned);
@@ -436,7 +446,7 @@ function ViewPanel({
       {overviewOpen || desktop ? (
         <div
           ref={overviewRef}
-          style={pinned ? { minHeight: OVERVIEW_MIN_H[locale] } : undefined}
+          style={pinned ? { minHeight: minH } : undefined}
           inert={!overviewOpen}
           aria-hidden={overviewOpen ? undefined : true}
           className={`grid grid-cols-12 gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)] ${
