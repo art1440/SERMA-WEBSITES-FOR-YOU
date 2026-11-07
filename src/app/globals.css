@@ -133,17 +133,26 @@
   .glass-dark.glass-solid {
     background: linear-gradient(140deg, rgba(30, 29, 26, 0.86), rgba(16, 16, 14, 0.82));
   }
-  /* Flat = no backdrop blur (cheap). Tint slightly denser to compensate. */
-  .glass.glass-flat,
-  .glass-dark.glass-flat {
+  /* Flat = no backdrop blur (cheap). Tint slightly denser to compensate.
+     One selector per rule on purpose: Tailwind turns a selector *list* into a
+     descendant selector under responsive variants (max-lg:glass-flat), which
+     would silently keep the blur. */
+  .glass.glass-flat {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-  }
-  .glass.glass-flat {
     background: linear-gradient(140deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.5) 55%, rgba(255, 255, 255, 0.64) 100%);
   }
   .glass-dark.glass-flat {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     background: linear-gradient(140deg, rgba(44, 42, 38, 0.92) 0%, rgba(24, 23, 21, 0.9) 55%, rgba(34, 32, 29, 0.92) 100%);
+  }
+  /* Flat + solid: text-heavy panels without blur keep the dense tint. */
+  .glass.glass-solid.glass-flat {
+    background: linear-gradient(140deg, rgba(252, 250, 246, 0.94), rgba(246, 242, 234, 0.88));
+  }
+  .glass-dark.glass-solid.glass-flat {
+    background: linear-gradient(140deg, rgba(30, 29, 26, 0.94), rgba(16, 16, 14, 0.92));
   }
 
   /* Specular rim: a light-catching gradient border (masked ring). */
@@ -181,6 +190,19 @@
     background: radial-gradient(320px circle at var(--mx, 50%) var(--my, -20%), rgba(255, 255, 255, 0.14), transparent 62%);
   }
 
+  /* "Pause animations" (MotionPauseContext) also freezes CSS keyframe loops
+     such as the live pulse and the scroll cue (WCAG 2.2.2). */
+  html[data-motion-paused="true"] *,
+  html[data-motion-paused="true"] *::before,
+  html[data-motion-paused="true"] *::after {
+    animation-play-state: paused !important;
+  }
+  /* Scroll-linked progress is driven by the visitor's own scrolling, not auto-play: keep it live. */
+  html[data-motion-paused="true"] .sd-progress,
+  html[data-motion-paused="true"] .sd-wordmark {
+    animation-play-state: running !important;
+  }
+
   /* ================================================================
    * BUTTONS — capsules. Motion is transform/opacity only.
    *   .btn-ink    primary on light  · .btn-bone  primary on dark
@@ -188,7 +210,7 @@
    *   .btn-signal accent (use at most once per view)
    * ================================================================ */
   .btn {
-    @apply relative isolate inline-flex min-h-[46px] select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-full px-6 py-3 text-[0.9375rem] font-medium tracking-[-0.01em] disabled:cursor-not-allowed disabled:opacity-60;
+    @apply relative isolate inline-flex min-h-[46px] select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 py-3 text-[0.9375rem] font-medium tracking-[-0.01em] disabled:cursor-not-allowed disabled:opacity-60;
     transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .btn:active {
