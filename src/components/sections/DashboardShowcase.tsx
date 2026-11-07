@@ -43,17 +43,22 @@ const BAR_SPRING = SPRING_SMOOTH;
  *    (already flat) content.
  *  - Content sits on soft CARDS inside plates.
  * Radii are concentric: window 30 − 8px padding = plate 22 − 8px = card 14.
+ *
+ * Pinned (lg+) the window has a fixed landscape design width (~16:10):
+ * sidebar | KPIs, chart + preview, pipeline strip | activity + modules in a
+ * right-hand rail. FitStage only scales by height, so a wide, short window
+ * keeps the scale (and the text size) high. Phones keep the stacked layout.
  * ------------------------------------------------------------------ */
 const WINDOW =
   "rounded-glass-lg border border-transparent p-1.5 text-bone sm:p-2 " +
-  "[background:linear-gradient(165deg,#26241f_0%,#161513_36%,#0e0e0c_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.4),rgba(255,255,255,0.07)_28%,rgba(255,255,255,0.03)_68%,rgba(240,163,92,0.36))_border-box] " +
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_2px_6px_rgba(13,13,11,0.12),0_40px_80px_-28px_rgba(70,40,15,0.5),0_90px_150px_-60px_rgba(13,13,11,0.55)]";
+  "[background:linear-gradient(165deg,#22231f_0%,#141513_36%,#0d0e0c_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.4),rgba(255,255,255,0.07)_28%,rgba(255,255,255,0.03)_68%,rgba(61,219,201,0.34))_border-box] " +
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_2px_6px_rgba(0,0,0,0.3),0_40px_80px_-28px_rgba(0,0,0,0.7),0_0_120px_-40px_rgba(61,219,201,0.22),0_90px_150px_-60px_rgba(0,0,0,0.6)]";
 const PLATE = "glass-dark glass-flat rounded-glass";
 const CARD =
-  "rounded-glass-sm bg-white/[0.04] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)] sm:p-5";
+  "rounded-glass-sm bg-white/[0.04] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)] sm:p-5 lg:p-4";
 /* Ash on the lightest plate corner is still ≥ 5:1. */
 const LABEL = "eyebrow text-ash";
-const TRAFFIC_DOT = "h-3 w-3 rounded-full shadow-[inset_0_0_0_0.5px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)]";
+const TRAFFIC_DOT = "h-3 w-3 rounded-full bg-white/[0.16] shadow-[inset_0_0_0_0.5px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.25)]";
 
 export function DashboardShowcase() {
   const { t } = useLanguage();
@@ -64,13 +69,13 @@ export function DashboardShowcase() {
   const d = track.progress;
 
   // 1 · Rise off the table → 2 · explode into layers → 3 · reassemble → 4 · cycle industries
-  const rotateX = useTransform(d, [0, 0.14, 0.19, 0.29, 0.38], [64, 0, 0, 16, 0]);
+  const rotateX = useTransform(d, [0, 0.14, 0.19, 0.29, 0.38], [64, 0, 0, 10, 0]);
   const rotateY = useTransform(d, [0.19, 0.29, 0.38], [0, -32, 0]);
   const y = useTransform(d, [0, 0.14], ["36%", "0%"]);
   const z = useTransform(d, [0, 0.14], [-460, 0]);
   const opacity = useTransform(d, [0, 0.07], [0, 1]);
   const explode = useTransform(d, [0.19, 0.28, 0.33, 0.4], [0, 1, 1, 0]);
-  const zChrome = useTransform(explode, (e) => e * 340);
+  const zChrome = useTransform(explode, (e) => e * 180);
   const zSidebar = useTransform(explode, (e) => e * 60);
   const zKpi = useTransform(explode, (e) => e * 260);
   const zMid = useTransform(explode, (e) => e * 150);
@@ -102,28 +107,33 @@ export function DashboardShowcase() {
       // so the pinned `sticky` stage below keeps sticking.
       className="relative isolate z-10 overflow-clip py-24 motion-safe:lg:h-[300vh] motion-safe:lg:py-0"
     >
-      <AmbientField tone="light" variant={1} />
+      <AmbientField variant={1} />
       <div className="motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-[100svh] motion-safe:lg:overflow-hidden motion-safe:lg:pb-4 motion-safe:lg:pt-20">
         <div className="frame flex h-full flex-col">
-          <SectionHeader
-            headingId="dashboard-title"
-            index={t.dashboard.index}
-            eyebrow={t.dashboard.eyebrow}
-            title={t.dashboard.title}
-            body={pinned ? undefined : t.dashboard.body}
-          />
-          {pinned ? (
-            <p className="eyebrow mt-3 flex items-center gap-2.5 text-muted">
-              {/* Static scroll capsule (no looping animation: the Pause control doesn't reach CSS keyframes). */}
-              <span aria-hidden="true" className="relative block h-4 w-[3px] shrink-0 overflow-hidden rounded-full bg-ink/10">
-                <span className="absolute inset-x-0 top-0 block h-1/2 rounded-full bg-signal-deep" />
-              </span>
-              {t.dashboard.scrollHint}
-            </p>
-          ) : null}
+          {/* z-10: the heading always paints above the exploding 3D stage. */}
+          <div className="relative z-10">
+            <SectionHeader
+              tone="dark"
+              headingId="dashboard-title"
+              index={t.dashboard.index}
+              eyebrow={t.dashboard.eyebrow}
+              title={t.dashboard.title}
+              body={pinned ? undefined : t.dashboard.body}
+            />
+            {pinned ? (
+              // Sits on the chip row (top-right), so it costs the pinned stage no height.
+              <p className="eyebrow absolute right-0 top-0 flex min-h-[2.125rem] items-center gap-2.5 text-ash">
+                {/* Static scroll capsule (no looping animation: the Pause control doesn't reach CSS keyframes). */}
+                <span aria-hidden="true" className="relative block h-4 w-[3px] shrink-0 overflow-hidden rounded-full bg-white/15">
+                  <span className="absolute inset-x-0 top-0 block h-1/2 rounded-full bg-aqua" />
+                </span>
+                {t.dashboard.scrollHint}
+              </p>
+            ) : null}
+          </div>
 
-          <FitStage enabled={pinned} className="mt-6 flex-1">
-            <div className="[perspective:1800px]">
+          <FitStage enabled={pinned} className={`${pinned ? "mt-4" : "mt-6"} flex-1`}>
+            <div className="mx-auto max-w-[1240px] [perspective-origin:50%_70%] [perspective:1800px]">
               <motion.div
                 data-theme="dark"
                 className={`${WINDOW} [transform-style:preserve-3d]`}
@@ -146,12 +156,12 @@ export function DashboardShowcase() {
                   role="tabpanel"
                   aria-labelledby={tabId(nicheId)}
                   tabIndex={0}
-                  className="mt-1.5 grid grid-cols-12 gap-1.5 rounded-glass [transform-style:preserve-3d] sm:mt-2 sm:gap-2"
+                  className="mt-1.5 grid grid-cols-12 gap-1.5 rounded-glass [transform-style:preserve-3d] sm:mt-2 sm:gap-2 lg:grid-cols-[8.5rem_minmax(0,1fr)_minmax(0,23rem)]"
                 >
-                  <motion.div className={`${PLATE} hidden lg:col-span-2 lg:block`} style={layerZ(zSidebar)}>
+                  <motion.div className={`${PLATE} hidden lg:col-span-1 lg:block`} style={layerZ(zSidebar)}>
                     <Sidebar />
                   </motion.div>
-                  <div className="col-span-12 grid gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:col-span-10">
+                  <div className="col-span-12 grid content-start gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:col-span-1">
                     <motion.div className={`${PLATE} p-1.5 sm:p-2`} style={layerZ(zKpi)}>
                       <KpiRow />
                     </motion.div>
@@ -159,16 +169,24 @@ export function DashboardShowcase() {
                       <RevenueChart />
                       <NichePreview />
                     </motion.div>
-                    <motion.div className={`${PLATE} grid grid-cols-12 gap-1.5 p-1.5 sm:gap-2 sm:p-2`} style={layerZ(zBottom)}>
+                    <motion.div className={`${PLATE} p-1.5 sm:p-2`} style={layerZ(zBottom)}>
                       <Pipeline />
-                      <ActivityStream />
-                      <Modules />
                     </motion.div>
                   </div>
+                  {/* Right-hand rail on lg+; a row of cards below the pipeline on smaller screens. */}
+                  <motion.div
+                    className={`${PLATE} col-span-12 grid grid-cols-12 content-start gap-1.5 p-1.5 sm:gap-2 sm:p-2 lg:col-span-1 lg:flex lg:flex-col`}
+                    style={layerZ(zBottom)}
+                  >
+                    <ActivityStream />
+                    <Modules />
+                  </motion.div>
                 </div>
               </motion.div>
             </div>
-            <SimulationDisclaimer className="mt-4" />
+            <div className="mx-auto max-w-[1240px]">
+              <SimulationDisclaimer className="mt-3 lg:max-w-none" />
+            </div>
           </FitStage>
         </div>
       </div>
@@ -179,13 +197,13 @@ export function DashboardShowcase() {
 function WindowChrome() {
   const { t } = useLanguage();
   return (
-    <div className="flex items-center justify-between gap-3 px-2 py-3 sm:px-2.5">
+    <div className="flex items-center justify-between gap-3 px-2 py-3 sm:px-2.5 lg:py-2.5">
       <div className="flex min-w-0 items-center gap-3">
-        {/* Traffic lights in brand tones (decorative). */}
+        {/* Window controls (decorative): neutral glass beads, so the accent stays on the data. */}
         <span aria-hidden="true" className="flex shrink-0 gap-1.5 sm:gap-2">
-          <span className={`${TRAFFIC_DOT} bg-signal`} />
-          <span className={`${TRAFFIC_DOT} bg-amber`} />
-          <span className={`${TRAFFIC_DOT} bg-live`} />
+          <span className={TRAFFIC_DOT} />
+          <span className={TRAFFIC_DOT} />
+          <span className={TRAFFIC_DOT} />
         </span>
         <span className="min-w-0 text-[0.8125rem] font-medium leading-snug tracking-[-0.005em] text-bone/90">
           SermaWebDesign · {t.dashboard.windowTitle}
@@ -222,7 +240,7 @@ function Sidebar() {
           >
             {item}
             {i === 0 ? (
-              <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-signal shadow-[0_0_8px_rgba(229,88,42,0.7)]" />
+              <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_rgba(61,219,201,0.7)]" />
             ) : null}
           </li>
         ))}
@@ -253,13 +271,13 @@ function KpiRow() {
               </motion.span>
             </AnimatePresence>
           </dt>
-          <dd className="mt-3">
+          <dd className="mt-3 lg:mt-2">
             <AnimatedNumber
               value={kpi.value}
               format={kpi.format}
               className="block font-display text-4xl leading-none tracking-[-0.04em] [font-size:clamp(1.75rem,21cqi,3rem)]"
             />
-            <span className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 lg:mt-2.5">
               {/* Ring-only capsule: no tinted fill, so live-on-dark contrast stays ≥ 4.5:1. */}
               <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[0.6875rem] text-live ring-1 ring-inset ring-live/30">
                 <ArrowUpRight aria-hidden="true" size={12} strokeWidth={1.75} />
@@ -299,9 +317,9 @@ function RevenueChart() {
         </p>
       </div>
 
-      <div role="img" aria-label={summary} className="mt-6">
+      <div role="img" aria-label={summary} className="mt-6 lg:mt-5">
         {/* Bars rise inside soft glass wells. They translate (not scale), so the rounded tops never squash. */}
-        <div aria-hidden="true" className="flex h-44 items-end gap-2 sm:gap-3">
+        <div aria-hidden="true" className="flex h-44 items-end gap-2 sm:gap-3 lg:h-32">
           {niche.weekly.map((value, i) => {
             const last = i === niche.weekly.length - 1;
             return (
@@ -309,7 +327,7 @@ function RevenueChart() {
                 <motion.div
                   className={`gpu absolute inset-0 rounded-[8px] ${
                     last
-                      ? "bg-[linear-gradient(to_top,#B23F14,#E5582A_70%)] shadow-[inset_0_1px_0_rgba(255,220,190,0.6)]"
+                      ? "bg-[linear-gradient(to_top,#12A594,#3DDBC9_70%)] shadow-[inset_0_1px_0_rgba(214,255,250,0.65)]"
                       : "bg-[linear-gradient(to_top,rgba(241,237,228,0.4),rgba(241,237,228,0.88))] shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
                   }`}
                   initial={{ y: "100%" }}
@@ -383,7 +401,7 @@ function NichePreview() {
       <AnimatePresence mode="wait" initial={false}>
         <motion.p
           key={`${niche.id}-${locale}`}
-          className="mt-4 font-display text-2xl leading-tight tracking-[-0.03em]"
+          className="mt-4 font-display text-2xl leading-tight tracking-[-0.03em] lg:mt-3 lg:text-xl"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
@@ -404,9 +422,10 @@ function Pipeline() {
   const top = niche.pipeline[0]?.count || 1;
 
   return (
-    <div ref={ref} className={`${CARD} col-span-12 md:col-span-6 lg:col-span-4`}>
+    <div ref={ref} className={CARD}>
       <h3 className={LABEL}>{t.dashboard.pipelineTitle}</h3>
-      <ol className="mt-4 space-y-4">
+      {/* A funnel strip: stacked on phones, 2-up on small tablets, one row of four in the landscape window. */}
+      <ol className="mt-4 grid gap-4 sm:grid-cols-2 sm:gap-x-6 lg:mt-3 lg:grid-cols-4 lg:gap-x-5">
         {niche.pipeline.map((stage, i) => (
           <li key={i}>
             <div className="flex items-baseline justify-between gap-3 text-sm">
@@ -419,7 +438,7 @@ function Pipeline() {
               className="relative isolate mt-2 h-2 w-full overflow-hidden rounded-full bg-white/[0.07] shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)]"
             >
               <motion.div
-                className="h-full w-full rounded-full bg-[linear-gradient(90deg,rgba(241,237,228,0.5),#F1EDE4)] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]"
+                className="h-full w-full rounded-full bg-[linear-gradient(90deg,rgba(18,165,148,0.75),#3DDBC9)] shadow-[inset_0_1px_0_rgba(214,255,250,0.6)]"
                 initial={{ x: "-100%" }}
                 animate={{ x: inView ? `${(stage.count / top - 1) * 100}%` : "-100%" }}
                 transition={{ ...BAR_SPRING, delay: inView ? i * 0.06 : 0 }}
@@ -437,7 +456,7 @@ function ActivityStream() {
   const { niche } = useNiche();
 
   return (
-    <div className={`${CARD} col-span-12 md:col-span-6 lg:col-span-5`}>
+    <div className={`${CARD} col-span-12 md:col-span-6`}>
       <h3 className={`${LABEL} flex items-center justify-between gap-3`}>
         {t.dashboard.streamTitle}
         <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs text-live ring-1 ring-inset ring-live/30">
@@ -486,7 +505,7 @@ function Modules() {
   const { t, locale } = useLanguage();
   const { niche } = useNiche();
   return (
-    <div className={`${CARD} col-span-12 lg:col-span-3`}>
+    <div className={`${CARD} col-span-12 md:col-span-6`}>
       <h3 className={LABEL}>{t.dashboard.modulesTitle}</h3>
       <AnimatePresence mode="wait" initial={false}>
         <motion.ul
@@ -501,7 +520,7 @@ function Modules() {
             <li key={mod.name.en} className="flex gap-2.5">
               <span
                 aria-hidden="true"
-                className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-full bg-signal text-ink shadow-[inset_0_1px_0_rgba(255,220,190,0.6),0_0_0_3px_rgba(229,88,42,0.14)]"
+                className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-full bg-aqua text-ink shadow-[inset_0_1px_0_rgba(214,255,250,0.7),0_0_0_3px_rgba(61,219,201,0.14)]"
               >
                 <Check size={12} strokeWidth={2.5} />
               </span>
