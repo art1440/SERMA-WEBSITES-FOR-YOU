@@ -132,6 +132,7 @@ const en = {
     minutesAgo: "{n} min ago",
     vsPrevious: "vs. previous period",
     scrollHint: "Keep scrolling — see the dashboard for each kind of business.",
+    newItems: "new",
   },
   simulator: {
     index: "(04)",
@@ -404,6 +405,7 @@ const es: Dictionary = {
     minutesAgo: "hace {n} min",
     vsPrevious: "vs. periodo anterior",
     scrollHint: "Siga desplazándose: vea el panel de cada tipo de negocio.",
+    newItems: "nuevos",
   },
   simulator: {
     index: "(04)",
