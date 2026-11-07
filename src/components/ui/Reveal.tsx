@@ -47,7 +47,7 @@ function withEmphasis(line: string, emphasis?: string): ReactNode {
   return (
     <Fragment>
       {before}
-      <em className="italic">{emphasis}</em>
+      <em className="font-serif font-normal italic tracking-[-0.01em]">{emphasis}</em>
       {rest.join(emphasis)}
     </Fragment>
   );
