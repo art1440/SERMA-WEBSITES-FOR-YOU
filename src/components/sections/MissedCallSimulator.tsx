@@ -55,26 +55,26 @@ const phaseAt = (v: number): Phase => SCROLL_STARTS.find(([, start]) => v >= sta
  * blur, which would flatten the 3D).
  * ------------------------------------------------------------------ */
 
-/** Light-catching 1px rim around the device: bright top-left, warm bottom-right. */
+/** Light-catching 1px rim around the device: bright top-left, aqua bottom-right. */
 const DEVICE_RIM =
-  "linear-gradient(150deg, rgba(255,255,255,0.62), rgba(255,255,255,0.1) 26%, rgba(255,255,255,0.03) 60%, rgba(240,163,92,0.4))";
+  "linear-gradient(150deg, rgba(255,255,255,0.62), rgba(255,255,255,0.1) 26%, rgba(255,255,255,0.03) 60%, rgba(61,219,201,0.4))";
 /** Glossy dark titanium body. */
 const DEVICE_BODY = "linear-gradient(160deg, #302e2a 0%, #181715 40%, #0f0f0d 68%, #24221e 100%)";
-/** Warm halo and soft contact shadow that give the device depth on the light field. */
-const DEVICE_HALO = "radial-gradient(closest-side, rgba(229,88,42,0.2), rgba(122,46,18,0.12) 55%, transparent)";
+/** Aqua halo and soft contact shadow that give the device depth on the dark field. */
+const DEVICE_HALO = "radial-gradient(closest-side, rgba(61,219,201,0.16), rgba(18,165,148,0.09) 55%, transparent)";
 const DEVICE_SHADOW = "radial-gradient(closest-side, rgba(0,0,0,0.62), transparent)";
-/** Screen wallpaper: near-black with an ember glow (top) and slate glow (bottom). */
+/** Screen wallpaper: near-black with an aqua glow (top) and slate glow (bottom). */
 const SCREEN_WALLPAPER =
-  "radial-gradient(120% 55% at 100% 0%, rgba(229,88,42,0.17), transparent 62%), radial-gradient(120% 60% at 0% 100%, rgba(43,52,64,0.55), transparent 66%), linear-gradient(180deg, #0e0e0c, #080807)";
+  "radial-gradient(120% 55% at 100% 0%, rgba(61,219,201,0.14), transparent 62%), radial-gradient(120% 60% at 0% 100%, rgba(43,52,64,0.55), transparent 66%), linear-gradient(180deg, #0e0e0c, #080807)";
 /** Diagonal glare across the cover glass. */
 const SCREEN_GLARE = "linear-gradient(118deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.016) 30%, rgba(255,255,255,0) 44%)";
-/** Call-screen glows: warm while ringing, signal once missed (cross-faded with opacity). */
-const CALL_GLOW_INCOMING = "radial-gradient(90% 55% at 50% 0%, rgba(240,163,92,0.24), transparent 72%)";
+/** Call-screen glows: aqua while ringing, signal (alert) once missed (cross-faded with opacity). */
+const CALL_GLOW_INCOMING = "radial-gradient(90% 55% at 50% 0%, rgba(61,219,201,0.24), transparent 72%)";
 const CALL_GLOW_MISSED = "radial-gradient(90% 55% at 50% 0%, rgba(229,88,42,0.36), transparent 72%)";
 
-/** Outgoing bubble: bone "light glass" with a specular top edge. */
-const BONE_GLASS =
-  "bg-gradient-to-b from-[#FBF8F2] to-bone-200 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.95),inset_0_-1px_0_rgba(13,13,11,0.06),0_10px_22px_-12px_rgba(0,0,0,0.85)]";
+/** Outgoing bubble: the business's own messages in aqua, with a specular top edge (ink on aqua 11:1). */
+const AQUA_BUBBLE =
+  "bg-gradient-to-b from-[#6FE9DA] to-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(13,13,11,0.08),0_10px_22px_-12px_rgba(0,0,0,0.85)]";
 /** Inner surface for cards nested inside a glass panel (level 2: tint + hairline ring, not another glass). */
 const INNER_SURFACE = "bg-white/[0.035] ring-1 ring-inset ring-white/[0.08]";
 
@@ -160,7 +160,7 @@ export function MissedCallSimulator() {
       data-theme="dark"
       className="relative isolate z-10 overflow-clip py-24 text-bone lg:py-32 motion-safe:lg:h-[240vh] motion-safe:lg:py-0"
     >
-      <AmbientField tone="dark" variant={1} />
+      <AmbientField variant={0} />
       <div className="motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-[100svh] motion-safe:lg:overflow-hidden motion-safe:lg:pb-4 motion-safe:lg:pt-20">
       <FitStage enabled={scrubbed} className="frame">
         <SectionHeader
@@ -176,7 +176,7 @@ export function MissedCallSimulator() {
           {announcement}
         </p>
 
-        <div className={`grid grid-cols-12 gap-x-4 gap-y-12 [perspective:1600px] lg:gap-x-10 ${scrubbed ? "mt-6" : "mt-14 lg:mt-20"}`}>
+        <div className={`grid grid-cols-12 gap-x-4 gap-y-6 [perspective:1600px] md:gap-y-12 lg:gap-x-10 ${scrubbed ? "mt-6" : "mt-10 md:mt-14 lg:mt-20"}`}>
           {/* ---------- Left: phone ---------- */}
           <Reveal className="col-span-12 md:col-span-6 lg:col-span-5">
             <motion.div style={scrubbed ? { rotateY: phoneRotateY, rotateX: phoneRotateX, z: phoneZ } : undefined}>
@@ -184,16 +184,17 @@ export function MissedCallSimulator() {
             </motion.div>
           </Reveal>
 
-          {/* ---------- Right: controls, progress, dashboard ---------- */}
+          {/* ---------- Right: controls, progress, dashboard ----------
+              Phones: the column dissolves (`contents`) so the controls can sit ABOVE the phone. */}
           <motion.div
-            className="col-span-12 flex flex-col gap-6 md:col-span-6 lg:col-span-7"
+            className="col-span-12 flex flex-col gap-6 max-md:contents md:col-span-6 lg:col-span-7"
             style={scrubbed ? { rotateY: panelRotateY, z: panelZ, x: panelX, transformOrigin: "100% 50%" } : undefined}
           >
-            <Reveal>
+            <Reveal className="order-first col-span-12 md:order-none">
               {scrubbed ? (
                 <p className="flex flex-wrap items-center gap-2">
                   <span className="chip-dark glass-flat text-bone">
-                    <ArrowDown aria-hidden="true" size={14} strokeWidth={1.75} className="text-signal" />
+                    <ArrowDown aria-hidden="true" size={14} strokeWidth={1.75} className="text-aqua" />
                     {t.simulator.scrollHint}
                   </span>
                   <span className="chip-dark glass-flat text-ash">
@@ -205,7 +206,7 @@ export function MissedCallSimulator() {
                 <MagneticButton
                   onClick={start}
                   aria-disabled={running}
-                  className="btn-bone whitespace-normal text-center aria-disabled:cursor-progress sm:whitespace-nowrap"
+                  className="btn-aqua whitespace-normal text-center aria-disabled:cursor-progress sm:whitespace-nowrap"
                 >
                   {phase === "logged" ? (
                     <RotateCcw aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
@@ -222,7 +223,7 @@ export function MissedCallSimulator() {
             </Reveal>
 
             {/* Progress: four glass chips, each with a rounded fill line. */}
-            <Reveal delay={0.05}>
+            <Reveal delay={0.05} className="col-span-12">
               <h3 className="sr-only">{t.simulator.stepsLabel}</h3>
               <ol className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4">
                 {t.simulator.steps.map((label, i) => {
@@ -231,16 +232,16 @@ export function MissedCallSimulator() {
                   return (
                     <li
                       key={label}
-                      className={`glass-dark glass-flat flex flex-col rounded-glass p-3 sm:p-3.5 ${current ? "border-signal/50" : ""}`}
+                      className={`glass-dark glass-flat flex flex-col rounded-glass p-3 sm:p-3.5 ${current ? "border-aqua/50" : ""}`}
                     >
                       <span className="flex items-center gap-2">
                         <span
                           aria-hidden="true"
                           className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-[0.6875rem] font-semibold tabular ${
                             done
-                              ? "bg-gradient-to-b from-[#F07A4F] to-signal text-ink shadow-[inset_0_1px_0_rgba(255,225,200,0.7),0_6px_14px_-6px_rgba(229,88,42,0.8)]"
+                              ? "bg-gradient-to-b from-aqua-glow to-aqua text-ink shadow-[inset_0_1px_0_rgba(230,255,252,0.7),0_6px_14px_-6px_rgba(61,219,201,0.8)]"
                               : current
-                                ? "bg-signal/15 text-bone ring-1 ring-inset ring-signal/70 shadow-[0_0_16px_-3px_rgba(229,88,42,0.75)]"
+                                ? "bg-aqua/15 text-bone ring-1 ring-inset ring-aqua/70 shadow-[0_0_16px_-3px_rgba(61,219,201,0.75)]"
                                 : "bg-white/[0.05] text-ash ring-1 ring-inset ring-white/10"
                           }`}
                         >
@@ -256,7 +257,7 @@ export function MissedCallSimulator() {
                       <span aria-hidden="true" className="mt-auto block pt-3">
                         <span className="block h-[3px] overflow-hidden rounded-full bg-white/10">
                           <motion.span
-                            className="block h-full origin-left rounded-full bg-gradient-to-r from-amber to-signal"
+                            className="block h-full origin-left rounded-full bg-gradient-to-r from-aqua-deep to-aqua"
                             initial={false}
                             animate={{ scaleX: done ? 1 : current ? 0.4 : 0 }}
                             transition={{ duration: 0.6, ease: EASE_EDITORIAL }}
@@ -270,7 +271,7 @@ export function MissedCallSimulator() {
             </Reveal>
 
             {/* Mini dashboard tracker: one flat dark-glass card (dense tint for small text). */}
-            <Reveal delay={0.1}>
+            <Reveal delay={0.1} className="col-span-12">
               <div
                 role="region"
                 aria-label={t.simulator.dashboardRegionLabel}
@@ -288,9 +289,9 @@ export function MissedCallSimulator() {
                     <p className="mt-3 flex items-center gap-2.5 font-display text-[clamp(1.6rem,8vw,2.25rem)] leading-none tracking-[-0.035em] text-bone xl:text-5xl">
                       <span
                         aria-hidden="true"
-                        className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-signal/15 ring-1 ring-inset ring-signal/40 xl:h-10 xl:w-10"
+                        className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-aqua/15 ring-1 ring-inset ring-aqua/40 xl:h-10 xl:w-10"
                       >
-                        <Zap size={16} strokeWidth={1.75} className="text-signal" />
+                        <Zap size={16} strokeWidth={1.75} className="text-aqua" />
                       </span>
                       {at(phase, "sms1") ? t.simulator.responseValue : "—"}
                     </p>
@@ -305,7 +306,7 @@ export function MissedCallSimulator() {
                           <motion.li
                             key={`new-${niche.id}`}
                             layout
-                            className="flex items-center justify-between gap-3 rounded-glass-sm bg-signal/10 p-3 shadow-[0_14px_32px_-16px_rgba(229,88,42,0.65)] ring-1 ring-inset ring-signal/45"
+                            className="flex items-center justify-between gap-3 rounded-glass-sm bg-aqua/10 p-3 shadow-[0_14px_32px_-16px_rgba(61,219,201,0.6)] ring-1 ring-inset ring-aqua/45"
                             initial={{ opacity: 0, y: -24, scale: 0.97 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0 }}
@@ -314,7 +315,7 @@ export function MissedCallSimulator() {
                             <div className="flex min-w-0 items-center gap-3">
                               <span
                                 aria-hidden="true"
-                                className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-b from-[#F07A4F] to-signal text-sm font-semibold text-ink shadow-[inset_0_1px_0_rgba(255,225,200,0.7)]"
+                                className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-b from-aqua-glow to-aqua text-sm font-semibold text-ink shadow-[inset_0_1px_0_rgba(230,255,252,0.7)]"
                               >
                                 {sim.caller.charAt(0)}
                               </span>
@@ -367,7 +368,7 @@ export function MissedCallSimulator() {
           </motion.div>
         </div>
 
-        <SimulationDisclaimer tone="dark" className={scrubbed ? "mt-4" : "mt-8"} />
+        <SimulationDisclaimer className={scrubbed ? "mt-4" : "mt-8"} />
       </FitStage>
       </div>
     </section>
@@ -414,14 +415,15 @@ function Phone({ phase }: { phase: Phase }) {
 
       {/* Frame: a 1px light-catching rim around a glossy dark body. */}
       <div
-        className="rounded-[2.75rem] p-px shadow-[0_60px_100px_-45px_rgba(0,0,0,0.95),0_30px_60px_-36px_rgba(122,46,18,0.7)]"
+        className="rounded-[2.75rem] p-px shadow-[0_60px_100px_-45px_rgba(0,0,0,0.95),0_30px_60px_-36px_rgba(18,165,148,0.45)]"
         style={{ backgroundImage: DEVICE_RIM }}
       >
         <div
           className="rounded-[calc(2.75rem_-_1px)] p-[9px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(0,0,0,0.5)]"
           style={{ backgroundImage: DEVICE_BODY }}
         >
-          <div className="relative isolate aspect-[9/18.5] overflow-hidden rounded-[2.125rem] bg-[#080807] ring-1 ring-white/[0.05]">
+          {/* Phones: height capped so the Simulate button and the idle screen fit in one view (the thread still fits). */}
+          <div className="relative isolate aspect-[9/18.5] overflow-hidden rounded-[2.125rem] bg-[#080807] ring-1 ring-white/[0.05] max-md:max-h-[max(26rem,58svh)]">
             <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ backgroundImage: SCREEN_WALLPAPER }} />
 
             {/* Status bar */}
@@ -517,7 +519,7 @@ function Phone({ phase }: { phase: Phase }) {
                           <motion.span
                             key={i}
                             aria-hidden="true"
-                            className="absolute inset-0 rounded-full bg-bone/10 ring-1 ring-inset ring-bone/30"
+                            className="absolute inset-0 rounded-full bg-aqua/10 ring-1 ring-inset ring-aqua/40"
                             initial={{ scale: 1, opacity: 0.6 }}
                             animate={{ scale: 1.9, opacity: 0 }}
                             transition={{ duration: 1.2, repeat: 1, delay: i * 0.5, ease: "easeOut" }}
@@ -528,7 +530,7 @@ function Phone({ phase }: { phase: Phase }) {
                       className={`relative grid h-16 w-16 place-items-center rounded-full text-ink ${
                         phase === "missed"
                           ? "bg-gradient-to-b from-[#F07A4F] to-signal shadow-[inset_0_1px_0_rgba(255,225,200,0.75),0_14px_34px_-10px_rgba(229,88,42,0.75)]"
-                          : "bg-gradient-to-b from-bone-50 to-bone-200 shadow-[inset_0_1px_0_#fff,0_14px_34px_-12px_rgba(0,0,0,0.85)]"
+                          : "bg-gradient-to-b from-aqua-glow to-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_14px_34px_-12px_rgba(61,219,201,0.6)]"
                       }`}
                     >
                       {phase === "missed" ? (
@@ -546,7 +548,7 @@ function Phone({ phase }: { phase: Phase }) {
                   <p className="mt-7 flex items-center gap-2 rounded-full bg-white/[0.07] px-3.5 py-2 text-xs font-medium text-bone/80 ring-1 ring-inset ring-white/10">
                     {phase === "missed" ? (
                       <>
-                        <MessageSquareText aria-hidden="true" size={13} strokeWidth={1.75} className="text-signal" />
+                        <MessageSquareText aria-hidden="true" size={13} strokeWidth={1.75} className="text-aqua" />
                         {t.simulator.typing}
                       </>
                     ) : (
@@ -582,7 +584,7 @@ function Bubble({ side, children, meta }: { side: "in" | "out"; children: string
       <p
         className={`px-3.5 py-2 text-[0.8rem] leading-snug ${
           out
-            ? `rounded-[1.15rem] rounded-br-[0.4rem] ${BONE_GLASS}`
+            ? `rounded-[1.15rem] rounded-br-[0.4rem] ${AQUA_BUBBLE}`
             : "glass-dark glass-flat rounded-[1.15rem] rounded-bl-[0.4rem] text-bone"
         }`}
       >
@@ -597,7 +599,7 @@ function Typing({ side, label }: { side: "in" | "out"; label: string }) {
   const out = side === "out";
   return (
     <motion.div
-      className={`flex items-center gap-1 rounded-full px-3.5 py-3 ${out ? `self-end ${BONE_GLASS}` : "glass-dark glass-flat self-start"}`}
+      className={`flex items-center gap-1 rounded-full px-3.5 py-3 ${out ? `self-end ${AQUA_BUBBLE}` : "glass-dark glass-flat self-start"}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
