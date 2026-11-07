@@ -98,6 +98,8 @@ export function DashboardShowcase() {
   const y = useTransform(d, [0, 0.14], ["36%", "0%"]);
   const z = useTransform(d, [0, 0.14], [-460, 0]);
   const opacity = useTransform(d, [0, 0.07], [0, 1]);
+  // The disclaimer fades in as the window lands (at rest from 0.14), so it never prints across the rising plates.
+  const noteOpacity = useTransform(d, [0.125, 0.15], [0, 1]);
   const explode = useTransform(d, [0.19, 0.28, 0.33, 0.4], [0, 1, 1, 0]);
   const zChrome = useTransform(explode, (e) => e * 180);
   const zSidebar = useTransform(explode, (e) => e * 60);
@@ -211,13 +213,13 @@ export function DashboardShowcase() {
               </motion.div>
             </div>
           </FitStage>
-          {/* FTC disclosure: outside the scaled stage, as wide as the (scaled) window. */}
-          <div
+          {/* FTC disclosure: outside the scaled stage, as wide as the (scaled) window; shown whenever the window is at rest. */}
+          <motion.div
             className="mx-auto shrink-0"
-            style={{ width: "min(100%, calc(1240px * var(--fit-scale, 1)))" }}
+            style={{ width: "min(100%, calc(1240px * var(--fit-scale, 1)))", ...(pinned ? { opacity: noteOpacity } : null) }}
           >
             <SimulationDisclaimer className="mt-3 lg:max-w-none" />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -501,42 +503,47 @@ function KpiRow() {
   const { locale, t } = useLanguage();
   const { niche } = useNiche();
   return (
-    <dl className="grid grid-cols-2 gap-1.5 sm:gap-2 lg:grid-cols-4">
-      {niche.kpis.map((kpi, i) => (
-        // Container-sized numerals: "$186,400" always fits its tile, from phone to wide desktop.
-        <div key={i} className={`${CARD} [container-type:inline-size]`}>
-          <dt className="eyebrow min-h-[2.5rem] text-ash">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={kpi.label[locale]}
-                className="block"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.25, ease: EASE_EDITORIAL }}
-              >
-                {kpi.label[locale]}
-              </motion.span>
-            </AnimatePresence>
-          </dt>
-          <dd className="mt-3 lg:mt-2">
-            <AnimatedNumber
-              value={kpi.value}
-              format={kpi.format}
-              className="block font-display text-4xl leading-none tracking-[-0.04em] [font-size:clamp(1.75rem,21cqi,3rem)]"
-            />
-            <span className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 lg:mt-2.5">
-              {/* Ring-only capsule: no tinted fill, so live-on-dark contrast stays ≥ 4.5:1. */}
-              <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[0.6875rem] text-live ring-1 ring-inset ring-live/30">
-                <ArrowUpRight aria-hidden="true" size={12} strokeWidth={1.75} />
-                {kpi.delta[locale]}
+    // lg: four across while a tile's text box is ≥ 106px ("$186,400" at the 24px floor, below); narrower lg
+    // windows (≈1024–1240, unpinned) get a 2×2 grid. The pinned 1240px window (row 656px) is always four across.
+    <div className="[container-type:inline-size]">
+      <dl className="grid grid-cols-2 gap-1.5 sm:gap-2 lg:[@container(min-width:576px)]:grid-cols-4">
+        {niche.kpis.map((kpi, i) => (
+          // Container-sized numerals: "$186,400" always fits its tile, from phone to wide desktop
+          // (28px floor; 24px in tiles whose text box is under 120px, e.g. 1241–1279 and small phones).
+          <div key={i} className={`${CARD} [container-type:inline-size]`}>
+            <dt className="eyebrow min-h-[2.5rem] text-ash">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={kpi.label[locale]}
+                  className="block"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.25, ease: EASE_EDITORIAL }}
+                >
+                  {kpi.label[locale]}
+                </motion.span>
+              </AnimatePresence>
+            </dt>
+            <dd className="mt-3 lg:mt-2">
+              <AnimatedNumber
+                value={kpi.value}
+                format={kpi.format}
+                className="block font-display text-4xl leading-none tracking-[-0.04em] [font-size:clamp(1.75rem,21cqi,3rem)] [@container(max-width:119.98px)]:[font-size:1.5rem]"
+              />
+              <span className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 lg:mt-2.5">
+                {/* Ring-only capsule: no tinted fill, so live-on-dark contrast stays ≥ 4.5:1. */}
+                <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono text-[0.6875rem] text-live ring-1 ring-inset ring-live/30">
+                  <ArrowUpRight aria-hidden="true" size={12} strokeWidth={1.75} />
+                  {kpi.delta[locale]}
+                </span>
+                <span className="text-xs text-ash">{t.dashboard.vsPrevious}</span>
               </span>
-              <span className="text-xs text-ash">{t.dashboard.vsPrevious}</span>
-            </span>
-          </dd>
-        </div>
-      ))}
-    </dl>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }
 

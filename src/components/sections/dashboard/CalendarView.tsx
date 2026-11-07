@@ -231,6 +231,11 @@ function timeRange(ev: CalendarEvent, intlLocale: string) {
 function hourLabel(h: number, intlLocale: string) {
   return normalizeMeridiem(new Intl.DateTimeFormat(intlLocale, { hour: "numeric" }).format(dayDate(0, h * 60)));
 }
+/** Advance widths (design px) of the 11px tabular time label in the site font: digits 6.6, unknown 7. */
+const TIME_CHAR_PX: Record<string, number> = {
+  ":": 3.25, " ": 2.75, "\u00a0": 2.75, "\u2009": 2.2, "\u202f": 1.4, "–": 6.5, "-": 4.6, ".": 2.2, A: 7.35, P: 6.95, M: 9.45,
+};
+const timeLabelWidth = (s: string) => [...s].reduce((w, c) => w + (TIME_CHAR_PX[c] ?? (/\d/.test(c) ? 6.6 : 7)), 0);
 /** "9:41" without the day period, for the compact now capsule and narrow blocks on the grid. */
 function shortClock(hhmm: string, intlLocale: string) {
   const parts = new Intl.DateTimeFormat(intlLocale, { hour: "numeric", minute: "2-digit" }).formatToParts(dayDate(0, toMin(hhmm)));
@@ -850,6 +855,11 @@ function EventBlock({
   const pending = status === "pending";
   const Icon = STATUS_ICON[status];
   const range = timeRange(ev, intlLocale);
+  // Range row (it may run into the right padding: the status icon sits on the first row). When "9:00 – 10:30 AM"
+  // can't fit (block − 5px gap − 9px left padding − borders − 4px), show "9:00 AM", then "9:00", never a cut "9:00 A…".
+  // The accessible name keeps the full range.
+  const rangeRoom = trackW * placed.width - 20;
+  const rangeRow = [range, formatClock(ev.start, intlLocale)].find((t) => timeLabelWidth(t) + 1 <= rangeRoom) ?? shortClock(ev.start, intlLocale);
 
   return (
     <motion.li
@@ -920,8 +930,8 @@ function EventBlock({
               {ev.service[locale]}
             </span>
             {lines >= 3 ? (
-              <span aria-hidden="true" className="tabular relative block truncate text-[0.6875rem] leading-[13px] text-bone/70">
-                {range}
+              <span aria-hidden="true" className="tabular relative -mr-3 block truncate text-[0.6875rem] leading-[13px] text-bone/70">
+                {rangeRow}
               </span>
             ) : null}
             {lines === 4 ? (

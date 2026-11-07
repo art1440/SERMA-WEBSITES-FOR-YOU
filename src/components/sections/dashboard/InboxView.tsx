@@ -588,7 +588,9 @@ function MessageRow({
           </span>
           <span className="tabular shrink-0 text-[0.6875rem] leading-5 text-ash">{m.received[locale]}</span>
         </span>
-        <span className={`block truncate text-sm leading-5 ${unread ? "font-semibold text-bone" : "text-bone/90"}`}>
+        {/* Below xl, up to 2 lines: alerts share one sender, so the subject is what tells rows apart on narrow lists.
+            xl+ (incl. the pinned stage) keeps 1 line so all five rows fit the pane without scrolling. */}
+        <span className={`line-clamp-2 text-sm leading-5 xl:line-clamp-1 ${unread ? "font-semibold text-bone" : "text-bone/90"}`}>
           {m.subject[locale]}
         </span>
         <span className="mt-1 flex min-w-0 items-center gap-1.5">
