@@ -209,7 +209,12 @@ function HeadlineLine({
         {parts ? (
           <>
             {parts[0]}
-            <em className="font-serif font-normal italic tracking-[-0.01em]">{emphasis}</em>
+            {/* Warm accent: serif italic with a rust → ember gradient fill. Both ends stay ≥3:1 on bone
+                and the warm glow (large-text AA). The padding stops the italic overhang from being cut
+                off by background-clip; the negative margin keeps the spacing before punctuation. */}
+            <em className="mr-[-0.12em] bg-gradient-to-r from-signal-deep to-[#d4501f] bg-clip-text pr-[0.12em] font-serif font-normal italic tracking-[-0.01em] text-transparent [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
+              {emphasis}
+            </em>
             {parts.slice(1).join(emphasis)}
           </>
         ) : (
