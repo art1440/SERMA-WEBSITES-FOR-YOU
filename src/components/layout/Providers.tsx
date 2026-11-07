@@ -4,6 +4,7 @@ import { MotionConfig } from "framer-motion";
 import type { ReactNode } from "react";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { MotionPauseProvider } from "@/context/MotionPauseContext";
+import { GlassSheen } from "@/components/ui/GlassSheen";
 
 /**
  * `reducedMotion="user"` makes every Framer Motion animation honor the OS
@@ -13,7 +14,10 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <LanguageProvider>
       <MotionPauseProvider>
-        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        <MotionConfig reducedMotion="user">
+          <GlassSheen />
+          {children}
+        </MotionConfig>
       </MotionPauseProvider>
     </LanguageProvider>
   );
