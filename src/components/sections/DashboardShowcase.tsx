@@ -8,8 +8,8 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { ArrowUpRight, Check, Circle, Pause, Play } from "lucide-react";
-import { startTransition, useRef, useState } from "react";
+import { ArrowUpRight, CalendarDays, Check, Circle, Inbox, LayoutGrid, Pause, Play, Settings2, Star, Users, type LucideIcon } from "lucide-react";
+import { startTransition, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { AmbientVideo } from "@/components/ui/AmbientVideo";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
@@ -20,11 +20,25 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
 import { useScene, useTrackProgress } from "@/context/SceneContext";
 import { NICHES } from "@/data/niches";
+import { NICHE_VIEWS } from "@/data/dashboard-views";
 import { formatCurrency } from "@/lib/format";
 import { EASE_EDITORIAL, SPRING_SMOOTH } from "@/lib/motion";
 import { fill } from "@/i18n/types";
 import { DASHBOARD_PANEL_ID, NicheTabs, tabId } from "./NicheTabs";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
+import { CalendarView } from "./dashboard/CalendarView";
+import {
+  DASHBOARD_VIEWS,
+  DashboardViewProvider,
+  VIEW_PANEL_ID,
+  useDashboardView,
+  viewTabId,
+  type DashboardView,
+} from "./dashboard/DashboardViewContext";
+import { InboxView } from "./dashboard/InboxView";
+import { LeadsView } from "./dashboard/LeadsView";
+import { ReviewsView } from "./dashboard/ReviewsView";
+import { SettingsView } from "./dashboard/SettingsView";
 
 const BAR_SPRING = SPRING_SMOOTH;
 
@@ -62,7 +76,7 @@ const TRAFFIC_DOT = "h-3 w-3 rounded-full bg-white/[0.16] shadow-[inset_0_0_0_0.
 
 export function DashboardShowcase() {
   const { t } = useLanguage();
-  const { nicheId, autoNiche, userPicked } = useNiche();
+  const { nicheId, autoNiche, pickNiche, userPicked } = useNiche();
   const { reduce, desktop } = useScene();
   const track = useTrackProgress();
   const pinned = desktop && !reduce;
@@ -99,6 +113,10 @@ export function DashboardShowcase() {
   });
 
   const layerZ = (mv: MotionValue<number>) => (pinned ? { z: mv } : undefined);
+  // Opening an inner section counts as the visitor's own choice: stop auto-cycling industries under them.
+  const lockNiche = () => {
+    if (!userPicked.current) pickNiche(nicheRef.current);
+  };
 
   return (
     <section
@@ -153,37 +171,22 @@ export function DashboardShowcase() {
                   <WindowChrome />
                   <NicheTabs />
                 </motion.div>
-                <div
-                  id={DASHBOARD_PANEL_ID}
-                  role="tabpanel"
-                  aria-labelledby={tabId(nicheId)}
-                  tabIndex={0}
-                  className="mt-1.5 grid grid-cols-12 gap-1.5 rounded-glass [transform-style:preserve-3d] sm:mt-2 sm:gap-2 lg:grid-cols-[8.5rem_minmax(0,1fr)_minmax(0,23rem)]"
-                >
-                  <motion.div className={`${PLATE} hidden lg:col-span-1 lg:block`} style={layerZ(zSidebar)}>
-                    <Sidebar />
-                  </motion.div>
-                  <div className="col-span-12 grid content-start gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:col-span-1">
-                    <motion.div className={`${PLATE} p-1.5 sm:p-2`} style={layerZ(zKpi)}>
-                      <KpiRow />
-                    </motion.div>
-                    <motion.div className={`${PLATE} grid grid-cols-12 gap-1.5 p-1.5 sm:gap-2 sm:p-2`} style={layerZ(zMid)}>
-                      <RevenueChart />
-                      <NichePreview />
-                    </motion.div>
-                    <motion.div className={`${PLATE} p-1.5 sm:p-2`} style={layerZ(zBottom)}>
-                      <Pipeline />
-                    </motion.div>
-                  </div>
-                  {/* Right-hand rail on lg+; a row of cards below the pipeline on smaller screens. */}
-                  <motion.div
-                    className={`${PLATE} col-span-12 grid grid-cols-12 content-start gap-1.5 p-1.5 sm:gap-2 sm:p-2 lg:col-span-1 lg:flex lg:flex-col`}
-                    style={layerZ(zRail)}
+                <DashboardViewProvider onInteract={lockNiche}>
+                  <div
+                    id={DASHBOARD_PANEL_ID}
+                    role="tabpanel"
+                    aria-labelledby={tabId(nicheId)}
+                    className="mt-1.5 grid grid-cols-12 gap-1.5 rounded-glass [transform-style:preserve-3d] sm:mt-2 sm:gap-2 lg:grid-cols-[8.5rem_minmax(0,1fr)]"
                   >
-                    <ActivityStream />
-                    <Modules />
-                  </motion.div>
-                </div>
+                    <motion.div className={`${PLATE} col-span-12 lg:col-span-1`} style={layerZ(zSidebar)}>
+                      <Sidebar desktop={desktop} />
+                    </motion.div>
+                    <ViewPanel
+                      desktop={desktop}
+                      layers={{ kpi: layerZ(zKpi), mid: layerZ(zMid), bottom: layerZ(zBottom), rail: layerZ(zRail) }}
+                    />
+                  </div>
+                </DashboardViewProvider>
               </motion.div>
             </div>
             <div className="mx-auto max-w-[1240px]">
@@ -225,28 +228,183 @@ function WindowChrome() {
   );
 }
 
-function Sidebar() {
+const VIEW_ICONS: Record<DashboardView, LucideIcon> = {
+  overview: LayoutGrid,
+  leads: Users,
+  calendar: CalendarDays,
+  inbox: Inbox,
+  reviews: Star,
+  settings: Settings2,
+};
+
+/**
+ * Dashboard sections as a WAI-ARIA tablist (automatic activation). Vertical
+ * sidebar on lg+, a horizontally scrolling capsule row on smaller screens.
+ * Arrow keys in either direction, Home and End move between sections.
+ */
+function Sidebar({ desktop }: { desktop: boolean }) {
   const { t } = useLanguage();
+  const { nicheId } = useNiche();
+  const { view, setView } = useDashboardView();
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  const data = NICHE_VIEWS[nicheId];
+  const badges: Partial<Record<DashboardView, number>> = {
+    inbox: data.inbox.filter((m) => m.unread).length,
+    leads: data.leads.filter((l) => l.status === "new").length,
+  };
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const current = DASHBOARD_VIEWS.indexOf(view);
+    let next = current;
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") next = (current + 1) % DASHBOARD_VIEWS.length;
+    else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = (current - 1 + DASHBOARD_VIEWS.length) % DASHBOARD_VIEWS.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = DASHBOARD_VIEWS.length - 1;
+    else return;
+    e.preventDefault();
+    setView(DASHBOARD_VIEWS[next]);
+    refs.current[next]?.focus();
+  };
+
   return (
-    <div className="h-full p-2">
-      <ul aria-label={t.dashboard.sidebarLabel} className="space-y-1">
-        {t.dashboard.sidebar.map((item, i) => (
-          <li
-            key={item}
-            aria-current={i === 0 ? "page" : undefined}
-            className={`flex items-center justify-between rounded-full px-3 py-2 text-sm ${
-              i === 0
-                ? "bg-white/[0.08] font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.09),inset_0_0_0_1px_rgba(255,255,255,0.05)]"
-                : "text-ash"
-            }`}
+    <div className="h-full p-1.5 lg:p-2">
+      <div
+        role="tablist"
+        aria-label={t.dashboard.sidebarLabel}
+        aria-orientation={desktop ? "vertical" : "horizontal"}
+        onKeyDown={onKeyDown}
+        className="flex gap-1 overflow-x-auto overscroll-x-contain [scrollbar-width:none] lg:flex-col lg:overflow-visible [&::-webkit-scrollbar]:hidden"
+      >
+        {DASHBOARD_VIEWS.map((v, i) => {
+          const selected = v === view;
+          const Icon = VIEW_ICONS[v];
+          const badge = badges[v];
+          return (
+            <button
+              key={v}
+              ref={(el) => {
+                refs.current[i] = el;
+              }}
+              id={viewTabId(v)}
+              role="tab"
+              type="button"
+              aria-selected={selected}
+              aria-controls={VIEW_PANEL_ID}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => setView(v)}
+              className={`relative flex min-h-[44px] shrink-0 items-center gap-2 rounded-full px-3 text-sm ${
+                selected
+                  ? "bg-white/[0.08] font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.09),inset_0_0_0_1px_rgba(255,255,255,0.05)]"
+                  : "text-ash hover:bg-white/[0.05] hover:text-bone"
+              }`}
+            >
+              <Icon aria-hidden="true" size={15} strokeWidth={1.75} className={selected ? "text-aqua" : ""} />
+              <span className="whitespace-nowrap">{t.dashboard.sidebar[i]}</span>
+              {badge ? (
+                <span className="tabular ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-aqua px-1.5 text-[0.6875rem] font-semibold text-ink">
+                  {badge}
+                  <span className="sr-only"> {t.dashboard.newItems}</span>
+                </span>
+              ) : selected ? (
+                <span aria-hidden="true" className="ml-auto hidden h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_rgba(61,219,201,0.7)] lg:block" />
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const VIEW_COMPONENTS: Record<Exclude<DashboardView, "overview">, () => React.JSX.Element> = {
+  leads: LeadsView,
+  calendar: CalendarView,
+  inbox: InboxView,
+  reviews: ReviewsView,
+  settings: SettingsView,
+};
+
+/**
+ * The open section. Overview keeps its exploding plates (KPIs, chart, pipeline,
+ * right rail). Every other section is one plate spanning the same area, locked
+ * to the Overview's measured height on lg+ so the window never jumps or
+ * rescales when switching (inner lists scroll instead).
+ */
+function ViewPanel({
+  desktop,
+  layers,
+}: {
+  desktop: boolean;
+  layers: { kpi?: object; mid?: object; bottom?: object; rail?: object };
+}) {
+  const { view } = useDashboardView();
+  const overviewRef = useRef<HTMLDivElement>(null);
+  const [lockedHeight, setLockedHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    const el = overviewRef.current;
+    if (view !== "overview" || !el) return;
+    const measure = () => setLockedHeight(el.offsetHeight || null);
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    measure();
+    return () => ro.disconnect();
+  }, [view]);
+
+  const Inner = view === "overview" ? null : VIEW_COMPONENTS[view];
+
+  return (
+    <div
+      id={VIEW_PANEL_ID}
+      role="tabpanel"
+      aria-labelledby={viewTabId(view)}
+      tabIndex={-1}
+      className="col-span-12 [transform-style:preserve-3d] lg:col-span-1"
+    >
+      {view === "overview" ? (
+        <div
+          ref={overviewRef}
+          className="grid grid-cols-12 gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,23rem)]"
+        >
+          <div className="col-span-12 grid content-start gap-1.5 [transform-style:preserve-3d] sm:gap-2 lg:col-span-1">
+            <motion.div className={`${PLATE} p-1.5 sm:p-2`} style={layers.kpi}>
+              <KpiRow />
+            </motion.div>
+            <motion.div className={`${PLATE} grid grid-cols-12 gap-1.5 p-1.5 sm:gap-2 sm:p-2`} style={layers.mid}>
+              <RevenueChart />
+              <NichePreview />
+            </motion.div>
+            <motion.div className={`${PLATE} p-1.5 sm:p-2`} style={layers.bottom}>
+              <Pipeline />
+            </motion.div>
+          </div>
+          {/* Right-hand rail on lg+; a row of cards below the pipeline on smaller screens. */}
+          <motion.div
+            className={`${PLATE} col-span-12 grid grid-cols-12 content-start gap-1.5 p-1.5 sm:gap-2 sm:p-2 lg:col-span-1 lg:flex lg:flex-col`}
+            style={layers.rail}
           >
-            {item}
-            {i === 0 ? (
-              <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_rgba(61,219,201,0.7)]" />
-            ) : null}
-          </li>
-        ))}
-      </ul>
+            <ActivityStream />
+            <Modules />
+          </motion.div>
+        </div>
+      ) : (
+        <motion.div
+          className={`${PLATE} flex flex-col p-1.5 sm:p-2`}
+          style={{ ...layers.mid, height: desktop && lockedHeight ? lockedHeight : undefined }}
+        >
+          {Inner ? (
+            <motion.div
+              key={view}
+              className="flex min-h-0 flex-1 flex-col"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: EASE_EDITORIAL }}
+            >
+              <Inner />
+            </motion.div>
+          ) : null}
+        </motion.div>
+      )}
     </div>
   );
 }
