@@ -153,6 +153,8 @@ export function DashboardShowcase() {
               eyebrow={t.dashboard.eyebrow}
               title={t.dashboard.title}
               body={pinned ? undefined : t.dashboard.body}
+              // Pinned: the Spanish title stays on one line at the 54px cap (≥1511px), keeping the stage's height.
+              wide={pinned}
             />
             {pinned ? (
               // Sits on the chip row (top-right), so it costs the pinned stage no height.
