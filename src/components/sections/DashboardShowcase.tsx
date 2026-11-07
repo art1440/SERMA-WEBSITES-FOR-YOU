@@ -246,7 +246,7 @@ function WindowChrome() {
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-ash">
         <span className="hidden sm:inline">{t.dashboard.period}</span>
-        <SampleTag />
+        <SampleTag className="py-1" />
         <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white/[0.07] px-2.5 py-1 font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
           <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
             <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />

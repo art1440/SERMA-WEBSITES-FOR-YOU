@@ -99,7 +99,7 @@ export const salonViews: NicheViews = {
       received: { en: "Today, 7:22 AM", es: "Hoy, 7:22 AM" },
       note: {
         en: "Booked Fri 9:30 AM with Jenna — new color client, needs a patch test",
-        es: "Agendó el viernes 9:30 AM con Jenna; clienta nueva de color, necesita prueba de alergia",
+        es: "Agendó el viernes a las 9:30 AM con Jenna; clienta nueva de color, necesita prueba de alergia",
       },
     },
     {
@@ -113,7 +113,7 @@ export const salonViews: NicheViews = {
       received: { en: "Sat, 11:10 AM", es: "Sáb, 11:10 AM" },
       note: {
         en: "Referred by her sister Camila R. — trial set for this Sat 9:00 AM with Nadia",
-        es: "Recomendada por su hermana Camila R.; prueba este sábado 9:00 AM con Nadia",
+        es: "Recomendada por su hermana Camila R.; prueba este sábado a las 9:00 AM con Nadia",
       },
     },
     {
@@ -174,7 +174,7 @@ export const salonViews: NicheViews = {
         en: "“I tried boxed dye and it went orange. Do you do color corrections? How much?”",
         es: "“Me puse un tinte de caja y me quedó naranja. ¿Hacen correcciones de color? ¿Cuánto cuesta?”",
       },
-      received: { en: "9:10 AM", es: "9:10 AM" },
+      received: { en: "9:09 AM", es: "9:09 AM" },
       unread: true,
       email: {
         greeting: HI,
@@ -306,7 +306,7 @@ export const salonViews: NicheViews = {
         primary: {
           label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
+          done: { en: "Opened in Reviews", es: "Abierta en Reseñas" },
         },
         signoff: { en: "— SermaWebDesign review alerts", es: "— Alertas de reseñas de SermaWebDesign" },
       },
@@ -362,7 +362,7 @@ export const salonViews: NicheViews = {
       },
       preview: {
         en: "Paid in full online. Her next visit is Mon 10:00 AM with you.",
-        es: "Pagado por completo en línea. Su próxima visita es el lunes 10:00 AM con usted.",
+        es: "Pagado por completo en línea. Su próxima visita es el lunes a las 10:00 AM con usted.",
       },
       received: { en: "Yesterday, 3:18 PM", es: "Ayer, 3:18 PM" },
       unread: false,

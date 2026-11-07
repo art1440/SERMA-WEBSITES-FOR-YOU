@@ -21,8 +21,15 @@ const en = {
     pauseAll: "Pause animations",
     playAll: "Play animations",
     scroll: "Scroll",
-    simulationDisclaimer:
-      "Illustrative interactive simulation of the SermaWebDesign Client Portal. Actual lead volume, bookings, and revenue depend on market, industry, and business operations. The businesses, people, messages and reviews shown are fictional.",
+    /** FTC micro-copy, one per surface (see SimulationDisclaimer `variant`). */
+    simulationDisclaimer: {
+      dashboard:
+        "Illustrative interactive simulation of the SermaWebDesign Client Portal. Actual lead volume, bookings, and revenue depend on market, industry, and business operations. The businesses, people, messages and reviews shown are fictional.",
+      simulator:
+        "Illustrative simulation of the SermaWebDesign missed-call text-back. The business, people, messages and amounts shown are fictional. Actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
+      calculator:
+        "Estimate only, based on the numbers you set and the formula shown. It is not a guarantee or a typical result: actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
+    },
   },
   nav: {
     primaryLabel: "Primary",
@@ -122,6 +129,8 @@ const en = {
     period: "Last 30 days",
     /** Window-chrome capsule; `live` stays for the activity-stream chip. */
     liveDemo: "Live demo",
+    /** Window-chrome FTC tag, next to `liveDemo`. */
+    sampleTag: "Sample data",
     live: "Live",
     revenueTitle: "Booked revenue by week",
     revenueTotal: "Booked revenue · 8 weeks",
@@ -298,8 +307,14 @@ const es: Dictionary = {
     pauseAll: "Pausar animaciones",
     playAll: "Reanudar animaciones",
     scroll: "Desplácese",
-    simulationDisclaimer:
-      "Simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Los negocios, personas, mensajes y reseñas que se muestran son ficticios.",
+    simulationDisclaimer: {
+      dashboard:
+        "Simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Los negocios, personas, mensajes y reseñas que se muestran son ficticios.",
+      simulator:
+        "Simulación ilustrativa del texto automático por llamada perdida de SermaWebDesign. El negocio, las personas, los mensajes y los montos que se muestran son ficticios. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
+      calculator:
+        "Solo es una estimación basada en los valores que usted ajusta y la fórmula que se muestra. No es una garantía ni un resultado típico: el volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
+    },
   },
   nav: {
     primaryLabel: "Principal",
@@ -398,6 +413,7 @@ const es: Dictionary = {
     sidebar: ["Resumen", "Prospectos", "Calendario", "Bandeja", "Reseñas", "Ajustes"],
     period: "Últimos 30 días",
     liveDemo: "Demo en vivo",
+    sampleTag: "Datos de ejemplo",
     live: "En vivo",
     revenueTitle: "Ingresos agendados por semana",
     revenueTotal: "Ingresos agendados · 8 semanas",
@@ -430,7 +446,7 @@ const es: Dictionary = {
     busy: "Está atendiendo a un cliente",
     autoTag: "Enviado automáticamente",
     typing: "Escribiendo…",
-    smsAuto: "¡Hola, {name}! Disculpe que no pudimos contestar en {business}; estamos atendiendo a un cliente. ¿Desea agendar? Próximo horario: {time}. Responda SÍ para confirmar.",
+    smsAuto: "¡Hola, {name}! Disculpe que no hayamos podido contestar en {business}; estamos atendiendo a un cliente. ¿Desea agendar? Próximo horario: {time}. Responda SÍ para confirmar.",
     smsReply: "¡Sí, por favor!",
     smsConfirm: "Listo ✓ {service} — {time}. ¡Le esperamos! Responda STOP para cancelar mensajes.",
     idleScreen: "Presione “Simular” para llamar a este negocio.",

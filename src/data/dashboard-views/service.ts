@@ -412,8 +412,8 @@ export const serviceViews: NicheViews = {
         },
         quickReplies: [
           {
-            en: "Hi Keisha, it's Dana at Clearline. Mike can be there today between 2 and 4 PM. A $50 deposit holds the visit, and it's credited toward the repair.",
-            es: "Hola, Keisha, habla Dana de Clearline. Mike puede llegar hoy entre las 2 y las 4 PM. Un depósito de $50 aparta la visita y se descuenta de la reparación.",
+            en: "Hi Keisha, it's Dana at Clearline. Mike can be there today between 2 and 4 PM. The service call is $89; a $50 deposit holds the visit and is credited to your final invoice.",
+            es: "Hola, Keisha, habla Dana de Clearline. Mike puede llegar hoy entre las 2 y las 4 PM. La visita de servicio cuesta $89; un depósito de $50 la aparta y se descuenta de su factura final.",
           },
           {
             en: "Today is full, but I can hold our first slot tomorrow, 8–10 AM. In the meantime, check that the furnace switch is on and the filter isn't clogged.",
@@ -509,7 +509,7 @@ export const serviceViews: NicheViews = {
         primary: {
           label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
+          done: { en: "Opened in Reviews", es: "Abierta en Reseñas" },
         },
         signoff: SIGNOFF,
       },

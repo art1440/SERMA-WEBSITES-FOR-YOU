@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import type { ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import type { CalendarEvent } from "@/data/dashboard-views";
+import type { Locale } from "@/i18n/types";
 import { EASE_EDITORIAL } from "@/lib/motion";
 
 /* ------------------------------------------------------------------ *
@@ -45,15 +47,19 @@ export const PILL_ON =
   "bg-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]";
 export const PILL_OFF = "bg-white/[0.06] text-bone/90 hover:bg-white/[0.1] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]";
 
-const SAMPLE = { en: "Sample data", es: "Datos de ejemplo" } as const;
-
-/** "Sample data" capsule: every inner section shows it (FTC: clearly illustrative). */
-export function SampleTag() {
-  const { locale } = useLanguage();
+/**
+ * "Sample data" capsule: the window chrome and every inner section show it (FTC: clearly
+ * illustrative). 12px bone/80 (7:1+ on the plate) so it stays legible when the pinned
+ * stage scales down to ~0.75.
+ */
+export function SampleTag({ className }: { className?: string }) {
+  const { t } = useLanguage();
   return (
-    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[0.6875rem] font-medium text-ash ring-1 ring-inset ring-white/15">
+    <span
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium text-bone/80 ring-1 ring-inset ring-white/15 ${className ?? ""}`}
+    >
       <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-white/40" />
-      {SAMPLE[locale]}
+      {t.dashboard.sampleTag}
     </span>
   );
 }
@@ -194,4 +200,40 @@ export function formatClock(hhmm: string, intlLocale: string) {
   const [h, m] = hhmm.split(":").map(Number);
   const d = new Date(2026, 0, 5, h, m);
   return normalizeMeridiem(new Intl.DateTimeFormat(intlLocale, { hour: "numeric", minute: "2-digit" }).format(d));
+}
+
+/* ------------------------------ demo clock ------------------------------ */
+
+/** The demo week's "today" (day 0 = Monday 5 Jan 2026: every industry's inbox and lead copy is written around it) and "now". */
+export const DEMO_TODAY = 0;
+export const DEMO_NOW = "09:41";
+
+const minutesOf = (hhmm: string) => {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + m;
+};
+type DemoSlot = Pick<CalendarEvent, "day" | "start">;
+
+/** Under way or already over at the demo's "now": too late for a reminder. */
+export const hasStarted = (ev: DemoSlot) =>
+  ev.day < DEMO_TODAY || (ev.day === DEMO_TODAY && minutesOf(ev.start) <= minutesOf(DEMO_NOW));
+
+/**
+ * "today at 10:00 AM" / "hoy a las 10:00 AM", "tomorrow at …" / "mañana a las …", else
+ * "Thursday at 10:30 AM" / "el jueves a las 10:30 AM" ("a la 1:00 PM"). For running sentences.
+ */
+export function whenPhrase(ev: DemoSlot, locale: Locale, intlLocale: string) {
+  const time = formatClock(ev.start, intlLocale);
+  const offset = ev.day - DEMO_TODAY;
+  const weekday = new Intl.DateTimeFormat(intlLocale, { weekday: "long" }).format(new Date(2026, 0, 5 + ev.day));
+  if (locale === "es") {
+    const h = Math.floor(minutesOf(ev.start) / 60) % 12;
+    const at = `a ${h === 1 ? "la" : "las"} ${time}`;
+    if (offset === 0) return `hoy ${at}`;
+    if (offset === 1) return `mañana ${at}`;
+    return `el ${weekday} ${at}`;
+  }
+  if (offset === 0) return `today at ${time}`;
+  if (offset === 1) return `tomorrow at ${time}`;
+  return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} at ${time}`;
 }

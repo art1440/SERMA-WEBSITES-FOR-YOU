@@ -414,7 +414,7 @@ const disclaimerEn: LegalDoc = {
       id: "simulations",
       heading: "1. Illustrative simulations",
       paragraphs: [
-        "The Client Dashboard showcase, the missed-call simulator, and the missed-revenue calculator are illustrative interactive simulations of the SermaWebDesign Client Portal. All names, phone numbers, businesses, metrics, and amounts shown are fictional sample data created for demonstration. Phone numbers use the reserved 555-01XX range.",
+        "The Client Dashboard showcase is an illustrative interactive simulation of the SermaWebDesign Client Portal, and the missed-call simulator is an illustrative simulation of the SermaWebDesign missed-call text-back. All names, phone numbers, businesses, messages, reviews, metrics, and amounts they show are fictional sample data created for demonstration. Phone numbers use the reserved 555-01XX range. The missed-revenue calculator is an estimate based only on the values you set and the formula shown; it is not a guarantee or a typical result.",
         "Actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
       ],
     },
@@ -469,7 +469,7 @@ const disclaimerEs: LegalDoc = {
       id: "simulations",
       heading: "1. Simulaciones ilustrativas",
       paragraphs: [
-        "La muestra del Panel de Control de Clientes, el simulador de llamadas perdidas y la calculadora de ingresos perdidos son simulaciones interactivas ilustrativas del Portal de Clientes de SermaWebDesign. Todos los nombres, números de teléfono, negocios, métricas y montos mostrados son datos de ejemplo ficticios creados para la demostración. Los números de teléfono usan el rango reservado 555-01XX.",
+        "La muestra del Panel de Control de Clientes es una simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign, y el simulador de llamadas perdidas es una simulación ilustrativa del texto automático por llamada perdida de SermaWebDesign. Todos los nombres, números de teléfono, negocios, mensajes, reseñas, métricas y montos que muestran son datos de ejemplo ficticios creados para la demostración. Los números de teléfono usan el rango reservado 555-01XX. La calculadora de ingresos perdidos es solo una estimación basada en los valores que usted ajusta y la fórmula que se muestra; no es una garantía ni un resultado típico.",
         "El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
       ],
     },

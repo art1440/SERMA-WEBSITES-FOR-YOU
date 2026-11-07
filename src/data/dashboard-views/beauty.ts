@@ -101,7 +101,7 @@ export const beautyViews: NicheViews = {
       received: { en: "Today, 6:55 AM", es: "Hoy, 6:55 AM" },
       note: {
         en: "Booked Tue 11:00 AM with you — her first lash set ever",
-        es: "Agendó el martes 11:00 AM con usted; es su primer juego de pestañas",
+        es: "Agendó el martes a las 11:00 AM con usted; es su primer juego de pestañas",
       },
     },
     {
@@ -115,7 +115,7 @@ export const beautyViews: NicheViews = {
       received: { en: "Sat, 4:12 PM", es: "Sáb, 4:12 PM" },
       note: {
         en: "Missed call → text-back → booked this Sat 10:15 AM with Mia",
-        es: "Llamada perdida → texto automático → agendó para este sábado 10:15 AM con Mia",
+        es: "Llamada perdida → texto automático → agendó para este sábado a las 10:15 AM con Mia",
       },
     },
     {
@@ -176,7 +176,7 @@ export const beautyViews: NicheViews = {
         en: "“My lashes are from another place. Can you fill them or do I need a new set?”",
         es: "“Mis pestañas son de otro lugar. ¿Me las pueden rellenar o necesito un juego nuevo?”",
       },
-      received: { en: "9:18 AM", es: "9:18 AM" },
+      received: { en: "9:17 AM", es: "9:17 AM" },
       unread: true,
       email: {
         greeting: HI,
@@ -317,7 +317,7 @@ export const beautyViews: NicheViews = {
       ...ALERTS,
       subject: {
         en: "Deposit received: $40 from Nicole A. for Fri 10:00 AM",
-        es: "Depósito recibido: $40 de Nicole A. para el viernes 10:00 AM",
+        es: "Depósito recibido: $40 de Nicole A. para el viernes a las 10:00 AM",
       },
       preview: {
         en: "Volume lash full set with you. $170 balance due at checkout.",
@@ -396,7 +396,7 @@ export const beautyViews: NicheViews = {
         primary: {
           label: { en: "Review & reply", es: "Revisar y responder" },
           action: "openReviews",
-          done: { en: "Opened in Reviews", es: "Abierto en Reseñas" },
+          done: { en: "Opened in Reviews", es: "Abierta en Reseñas" },
         },
         signoff: { en: "— SermaWebDesign review alerts", es: "— Alertas de reseñas de SermaWebDesign" },
       },

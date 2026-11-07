@@ -50,7 +50,10 @@ import {
   StatusChip,
   ViewHeader,
   formatClock,
+  DEMO_TODAY,
+  hasStarted,
   revealInPage,
+  whenPhrase,
   type Tone,
 } from "./ui";
 
@@ -94,6 +97,7 @@ const COPY = {
   value: { en: "Estimated value", es: "Valor estimado" },
   source: { en: "Source", es: "Origen" },
   appointment: { en: "Appointment", es: "Cita" },
+  reservation: { en: "Reservation", es: "Reservación" },
   note: { en: "Note", es: "Nota" },
   activity: { en: "Activity", es: "Actividad" },
   sendText: { en: "Send text", es: "Enviar texto" },
@@ -109,8 +113,12 @@ const COPY = {
   automatic: { en: "Automatic, seconds later", es: "Automático, segundos después" },
   followedUp: { en: "Your team followed up", es: "Su equipo dio seguimiento" },
   followedUpMeta: { en: "Waiting for them to reply", es: "Esperando a que responda" },
-  bookedFor: { en: "Booked for {when}", es: "Agendado para el {when}" },
+  // {when}: whenPhrase, "today at 9:00 AM" / "el jueves a las 5:15 PM".
+  bookedFor: { en: "Booked for {when}", es: "Agendado para {when}" },
   bookedNoEvent: { en: "Appointment booked", es: "Cita agendada" },
+  // Restaurants take reservations (as in the Calendar).
+  reservedFor: { en: "Reserved for {when}", es: "Reservado para {when}" },
+  reservedNoEvent: { en: "Reservation booked", es: "Reservación hecha" },
   lost: { en: "Marked lost", es: "Marcado como perdido" },
   youTexted: { en: "You texted (demo)", es: "Usted envió un texto (demo)" },
   youBooked: { en: "You marked it booked", es: "Usted lo marcó como agendado" },
@@ -161,20 +169,37 @@ const SOURCE: Record<LeadSource, { label: L10n; icon: LucideIcon; event: L10n; a
   },
 };
 
-/** The prewritten follow-up text ("Send text"), built from the lead's name and service. */
-const TEXT_TEMPLATE: Record<"open" | "booked" | "lost", L10n> = {
+/**
+ * The prewritten follow-up text ("Send text"), built from the lead's name and service.
+ * `{when}` is " Thursday at 5:15 PM" / " el jueves a las 5:15 PM" (whenPhrase), or empty.
+ */
+const TEXT_TEMPLATE: Record<"open" | "booked" | "started" | "lost", L10n> = {
   open: {
     en: "Hi {first}, this is {business}. Thanks for reaching out about “{service}”. {closer}",
     es: "Hola, {first}, le escribe {business}. Gracias por su interés en “{service}”. {closer}",
   },
   booked: {
     en: "Hi {first}, this is {business}. You're all set for “{service}”{when}. Reply C to confirm or R to reschedule.",
-    es: "Hola, {first}, le escribe {business}. Su cita para “{service}”{when} está lista. Responda C para confirmar o R para cambiarla.",
+    es: "Hola, {first}, le escribe {business}. Su {booking} para “{service}”{when} está lista. Responda C para confirmar o R para cambiarla.",
+  },
+  // The booking is already under way at the demo's "now" (Derek S.: Crew B since 9:00 AM), so no "confirm or reschedule".
+  started: {
+    en: "Hi {first}, this is {business}. {thanks} Reply here with any questions about “{service}”.",
+    es: "Hola, {first}, le escribe {business}. {thanks} Responda aquí si tiene preguntas sobre “{service}”.",
   },
   lost: {
     en: "Hi {first}, this is {business}. Still thinking about “{service}”? If your plans change, reply here and we'll find a time that works.",
     es: "Hola, {first}, le escribe {business}. ¿Sigue pensando en “{service}”? Si sus planes cambian, responda aquí y buscamos un horario que le funcione.",
   },
+};
+/** `{thanks}` for a started booking: trades and home services go out to the client; shops and restaurants host them. */
+const THANKS: Record<NicheId, L10n> = {
+  barbershop: { en: "Thanks for coming in today.", es: "Gracias por visitarnos hoy." },
+  salon: { en: "Thanks for coming in today.", es: "Gracias por visitarnos hoy." },
+  beauty: { en: "Thanks for coming in today.", es: "Gracias por visitarnos hoy." },
+  restaurant: { en: "Thanks for dining with us today.", es: "Gracias por acompañarnos hoy." },
+  contractor: { en: "Thanks for having us out today.", es: "Gracias por recibirnos hoy." },
+  service: { en: "Thanks for having us out today.", es: "Gracias por recibirnos hoy." },
 };
 const CLOSER: Record<NicheId, L10n> = {
   barbershop: { en: "We have openings this week. Want us to hold a time for you?", es: "Tenemos espacios esta semana. ¿Le apartamos un horario?" },
@@ -185,8 +210,8 @@ const CLOSER: Record<NicheId, L10n> = {
     es: "Será un gusto recibirlos. ¿Le enviamos algunas fechas disponibles y nuestro menú para grupos?",
   },
   contractor: {
-    en: "When works for an on-site estimate this week? The $150 visit fee is credited to your project.",
-    es: "¿Qué día le queda bien esta semana para un presupuesto en sitio? La visita de $150 se acredita a su proyecto.",
+    en: "When works for an on-site estimate this week? The $150 site-visit deposit is credited to the job when you sign the estimate.",
+    es: "¿Qué día le queda bien esta semana para un presupuesto en sitio? El depósito de $150 por la visita se acredita al trabajo al firmar el presupuesto.",
   },
   service: {
     en: "We can get a technician out this week. Want us to hold a time?",
@@ -211,15 +236,20 @@ export function leadStatus(lead: Lead, isDone: (key: string) => boolean): LeadSt
 
 const firstName = (name: string) => name.split(" ")[0] ?? name;
 const CLOCK_RE = /\d{1,2}:\d{2}\s?[AP]M/i;
+/** Names are "First L.": a template with a period right after {name} would end "Alexis R..", so collapse it. */
+const fillName = (template: string, name: string) => fill(template, { name }).replace(/\.\./g, ".");
 
 /**
- * "Thu, 5:15 PM" for a demo-week event (day 0 = Monday 5 Jan 2026). Spanish keeps
- * the weekday lowercase ("jue, 5:15 PM"), so "Agendado para el jue, …" reads right.
+ * "Thu, 5:15 PM" / "Jue, 5:15 PM" for a demo-week event (day 0 = Monday 5 Jan 2026): the
+ * capitalized stamp for labels, like the data's "Jue, 10:05 AM". Sentences use whenPhrase.
  */
 function eventWhen(ev: CalendarEvent, intlLocale: string) {
-  const weekday = new Intl.DateTimeFormat(intlLocale, { weekday: "short" }).format(new Date(2026, 0, 5 + ev.day));
-  const day = intlLocale.startsWith("es") ? weekday.toLocaleLowerCase(intlLocale) : `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)}`;
-  return `${day}, ${formatClock(ev.start, intlLocale)}`;
+  // Same style as the data's own stamps: "Today, 9:00 AM" / "Hoy, 9:00 AM", else "Thu, 5:15 PM" / "Jue, 5:15 PM".
+  const weekday =
+    ev.day === DEMO_TODAY
+      ? intlLocale.startsWith("es") ? "hoy" : "today"
+      : new Intl.DateTimeFormat(intlLocale, { weekday: "short" }).format(new Date(2026, 0, 5 + ev.day));
+  return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)}, ${formatClock(ev.start, intlLocale)}`;
 }
 
 /**
@@ -263,14 +293,23 @@ export function leadTextMessage(lead: Lead, nicheId: NicheId, business: string, 
   const answer = textBackFor(lead, data)?.email.quickReplies?.[0];
   if (answer) return answer[locale];
   const event = eventFor(lead, data);
-  const when = event ? eventWhen(event, intlLocale) : null;
-  const template = lead.status === "booked" ? TEXT_TEMPLATE.booked : lead.status === "lost" ? TEXT_TEMPLATE.lost : TEXT_TEMPLATE.open;
+  const template =
+    event && hasStarted(event)
+      ? TEXT_TEMPLATE.started
+      : lead.status === "booked"
+        ? TEXT_TEMPLATE.booked
+        : lead.status === "lost"
+          ? TEXT_TEMPLATE.lost
+          : TEXT_TEMPLATE.open;
   return fill(template[locale], {
     first: firstName(lead.name),
     business,
     service: lead.service[locale],
     closer: CLOSER[nicheId][locale],
-    when: when ? ` (${when})` : "",
+    thanks: THANKS[nicheId][locale],
+    when: event ? ` ${whenPhrase(event, locale, intlLocale)}` : "",
+    // As in the Calendar: restaurants take reservations (both nouns are feminine, so "lista" / "cambiarla" agree).
+    booking: nicheId === "restaurant" ? "reservación" : "cita",
   }).replace(/\.\./g, "."); // "Northside Barber Co." + "." → one period
 }
 
@@ -521,14 +560,14 @@ function LeadsBoard({ nicheId }: { nicheId: NicheId }) {
                 headingRef={headingRef}
                 onText={() => {
                   markDone(`text:${selected.id}`);
-                  announce(fill(COPY.textAnnounce[locale], { name: selected.name }));
+                  announce(fillName(COPY.textAnnounce[locale], selected.name));
                 }}
                 onBook={() => {
                   markDone(`booked:${selected.id}`);
-                  announce(fill(COPY.bookedAnnounce[locale], { name: selected.name }));
+                  announce(fillName(COPY.bookedAnnounce[locale], selected.name));
                 }}
                 onCalendar={(ev) => {
-                  announce(fill(COPY.calendarAnnounce[locale], { name: selected.name }));
+                  announce(fillName(COPY.calendarAnnounce[locale], selected.name));
                   setView("calendar", ev.id);
                 }}
               />
@@ -670,7 +709,9 @@ function LeadDetail({
       key: "booked",
       icon: CalendarCheck,
       tone: "done",
-      title: when ? fill(COPY.bookedFor[locale], { when }) : COPY.bookedNoEvent[locale],
+      title: event
+        ? fill((nicheId === "restaurant" ? COPY.reservedFor : COPY.bookedFor)[locale], { when: whenPhrase(event, locale, intlLocale) })
+        : (nicheId === "restaurant" ? COPY.reservedNoEvent : COPY.bookedNoEvent)[locale],
       meta: event?.resource[locale],
     });
   if (lead.status === "lost") steps.push({ key: "lost", icon: XCircle, tone: "lost", title: COPY.lost[locale] });
@@ -693,7 +734,8 @@ function LeadDetail({
     { label: COPY.value[locale], value: formatCurrency(lead.value, intlLocale), mono: true },
     { label: COPY.source[locale], value: SOURCE[lead.source].label[locale] },
   ];
-  if (event && when) facts.push({ label: COPY.appointment[locale], value: `${when} · ${event.resource[locale]}` });
+  if (event && when)
+    facts.push({ label: (nicheId === "restaurant" ? COPY.reservation : COPY.appointment)[locale], value: `${when} · ${event.resource[locale]}` });
 
   return (
     <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE_EDITORIAL }}>
