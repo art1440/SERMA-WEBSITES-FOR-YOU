@@ -77,14 +77,15 @@ export function TiltCard({ children, className, max = 9, glare }: Props) {
           {children}
           {glare && !reduce ? (
             // Leaf layer lifted 1px off the card plane (no z-fighting); it clips only itself.
-            // Peak tint stays ≤10% white so small text under it keeps AA contrast.
+            // Cool white streak (matches the aqua accent on the dark cards). Peak tint stays
+            // ≤10% so small text under it keeps AA contrast.
             <div
               aria-hidden="true"
               className={`pointer-events-none absolute inset-0 overflow-hidden ${glare}`}
               style={{ transform: "translateZ(1px)" }}
             >
               <motion.div
-                className="absolute -inset-x-1/2 -inset-y-1/4 bg-[linear-gradient(112deg,transparent_36%,rgba(255,255,255,0.05)_44%,rgba(255,255,255,0.1)_50%,rgba(255,255,255,0.05)_56%,transparent_64%)]"
+                className="absolute -inset-x-1/2 -inset-y-1/4 bg-[linear-gradient(112deg,transparent_36%,rgba(214,255,249,0.05)_44%,rgba(214,255,249,0.1)_50%,rgba(214,255,249,0.05)_56%,transparent_64%)]"
                 style={{ x: shineX, y: shineY, opacity: shine }}
               />
             </div>

@@ -11,11 +11,11 @@ import { useScene } from "@/context/SceneContext";
 import { fill } from "@/i18n/types";
 import { EASE_EDITORIAL, VIEWPORT_ONCE } from "@/lib/motion";
 
-/** Small numbered pebble: bone numeral on a warm, light-catching ring (≥4.5:1 on dark glass). Read aloud as before. */
+/** Small numbered pebble: bone numeral on an aqua-tinted, light-catching ring (≥4.5:1 on dark glass). Read aloud as before. */
 function NumberBadge({ n, size = "md" }: { n: number; size?: "sm" | "md" }) {
   return (
     <span
-      className={`grid shrink-0 place-items-center rounded-full bg-signal/15 font-medium tabular text-bone ring-1 ring-inset ring-signal/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] ${
+      className={`grid shrink-0 place-items-center rounded-full bg-aqua/15 font-medium tabular text-bone ring-1 ring-inset ring-aqua/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] ${
         size === "sm" ? "h-7 w-7 text-[0.6875rem]" : "h-8 w-8 text-[0.75rem]"
       }`}
     >
@@ -31,9 +31,9 @@ function NumberBadge({ n, size = "md" }: { n: number; size?: "sm" | "md" }) {
  * what to send.
  *
  * Finale: the section stays transparent so the 3D engine returns on the right.
- * The contact card is one medium dark Liquid Glass panel (real blur on desktop,
- * where it floats over the engine; dense tint without blur on phones, where it
- * sits on the ink fade). Everything inside it is flat glass (no nested blur).
+ * The contact card is one medium dark Liquid Glass panel with a dense tint and
+ * NO backdrop blur: behind it there are only static gradients, where blur is
+ * invisible (measured) but still costs. Everything inside it is flat glass.
  */
 export function DemoContact() {
   const { t } = useLanguage();
@@ -51,20 +51,22 @@ export function DemoContact() {
       className="relative z-10 pb-24 pt-[44vh] text-bone motion-reduce:isolate motion-reduce:overflow-hidden motion-reduce:pt-24 lg:py-40"
     >
       {/* Reduced motion: no 3D stage behind, so the glass sits in a dark light field instead of flat ink. */}
-      <AmbientField tone="dark" variant={0} className="hidden motion-reduce:block" />
+      <AmbientField variant={0} className="hidden motion-reduce:block" />
       {/* Finale: the section is transparent so the 3D engine returns on the right. */}
-      {/* Phones: ink fade that travels with the copy, so text never sits on the bare sculpture */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[30vh] h-[13vh] bg-gradient-to-b from-transparent to-ink motion-reduce:hidden lg:hidden" />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 top-[43vh] bg-ink motion-reduce:hidden lg:hidden" />
+      {/* Phones: a fade that travels with the copy, then a dark light field (not flat ink), so text
+          never sits on the bare sculpture and the glass panels still have depth behind them.
+          The fade ends at the field's own ink wash (86%), so there is no seam. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[30vh] h-[13vh] bg-gradient-to-b from-transparent to-ink/[0.86] motion-reduce:hidden lg:hidden" />
+      <AmbientField variant={0} className="top-[43vh] motion-reduce:hidden lg:hidden" />
 
       <div className="frame relative grid grid-cols-12 gap-x-4 gap-y-12 lg:gap-x-10 lg:gap-y-14">
         {/* Pitch column */}
         <div className="col-span-12 lg:col-span-6">
           <Reveal y={12}>
-            <p className="chip-dark text-bone">
-              {/* bone/70 (not ash): stays ≥4.5:1 even where the chip crosses the engine's warm glow. */}
-              <span className="tabular text-bone/70">{index}</span>
-              <span aria-hidden="true" className="h-[5px] w-[5px] shrink-0 rounded-full bg-signal shadow-[0_0_8px_1px_rgba(229,88,42,0.6)]" />
+            {/* Same grammar as SectionHeader: flat dark chip, bone index, aqua dot, label. */}
+            <p className="chip-dark glass-flat text-bone">
+              <span className="tabular text-bone">{index}</span>
+              <span aria-hidden="true" className="h-[5px] w-[5px] shrink-0 rounded-full bg-aqua" />
               <span>{t.demo.eyebrow}</span>
             </p>
           </Reveal>
@@ -89,17 +91,17 @@ export function DemoContact() {
         {/* Contact panel */}
         <Reveal className="col-span-12 lg:col-span-6 lg:col-start-1" delay={0.1}>
           <div className="relative">
-            {/* Static warm light behind the glass: gives the frosted panel something to catch. */}
+            {/* Static aqua light behind the panel: gives the glass rim and tint something to catch. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-4 -top-14 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(229,88,42,0.3),rgba(122,46,18,0.18)_55%,transparent)] sm:-right-16 sm:-top-20 sm:h-96 sm:w-96"
+              className="pointer-events-none absolute -right-4 -top-14 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(61,219,201,0.24),rgba(18,165,148,0.14)_55%,transparent)] sm:-right-16 sm:-top-20 sm:h-96 sm:w-96"
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-16 -left-12 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(240,163,92,0.12),transparent)]"
+              className="pointer-events-none absolute -bottom-16 -left-12 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(127,242,227,0.1),transparent)]"
             />
 
-            <div className="glass-dark glass-solid relative rounded-glass-lg p-5 text-bone [--glass-blur:28px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:p-8 xl:p-10">
+            <div className="glass-dark glass-solid relative rounded-glass-lg p-5 text-bone [-webkit-backdrop-filter:none] [backdrop-filter:none] sm:p-8 xl:p-10">
               <p className="eyebrow text-ash">{t.demo.contactLabel}</p>
 
               <a
@@ -110,12 +112,12 @@ export function DemoContact() {
                 <ArrowUpRight
                   aria-hidden="true"
                   strokeWidth={1.75}
-                  className="ml-2 inline-block h-[0.55em] w-[0.55em] align-baseline text-signal transition-transform duration-500 ease-editorial group-hover:-translate-y-1 group-hover:translate-x-1"
+                  className="ml-2 inline-block h-[0.55em] w-[0.55em] align-baseline text-aqua transition-transform duration-500 ease-editorial group-hover:-translate-y-1 group-hover:translate-x-1"
                 />
               </a>
               <motion.span
                 aria-hidden="true"
-                className="mt-5 block h-[2px] w-full origin-left rounded-full bg-gradient-to-r from-signal via-signal/50 to-transparent"
+                className="mt-5 block h-[2px] w-full origin-left rounded-full bg-gradient-to-r from-aqua via-aqua-deep/60 to-transparent"
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: 1 }}
                 viewport={VIEWPORT_ONCE}
@@ -126,7 +128,7 @@ export function DemoContact() {
                 <MagneticButton
                   href={mailto}
                   data-primary-action
-                  className="btn-bone min-h-[52px] whitespace-normal px-6 text-center"
+                  className="btn-aqua whitespace-normal text-center"
                 >
                   <Mail aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
                   {t.demo.emailCta}
@@ -134,7 +136,7 @@ export function DemoContact() {
                 {phone ? (
                   <a
                     href={`tel:${phone.e164}`}
-                    className="btn-line-dark glass-flat min-h-[52px] whitespace-normal px-6 text-center"
+                    className="btn-line-dark glass-flat whitespace-normal text-center"
                   >
                     <Phone aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
                     {fill(t.demo.phoneCta, { phone: phone.display })}
@@ -158,7 +160,7 @@ export function DemoContact() {
               <p className="mt-8 flex items-start gap-3 border-t border-white/10 pt-6 text-sm leading-relaxed text-ash">
                 <span
                   aria-hidden="true"
-                  className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/[0.06] text-signal ring-1 ring-inset ring-white/10"
+                  className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/[0.06] text-aqua ring-1 ring-inset ring-white/10"
                 >
                   <ShieldCheck size={16} strokeWidth={1.75} />
                 </span>
