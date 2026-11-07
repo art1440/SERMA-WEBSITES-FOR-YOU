@@ -70,7 +70,7 @@ export function DashboardShowcase() {
 
   // 1 · Rise off the table → 2 · explode into layers → 3 · reassemble → 4 · cycle industries
   const rotateX = useTransform(d, [0, 0.14, 0.19, 0.29, 0.38], [64, 0, 0, 10, 0]);
-  const rotateY = useTransform(d, [0.19, 0.29, 0.38], [0, -32, 0]);
+  const rotateY = useTransform(d, [0.19, 0.29, 0.38], [0, -24, 0]);
   const y = useTransform(d, [0, 0.14], ["36%", "0%"]);
   const z = useTransform(d, [0, 0.14], [-460, 0]);
   const opacity = useTransform(d, [0, 0.07], [0, 1]);
@@ -80,6 +80,8 @@ export function DashboardShowcase() {
   const zKpi = useTransform(explode, (e) => e * 260);
   const zMid = useTransform(explode, (e) => e * 150);
   const zBottom = useTransform(explode, (e) => e * 420);
+  // The right rail spans the full window height: kept shallow so it never swings over the heading.
+  const zRail = useTransform(explode, (e) => e * 200);
 
   // Scroll cycles all six industries — but only until the visitor picks one themselves.
   const nicheRef = useRef(nicheId);
@@ -176,7 +178,7 @@ export function DashboardShowcase() {
                   {/* Right-hand rail on lg+; a row of cards below the pipeline on smaller screens. */}
                   <motion.div
                     className={`${PLATE} col-span-12 grid grid-cols-12 content-start gap-1.5 p-1.5 sm:gap-2 sm:p-2 lg:col-span-1 lg:flex lg:flex-col`}
-                    style={layerZ(zBottom)}
+                    style={layerZ(zRail)}
                   >
                     <ActivityStream />
                     <Modules />

@@ -423,7 +423,7 @@ function Phone({ phase }: { phase: Phase }) {
           style={{ backgroundImage: DEVICE_BODY }}
         >
           {/* Phones: height capped so the Simulate button and the idle screen fit in one view (the thread still fits). */}
-          <div className="relative isolate aspect-[9/18.5] overflow-hidden rounded-[2.125rem] bg-[#080807] ring-1 ring-white/[0.05] max-md:max-h-[max(26rem,58svh)]">
+          <div className="relative isolate aspect-[9/18.5] w-full overflow-hidden rounded-[2.125rem] bg-[#080807] ring-1 ring-white/[0.05] max-md:max-h-[max(26rem,58svh)]">
             <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ backgroundImage: SCREEN_WALLPAPER }} />
 
             {/* Status bar */}
