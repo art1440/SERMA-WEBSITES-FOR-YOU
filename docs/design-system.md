@@ -23,6 +23,9 @@ Rules
 - **Shape is separate:** add `rounded-glass-sm` (14px) · `rounded-glass` (22px) · `rounded-glass-lg` (30px) · `rounded-full` (capsules).
 - **Never put real blur (`backdrop-filter`) inside a `preserve-3d` chain** or on a 3D root — it flattens the 3D. Use `glass-flat` there.
 - **Never put `overflow-hidden` on a `preserve-3d` element** — same flattening. Round corners with radius on the element and its corner children instead.
+- **Never put `glass`/`glass-dark` (even with `glass-flat`) on an element that itself has `preserve-3d`.** The material sets `isolation: isolate`, a grouping property that forces `transform-style: flat`. Use the material only on leaf layers inside the 3D chain.
+- **Responsive blur removal:** `max-lg:glass-flat` works (the flat rules are one selector each); `max-lg:[backdrop-filter:none] max-lg:[-webkit-backdrop-filter:none]` also works and keeps the current tint.
+- `glass-solid` + `glass-flat` together keep the dense tint (for text-heavy panels without blur).
 - **Blur budget:** at most ~4 real-blur surfaces visible at once, and avoid real blur on surfaces larger than ~40% of the viewport. Prefer `glass-flat` for big panels.
 - `--glass-blur` (default 22px) can be lowered per element, e.g. `[--glass-blur:14px]`.
 - The `::before` (specular rim) and `::after` (pointer sheen) pseudo-elements belong to the material. Don't add your own `::before/::after` to a glass element.
@@ -30,7 +33,7 @@ Rules
 
 ## 2. Ambient light fields
 
-Glass needs depth behind it. Every **opaque** section is `relative isolate overflow-hidden` and
+Glass needs depth behind it. Every **opaque** section is `relative isolate overflow-hidden` (use `overflow-clip` when it contains a sticky/pinned stage: `overflow-hidden` makes the section the sticky element's scroll container and the pin stops working) and
 renders `<AmbientField tone="light|dark" variant={0|1|2} />` as its first child, *instead of*
 `bg-bone`/`bg-ink` on the section. Vary `variant` between neighbouring sections.
 Transparent chapters (hero, system, finale) sit over the 3D stage and don't need one.
@@ -71,7 +74,8 @@ uppercase mono on buttons**. Minimum 44×44px touch target.
 ## 7. Motion
 - Tokens in `src/lib/motion.ts`: `snappy` (controls), `smooth` (panels/cards), `cinematic` (scroll/3D).
 - Animate only `transform` and `opacity`. No animating blur, width/height/top/left, or colour.
-- Respect `prefers-reduced-motion` (already global) and the "Pause animations" control.
+- Respect `prefers-reduced-motion` (already global) and the "Pause animations" control. While paused, `html[data-motion-paused="true"]` freezes CSS keyframe loops (`animate-live-pulse`, `animate-scroll-cue`, …) automatically; JS/WebGL/video loops must read `useMotionPause()`.
+- `MagneticButton` drives `transform` with a spring, so it opts out of the `.btn` CSS transform transition (`transition-none`).
 
 ## 8. Don'ts
 - Don't change copy, ids, aria attributes, data, or behaviour when restyling.
