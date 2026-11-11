@@ -9,29 +9,35 @@
     <!--
       Static definition of the "enquiries" form so Netlify registers it at deploy.
       The real form is the React one in the Contact section, which posts here.
-      Netlify records each submission (and its date) in the form list called "enquiries".
+      Netlify records each submission, and its date, in the form list "enquiries".
+      The form must stay in the parsed HTML, so it is hidden by position rather
+      than with the hidden attribute or display:none.
     -->
-    <form name="enquiries" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
-      <input type="hidden" name="form-name" value="enquiries" />
-      <input type="hidden" name="submitted_on" />
-      <p>
-        <label>Leave this field empty <input name="bot-field" /></label>
-      </p>
-      <p>
-        <label>Your name <input type="text" name="name" /></label>
-      </p>
-      <p>
-        <label>Business name <input type="text" name="business" /></label>
-      </p>
-      <p>
-        <label>Phone <input type="tel" name="phone" /></label>
-      </p>
-      <p>
-        <label>What do you need? <textarea name="need"></textarea></label>
-      </p>
-      <p>
-        <button type="submit">Send</button>
-      </p>
-    </form>
+    <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+      <form name="enquiries" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="enquiries" />
+        <p>
+          <label>Leave this field empty <input name="bot-field" /></label>
+        </p>
+        <p>
+          <label>Your name <input type="text" name="name" /></label>
+        </p>
+        <p>
+          <label>Business name <input type="text" name="business" /></label>
+        </p>
+        <p>
+          <label>Phone <input type="tel" name="phone" /></label>
+        </p>
+        <p>
+          <label>What do you need? <textarea name="need"></textarea></label>
+        </p>
+        <p>
+          <label>Date sent <input type="text" name="submitted_on" /></label>
+        </p>
+        <p>
+          <button type="submit">Send</button>
+        </p>
+      </form>
+    </div>
   </body>
 </html>
