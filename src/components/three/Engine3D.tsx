@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import type { MotionValue } from "framer-motion";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
@@ -416,7 +416,8 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
       // Orbit: swing round on Capture/Respond, square up for Book (grid faces camera), circle on Return.
       orbit = kf([[0, 0], [0.22, 0.55], [0.45, -0.4], [0.55, 0], [0.72, 0], [1, 0.7]], s);
     }
-    const ck = 1 - Math.exp(-dt * 3.2);
+    // Camera / pose follows on top of the sprung progress: quick enough to stay in step with the page.
+    const ck = 1 - Math.exp(-dt * 6);
     const c = cam.current;
     c.z += (camZ - c.z) * ck;
     c.y += (camY - c.y) * ck;
@@ -432,13 +433,13 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
     }
 
     // ---- Damped follow (silky, frame-rate independent) -----------------
-    const k = 1 - Math.exp(-dt * 5);
+    const k = 1 - Math.exp(-dt * 9);
     const cur = pose.current;
     cur.x += (target.x - cur.x) * k;
     cur.y += (target.y - cur.y) * k;
     cur.z += (target.z - cur.z) * k;
     cur.s += (target.s - cur.s) * k;
-    morph.current += (targetMorph - morph.current) * (1 - Math.exp(-dt * 6));
+    morph.current += (targetMorph - morph.current) * (1 - Math.exp(-dt * 10));
 
     const ptr = pointer.current;
     ptr.sx += (ptr.x - ptr.sx) * (1 - Math.exp(-dt * 3));
@@ -568,12 +569,39 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
   );
 }
 
+/**
+ * Compiles every shader in the scene off the main thread (KHR_parallel_shader_compile where
+ * available) before the first frame, so the page never freezes when the engine first renders.
+ */
+function Precompile({ onReady }: { onReady: () => void }) {
+  const { gl, scene, camera } = useThree();
+  useEffect(() => {
+    let alive = true;
+    gl.compileAsync(scene, camera)
+      .catch(() => undefined)
+      .finally(() => {
+        if (alive) onReady();
+      });
+    return () => {
+      alive = false;
+    };
+  }, [gl, scene, camera, onReady]);
+  return null;
+}
+
 export default function Engine3D({ active, ...inputs }: Props) {
+  const [ready, setReady] = useState(false);
+  const onReady = useCallback(() => setReady(true), []);
   return (
     <Canvas
       // Phones: cap sharpness at 1.25× (big battery/GPU saving, visually near-identical).
       dpr={inputs.desktop ? [1, 1.75] : [1, 1.25]}
-      frameloop={active ? "always" : "never"}
+      frameloop={active && ready ? "always" : "never"}
+      // The glass core's refraction pass at half resolution: a quarter of the per-frame
+      // MSAA resolve + mipmap work, and the refraction is seen through dark tinted glass.
+      onCreated={({ gl }) => {
+        gl.transmissionResolutionScale = 0.5;
+      }}
       camera={{ position: [0, 0, 9], fov: 35, near: 0.1, far: 60 }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       style={{ position: "absolute", inset: 0 }}
@@ -582,6 +610,7 @@ export default function Engine3D({ active, ...inputs }: Props) {
     >
       <Environment />
       <EngineScene {...inputs} />
+      <Precompile onReady={onReady} />
     </Canvas>
   );
 }

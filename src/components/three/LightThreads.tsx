@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
  *
  * One full-screen fragment shader on its own tiny WebGL context: no three.js,
  * one draw call per frame. Rendered at reduced resolution (the glow is soft,
- * so it scales up cleanly) and capped at 30 fps on phones. Stops entirely
+ * so it scales up cleanly) and capped at 60 fps (30 fps on phones). Stops entirely
  * while paused (WCAG 2.2.2 control), when the tab is hidden, or when WebGL is
  * unavailable. Reduced motion never mounts it (the Stage is off).
  */
@@ -26,16 +26,13 @@ uniform float uTime;
 uniform float uScroll;
 const int N = 18;
 
-float strand(vec2 q, float i, float t, float s) {
+// Per-pixel terms shared by every strand are computed once in main() (same picture, ~35% less ALU).
+float strand(vec2 q, float i, float c, float base, float wbase, float px) {
   float fi = i / float(N - 1) - 0.5;            // -0.5 … 0.5 across the bundle
-  // Bundle centre: a long S-curve that drifts with time and swings with scroll.
-  float c = 0.18 * sin(q.x * 1.25 + s * 1.6 + t * 0.07)
-          + 0.07 * sin(q.x * 2.9 - s * 0.9 + t * 0.11);
   // Twist: the bundle pinches and fans out along its length (ribbon look).
-  float twist = 0.05 + 0.24 * abs(sin(q.x * 1.05 + s * 1.2 + t * 0.05 + fi * 0.6));
-  float wob = 0.012 * sin(q.x * 7.0 + i * 1.7 + t * 0.4);
+  float twist = 0.05 + 0.24 * abs(sin(base + fi * 0.6));
+  float wob = 0.012 * sin(wbase + i * 1.7);
   float d = abs(q.y - (c + fi * twist + wob));
-  float px = 1.6 / uRes.y;                       // ~constant on-screen width
   return px / (d + px) * smoothstep(0.0, 0.6, 1.0 - abs(fi) * 1.6);
 }
 
@@ -46,10 +43,18 @@ void main() {
   float a = -0.55 + 0.35 * sin(uScroll * 0.55);
   q = mat2(cos(a), -sin(a), sin(a), cos(a)) * q;
 
+  float t = uTime, s = uScroll;
+  // Bundle centre: a long S-curve that drifts with time and swings with scroll.
+  float c = 0.18 * sin(q.x * 1.25 + s * 1.6 + t * 0.07)
+          + 0.07 * sin(q.x * 2.9 - s * 0.9 + t * 0.11);
+  float base = q.x * 1.05 + s * 1.2 + t * 0.05;
+  float wbase = q.x * 7.0 + t * 0.4;
+  float px = 1.6 / uRes.y;                       // ~constant on-screen width
+
   vec3 col = vec3(0.0);
   for (int k = 0; k < N; k++) {
     float i = float(k);
-    float g = strand(q, i, uTime, uScroll);
+    float g = strand(q, i, c, base, wbase, px);
     float glow = pow(g, 2.2) * 1.4 + g * 0.06;
     // Aqua core strands, a deeper teal at the edges, one warm ember strand.
     vec3 tint = mix(vec3(0.24, 0.86, 0.79), vec3(0.07, 0.45, 0.52), abs(i / float(N - 1) - 0.5) * 2.0);
@@ -85,6 +90,10 @@ export function LightThreads({ paused, desktop }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const pausedRef = useRef(paused);
   const runRef = useRef<() => void>(() => undefined);
+  const resizeRef = useRef<() => void>(() => undefined);
+  // Desktop-dependent settings live in a ref, so the GL context and shader are set up once
+  // (`desktop` flips false → true right after mount on wide screens).
+  const cfg = useRef({ scale: 0.45, minDelta: 1000 / 30 });
 
   useEffect(() => {
     const canvas = ref.current;
@@ -113,10 +122,18 @@ export function LightThreads({ paused, desktop }: Props) {
     const uScroll = gl.getUniformLocation(prog, "uScroll");
 
     // Soft glow → render at a fraction of CSS pixels and let the browser scale it up.
-    const scale = desktop ? 0.6 : 0.45;
+    // Sized from the canvas (the backdrop is lvh-tall), and the scroll unit only changes with
+    // the width, so a phone's URL bar sliding in/out never resizes it or jolts the threads.
+    let unit = canvas.clientHeight || window.innerHeight;
+    let lastW = 0;
     const resize = () => {
-      const w = Math.max(1, Math.round(window.innerWidth * scale));
-      const h = Math.max(1, Math.round(window.innerHeight * scale));
+      const cw = canvas.clientWidth || window.innerWidth;
+      if (cw !== lastW) {
+        unit = canvas.clientHeight || window.innerHeight;
+        lastW = cw;
+      }
+      const w = Math.max(1, Math.round(cw * cfg.current.scale));
+      const h = Math.max(1, Math.round((canvas.clientHeight || window.innerHeight) * cfg.current.scale));
       if (canvas.width !== w || canvas.height !== h) {
         canvas.width = w;
         canvas.height = h;
@@ -125,17 +142,18 @@ export function LightThreads({ paused, desktop }: Props) {
       gl.uniform2f(uRes, w, h);
     };
     resize();
+    resizeRef.current = resize;
     window.addEventListener("resize", resize);
 
-    // Scroll is eased so trackpad jitter never shakes the threads.
-    let scroll = window.scrollY / window.innerHeight;
+    // Scroll is eased (time-based, ~0.2s) so trackpad jitter never shakes the threads,
+    // and the follow feels the same at 30, 60 or 120 fps.
+    let scroll = window.scrollY / unit;
     let raf = 0;
     let last = 0;
-    const minDelta = desktop ? 0 : 1000 / 30;
     let start = performance.now();
     let frozenAt = 0;
     const render = (now: number, ease: number) => {
-      const target = window.scrollY / window.innerHeight;
+      const target = window.scrollY / unit;
       scroll += (target - scroll) * ease;
       gl.uniform1f(uTime, (now - start) / 1000);
       gl.uniform1f(uScroll, scroll);
@@ -143,9 +161,11 @@ export function LightThreads({ paused, desktop }: Props) {
     };
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
-      if (now - last < minDelta) return;
+      const elapsed = now - last;
+      // Frame cap (60 fps desktop, 30 fps phones); the 4ms slack locks to an even vsync cadence.
+      if (elapsed < cfg.current.minDelta - 4) return;
       last = now;
-      render(now, 0.08);
+      render(now, 1 - Math.exp(-Math.min(elapsed, 100) * 0.005));
     };
     // Paused: time freezes; the threads still follow scroll (visitor-driven), with no loop.
     const onScrollPaused = () => {
@@ -166,6 +186,7 @@ export function LightThreads({ paused, desktop }: Props) {
           start += gap;
           frozenAt = 0;
         }
+        last = performance.now(); // no catch-up step after a pause
         raf = requestAnimationFrame(loop);
       }
     };
@@ -180,6 +201,11 @@ export function LightThreads({ paused, desktop }: Props) {
       document.removeEventListener("visibilitychange", run);
     };
     // The canvas keeps one context for its whole life (a lost context can't be re-acquired).
+  }, []);
+
+  useEffect(() => {
+    cfg.current = desktop ? { scale: 0.6, minDelta: 1000 / 60 } : { scale: 0.45, minDelta: 1000 / 30 };
+    resizeRef.current();
   }, [desktop]);
 
   useEffect(() => {

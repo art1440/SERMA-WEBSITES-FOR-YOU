@@ -38,7 +38,7 @@ export function SystemChapter() {
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink via-ink/85 to-transparent lg:hidden" />
 
         <div className="frame relative flex h-full flex-col pb-4 pt-20 motion-safe:justify-end sm:pb-10 sm:pt-24 lg:pb-6 lg:pt-20 lg:motion-safe:justify-center">
-          <div className="glass-dark glass-solid w-full rounded-glass p-4 [--glass-blur:26px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:max-w-[34rem] sm:rounded-glass-lg sm:p-8 lg:w-6/12 lg:max-w-[36rem]">
+          <div className="glass-dark glass-solid w-full rounded-glass p-4 [--glass-blur:14px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:max-w-[34rem] sm:rounded-glass-lg sm:p-8 lg:w-6/12 lg:max-w-[36rem]">
             <Reveal y={12}>
               <SectionChip index={t.system.index} label={t.system.eyebrow} />
             </Reveal>

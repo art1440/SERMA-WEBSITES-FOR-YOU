@@ -205,6 +205,8 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
                     src={item.poster}
                     alt=""
                     draggable={false}
+                    loading="lazy"
+                    decoding="async"
                     className="pointer-events-none absolute inset-0 h-full w-full object-cover"
                   />
                   {item.video && front && !paused && !reduce ? (
