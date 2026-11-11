@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, Phone, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
 import { AmbientField } from "@/components/ui/AmbientField";
 
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
@@ -128,14 +128,19 @@ export function DemoContact() {
               {/* Four fields, nothing else: name, business, phone, what they need. */}
               <EnquiryForm />
 
-              {phone ? (
-                <p className="mt-6 text-sm leading-relaxed text-ash">
+              {/* Some people never fill in a form. Give them the address and the number right here. */}
+              <div className="mt-7 flex flex-col gap-2.5 border-t border-white/10 pt-6 text-[0.9375rem]">
+                <a href={mailto} className="link-quiet break-all">
+                  <Mail aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0" />
+                  {siteConfig.contactEmail}
+                </a>
+                {phone ? (
                   <a href={`tel:${phone.e164}`} className="link-quiet">
-                    <Phone aria-hidden="true" size={15} strokeWidth={1.75} />
+                    <Phone aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0" />
                     {fill(t.demo.phoneCta, { phone: phone.display })}
                   </a>
-                </p>
-              ) : null}
+                ) : null}
+              </div>
 
               <p className="mt-8 flex items-start gap-3 border-t border-white/10 pt-6 text-sm leading-relaxed text-ash">
                 <span

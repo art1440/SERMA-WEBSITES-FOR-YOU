@@ -73,7 +73,7 @@ export function EnquiryForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} name="enquiries" className="mt-6 grid gap-4">
+    <form id="enquiry-form" onSubmit={onSubmit} name="enquiries" className="mt-6 scroll-mt-28 grid gap-4">
       <input type="hidden" name="form-name" value="enquiries" />
       <p className="hidden">
         <label>

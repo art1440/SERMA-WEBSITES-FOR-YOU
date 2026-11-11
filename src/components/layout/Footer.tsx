@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUp, ArrowUpRight, ShieldCheck } from "lucide-react";
+import { ArrowUp, ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { Reveal } from "@/components/ui/Reveal";
@@ -55,6 +55,20 @@ export function Footer() {
             <p className="max-w-md text-pretty font-display text-[1.625rem] leading-[1.18] tracking-[-0.03em] text-bone sm:text-[1.875rem]">
               {t.footer.tagline}
             </p>
+            {/* Direct routes, for people who would rather ring than fill in a form. */}
+            <div className="mt-7 flex flex-col gap-2.5 text-[0.9375rem] leading-relaxed">
+              <a href={`mailto:${siteConfig.contactEmail}`} className="link-quiet break-all">
+                <Mail aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0" />
+                {siteConfig.contactEmail}
+              </a>
+              {siteConfig.contactPhone ? (
+                <a href={`tel:${siteConfig.contactPhone.e164}`} className="link-quiet">
+                  <Phone aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0" />
+                  {siteConfig.contactPhone.display}
+                </a>
+              ) : null}
+            </div>
+
             <div className="mt-8 flex flex-wrap items-center gap-3">
               {/* Switch first: the badge beside it changes width with the language, so anything after
                   it would jump away from the pointer after a tap. */}
