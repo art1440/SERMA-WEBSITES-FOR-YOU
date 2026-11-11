@@ -40,6 +40,24 @@ export function InclusionsList() {
             </li>
           ))}
         </ol>
+
+        <div className="mt-12 grid gap-10 border-t border-hairline-dark pt-10 md:mt-14 md:grid-cols-[1.5fr_1fr] md:gap-14 md:pt-12">
+          <div>
+            <h3 className="eyebrow text-ash">{section.fitsLabel}</h3>
+            <ul className="mt-4 space-y-3">
+              {section.fits.map((line) => (
+                <li key={line} className="flex gap-3 text-pretty text-[0.9375rem] leading-relaxed text-bone/90">
+                  <span aria-hidden="true" className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-bone/50" />
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="md:border-l md:border-hairline-dark md:pl-10">
+            <h3 className="eyebrow text-ash">{section.notLabel}</h3>
+            <p className="mt-4 text-pretty text-[0.9375rem] leading-relaxed text-ash">{section.notLine}</p>
+          </div>
+        </div>
       </div>
     </section>
   );

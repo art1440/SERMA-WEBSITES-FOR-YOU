@@ -143,6 +143,16 @@ const en = {
         detail: "Message or call and you hear back inside one business day. Site changes get handled in that same thread.",
       },
     ],
+    fitsLabel: "Who this is for",
+    fits: [
+      "Shops with chairs and regulars: barbershops, hair salons, nail salons and beauty studios.",
+      "One to six people in the same place, with the owner still behind the chair or the table.",
+      "South Austin, Buda, Kyle or San Marcos, close enough for me to walk in and sit with you.",
+      "Bookings coming in by phone and DM, where the ones that arrive mid shift are the ones going missing.",
+    ],
+    notLabel: "Who it is not for",
+    notLine:
+      "Franchises, chains, and anyone who wants a marketing department. This is one shop, one site, built and answered by one person.",
   },
   industries: {
     index: "(03)",
@@ -468,6 +478,16 @@ const es: Dictionary = {
         detail: "Escriba o llame y le contesto dentro de un día hábil. Los cambios del sitio se resuelven en ese mismo hilo.",
       },
     ],
+    fitsLabel: "Para quién es",
+    fits: [
+      "Negocios con sillas y clientes de siempre: barberías, salones de belleza, uñas y estudios de estética.",
+      "De una a seis personas en el mismo local, con el dueño todavía detrás de la silla o de la mesa.",
+      "Sur de Austin, Buda, Kyle o San Marcos, cerca para pasar y sentarme con usted.",
+      "Citas que llegan por teléfono y por mensaje, y las que entran a media jornada son las que se pierden.",
+    ],
+    notLabel: "Para quién no es",
+    notLine:
+      "Franquicias, cadenas y quien quiera un departamento de marketing. Esto es un negocio, un sitio, hecho y contestado por una sola persona.",
   },
   industries: {
     index: "(03)",
