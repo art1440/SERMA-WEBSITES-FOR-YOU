@@ -94,11 +94,11 @@ export function DemoContact() {
             {/* Static aqua light behind the panel: gives the glass rim and tint something to catch. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-4 -top-14 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(61,219,201,0.24),rgba(18,165,148,0.14)_55%,transparent)] sm:-right-16 sm:-top-20 sm:h-96 sm:w-96"
+              className="pointer-events-none absolute -right-4 -top-14 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(232,223,207,0.24),rgba(201,184,147,0.14)_55%,transparent)] sm:-right-16 sm:-top-20 sm:h-96 sm:w-96"
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-16 -left-12 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(127,242,227,0.1),transparent)]"
+              className="pointer-events-none absolute -bottom-16 -left-12 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(243,237,225,0.1),transparent)]"
             />
 
             <div className="glass-dark glass-solid relative rounded-glass-lg p-5 text-bone [-webkit-backdrop-filter:none] [backdrop-filter:none] sm:p-8 xl:p-10">

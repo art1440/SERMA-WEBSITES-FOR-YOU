@@ -263,7 +263,7 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
               {i === active ? (
                 <motion.span
                   layoutId="carousel-dot"
-                  className="absolute -inset-x-1.5 inset-y-0 rounded-full bg-aqua shadow-[0_0_10px_rgba(61,219,201,0.55)]"
+                  className="absolute -inset-x-1.5 inset-y-0 rounded-full bg-aqua shadow-[0_0_10px_rgba(232,223,207,0.55)]"
                 />
               ) : null}
             </li>

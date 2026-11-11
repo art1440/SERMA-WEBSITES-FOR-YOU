@@ -8,6 +8,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { ComparisonMatrix } from "@/components/sections/ComparisonMatrix";
 import { DashboardShowcase } from "@/components/sections/DashboardShowcase";
 import { DemoContact } from "@/components/sections/DemoContact";
+import { InclusionsList } from "@/components/sections/InclusionsList";
 import { MissedCallSimulator } from "@/components/sections/MissedCallSimulator";
 import { RevenueCalculator } from "@/components/sections/RevenueCalculator";
 import { Stage } from "@/components/three/Stage";
@@ -32,6 +33,7 @@ export default function HomePage() {
         <main id="main" tabIndex={-1} className="relative z-10 focus:outline-none">
           <HeroChapter />
           <SystemChapter />
+          <InclusionsList />
           <IndustriesChapter />
           <DashboardShowcase />
           <MissedCallSimulator />

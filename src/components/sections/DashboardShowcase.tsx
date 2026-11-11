@@ -72,8 +72,8 @@ const BAR_SPRING = SPRING_SMOOTH;
  * ------------------------------------------------------------------ */
 const WINDOW =
   "rounded-glass-lg border border-transparent p-1.5 text-bone sm:p-2 " +
-  "[background:linear-gradient(165deg,#1E2E48_0%,#132033_36%,#0F1A2A_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.4),rgba(255,255,255,0.07)_28%,rgba(255,255,255,0.03)_68%,rgba(61,219,201,0.34))_border-box] " +
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_2px_6px_rgba(0,0,0,0.3),0_40px_80px_-28px_rgba(0,0,0,0.7),0_0_120px_-40px_rgba(61,219,201,0.22),0_90px_150px_-60px_rgba(0,0,0,0.6)]";
+  "[background:linear-gradient(165deg,#1E2E48_0%,#132033_36%,#0F1A2A_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.4),rgba(255,255,255,0.07)_28%,rgba(255,255,255,0.03)_68%,rgba(232,223,207,0.34))_border-box] " +
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_2px_6px_rgba(0,0,0,0.3),0_40px_80px_-28px_rgba(0,0,0,0.7),0_0_120px_-40px_rgba(232,223,207,0.22),0_90px_150px_-60px_rgba(0,0,0,0.6)]";
 const PLATE = "glass-dark glass-flat rounded-glass";
 /** The window's full width (its max-w); the pinned stage always lays it out at this width. */
 const WINDOW_W = 1240;
@@ -351,7 +351,7 @@ function Sidebar({ desktop }: { desktop: boolean }) {
                   <span className="sr-only"> {badge === 1 ? t.dashboard.newItemsOne : t.dashboard.newItems}</span>
                 </span>
               ) : selected ? (
-                <span aria-hidden="true" className="ml-auto hidden h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_rgba(61,219,201,0.7)] lg:block" />
+                <span aria-hidden="true" className="ml-auto hidden h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_rgba(232,223,207,0.7)] lg:block" />
               ) : null}
             </button>
           );
@@ -701,7 +701,7 @@ function Pipeline() {
               className="relative isolate mt-2 h-2 w-full overflow-hidden rounded-full bg-white/[0.07] shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)]"
             >
               <motion.div
-                className="h-full w-full rounded-full bg-[linear-gradient(90deg,rgba(18,165,148,0.75),#E8DFCF)] shadow-[inset_0_1px_0_rgba(214,255,250,0.6)]"
+                className="h-full w-full rounded-full bg-[linear-gradient(90deg,rgba(201,184,147,0.75),#E8DFCF)] shadow-[inset_0_1px_0_rgba(214,255,250,0.6)]"
                 initial={{ x: "-100%" }}
                 animate={{ x: inView ? `${(stage.count / top - 1) * 100}%` : "-100%" }}
                 transition={{ ...BAR_SPRING, delay: inView ? i * 0.06 : 0 }}
@@ -783,7 +783,7 @@ function Modules() {
             <li key={mod.name.en} className="flex gap-2.5">
               <span
                 aria-hidden="true"
-                className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-full bg-aqua text-ink shadow-[inset_0_1px_0_rgba(214,255,250,0.7),0_0_0_3px_rgba(61,219,201,0.14)]"
+                className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-full bg-aqua text-ink shadow-[inset_0_1px_0_rgba(214,255,250,0.7),0_0_0_3px_rgba(232,223,207,0.14)]"
               >
                 <Check size={12} strokeWidth={2.5} />
               </span>

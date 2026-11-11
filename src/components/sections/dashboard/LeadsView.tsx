@@ -827,7 +827,7 @@ function LeadDetail({
               <div className="min-w-0 flex-1 pt-[3px]">
                 <p className={`text-[0.8125rem] leading-snug ${step.tone === "pending" ? "text-ash" : "text-bone"}`}>{step.title}</p>
                 {step.bubble ? (
-                  <p className="mt-1.5 rounded-[12px] rounded-tl-[4px] bg-aqua/[0.1] px-3 py-2 text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(61,219,201,0.22)]">
+                  <p className="mt-1.5 rounded-[12px] rounded-tl-[4px] bg-aqua/[0.1] px-3 py-2 text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(232,223,207,0.22)]">
                     “{step.bubble}”
                   </p>
                 ) : null}

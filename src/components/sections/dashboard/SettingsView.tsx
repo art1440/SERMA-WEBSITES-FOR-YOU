@@ -646,7 +646,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
                       lang={lang}
                       className={`max-w-[92%] rounded-[18px] rounded-br-[6px] px-3.5 py-2.5 text-[0.8125rem] leading-snug sm:max-w-[86%] ${
                         s.textBack
-                          ? "bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_60%,#E8DFCF_100%)] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_16px_-10px_rgba(61,219,201,0.7)]"
+                          ? "bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_60%,#E8DFCF_100%)] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_16px_-10px_rgba(232,223,207,0.7)]"
                           : "border border-dashed border-white/20 bg-white/[0.04] text-bone/85"
                       }`}
                       initial={{ opacity: 0, y: 6 }}
@@ -860,7 +860,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
         <p className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1 text-xs leading-snug text-ash">
           {changes > 0 ? (
             <span className="inline-flex items-center gap-1.5 font-medium text-bone">
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_0_3px_rgba(61,219,201,0.18)]" />
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_0_3px_rgba(232,223,207,0.18)]" />
               {changes === 1 ? COPY.unsavedOne[locale] : fill(COPY.unsaved[locale], { n: changes })}
             </span>
           ) : saved ? (
@@ -1000,7 +1000,7 @@ function Toggle({ on, locale }: { on: boolean; locale: Locale }) {
       </span>
       <span className="relative block h-[26px] w-[44px] rounded-full bg-white/[0.1] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16),inset_0_1px_2px_rgba(0,0,0,0.4)] forced-colors:border forced-colors:border-[CanvasText]">
         <span
-          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_55%,#C9B893_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(61,219,201,0.6)] transition-opacity duration-200 ease-editorial ${
+          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_55%,#C9B893_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(232,223,207,0.6)] transition-opacity duration-200 ease-editorial ${
             on ? "opacity-100" : "opacity-0"
           }`}
         />
@@ -1045,7 +1045,7 @@ function Segmented<T extends string>({
     >
       <motion.span
         aria-hidden="true"
-        className="absolute bottom-1 left-1 top-1 rounded-full bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_14px_-6px_rgba(61,219,201,0.75)] [forced-color-adjust:none] forced-colors:bg-[Highlight]"
+        className="absolute bottom-1 left-1 top-1 rounded-full bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_14px_-6px_rgba(232,223,207,0.75)] [forced-color-adjust:none] forced-colors:bg-[Highlight]"
         style={{ width: `calc((100% - 0.5rem) / ${options.length})` }}
         initial={false}
         animate={{ x: `${index * 100}%` }}

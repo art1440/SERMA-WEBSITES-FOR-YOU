@@ -104,8 +104,48 @@ const en = {
       { title: "Return", body: "Review requests and re-booking nudges keep customers coming back on schedule." },
     ],
   },
-  industries: {
+  included: {
     index: "(02)",
+    eyebrow: "What you get",
+    title: "Exactly what you buy, in the order it happens",
+    body: "No mystery box and no hourly billing. Eight things are built for your shop, and you see the pages before you pay anything.",
+    items: [
+      {
+        title: "A 30 minute call to get your details",
+        detail: "Services, barbers, hours, the booking tool you already use, and a handful of photos from your phone.",
+      },
+      {
+        title: "Your pages written, not templated",
+        detail: "Home, services, hours and location, written from what you tell me and corrected by you before anything goes public.",
+      },
+      {
+        title: "Your first draft, before you pay",
+        detail: "I send the link to the finished draft, you mark what reads wrong or looks wrong, and I fix it.",
+      },
+      {
+        title: "Your own domain pointing at it",
+        detail: "Your address, your email, your photos. The domain and the photos stay in your name.",
+      },
+      {
+        title: "Missed calls answered by text in seconds",
+        detail: "When a call goes unanswered mid cut, the caller gets a text with your booking link before they dial the shop down the road.",
+      },
+      {
+        title: "Booking that runs while you work",
+        detail: "Clients pick their own slot at 11pm and it lands in your calendar with the deposit already taken.",
+      },
+      {
+        title: "A reminder the day before, every time",
+        detail: "One text to the client, so the chair is not sitting empty at 9am.",
+      },
+      {
+        title: "An answer within one business day, from me",
+        detail: "Message or call and you hear back inside one business day. Site changes get handled in that same thread.",
+      },
+    ],
+  },
+  industries: {
+    index: "(03)",
     eyebrow: "Built for",
     title: ["Built around your trade.", "Not around software."],
     titleEmphasis: "Not around software.",
@@ -118,7 +158,7 @@ const en = {
     swipeHint: "Swipe · Drag · Arrows",
   },
   dashboard: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Your dashboard",
     title: "Know how the week went in ten seconds.",
     body: "No spreadsheets, no guessing. One screen shows who booked, who's coming back and what came in while you were busy. Pick an industry to see yours.",
@@ -148,7 +188,7 @@ const en = {
     newItemsOne: "new",
   },
   simulator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "When you can't pick up",
     scrollHint: "Scroll to play the call — scroll back to rewind.",
     title: "You keep working. It answers the phone.",
@@ -184,7 +224,7 @@ const en = {
     announceBooked: "{name} booked {service} for {time}. {amount} added to the dashboard.",
   },
   calculator: {
-    index: "(05)",
+    index: "(06)",
     eyebrow: "The calls you can't take",
     title: "What do the calls you can't answer cost you?",
     body: "Move the sliders to match a normal week. The math is on the page — no inflated promises.",
@@ -203,7 +243,7 @@ const en = {
     cta: "Get a free audit of your week",
   },
   compare: {
-    index: "(06)",
+    index: "(07)",
     eyebrow: "The difference",
     title: ["A website that waits.", "Or one that works while you do."],
     body: "Most local business websites sit there until someone calls — and then you still have to answer. Here's what changes when the website handles the follow-up.",
@@ -257,7 +297,7 @@ const en = {
     ],
   },
   demo: {
-    index: "(07)",
+    index: "(08)",
     eyebrow: "Live demo & free audit",
     title: "Let's see what we can take off your plate.",
     body: "A 30-minute walkthrough on your schedule. We'll show you where calls and bookings slip through today, what we'd hand off to the system, and what your week could look like after — no pricing pressure, no obligation.",
@@ -389,8 +429,48 @@ const es: Dictionary = {
       { title: "Regreso", body: "Las solicitudes de reseñas y los recordatorios para volver a reservar hacen que sus clientes regresen a tiempo." },
     ],
   },
-  industries: {
+  included: {
     index: "(02)",
+    eyebrow: "Lo que recibe",
+    title: "Exactamente lo que compra, en el orden en que pasa",
+    body: "Sin caja cerrada y sin cobro por hora. Se construyen ocho cosas para su negocio, y usted ve las páginas antes de pagar nada.",
+    items: [
+      {
+        title: "Una llamada de 30 minutos para sus datos",
+        detail: "Servicios, barberos, horario, la herramienta de citas que ya usa y unas cuantas fotos de su teléfono.",
+      },
+      {
+        title: "Sus páginas escritas, no de plantilla",
+        detail: "Inicio, servicios, horario y ubicación, escritos con lo que usted me cuenta y corregidos por usted antes de publicar.",
+      },
+      {
+        title: "Su primer borrador, antes de pagar",
+        detail: "Le mando el enlace del borrador terminado, usted marca lo que está mal escrito o mal visto, y yo lo corrijo.",
+      },
+      {
+        title: "Su propio dominio apuntando al sitio",
+        detail: "Su dirección, su correo y sus fotos. El dominio y las fotos quedan a su nombre.",
+      },
+      {
+        title: "Llamadas perdidas contestadas por texto en segundos",
+        detail: "Si no alcanza a contestar porque está cortando, quien llama recibe un texto con su enlace de citas antes de marcar a otra barbería.",
+      },
+      {
+        title: "Citas que avanzan mientras usted trabaja",
+        detail: "El cliente elige su horario a las 11 de la noche y la cita entra a su calendario con el anticipo ya cobrado.",
+      },
+      {
+        title: "Un recordatorio el día antes, siempre",
+        detail: "Un texto al cliente, para que la silla no quede vacía a las 9 de la mañana.",
+      },
+      {
+        title: "Respuesta dentro de un día hábil, de mi parte",
+        detail: "Escriba o llame y le contesto dentro de un día hábil. Los cambios del sitio se resuelven en ese mismo hilo.",
+      },
+    ],
+  },
+  industries: {
+    index: "(03)",
     eyebrow: "Diseñado para",
     title: ["Hecho para su oficio,", "no para el software."],
     titleEmphasis: "no para el software.",
@@ -403,7 +483,7 @@ const es: Dictionary = {
     swipeHint: "Deslice · Arrastre · Flechas",
   },
   dashboard: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Su panel",
     title: "Sepa cómo fue la semana en diez segundos.",
     body: "Sin hojas de cálculo ni suposiciones. Una sola pantalla muestra quién agendó, quién regresa y qué entró mientras usted estaba ocupado. Elija una industria para ver la suya.",
@@ -430,7 +510,7 @@ const es: Dictionary = {
     newItemsOne: "nuevo",
   },
   simulator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "Cuando no puede contestar",
     scrollHint: "Desplácese para reproducir la llamada; regrese para rebobinar.",
     title: "Usted sigue trabajando. El sistema contesta.",
@@ -466,7 +546,7 @@ const es: Dictionary = {
     announceBooked: "{name} agendó {service} para {time}. Se agregaron {amount} al panel.",
   },
   calculator: {
-    index: "(05)",
+    index: "(06)",
     eyebrow: "Las llamadas que no puede tomar",
     title: "¿Cuánto le cuestan las llamadas que no puede contestar?",
     body: "Mueva los controles según una semana normal. El cálculo está a la vista, sin promesas infladas.",
@@ -485,7 +565,7 @@ const es: Dictionary = {
     cta: "Solicite una auditoría gratuita de su semana",
   },
   compare: {
-    index: "(06)",
+    index: "(07)",
     eyebrow: "La diferencia",
     title: ["Un sitio web que espera.", "O uno que trabaja mientras usted trabaja."],
     body: "La mayoría de los sitios web de negocios locales esperan a que alguien llame, y luego usted todavía tiene que contestar. Esto es lo que cambia cuando el sitio se encarga del seguimiento.",
@@ -539,7 +619,7 @@ const es: Dictionary = {
     ],
   },
   demo: {
-    index: "(07)",
+    index: "(08)",
     eyebrow: "Demostración en vivo y auditoría gratuita",
     title: "Veamos qué podemos quitarle de encima.",
     body: "Un recorrido de 30 minutos cuando a usted le convenga. Le mostraremos dónde se escapan hoy las llamadas y las citas, qué dejaríamos en manos del sistema y cómo podría verse su semana después, sin presión de precios ni compromiso.",

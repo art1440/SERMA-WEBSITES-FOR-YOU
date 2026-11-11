@@ -174,7 +174,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + i * 0.08, duration: 0.5, ease: EASE_EDITORIAL }}
                   >
-                    <span className="tabular grid h-7 w-7 shrink-0 place-items-center rounded-full bg-aqua text-xs font-semibold text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_0_10px_rgba(61,219,201,0.35)]">
+                    <span className="tabular grid h-7 w-7 shrink-0 place-items-center rounded-full bg-aqua text-xs font-semibold text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_0_10px_rgba(232,223,207,0.35)]">
                       0{i + 1}
                     </span>
                     <span className="block pt-1 text-sm leading-snug sm:pt-0">{step}</span>

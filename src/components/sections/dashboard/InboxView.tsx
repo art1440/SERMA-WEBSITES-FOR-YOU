@@ -570,7 +570,7 @@ function MessageRow({
           {unread ? (
             <motion.span
               key="dot"
-              className="h-2 w-2 rounded-full bg-aqua shadow-[0_0_8px_rgba(61,219,201,0.65)]"
+              className="h-2 w-2 rounded-full bg-aqua shadow-[0_0_8px_rgba(232,223,207,0.65)]"
               initial={{ opacity: 0, scale: 0.4 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.4 }}
@@ -904,7 +904,7 @@ function Reader({
                       <button
                         type="button"
                         onClick={() => sendReply(i)}
-                        className="group flex min-h-[44px] w-full items-center gap-3 rounded-[14px] bg-white/[0.05] px-3.5 py-2.5 text-left text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-transform duration-200 ease-editorial hover:-translate-y-px hover:bg-aqua/[0.08] hover:shadow-[inset_0_0_0_1px_rgba(61,219,201,0.45)] active:scale-[0.99]"
+                        className="group flex min-h-[44px] w-full items-center gap-3 rounded-[14px] bg-white/[0.05] px-3.5 py-2.5 text-left text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-transform duration-200 ease-editorial hover:-translate-y-px hover:bg-aqua/[0.08] hover:shadow-[inset_0_0_0_1px_rgba(232,223,207,0.45)] active:scale-[0.99]"
                       >
                         <span className="flex-1">
                           {r[locale]}
@@ -982,7 +982,7 @@ function Reader({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
               >
-                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(61,219,201,0.6)]">
+                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(232,223,207,0.6)]">
                   <span className="sr-only">{COPY.youSent[locale]} </span>
                   {replies[i]?.[locale]}
                 </p>
@@ -995,7 +995,7 @@ function Reader({
             ))}
             {leadText ? (
               <li className="flex flex-col items-end">
-                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(61,219,201,0.6)]">
+                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(232,223,207,0.6)]">
                   <span className="sr-only">{COPY.youSentFromLeads[locale]} </span>
                   {leadText}
                 </p>

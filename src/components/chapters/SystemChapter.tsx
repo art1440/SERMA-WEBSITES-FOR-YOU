@@ -52,7 +52,7 @@ export function SystemChapter() {
             <p className="mt-3 text-pretty text-[0.8125rem] font-medium leading-6 text-ash sm:mt-4">
               {t.system.inputs.join(" · ")} →{" "}
               <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-aqua/[0.12] px-2.5 py-0.5 leading-5 text-bone ring-1 ring-inset ring-aqua/40">
-                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_2px_rgba(61,219,201,0.55)]" />
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_2px_rgba(232,223,207,0.55)]" />
                 {t.system.core}
               </span>{" "}
               → {t.system.outputs.join(" · ")}
@@ -147,7 +147,7 @@ function RailMarker({ progress, at }: { progress: MotionValue<number>; at: numbe
       style={{ top: `${at * 100}%` }}
     >
       <motion.span
-        className="block h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(61,219,201,0.7)]"
+        className="block h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(232,223,207,0.7)]"
         style={{ opacity: lit }}
       />
     </span>

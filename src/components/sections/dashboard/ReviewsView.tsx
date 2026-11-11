@@ -470,10 +470,10 @@ function ReviewCard({
   // A card opened from a cross-link gets the aqua selection ring.
   const edge = low
     ? highlighted
-      ? "shadow-[inset_3px_0_0_rgba(229,88,42,0.8),inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(61,219,201,0.45)]"
+      ? "shadow-[inset_3px_0_0_rgba(229,88,42,0.8),inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(232,223,207,0.45)]"
       : "shadow-[inset_3px_0_0_rgba(229,88,42,0.8),inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(229,88,42,0.16)]"
     : highlighted
-      ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(61,219,201,0.45)]"
+      ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(232,223,207,0.45)]"
       : "shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)]";
 
   return (
@@ -519,7 +519,7 @@ function ReviewCard({
         <motion.div
           key="owner"
           data-reveal=""
-          className="mt-3 rounded-[12px] bg-white/[0.035] px-3 py-2.5 shadow-[inset_2px_0_0_rgba(61,219,201,0.6)]"
+          className="mt-3 rounded-[12px] bg-white/[0.035] px-3 py-2.5 shadow-[inset_2px_0_0_rgba(232,223,207,0.6)]"
           initial={repliedNow ? { opacity: 0, y: 6 } : false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: EASE_EDITORIAL }}
@@ -544,7 +544,7 @@ function ReviewCard({
         <motion.div
           key="draft"
           data-reveal=""
-          className="mt-3 rounded-[12px] bg-white/[0.03] p-3 shadow-[inset_0_0_0_1px_rgba(61,219,201,0.28)]"
+          className="mt-3 rounded-[12px] bg-white/[0.03] p-3 shadow-[inset_0_0_0_1px_rgba(232,223,207,0.28)]"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: EASE_EDITORIAL }}

@@ -274,9 +274,9 @@ const RES_TONES: readonly ResTone[] = [
   { bar: "bg-bone/80", fill: "bg-bone/[0.1]", soft: "bg-bone/[0.04]", swatch: "bg-bone/80" },
   {
     bar: "bg-aqua-deep",
-    fill: "bg-[repeating-linear-gradient(135deg,rgba(18,165,148,0.28)_0_4px,rgba(18,165,148,0.12)_4px_8px)]",
+    fill: "bg-[repeating-linear-gradient(135deg,rgba(201,184,147,0.28)_0_4px,rgba(201,184,147,0.12)_4px_8px)]",
     soft: "bg-aqua-deep/[0.07]",
-    swatch: "bg-[repeating-linear-gradient(135deg,#C9B893_0_2px,rgba(18,165,148,0.4)_2px_4px)]",
+    swatch: "bg-[repeating-linear-gradient(135deg,#C9B893_0_2px,rgba(201,184,147,0.4)_2px_4px)]",
   },
 ];
 const toneAt = (i: number) => RES_TONES[((i % RES_TONES.length) + RES_TONES.length) % RES_TONES.length];
@@ -699,7 +699,7 @@ function WeekGrid({
                   ),
                 )}
                 <span
-                  className="tabular absolute right-1 z-10 -translate-y-1/2 rounded-full bg-aqua px-1.5 py-px text-[0.625rem] font-semibold leading-[14px] text-ink shadow-[0_0_12px_rgba(61,219,201,0.45)]"
+                  className="tabular absolute right-1 z-10 -translate-y-1/2 rounded-full bg-aqua px-1.5 py-px text-[0.625rem] font-semibold leading-[14px] text-ink shadow-[0_0_12px_rgba(232,223,207,0.45)]"
                   style={{ top: `${nowPct}%` }}
                 >
                   {shortClock(NOW, intlLocale)}
@@ -788,7 +788,7 @@ function WeekGrid({
                     >
                       {today ? (
                         <>
-                          <span className="absolute inset-x-0 -top-px h-[2px] rounded-full bg-aqua shadow-[0_0_10px_rgba(61,219,201,0.55)]" />
+                          <span className="absolute inset-x-0 -top-px h-[2px] rounded-full bg-aqua shadow-[0_0_10px_rgba(232,223,207,0.55)]" />
                           <span className="absolute -left-[4px] -top-[4px] h-2 w-2 rounded-full bg-aqua shadow-[0_0_0_2px_#1E2E48]" />
                         </>
                       ) : (
@@ -955,7 +955,7 @@ function PulseRing({ className }: { className: string }) {
   return (
     <motion.span
       aria-hidden="true"
-      className={`pointer-events-none absolute z-10 ring-2 ring-aqua shadow-[0_0_18px_rgba(61,219,201,0.5)] ${className}`}
+      className={`pointer-events-none absolute z-10 ring-2 ring-aqua shadow-[0_0_18px_rgba(232,223,207,0.5)] ${className}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: [0, 1, 0.15, 1, 0] }}
       transition={{ duration: 1.9, times: [0, 0.18, 0.45, 0.65, 1], ease: "easeInOut", delay: 0.25 }}
@@ -1302,7 +1302,7 @@ function EventDetail({
             transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
             className={`mt-1.5 rounded-[12px] rounded-tl-[4px] px-3 py-2 text-[0.8125rem] leading-snug ${
               reminded
-                ? "bg-aqua/[0.1] text-bone shadow-[inset_0_0_0_1px_rgba(61,219,201,0.22)]"
+                ? "bg-aqua/[0.1] text-bone shadow-[inset_0_0_0_1px_rgba(232,223,207,0.22)]"
                 : "bg-white/[0.035] text-bone/85 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]"
             }`}
           >

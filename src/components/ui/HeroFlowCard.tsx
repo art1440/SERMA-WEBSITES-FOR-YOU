@@ -58,7 +58,7 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
           {t.hero.flow.title}
         </p>
         <span aria-hidden="true" className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_2px_rgba(61,219,201,0.6)]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_2px_rgba(232,223,207,0.6)]" />
           <span className="h-1.5 w-1.5 rounded-full bg-white/25" />
           <span className="h-1.5 w-1.5 rounded-full bg-white/25" />
         </span>
@@ -98,7 +98,7 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
                 <motion.span
                   aria-hidden="true"
                   className={`absolute inset-0 grid place-items-center rounded-full text-ink ${
-                    alert ? "bg-signal shadow-[0_0_16px_2px_rgba(229,88,42,0.45)]" : "bg-aqua shadow-[0_0_16px_2px_rgba(61,219,201,0.45)]"
+                    alert ? "bg-signal shadow-[0_0_16px_2px_rgba(229,88,42,0.45)]" : "bg-aqua shadow-[0_0_16px_2px_rgba(232,223,207,0.45)]"
                   }`}
                   initial={false}
                   animate={{ opacity: on ? 1 : 0, scale: on ? 1 : 0.6 }}
