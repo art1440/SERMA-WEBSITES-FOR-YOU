@@ -13,7 +13,7 @@ import { EASE_EDITORIAL } from "@/lib/motion";
  *
  * Everything here lives INSIDE a flat dashboard plate (a leaf of the 3D
  * layer stack), so it may use overflow/scroll, but never backdrop-filter.
- * Contrast on the plate (≈ #1d2122): bone ≥ 13:1, ash ≥ 5:1, aqua ≥ 8:1,
+ * Contrast on the plate (≈ #17253B): bone ≥ 13:1, ash ≥ 5:1, aqua ≥ 8:1,
  * live green ≥ 6:1, signal ≥ 4.6:1 (use signal for small alert accents only).
  * ------------------------------------------------------------------ */
 
@@ -33,7 +33,7 @@ export const ROW_SELECTED =
 /** Small capsule actions inside the demo (44px tall touch target). */
 export const ACTION_PRIMARY =
   "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-4 text-sm font-medium text-ink " +
-  "bg-[linear-gradient(180deg,#6FE9DA_0%,#3DDBC9_55%,#2FCBB9_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_0_0_1px_rgba(61,219,201,0.35),0_8px_20px_-10px_rgba(61,219,201,0.6)] " +
+  "bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_55%,#C9B893_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_0_0_1px_rgba(61,219,201,0.35),0_8px_20px_-10px_rgba(61,219,201,0.6)] " +
   "transition-transform duration-200 ease-editorial hover:-translate-y-px active:scale-[0.97]";
 export const ACTION_SECONDARY =
   "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-4 text-sm font-medium text-bone " +

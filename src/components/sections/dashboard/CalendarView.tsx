@@ -270,13 +270,13 @@ type ResTone = { bar: string; fill: string; soft: string; swatch: string };
 /** Aqua family + neutral/slate tints; the 4th adds a stripe pattern so it never relies on hue alone. */
 const RES_TONES: readonly ResTone[] = [
   { bar: "bg-aqua", fill: "bg-aqua/[0.16]", soft: "bg-aqua/[0.06]", swatch: "bg-aqua" },
-  { bar: "bg-[#A7B6CB]", fill: "bg-[#94A3B8]/[0.17]", soft: "bg-[#94A3B8]/[0.06]", swatch: "bg-[#A7B6CB]" },
+  { bar: "bg-[#8E99AB]", fill: "bg-[#8E99AB]/[0.17]", soft: "bg-[#8E99AB]/[0.06]", swatch: "bg-[#8E99AB]" },
   { bar: "bg-bone/80", fill: "bg-bone/[0.1]", soft: "bg-bone/[0.04]", swatch: "bg-bone/80" },
   {
     bar: "bg-aqua-deep",
     fill: "bg-[repeating-linear-gradient(135deg,rgba(18,165,148,0.28)_0_4px,rgba(18,165,148,0.12)_4px_8px)]",
     soft: "bg-aqua-deep/[0.07]",
-    swatch: "bg-[repeating-linear-gradient(135deg,#12A594_0_2px,rgba(18,165,148,0.4)_2px_4px)]",
+    swatch: "bg-[repeating-linear-gradient(135deg,#C9B893_0_2px,rgba(18,165,148,0.4)_2px_4px)]",
   },
 ];
 const toneAt = (i: number) => RES_TONES[((i % RES_TONES.length) + RES_TONES.length) % RES_TONES.length];
@@ -286,8 +286,8 @@ const SELECTED_BLOCK =
   "ring-1 ring-inset ring-aqua/80 forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]";
 
 /** The grid sits in a solid, slightly recessed well so the sticky day headers can match it exactly. */
-const WELL = "#191d1e";
-const WELL_TODAY = "#1a2424";
+const WELL = "#17253B";
+const WELL_TODAY = "#1E2E48";
 
 /* ------------------------------ helpers ------------------------------ */
 
@@ -789,7 +789,7 @@ function WeekGrid({
                       {today ? (
                         <>
                           <span className="absolute inset-x-0 -top-px h-[2px] rounded-full bg-aqua shadow-[0_0_10px_rgba(61,219,201,0.55)]" />
-                          <span className="absolute -left-[4px] -top-[4px] h-2 w-2 rounded-full bg-aqua shadow-[0_0_0_2px_#1a2424]" />
+                          <span className="absolute -left-[4px] -top-[4px] h-2 w-2 rounded-full bg-aqua shadow-[0_0_0_2px_#1E2E48]" />
                         </>
                       ) : (
                         <span className="absolute inset-x-0 top-0 h-px bg-aqua/20" />

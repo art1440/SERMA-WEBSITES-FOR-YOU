@@ -72,7 +72,7 @@ const BAR_SPRING = SPRING_SMOOTH;
  * ------------------------------------------------------------------ */
 const WINDOW =
   "rounded-glass-lg border border-transparent p-1.5 text-bone sm:p-2 " +
-  "[background:linear-gradient(165deg,#22231f_0%,#141513_36%,#0d0e0c_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.4),rgba(255,255,255,0.07)_28%,rgba(255,255,255,0.03)_68%,rgba(61,219,201,0.34))_border-box] " +
+  "[background:linear-gradient(165deg,#1E2E48_0%,#132033_36%,#0F1A2A_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.4),rgba(255,255,255,0.07)_28%,rgba(255,255,255,0.03)_68%,rgba(61,219,201,0.34))_border-box] " +
   "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_2px_6px_rgba(0,0,0,0.3),0_40px_80px_-28px_rgba(0,0,0,0.7),0_0_120px_-40px_rgba(61,219,201,0.22),0_90px_150px_-60px_rgba(0,0,0,0.6)]";
 const PLATE = "glass-dark glass-flat rounded-glass";
 /** The window's full width (its max-w); the pinned stage always lays it out at this width. */
@@ -582,7 +582,7 @@ function RevenueChart() {
                 <motion.div
                   className={`gpu absolute inset-0 rounded-[8px] ${
                     last
-                      ? "bg-[linear-gradient(to_top,#12A594,#3DDBC9_70%)] shadow-[inset_0_1px_0_rgba(214,255,250,0.65)]"
+                      ? "bg-[linear-gradient(to_top,#C9B893,#E8DFCF_70%)] shadow-[inset_0_1px_0_rgba(214,255,250,0.65)]"
                       : "bg-[linear-gradient(to_top,rgba(241,237,228,0.4),rgba(241,237,228,0.88))] shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
                   }`}
                   initial={{ y: "100%" }}
@@ -701,7 +701,7 @@ function Pipeline() {
               className="relative isolate mt-2 h-2 w-full overflow-hidden rounded-full bg-white/[0.07] shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)]"
             >
               <motion.div
-                className="h-full w-full rounded-full bg-[linear-gradient(90deg,rgba(18,165,148,0.75),#3DDBC9)] shadow-[inset_0_1px_0_rgba(214,255,250,0.6)]"
+                className="h-full w-full rounded-full bg-[linear-gradient(90deg,rgba(18,165,148,0.75),#E8DFCF)] shadow-[inset_0_1px_0_rgba(214,255,250,0.6)]"
                 initial={{ x: "-100%" }}
                 animate={{ x: inView ? `${(stage.count / top - 1) * 100}%` : "-100%" }}
                 transition={{ ...BAR_SPRING, delay: inView ? i * 0.06 : 0 }}

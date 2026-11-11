@@ -99,7 +99,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
             aria-labelledby="login-title"
             aria-describedby="login-description"
             data-theme="dark"
-            className="glass-dark glass-solid relative flex max-h-[92svh] w-full max-w-xl flex-col rounded-t-glass-lg text-bone [--glass-blur:30px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] max-lg:![background:linear-gradient(160deg,#1f1e1b,#121210)] [@media(max-height:820px)]:[-webkit-backdrop-filter:none] [@media(max-height:820px)]:[backdrop-filter:none] [@media(max-height:820px)]:![background:linear-gradient(160deg,#1f1e1b,#121210)] sm:rounded-glass-lg"
+            className="glass-dark glass-solid relative flex max-h-[92svh] w-full max-w-xl flex-col rounded-t-glass-lg text-bone [--glass-blur:30px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] max-lg:![background:linear-gradient(160deg,#1E2E48,#132033)] [@media(max-height:820px)]:[-webkit-backdrop-filter:none] [@media(max-height:820px)]:[backdrop-filter:none] [@media(max-height:820px)]:![background:linear-gradient(160deg,#1E2E48,#132033)] sm:rounded-glass-lg"
             initial={{ y: 48, opacity: 0, scale: 0.985 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 28, opacity: 0, scale: 0.99 }}

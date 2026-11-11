@@ -103,7 +103,7 @@ export function IndustriesChapter() {
               </motion.p>
             </AnimatePresence>
             {/* Flat: sits over the static dark field, so real blur would be invisible cost (blur budget). */}
-            <button type="button" onClick={openDashboard} className="btn-line-dark glass-flat">
+            <button type="button" onClick={openDashboard} className="link-quiet">
               {t.industries.explore}
               <ArrowDown aria-hidden="true" size={16} strokeWidth={1.75} />
             </button>

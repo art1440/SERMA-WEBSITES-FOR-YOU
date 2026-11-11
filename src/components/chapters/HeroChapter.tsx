@@ -71,7 +71,7 @@ export function HeroChapter() {
             <p className="chip-dark text-bone">
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2F7D4F]" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#8FBFA3]" />
               </span>
               {t.hero.status}
             </p>
@@ -114,7 +114,7 @@ export function HeroChapter() {
                 {t.common.bookDemo}
                 <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} />
               </MagneticButton>
-              <a href="#dashboard" className="btn-line-dark group">
+              <a href="#dashboard" className="link-quiet group">
                 {t.hero.secondaryCta}
                 <ArrowDown
                   aria-hidden="true"

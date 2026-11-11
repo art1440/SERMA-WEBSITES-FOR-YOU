@@ -397,7 +397,7 @@ function RatingSummary({
               </span>
               <span aria-hidden="true" className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
                 <motion.span
-                  className="absolute inset-0 rounded-full bg-[linear-gradient(90deg,#12A594,#3DDBC9)]"
+                  className="absolute inset-0 rounded-full bg-[linear-gradient(90deg,#C9B893,#E8DFCF)]"
                   initial={{ x: "-100%" }}
                   animate={{ x: `${shown - 100}%` }}
                   transition={{ ...SPRING_SMOOTH, delay: 0.1 + i * 0.05 }}
