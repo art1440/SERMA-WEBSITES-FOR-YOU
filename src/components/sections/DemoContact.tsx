@@ -1,15 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, Phone, ShieldCheck } from "lucide-react";
 import { AmbientField } from "@/components/ui/AmbientField";
-import { MagneticButton } from "@/components/ui/MagneticButton";
+
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
 import { fill } from "@/i18n/types";
 import { EASE_EDITORIAL, VIEWPORT_ONCE } from "@/lib/motion";
+import { EnquiryForm } from "./EnquiryForm";
 
 /** Small numbered pebble: bone numeral on an aqua-tinted, light-catching ring (≥4.5:1 on dark glass). Read aloud as before. */
 function NumberBadge({ n, size = "md" }: { n: number; size?: "sm" | "md" }) {
@@ -124,38 +125,17 @@ export function DemoContact() {
                 transition={{ duration: 1.2, ease: EASE_EDITORIAL, delay: 0.2 }}
               />
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <MagneticButton
-                  href={mailto}
-                  data-primary-action
-                  className="btn-aqua whitespace-normal text-center"
-                >
-                  <Mail aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
-                  {t.demo.emailCta}
-                </MagneticButton>
-                {phone ? (
-                  <a
-                    href={`tel:${phone.e164}`}
-                    className="btn-line-dark glass-flat whitespace-normal text-center"
-                  >
-                    <Phone aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
+              {/* Four fields, nothing else: name, business, phone, what they need. */}
+              <EnquiryForm />
+
+              {phone ? (
+                <p className="mt-6 text-sm leading-relaxed text-ash">
+                  <a href={`tel:${phone.e164}`} className="link-quiet">
+                    <Phone aria-hidden="true" size={15} strokeWidth={1.75} />
                     {fill(t.demo.phoneCta, { phone: phone.display })}
                   </a>
-                ) : null}
-              </div>
-
-              <h3 className="eyebrow mt-10 text-ash">{t.demo.includeLabel}</h3>
-              <ol className="mt-4 grid gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-1 lg:gap-2.5 xl:grid-cols-3 xl:gap-3">
-                {t.demo.include.map((item, i) => (
-                  <li
-                    key={item}
-                    className="glass-dark glass-flat flex items-center gap-3 rounded-glass-sm p-3.5 sm:flex-col sm:items-start sm:p-4 lg:flex-row lg:items-center lg:p-3.5 xl:flex-col xl:items-start xl:p-4"
-                  >
-                    <NumberBadge n={i + 1} size="sm" />
-                    <span className="text-pretty text-sm leading-snug text-bone">{item}</span>
-                  </li>
-                ))}
-              </ol>
+                </p>
+              ) : null}
 
               <p className="mt-8 flex items-start gap-3 border-t border-white/10 pt-6 text-sm leading-relaxed text-ash">
                 <span

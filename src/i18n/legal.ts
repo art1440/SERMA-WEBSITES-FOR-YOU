@@ -19,7 +19,7 @@ export type LegalSlug = "privacy" | "terms" | "disclaimer";
 const privacyEn: LegalDoc = {
   title: "Privacy Policy",
   intro:
-    "{entity} (“SermaWebDesign,” “we,” “us”) builds websites and client-acquisition systems for local businesses. This policy explains how this website handles personal information. The short version: this website has no forms, sets no cookies, runs no trackers, and does not collect your personal information. If you choose to email or call us, we use what you send only to reply — and we never sell it.",
+    "{entity} (“SermaWebDesign,” “we,” “us”) builds websites and client-acquisition systems for local businesses. This policy explains how this website handles personal information. The short version: this site sets no cookies and runs no trackers. The only personal information we collect is what you type into the contact form, and we use it only to reply to you. We never sell it.",
   sections: [
     {
       id: "zero-cookie",
@@ -34,7 +34,9 @@ const privacyEn: LegalDoc = {
       id: "collect",
       heading: "2. Information we collect",
       paragraphs: [
-        "This website does not collect personal information. It has no forms, sign-ups, accounts, chat widgets, or analytics. The interactive dashboard, simulator, and calculator run entirely in your browser; nothing you do with them is sent to us.",
+        "The contact form asks for four things: your name, your business name, your phone number, and what you need. That is the only personal information this site collects. It is stored in the form submissions of our hosting provider (Netlify) with the date and time you sent it, and it reaches our email inbox. We use it to reply to you and to prepare a quote. We do not add you to a mailing list, and we do not sell or share it.",
+        "We keep a submission for as long as it takes to answer you and keep a record of the job, and no longer. Ask us to delete it at {email} and we delete it, unless the law requires us to keep it.",
+        "There are no sign-ups, accounts, chat widgets, or analytics. The interactive dashboard, simulator, and calculator run entirely in your browser; nothing you do with them is sent to us.",
         "Like every website, our hosting provider automatically processes basic technical data needed to deliver and secure the site (such as IP address, browser type, and request time in server logs). We do not use this data to identify, track, or profile visitors.",
       ],
     },
@@ -120,7 +122,7 @@ const privacyEn: LegalDoc = {
 const privacyEs: LegalDoc = {
   title: "Política de Privacidad",
   intro:
-    "{entity} (“SermaWebDesign”, “nosotros”) crea sitios web y sistemas de captación de clientes para negocios locales. Esta política explica cómo este sitio web maneja la información personal. En resumen: este sitio no tiene formularios, no instala cookies, no usa rastreadores y no recopila su información personal. Si decide escribirnos o llamarnos, usamos lo que nos envía solo para responderle, y nunca lo vendemos.",
+    "{entity} (“SermaWebDesign”, “nosotros”) crea sitios web y sistemas de captación de clientes para negocios locales. Esta política explica cómo este sitio web maneja la información personal. En resumen: este sitio no instala cookies ni usa rastreadores. La única información personal que recopilamos es la que usted escribe en el formulario de contacto, y la usamos solo para responderle. Nunca la vendemos.",
   sections: [
     {
       id: "zero-cookie",
@@ -135,7 +137,9 @@ const privacyEs: LegalDoc = {
       id: "collect",
       heading: "2. Información que recopilamos",
       paragraphs: [
-        "Este sitio web no recopila información personal. No tiene formularios, registros, cuentas, ventanas de chat ni analítica. El panel interactivo, el simulador y la calculadora funcionan completamente en su navegador; nada de lo que haga con ellos se nos envía.",
+        "El formulario de contacto pide cuatro datos: su nombre, el nombre de su negocio, su teléfono y qué necesita. Es la única información personal que recopila este sitio. Se guarda en los envíos de formularios de nuestro proveedor de alojamiento (Netlify) con la fecha y la hora en que lo envió, y llega a nuestra bandeja de correo. La usamos para responderle y para preparar una cotización. No lo agregamos a ninguna lista de correo y no la vendemos ni la compartimos.",
+        "Conservamos el envío el tiempo necesario para responderle y llevar un registro del trabajo, y no más. Si nos pide eliminarlo en {email}, lo eliminamos, salvo que la ley nos obligue a conservarlo.",
+        "No hay registros, cuentas, ventanas de chat ni analítica. El panel interactivo, el simulador y la calculadora funcionan completamente en su navegador; nada de lo que haga con ellos se nos envía.",
         "Como en cualquier sitio web, nuestro proveedor de alojamiento procesa automáticamente datos técnicos básicos necesarios para entregar y proteger el sitio (como dirección IP, tipo de navegador y hora de la solicitud en los registros del servidor). No usamos estos datos para identificar, rastrear ni perfilar a los visitantes.",
       ],
     },
@@ -241,7 +245,7 @@ const termsEn: LegalDoc = {
       id: "communications",
       heading: "3. Contacting us",
       paragraphs: [
-        "This website has no forms. If you email or call us to request a demo, please provide accurate information and do not send sensitive personal or payment data by email. Contacting us does not create a client relationship or any obligation to purchase.",
+        "The only form on this website is the contact form. If you email or call us to request a demo, please provide accurate information and do not send sensitive personal or payment data by email. Contacting us does not create a client relationship or any obligation to purchase.",
       ],
     },
     {
@@ -335,7 +339,7 @@ const termsEs: LegalDoc = {
       id: "communications",
       heading: "3. Cómo contactarnos",
       paragraphs: [
-        "Este sitio web no tiene formularios. Si nos escribe o llama para solicitar una demostración, proporcione información veraz y no envíe datos personales sensibles ni de pago por correo electrónico. Contactarnos no crea una relación de cliente ni obligación alguna de compra.",
+        "El sitio web solo tiene el formulario de contacto. Si nos escribe o llama para solicitar una demostración, proporcione información veraz y no envíe datos personales sensibles ni de pago por correo electrónico. Contactarnos no crea una relación de cliente ni obligación alguna de compra.",
       ],
     },
     {
