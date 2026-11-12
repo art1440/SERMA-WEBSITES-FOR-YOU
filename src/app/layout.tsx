@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     description:
       "Missed calls get a text back. Clients book themselves, day or night, with deposits and reminders. You stay with the work you opened the doors for.",
     // Its own file (not the hero poster): the standard 1200x630 size, and a new URL so social sites drop cached previews.
-    images: [{ url: asset("/media/og-render-pass.jpg"), width: 1200, height: 630, alt: "SermaWebDesign" }],
+    images: [{ url: asset("/media/og-render-pass-v2.jpg"), width: 1200, height: 630, alt: "SermaWebDesign" }],
     locale: "en_US",
     alternateLocale: ["es_US"],
   },

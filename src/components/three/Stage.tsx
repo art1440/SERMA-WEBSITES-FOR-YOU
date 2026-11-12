@@ -112,7 +112,7 @@ export function Stage() {
           style={{ opacity: filmOpacity, scale: filmScale, rotateX: filmRotateX, rotateZ: filmRotateZ }}
         >
           {/* Poster = the film's own first frame, so nothing jumps when playback takes over. */}
-          <LayerVideo src={asset("/media/hero")} poster={asset("/media/hero-film-poster.jpg")} visibility={filmOpacity} paused={paused} />
+          <LayerVideo src={asset("/media/hero-v2")} poster={asset("/media/hero-v2-film-poster.jpg")} visibility={filmOpacity} paused={paused} />
           <div className="absolute inset-0 bg-ink/45" />
         </motion.div>
       </div>
@@ -127,8 +127,8 @@ export function Stage() {
       >
         {/* Phones show a narrow strip of the frame: aim it at the lit pages on the right. */}
         <LayerVideo
-          src={asset("/media/architecture")}
-          poster={asset("/media/architecture-poster.jpg")}
+          src={asset("/media/architecture-v2")}
+          poster={asset("/media/architecture-v2-poster.jpg")}
           visibility={archOpacity}
           paused={paused}
           className="max-lg:object-[72%_50%]"
