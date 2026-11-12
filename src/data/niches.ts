@@ -58,8 +58,8 @@ export const NICHES: Niche[] = [
       src: asset("/media/barbershop"),
       poster: asset("/media/barbershop-poster.jpg"),
       alt: {
-        en: "An empty classic barbershop at night: a leather barber chair under a warm pendant light, a straight razor on black marble.",
-        es: "Una barbería clásica vacía de noche: un sillón de barbero de piel bajo una lámpara cálida y una navaja sobre mármol negro.",
+        en: "A barber fades the side of a client's head with clippers and a comb, hair clippings falling.",
+        es: "Un barbero hace un degradado en el costado de la cabeza de un cliente con máquina y peine; caen recortes de cabello.",
       },
     },
     modules: [
@@ -110,8 +110,8 @@ export const NICHES: Niche[] = [
       src: asset("/media/salon"),
       poster: asset("/media/salon-poster.jpg"),
       alt: {
-        en: "Minimalist salon styling stations with round brass mirrors; steam rises from a ceramic bowl of hair color.",
-        es: "Estaciones de un salón minimalista con espejos redondos de latón; vapor sale de un tazón de tinte para cabello.",
+        en: "A stylist blow-dries a client's long hair with a round brush, the strands lifting and flowing.",
+        es: "Una estilista seca el cabello largo de una clienta con cepillo redondo; los mechones se elevan y fluyen.",
       },
     },
     modules: [
@@ -161,8 +161,8 @@ export const NICHES: Niche[] = [
       src: asset("/media/beauty"),
       poster: asset("/media/beauty-poster.jpg"),
       alt: {
-        en: "Macro still life of glossy oxblood nail lacquer bottles and lash tweezers on travertine stone.",
-        es: "Bodegón macro de esmaltes color vino brillantes y pinzas para pestañas sobre piedra travertino.",
+        en: "Close-up of a nail technician painting a glossy coat of polish onto a client's fingernail.",
+        es: "Primer plano de una técnica de uñas aplicando una capa de esmalte brillante en la uña de una clienta.",
       },
     },
     modules: [
@@ -213,8 +213,8 @@ export const NICHES: Niche[] = [
       src: asset("/media/restaurant"),
       poster: asset("/media/restaurant-poster.jpg"),
       alt: {
-        en: "A dark upscale restaurant kitchen: steam rises from a pan beneath brass pendant lights beside a finished plated dish.",
-        es: "La cocina oscura de un restaurante elegante: sale vapor de un sartén bajo lámparas de latón junto a un platillo terminado.",
+        en: "A chef drizzles sauce over a plated fish while a pan flares and steams behind.",
+        es: "Un chef vierte salsa sobre un pescado emplatado mientras detrás un sartén se enciende y humea.",
       },
     },
     modules: [
@@ -264,8 +264,8 @@ export const NICHES: Niche[] = [
       src: asset("/media/contractor"),
       poster: asset("/media/contractor-poster.jpg"),
       alt: {
-        en: "A contractor's worktable at dusk with rolled blueprints, a level, and a caged work light before a timber-framed house.",
-        es: "La mesa de trabajo de un contratista al anochecer con planos, un nivel y una lámpara de obra frente a una casa en construcción.",
+        en: "A carpenter guides a circular saw through a board at dusk, sawdust flying, a timber-framed house behind.",
+        es: "Un carpintero corta una tabla con sierra circular al anochecer, con aserrín en el aire y una casa en construcción detrás.",
       },
     },
     modules: [
@@ -316,8 +316,8 @@ export const NICHES: Niche[] = [
       src: asset("/media/service"),
       poster: asset("/media/service-poster.jpg"),
       alt: {
-        en: "Blue hour at a modern home entrance: a warm porch light glows above a professional's tool bag resting on the front step.",
-        es: "Atardecer en la entrada de una casa moderna: una luz cálida ilumina la bolsa de herramientas de un profesional en el escalón.",
+        en: "A technician tightens a pipe fitting under a sink with a wrench, lit by a headlamp.",
+        es: "Un técnico aprieta una conexión de tubería bajo un fregadero con una llave, iluminado por una linterna frontal.",
       },
     },
     modules: [
