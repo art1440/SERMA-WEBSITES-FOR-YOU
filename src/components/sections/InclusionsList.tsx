@@ -40,6 +40,21 @@ export function InclusionsList() {
             </li>
           ))}
         </ol>
+
+        {/* The receptionist is kept visible, but labelled as not yet offered. */}
+        <div className="mt-12 rounded-glass-sm border border-hairline-dark bg-white/[0.03] p-5 sm:p-6 md:mt-14">
+          <p className="eyebrow text-ash">{section.roadmapLabel}</p>
+          <h3 className="mt-3 font-display text-[1.1875rem] leading-snug text-bone md:text-xl">{section.roadmapTitle}</h3>
+          <ul className="mt-3 grid gap-2 md:grid-cols-3 md:gap-x-8">
+            {section.roadmap.map((line) => (
+              <li key={line} className="flex gap-2.5 text-[0.9375rem] leading-relaxed text-ash">
+                <span aria-hidden="true" className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-bone/40" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-[0.875rem] leading-relaxed text-ash">{section.roadmapNote}</p>
+        </div>
       </div>
     </section>
   );

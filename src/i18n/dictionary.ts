@@ -64,7 +64,7 @@ const en = {
     eyebrow: "For barbershops, salons, restaurants and the trades",
     headline: ["Websites that", "book clients", "for you."],
     headlineEmphasis: "for you",
-    sub: "Missed calls get a text back in seconds. Clients book themselves 24/7, with deposits and reminders built in. Regulars get a nudge when they’re due. And your hands stay on the work you opened the doors for.",
+    sub: "A real website for your shop, written and built for you, and you see it finished before you pay. When you want the phone answered as well, that is the next thing I build.",
     status: "Booking while you work",
     statusDetail: "Calls · Bookings · Follow-ups",
     secondaryCta: "See how it works",
@@ -108,11 +108,15 @@ const en = {
     index: "(02)",
     eyebrow: "What you get",
     title: "Exactly what you buy, in the order it happens",
-    body: "No mystery box and no hourly billing. Eight things are built for your shop, and you see the pages before you pay anything.",
+    body: "No mystery box and no hourly billing. These are the eight things I build for your shop, and you see the pages before you pay anything.",
     items: [
       {
         title: "A 30 minute call to get your details",
         detail: "Services, barbers, hours, the booking tool you already use, and a handful of photos from your phone.",
+      },
+      {
+        title: "Your best photos, picked and cropped",
+        detail: "You send the photos you already post. I choose the ones that sell the shop and crop them to fit the site.",
       },
       {
         title: "Your pages written, not templated",
@@ -127,22 +131,26 @@ const en = {
         detail: "Your address, your email, your photos. The domain and the photos stay in your name.",
       },
       {
-        title: "Missed calls answered by text in seconds",
-        detail: "When a call goes unanswered mid cut, the caller gets a text with your booking link before they dial the shop down the road.",
+        title: "A call button on every screen",
+        detail: "One tap to ring you, in the header and at the bottom of every page, because most people will look on a phone.",
       },
       {
-        title: "Booking that runs while you work",
-        detail: "Clients pick their own slot at 11pm and it lands in your calendar with the deposit already taken.",
-      },
-      {
-        title: "A reminder the day before, every time",
-        detail: "One text to the client, so the chair is not sitting empty at 9am.",
+        title: "Fast on a phone, on shop wifi",
+        detail: "Pages built to open quickly on mobile data, not just on a laptop at home.",
       },
       {
         title: "An answer within one business day, from me",
         detail: "Message or call and you hear back inside one business day. Site changes get handled in that same thread.",
       },
     ],
+    roadmapLabel: "Not offered yet, building it now",
+    roadmapTitle: "The phone side",
+    roadmap: [
+      "Missed calls answered by text in seconds, with your booking link.",
+      "Online booking, with the deposit taken when they book.",
+      "A reminder the day before, sent automatically.",
+    ],
+    roadmapNote: "Ask me where it stands and I will tell you straight. Websites come first.",
   },
   industries: {
     index: "(03)",
@@ -401,7 +409,7 @@ const es: Dictionary = {
     eyebrow: "Para barberías, salones, restaurantes y contratistas",
     headline: ["Sitios web que", "agendan citas", "por usted."],
     headlineEmphasis: "por usted",
-    sub: "Las llamadas perdidas reciben un mensaje de texto en segundos. Sus clientes agendan solos, 24/7, con depósito y recordatorios. Los clientes fijos reciben un aviso cuando les toca volver. Y usted sigue en lo suyo: el trabajo por el que abrió su negocio.",
+    sub: "Un sitio web de verdad para su negocio, escrito y construido para usted, y lo ve terminado antes de pagar. Cuando quiera que también se conteste el teléfono, eso es lo siguiente que construyo.",
     status: "Agendando mientras usted trabaja",
     statusDetail: "Llamadas · Citas · Seguimiento",
     secondaryCta: "Vea cómo funciona",
@@ -445,11 +453,15 @@ const es: Dictionary = {
     index: "(02)",
     eyebrow: "Lo que recibe",
     title: "Exactamente lo que compra, en el orden en que pasa",
-    body: "Sin caja cerrada y sin cobro por hora. Se construyen ocho cosas para su negocio, y usted ve las páginas antes de pagar nada.",
+    body: "Sin caja cerrada y sin cobro por hora. Estas son las ocho cosas que construyo para su negocio, y usted ve las páginas antes de pagar nada.",
     items: [
       {
         title: "Una llamada de 30 minutos para sus datos",
         detail: "Servicios, barberos, horario, la herramienta de citas que ya usa y unas cuantas fotos de su teléfono.",
+      },
+      {
+        title: "Sus mejores fotos, elegidas y recortadas",
+        detail: "Usted manda las fotos que ya publica. Yo elijo las que venden el negocio y las recorto para que encajen en el sitio.",
       },
       {
         title: "Sus páginas escritas, no de plantilla",
@@ -464,22 +476,26 @@ const es: Dictionary = {
         detail: "Su dirección, su correo y sus fotos. El dominio y las fotos quedan a su nombre.",
       },
       {
-        title: "Llamadas perdidas contestadas por texto en segundos",
-        detail: "Si no alcanza a contestar porque está cortando, quien llama recibe un texto con su enlace de citas antes de marcar a otra barbería.",
+        title: "Un botón para llamar en cada pantalla",
+        detail: "Un toque para llamarle, arriba y al final de cada página, porque la mayoría lo va a ver desde el teléfono.",
       },
       {
-        title: "Citas que avanzan mientras usted trabaja",
-        detail: "El cliente elige su horario a las 11 de la noche y la cita entra a su calendario con el anticipo ya cobrado.",
-      },
-      {
-        title: "Un recordatorio el día antes, siempre",
-        detail: "Un texto al cliente, para que la silla no quede vacía a las 9 de la mañana.",
+        title: "Rápido en el teléfono, con datos",
+        detail: "Páginas hechas para abrir rápido con datos móviles, no solo en una computadora en casa.",
       },
       {
         title: "Respuesta dentro de un día hábil, de mi parte",
         detail: "Escriba o llame y le contesto dentro de un día hábil. Los cambios del sitio se resuelven en ese mismo hilo.",
       },
     ],
+    roadmapLabel: "Todavía no lo ofrezco, lo estoy construyendo",
+    roadmapTitle: "El lado del teléfono",
+    roadmap: [
+      "Llamadas perdidas contestadas por texto en segundos, con su enlace de citas.",
+      "Citas en línea, con el anticipo cobrado al reservar.",
+      "Un recordatorio el día antes, enviado automáticamente.",
+    ],
+    roadmapNote: "Pregúnteme cómo va y le digo la verdad. Los sitios web van primero.",
   },
   industries: {
     index: "(03)",
