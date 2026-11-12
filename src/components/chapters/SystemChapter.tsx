@@ -1,7 +1,6 @@
 "use client";
 
 import { animate, motion, useInView, useMotionValue, type MotionValue } from "framer-motion";
-import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { useLanguage } from "@/context/LanguageContext";
@@ -25,8 +24,7 @@ const stepAt = (k: number, count: number) => k / count + 0.15;
  *
  * All four steps are on show as cards (2×2 from sm, stacked on phones). Auto-play
  * spotlights one at a time, with a timer line filling across it, and the engine morphs
- * to match; a resting mouse or a tap never freezes it. Control (WCAG 2.2.2): a pause
- * button by the steps, the site-wide Pause, keyboard focus inside the panel holds it,
+ * to match; a resting mouse or a tap never freezes it. Control (WCAG 2.2.2): the site-wide Pause, keyboard focus inside the panel holds it,
  * and each card is a button that spotlights it (auto-play resumes ~9s later).
  * Reduced motion: the same four cards, nothing moves.
  *
@@ -45,7 +43,6 @@ export function SystemChapter() {
   const [active, setActive] = useState(0);
   const [held, setHeld] = useState(false); // keyboard focus inside the panel
   const [manual, setManual] = useState(false); // the visitor just picked a step themselves
-  const [stopped, setStopped] = useState(false); // the visitor pressed this section's pause
   const prevActive = useRef(0);
   // 0 → 1 over one step: drives the rail's "story timer" fill and the hand-off to the next step.
   const tick = useMotionValue(0);
@@ -65,7 +62,7 @@ export function SystemChapter() {
     return () => window.clearTimeout(id);
   }, [manual, active]);
 
-  const running = !reduce && inView && !paused && !held && !manual && !stopped;
+  const running = !reduce && inView && !paused && !held && !manual;
 
   // Auto-advance: the timer runs from wherever it was (a pause holds it, play resumes it).
   useEffect(() => {
@@ -149,21 +146,7 @@ export function SystemChapter() {
 
             {/* All four steps on show; auto-play spotlights one at a time (and morphs the engine). */}
             <div className="mt-4 border-t border-white/10 pt-4 sm:mt-5 sm:pt-5">
-              <div className="flex items-center justify-between gap-3">
-                <p className="eyebrow text-ash">{t.system.stepsHeading}</p>
-                {reduce ? null : (
-                  // This section's own pause (WCAG 2.2.2), on top of the site-wide Pause.
-                  <button
-                    type="button"
-                    onClick={() => setStopped((v) => !v)}
-                    aria-pressed={stopped}
-                    aria-label={stopped ? t.system.playSteps : t.system.pauseSteps}
-                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-ash ring-1 ring-inset ring-white/15 transition-colors hover:bg-white/[0.06] hover:text-bone"
-                  >
-                    {stopped ? <Play aria-hidden="true" size={13} strokeWidth={2} /> : <Pause aria-hidden="true" size={13} strokeWidth={2} />}
-                  </button>
-                )}
-              </div>
+              <p className="eyebrow text-ash">{t.system.stepsHeading}</p>
               <ol className="mt-3 grid grid-cols-2 gap-2 sm:gap-2.5">
                 {steps.map((step, i) => (
                   <StepCard

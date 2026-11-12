@@ -98,8 +98,6 @@ const en = {
     core: "SermaWebDesign Engine",
     outputs: ["Bookings", "Revenue", "Reviews"],
     stepsHeading: "Four steps, start to finish",
-    pauseSteps: "Pause the steps",
-    playSteps: "Play the steps",
     steps: [
       { title: "Capture", body: "Calls, web forms, and booking requests land in one place — nothing lives in a voicemail box." },
       { title: "Respond", body: "Missed calls get an instant, personalized text back in seconds, even when your hands are full." },
@@ -446,8 +444,6 @@ const es: Dictionary = {
     core: "Motor SermaWebDesign",
     outputs: ["Citas", "Ingresos", "Reseñas"],
     stepsHeading: "Cuatro pasos, de principio a fin",
-    pauseSteps: "Pausar los pasos",
-    playSteps: "Reproducir los pasos",
     steps: [
       { title: "Captura", body: "Llamadas, formularios web y solicitudes de cita llegan a un solo lugar; nada se queda en el buzón de voz." },
       { title: "Respuesta", body: "Las llamadas perdidas reciben un texto inmediato y personalizado en segundos, aunque usted tenga las manos ocupadas." },
