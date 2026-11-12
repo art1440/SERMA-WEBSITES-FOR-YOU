@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useMotionValueEvent, useTransform, type MotionValue } from "framer-motion";
+import { animate, motion, useMotionValue, useMotionValueEvent, useTransform, type MotionValue } from "framer-motion";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMotionPause } from "@/context/MotionPauseContext";
@@ -31,13 +31,22 @@ export function Stage() {
   const filmRotateZ = useTransform(hero.progress, [0.36, 0.8], [-6, 0]);
   // The ambient "site being built" film: dimly behind the hero's first screen (gone before the
   // hero film flies in), then again behind How it works while its steps play.
-  const archHero = useTransform(hero.progress, [0, 0.26, 0.38], [0.24, 0.24, 0]);
+  // It eases in just after the headline (never in the server-rendered first paint, and its decode waits
+  // until the page has settled). Raw scroll, not the spring, so a mid-page load never flashes it.
+  const archIntro = useMotionValue(0);
+  useEffect(() => {
+    const controls = animate(archIntro, 1, { delay: 0.6, duration: 1.4, ease: "easeOut" });
+    return () => controls.stop();
+  }, [archIntro]);
+  const archHeroBase = useTransform(hero.raw, [0, 0.26, 0.38], [0.24, 0.24, 0]);
+  const archHero = useTransform([archHeroBase, archIntro], ([h, k]: number[]) => h * k);
   const archSystem = useTransform(system.progress, [0, 0.1, 0.9, 1], [0, 0.32, 0.32, 0]);
   const archOpacity = useTransform([archHero, archSystem], ([h, s]: number[]) => Math.max(h, s));
-  // On phones the first-screen copy covers the lower half, so there the film is masked to the top
-  // (behind the sculpture). The flag flips once, while the film is invisible between the two uses.
+  // During the hero the film is masked away from the copy: on desktop it fades in from the left (the
+  // headline side), on phones it stays at the top behind the sculpture. The flag flips once, while the
+  // film is invisible between its two uses.
   const [archInHero, setArchInHero] = useState(true);
-  useMotionValueEvent(hero.progress, "change", (v) => {
+  useMotionValueEvent(hero.raw, "change", (v) => {
     const inHero = v < 0.5;
     if (inHero !== archInHero) setArchInHero(inHero);
   });
@@ -108,7 +117,11 @@ export function Stage() {
       </div>
 
       <motion.div
-        className={`absolute inset-0 ${archInHero ? "max-lg:[mask-image:linear-gradient(to_bottom,#000_0%,#000_30%,transparent_52%)]" : ""}`}
+        className={`absolute inset-0 ${
+          archInHero
+            ? "max-lg:[mask-image:linear-gradient(to_bottom,#000_0%,#000_16%,transparent_30%)] lg:[mask-image:linear-gradient(to_right,transparent_0%,transparent_40%,#000_60%)]"
+            : ""
+        }`}
         style={{ opacity: archOpacity }}
       >
         {/* Phones show a narrow strip of the frame: aim it at the lit pages on the right. */}
