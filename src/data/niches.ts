@@ -55,8 +55,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Barbers", es: "Barberías" },
     tagline: { en: "Chairs full. No-shows covered.", es: "Sillas llenas. Inasistencias cubiertas." },
     media: {
-      src: asset("/media/barbershop-v2"),
-      poster: asset("/media/barbershop-v2-poster.jpg"),
+      src: asset("/media/barbershop-v3"),
+      poster: asset("/media/barbershop-v3-poster.jpg"),
       alt: {
         en: "A barber fades the side of a client's head with clippers and a comb, hair clippings falling.",
         es: "Un barbero hace un degradado en el costado de la cabeza de un cliente con máquina y peine; caen recortes de cabello.",
@@ -107,8 +107,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Salons", es: "Salones" },
     tagline: { en: "Every stylist booked, every color on cycle.", es: "Cada estilista ocupado, cada color a tiempo." },
     media: {
-      src: asset("/media/salon-v2"),
-      poster: asset("/media/salon-v2-poster.jpg"),
+      src: asset("/media/salon-v3"),
+      poster: asset("/media/salon-v3-poster.jpg"),
       alt: {
         en: "A stylist blow-dries a client's long hair with a round brush, the strands lifting and flowing.",
         es: "Una estilista seca el cabello largo de una clienta con cepillo redondo; los mechones se elevan y fluyen.",
@@ -158,8 +158,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Beauty", es: "Belleza" },
     tagline: { en: "Sets, lashes, and deposits — handled.", es: "Uñas, pestañas y depósitos, resueltos." },
     media: {
-      src: asset("/media/beauty-v2"),
-      poster: asset("/media/beauty-v2-poster.jpg"),
+      src: asset("/media/beauty-v3"),
+      poster: asset("/media/beauty-v3-poster.jpg"),
       alt: {
         en: "Close-up of a nail technician painting a glossy coat of polish onto a client's fingernail.",
         es: "Primer plano de una técnica de uñas aplicando una capa de esmalte brillante en la uña de una clienta.",
@@ -210,8 +210,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Restaurants", es: "Restaurantes" },
     tagline: { en: "Your orders, your tables, your guests.", es: "Sus pedidos, sus mesas, sus comensales." },
     media: {
-      src: asset("/media/restaurant-v2"),
-      poster: asset("/media/restaurant-v2-poster.jpg"),
+      src: asset("/media/restaurant-v3"),
+      poster: asset("/media/restaurant-v3-poster.jpg"),
       alt: {
         en: "A chef drizzles sauce over a plated fish while a pan flares and steams behind.",
         es: "Un chef vierte salsa sobre un pescado emplatado mientras detrás un sartén se enciende y humea.",
@@ -261,8 +261,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Contractors", es: "Contratistas" },
     tagline: { en: "Every missed call is a quote you lost.", es: "Cada llamada perdida es una cotización perdida." },
     media: {
-      src: asset("/media/contractor-v2"),
-      poster: asset("/media/contractor-v2-poster.jpg"),
+      src: asset("/media/contractor-v3"),
+      poster: asset("/media/contractor-v3-poster.jpg"),
       alt: {
         en: "A carpenter guides a circular saw through a board at dusk, sawdust flying, a timber-framed house behind.",
         es: "Un carpintero corta una tabla con sierra circular al anochecer, con aserrín en el aire y una casa en construcción detrás.",
@@ -313,8 +313,8 @@ export const NICHES: Niche[] = [
     shortLabel: { en: "Services", es: "Servicios" },
     tagline: { en: "Leads in, conversations handled, reviews out.", es: "Entran prospectos, se atienden conversaciones, salen reseñas." },
     media: {
-      src: asset("/media/service-v2"),
-      poster: asset("/media/service-v2-poster.jpg"),
+      src: asset("/media/service-v3"),
+      poster: asset("/media/service-v3-poster.jpg"),
       alt: {
         en: "A technician tightens a pipe fitting under a sink with a wrench, lit by a headlamp.",
         es: "Un técnico aprieta una conexión de tubería bajo un fregadero con una llave, iluminado por una linterna frontal.",
