@@ -27,7 +27,7 @@ export function Stage() {
   const filmScale = useTransform(hero.progress, [0.36, 0.8], [0.22, 1.08]);
   const filmRotateX = useTransform(hero.progress, [0.36, 0.8], [32, 0]);
   const filmRotateZ = useTransform(hero.progress, [0.36, 0.8], [-6, 0]);
-  const archOpacity = useTransform(system.progress, [0, 0.1, 0.9, 1], [0, 0.32, 0.32, 0]);
+  const archOpacity = useTransform(system.raw, [0.05, 0.3, 0.7, 0.95], [0, 0.32, 0.32, 0]);
   // Film finish: grain is always faintly present; vignette deepens on the dark chapters.
   const grainOpacity = useTransform(ink, [0, 1], [0.035, 0.075]);
   const vignetteOpacity = useTransform(ink, [0, 1], [0, 0.85]);
