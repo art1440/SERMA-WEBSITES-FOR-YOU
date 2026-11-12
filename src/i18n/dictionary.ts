@@ -256,14 +256,14 @@ const en = {
   compare: {
     index: "(07)",
     eyebrow: "The difference",
-    title: ["A website that waits.", "Or one that works while you do."],
-    body: "Most local business websites sit there until someone calls — and then you still have to answer. Here's what changes when the website handles the follow-up.",
+    title: ["Most websites just sit there.", "Yours should bring in customers."],
+    body: "Most local business websites are slow, hard to use on a phone, and hide the phone number. Here's what's different when the site is built to turn visitors into calls.",
     capability: "Capability",
     colBrochure: "A website that waits",
     colEngine: "A SermaWebDesign website",
     notIncluded: "Not handled",
     included: "Handled",
-    flipHint: "Scroll — each card flips from brochure to engine.",
+    flipHint: "Each card flips to show the difference.",
     rows: [
       {
         capability: "Missed calls",
@@ -601,14 +601,14 @@ const es: Dictionary = {
   compare: {
     index: "(07)",
     eyebrow: "La diferencia",
-    title: ["Un sitio web que espera.", "O uno que trabaja mientras usted trabaja."],
-    body: "La mayoría de los sitios web de negocios locales esperan a que alguien llame, y luego usted todavía tiene que contestar. Esto es lo que cambia cuando el sitio se encarga del seguimiento.",
+    title: ["La mayoría de los sitios web solo están ahí.", "El suyo debería traerle clientes."],
+    body: "La mayoría de los sitios web de negocios locales son lentos, difíciles de usar en el teléfono y esconden el número. Esto es lo que cambia cuando el sitio está hecho para convertir visitas en llamadas.",
     capability: "Capacidad",
     colBrochure: "Un sitio web que espera",
     colEngine: "Un sitio web de SermaWebDesign",
     notIncluded: "No resuelto",
     included: "Resuelto",
-    flipHint: "Desplácese: cada tarjeta pasa de folleto a motor.",
+    flipHint: "Cada tarjeta gira para mostrar la diferencia.",
     rows: [
       {
         capability: "Llamadas perdidas",
