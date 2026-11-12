@@ -158,8 +158,8 @@ const en = {
   industries: {
     index: "(03)",
     eyebrow: "Built for",
-    title: ["Built around your trade.", "Not around software."],
-    titleEmphasis: "Not around software.",
+    title: ["A website built around your business"],
+    titleEmphasis: "your business",
     body: "A barber's week isn't a contractor's week. Each system is set up around how your business actually books, gets paid and keeps customers. Swipe or drag the cards to explore.",
     carouselLabel: "Industries we build for",
     slideLabel: "{n} of {total}: {name}",
@@ -506,8 +506,8 @@ const es: Dictionary = {
   industries: {
     index: "(03)",
     eyebrow: "Diseñado para",
-    title: ["Hecho para su oficio,", "no para el software."],
-    titleEmphasis: "no para el software.",
+    title: ["Un sitio web hecho a la medida de su negocio"],
+    titleEmphasis: "su negocio",
     body: "La semana de un barbero no es la de un contratista. Cada sistema se ajusta a la forma real en que su negocio agenda, cobra y conserva a sus clientes. Deslice o arrastre las tarjetas para explorar.",
     carouselLabel: "Industrias para las que trabajamos",
     slideLabel: "{n} de {total}: {name}",
