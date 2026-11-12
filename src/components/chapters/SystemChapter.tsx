@@ -9,8 +9,9 @@ import { useScene } from "@/context/SceneContext";
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
 import { SectionChip } from "@/components/ui/SectionHeader";
 
-/** Seconds each step holds before the next one plays. */
-const DWELL = 4.6;
+/** Seconds each step holds before the next one plays — shorter on phones, where people scroll faster. */
+const DWELL_DESKTOP = 4.6;
+const DWELL_MOBILE = 3.5;
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 const EASE_IN_OUT = [0.65, 0, 0.35, 1] as const;
 
@@ -27,7 +28,8 @@ const EASE_IN_OUT = [0.65, 0, 0.35, 1] as const;
  */
 export function SystemChapter() {
   const { t } = useLanguage();
-  const { system, reduce } = useScene();
+  const { system, reduce, desktop } = useScene();
+  const dwell = desktop ? DWELL_DESKTOP : DWELL_MOBILE;
   const { paused } = useMotionPause();
   const steps = t.system.steps;
   const count = steps.length;
@@ -49,7 +51,7 @@ export function SystemChapter() {
     let ctrl: { stop: () => void } | undefined;
     const play = () => {
       if (!running) return;
-      const remaining = Math.max(0, end - progress.get()) * count * DWELL;
+      const remaining = Math.max(0, end - progress.get()) * count * dwell;
       ctrl = animate(progress, end, {
         duration: remaining,
         ease: "linear",
@@ -64,7 +66,7 @@ export function SystemChapter() {
       play();
     }
     return () => ctrl?.stop();
-  }, [live, running, step, count, progress]);
+  }, [live, running, step, count, progress, dwell]);
 
   return (
     <section
