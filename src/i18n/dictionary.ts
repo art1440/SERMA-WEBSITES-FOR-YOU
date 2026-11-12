@@ -64,7 +64,7 @@ const en = {
     eyebrow: "For barbershops, salons, restaurants and the trades",
     headline: ["Websites that", "keep your phone", "ringing."],
     headlineEmphasis: "ringing",
-    sub: "A real website for your shop, written and built for you, and you see it finished before you pay. When you want the phone answered as well, that is the next thing we build.",
+    sub: "A real website for your business, written and built for you, and you see it finished before you pay. When you want the phone answered as well, that is the next thing we build.",
     status: "Booking while you work",
     statusDetail: "Calls · Bookings · Follow-ups",
     secondaryCta: "See how it works",
