@@ -119,7 +119,7 @@ export function Stage() {
       <motion.div
         className={`absolute inset-0 ${
           archInHero
-            ? "max-lg:[mask-image:linear-gradient(to_bottom,#000_0%,#000_16%,transparent_30%)] lg:[mask-image:linear-gradient(to_right,transparent_0%,transparent_40%,#000_60%)]"
+            ? "max-lg:[mask-image:linear-gradient(to_bottom,#000_0%,#000_16%,transparent_30%)] lg:[mask-image:linear-gradient(to_right,transparent_0%,transparent_54%,#000_70%)]"
             : ""
         }`}
         style={{ opacity: archOpacity }}
