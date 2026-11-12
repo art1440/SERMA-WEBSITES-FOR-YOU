@@ -111,7 +111,8 @@ export function Stage() {
           className="absolute inset-0 overflow-hidden"
           style={{ opacity: filmOpacity, scale: filmScale, rotateX: filmRotateX, rotateZ: filmRotateZ }}
         >
-          <LayerVideo src={asset("/media/hero")} poster={asset("/media/hero-poster.jpg")} visibility={filmOpacity} paused={paused} />
+          {/* Poster = the film's own first frame, so nothing jumps when playback takes over. */}
+          <LayerVideo src={asset("/media/hero")} poster={asset("/media/hero-film-poster.jpg")} visibility={filmOpacity} paused={paused} />
           <div className="absolute inset-0 bg-ink/45" />
         </motion.div>
       </div>
@@ -119,7 +120,7 @@ export function Stage() {
       <motion.div
         className={`absolute inset-0 ${
           archInHero
-            ? "max-lg:[mask-image:linear-gradient(to_bottom,#000_0%,#000_16%,transparent_30%)] lg:[mask-image:linear-gradient(to_right,transparent_0%,transparent_40%,#000_60%)]"
+            ? "max-lg:[mask-image:linear-gradient(to_bottom,#000_0%,#000_16%,transparent_30%)] lg:[mask-image:linear-gradient(to_right,transparent_0%,transparent_54%,#000_70%)]"
             : ""
         }`}
         style={{ opacity: archOpacity }}
