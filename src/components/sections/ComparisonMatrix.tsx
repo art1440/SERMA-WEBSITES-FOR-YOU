@@ -1,13 +1,13 @@
 "use client";
 
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { Check, Rotate3d, X } from "lucide-react";
 import { useRef } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
-import { MOTION } from "@/lib/motion";
+import { EASE_EDITORIAL } from "@/lib/motion";
 
 type Row = { capability: string; brochure: string; engine: string };
 
@@ -40,8 +40,9 @@ const BADGE = "grid h-6 w-6 shrink-0 place-items-center rounded-full";
 
 /**
  * Brochure vs. Growth Engine as 3D flip cards: each card shows the dead
- * brochure side, then flips to the engine side as it scrolls through the
- * viewport. Both faces stay in the DOM (screen readers read both); icons are
+ * brochure side, then flips once to the engine side when it is well into
+ * view (a timed flip, staggered across the row). Not scrubbed by scroll, so
+ * a card is never left frozen edge-on mid-flip when the visitor stops. Both faces stay in the DOM (screen readers read both); icons are
  * always paired with text.
  */
 export function ComparisonMatrix() {
@@ -99,14 +100,8 @@ function FlipCard({
 }) {
   const ref = useRef<HTMLLIElement>(null);
   const col = index % 4;
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: [`start ${0.92 - col * 0.04}`, `start ${0.42 - col * 0.04}`] as unknown as ["start end", "start start"],
-  });
-  const raw = useTransform(scrollYProgress, [0, 1], [0, 180]);
-  const rotateY = useSpring(raw, MOTION.smooth);
-  // Small lift mid-flip (was 60px): some depth, without the card spilling over its neighbours.
-  const lift = useTransform(rotateY, [0, 90, 180], [0, 24, 0]);
+  // Flip once the card is mostly on screen; the row flips left to right.
+  const shown = useInView(ref, { amount: 0.6, once: true });
 
   const front = (
     <div className={FRONT_FACE}>
@@ -165,7 +160,12 @@ function FlipCard({
   return (
     <li ref={ref} className="[perspective:1200px]">
       {/* Both faces share one grid cell: the card is as tall as its taller face. */}
-      <motion.div className="relative grid h-full w-full [transform-style:preserve-3d]" style={{ rotateY, z: lift }}>
+      <motion.div
+        className="relative grid h-full w-full [transform-style:preserve-3d]"
+        initial={false}
+        animate={{ rotateY: shown ? 180 : 0 }}
+        transition={{ duration: 0.9, delay: shown ? 0.25 + col * 0.12 : 0, ease: EASE_EDITORIAL }}
+      >
         <div className="[grid-area:1/1] [-webkit-backface-visibility:hidden] [backface-visibility:hidden]">{front}</div>
         <div className="[grid-area:1/1] [-webkit-backface-visibility:hidden] [backface-visibility:hidden] [transform:rotateY(180deg)]">
           {back}

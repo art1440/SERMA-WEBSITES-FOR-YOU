@@ -92,11 +92,12 @@ export function AmbientVideo({
           ref={ref}
           className={`gpu absolute inset-0 h-full w-full object-cover ${videoClassName ?? ""}`}
           poster={poster}
-          autoPlay
+          // No autoPlay/preload: the IntersectionObserver below starts it when it scrolls into view,
+          // so below-the-fold films don't download during page load (the poster shows meanwhile).
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="none"
           disablePictureInPicture
           aria-hidden="true"
           tabIndex={-1}

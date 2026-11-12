@@ -45,21 +45,18 @@ function useChapter(offset: ["start start", "end end"] | ["start end", "end end"
 }
 
 /**
- * The System chapter is NOT pinned: it scrolls past like any section, and its
- * four steps advance on a timer instead (SystemChapter drives `progress`).
- * `raw` is the plain pass-through scroll progress (0 as it enters, 1 as it leaves),
- * for things that should only fade with visibility, like the backdrop video.
+ * A chapter whose progress is driven by its own timeline (not scroll): the System chapter
+ * auto-plays its four steps, and the 3D engine follows the same MotionValue.
  */
-function useTimedChapter(): Chapter {
+function useTimelineChapter(): Chapter {
   const ref = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const progress = useMotionValue(0);
-  return { ref, progress, raw: scrollYProgress };
+  return { ref, progress, raw: progress };
 }
 
 export function SceneProvider({ children }: { children: ReactNode }) {
   const hero = useChapter(["start start", "end end"]);
-  const system = useTimedChapter();
+  const system = useTimelineChapter();
   const finale = useChapter(["start end", "end end"]);
   const reduce = useReducedMotionSafe();
   const [desktop, setDesktop] = useState(false);

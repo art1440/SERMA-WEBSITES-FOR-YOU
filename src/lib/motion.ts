@@ -17,7 +17,8 @@ export const VIEWPORT_ONCE = { once: true, margin: "-10%" } as const;
 export const MOTION = {
   snappy: { stiffness: 320, damping: 26, mass: 0.5 },
   smooth: { stiffness: 140, damping: 24, mass: 0.8 },
-  cinematic: { stiffness: 90, damping: 26, mass: 0.7, restDelta: 0.0005 },
+  // Overdamped (never overshoots); trails a scroll flick by ~150ms, so scenes stay in step with the page.
+  cinematic: { stiffness: 170, damping: 26, mass: 0.5, restDelta: 0.0005 },
 } as const;
 
 /** Framer `transition` forms of the tokens. */

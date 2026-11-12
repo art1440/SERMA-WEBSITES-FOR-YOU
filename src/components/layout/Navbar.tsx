@@ -84,7 +84,7 @@ export function Navbar() {
           ) : null}
         </AnimatePresence>
         <div className="relative mx-auto max-w-[87.5rem]">
-          <div className="glass-dark glass-solid pointer-events-auto relative flex h-14 items-center justify-between gap-2 rounded-full pl-3.5 pr-1.5 [--glass-blur:20px] sm:pl-4 lg:pl-5">
+          <div className="glass-dark glass-solid pointer-events-auto relative flex h-14 items-center justify-between gap-2 rounded-full pl-3.5 pr-1.5 [--glass-blur:14px] sm:pl-4 lg:pl-5">
             {/* Reading-progress line along the capsule's lower edge (CSS scroll-driven; no JS).
                 The wrapper clips it to the capsule's rounded shape. */}
             <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">

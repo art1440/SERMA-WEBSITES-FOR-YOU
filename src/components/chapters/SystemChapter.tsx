@@ -1,6 +1,7 @@
 "use client";
 
-import { animate, motion, useInView, useTransform, type MotionValue } from "framer-motion";
+import { animate, motion, useInView, useMotionValue, type MotionValue } from "framer-motion";
+import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { useLanguage } from "@/context/LanguageContext";
@@ -8,65 +9,97 @@ import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
 import { SectionChip } from "@/components/ui/SectionHeader";
+import { EASE_EDITORIAL } from "@/lib/motion";
 
-/** Seconds each step holds before the next one plays — shorter on phones, where people scroll faster. */
-const DWELL_DESKTOP = 4.6;
-const DWELL_MOBILE = 3.5;
-const EASE_OUT = [0.22, 1, 0.36, 1] as const;
-const EASE_IN_OUT = [0.65, 0, 0.35, 1] as const;
+/** How long each step stays up before the next one plays in. */
+const STEP_MS = 4200;
+/** After the visitor picks a step by hand, auto-play picks up again after this long. */
+const RESUME_MS = 9000;
+/** Engine timeline position for step k: its formation has fully assembled (see Engine3D). */
+const stepAt = (k: number, count: number) => k / count + 0.15;
 
 /**
- * The System — a normal-height section (no scroll pin). While it's on screen,
- * a timeline plays the four steps on its own: the copy cross-fades, the rail
- * fills toward the next marker like a countdown, and the 3D engine morphs
- * through its formations (it reads the same `system.progress` value).
- * After "Return" the rail rewinds and the loop starts over.
+ * The System — one screen. Once the section is in view, the four steps play by
+ * themselves (Capture → Respond → Book → Return, then loop), spotlighting each step
+ * while the 3D engine morphs through its formations on the same timeline.
  *
- * Hover or focus pauses it; markers jump to a step. Offscreen, hidden tab or the
- * site-wide pause switch stop the clock. All four steps stay in the DOM for
- * screen readers; only their visual opacity changes.
+ * All four steps are on show as cards (2×2 from sm, stacked on phones). Auto-play
+ * spotlights one at a time, with a timer line filling across it, and the engine morphs
+ * to match; a resting mouse or a tap never freezes it. Control (WCAG 2.2.2): a pause
+ * button by the steps, the site-wide Pause, keyboard focus inside the panel holds it,
+ * and each card is a button that spotlights it (auto-play resumes ~9s later).
+ * Reduced motion: the same four cards, nothing moves.
+ *
+ * The copy floats on one dark glass panel over the engine and film. Real blur
+ * on desktop; on phones the panel keeps the dense tint and drops the blur.
  */
 export function SystemChapter() {
   const { t } = useLanguage();
-  const { system, reduce, desktop } = useScene();
-  const dwell = desktop ? DWELL_DESKTOP : DWELL_MOBILE;
+  const { system, reduce } = useScene();
   const { paused } = useMotionPause();
   const steps = t.system.steps;
   const count = steps.length;
-  const progress = system.progress;
 
   const panelRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(panelRef, { amount: 0.35 });
-  const [step, setStep] = useState(0);
-  const [held, setHeld] = useState(false);
-  const live = inView && !paused && !reduce;
-  const running = live && !held;
+  const inView = useInView(panelRef, { amount: 0.4 });
+  const [active, setActive] = useState(0);
+  const [held, setHeld] = useState(false); // keyboard focus inside the panel
+  const [manual, setManual] = useState(false); // the visitor just picked a step themselves
+  const [stopped, setStopped] = useState(false); // the visitor pressed this section's pause
+  const prevActive = useRef(0);
+  // 0 → 1 over one step: drives the rail's "story timer" fill and the hand-off to the next step.
+  const tick = useMotionValue(0);
 
+  // Leaving the section: rewind to step 1 for the next visit.
   useEffect(() => {
-    // `live`: glide the rail to the chosen step (marker jumps work even while hovered).
-    // `running`: also count down and advance. Hover only freezes the countdown.
-    if (!live) return;
-    const start = step / count;
-    const end = (step + 1) / count;
-    let ctrl: { stop: () => void } | undefined;
-    const play = () => {
-      if (!running) return;
-      const remaining = Math.max(0, end - progress.get()) * count * dwell;
-      ctrl = animate(progress, end, {
-        duration: remaining,
-        ease: "linear",
-        onComplete: () => setStep((s) => (s + 1) % count),
-      });
-    };
-    const p = progress.get();
-    if (p < start - 0.001 || p > end) {
-      // Jumped (marker click) or looping back from the last step: glide the rail there first.
-      ctrl = animate(progress, start, { duration: p > end && step === 0 ? 1.1 : 0.7, ease: EASE_IN_OUT, onComplete: play });
-    } else {
-      play();
-    }
-    return () => ctrl?.stop();
-  }, [live, running, step, count, progress, dwell]);
+    if (inView) return;
+    setActive(0);
+    setManual(false);
+    tick.set(0);
+  }, [inView, tick]);
+
+  // A step picked by hand stays up a while, then auto-play carries on from there.
+  useEffect(() => {
+    if (!manual) return;
+    const id = window.setTimeout(() => setManual(false), RESUME_MS);
+    return () => window.clearTimeout(id);
+  }, [manual, active]);
+
+  const running = !reduce && inView && !paused && !held && !manual && !stopped;
+
+  // Auto-advance: the timer runs from wherever it was (a pause holds it, play resumes it).
+  useEffect(() => {
+    if (!running) return;
+    const left = Math.max(0.05, 1 - tick.get());
+    const controls = animate(tick, 1, {
+      duration: (STEP_MS / 1000) * left,
+      ease: "linear",
+      onComplete: () => {
+        tick.set(0);
+        setActive((a) => (a + 1) % count);
+      },
+    });
+    return () => controls.stop();
+  }, [running, active, count, tick]);
+
+  // Drive the shared timeline (the engine + architecture film read it).
+  useEffect(() => {
+    if (reduce) return;
+    const wrapped = active < prevActive.current;
+    prevActive.current = active;
+    const target = inView ? stepAt(active, count) : 0;
+    const controls = animate(system.progress, target, {
+      duration: inView ? (wrapped ? 1.6 : 1.2) : 0.6,
+      ease: EASE_EDITORIAL,
+    });
+    return () => controls.stop();
+  }, [active, inView, reduce, count, system.progress]);
+
+  const pick = (i: number) => {
+    tick.set(0);
+    setManual(true);
+    setActive(i);
+  };
 
   return (
     <section
@@ -74,33 +107,36 @@ export function SystemChapter() {
       ref={system.ref}
       aria-labelledby="system-title"
       data-theme="dark"
-      className="relative isolate text-bone motion-reduce:overflow-hidden motion-reduce:py-24"
+      className="relative text-bone motion-safe:min-h-[100svh] motion-safe:scroll-mt-[-5.5rem] motion-reduce:isolate motion-reduce:overflow-hidden motion-reduce:py-24"
     >
       {/* Reduced motion: no 3D stage behind, so the panel sits in a dark light field instead of flat ink. */}
       <AmbientField tone="dark" variant={1} className="hidden motion-reduce:block" />
 
-      <div className="relative">
+      <div className="relative motion-safe:min-h-[100svh]">
         {/* Legibility scrim on phones, where the panel sits over the particles */}
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink via-ink/85 to-transparent lg:hidden" />
 
         <div className="frame relative flex flex-col pb-4 pt-20 motion-safe:min-h-[100svh] motion-safe:justify-end sm:pb-10 sm:pt-24 lg:pb-6 lg:pt-20 lg:motion-safe:justify-center">
           <div
             ref={panelRef}
-            onPointerEnter={(e) => e.pointerType === "mouse" && setHeld(true)}
-            onPointerLeave={() => setHeld(false)}
-            onFocus={() => setHeld(true)}
-            onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setHeld(false)}
-            className="glass-dark glass-solid w-full rounded-glass p-4 [--glass-blur:26px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:max-w-[34rem] sm:rounded-glass-lg sm:p-8 lg:w-6/12 lg:max-w-[36rem]"
-          >
+            // Hold only for keyboard focus (so a resting mouse or a tap never freezes the steps).
+            onFocus={(e) => {
+              if (e.target.matches(":focus-visible")) setHeld(true);
+            }}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHeld(false);
+            }}
+            className="glass-dark glass-solid w-full rounded-glass p-4 [--glass-blur:14px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:max-w-[40rem] sm:rounded-glass-lg sm:p-7 lg:w-7/12 lg:max-w-[46rem] lg:p-7 xl:p-8">
             <Reveal y={12}>
               <SectionChip index={t.system.index} label={t.system.eyebrow} />
             </Reveal>
             <RevealLines
               id="system-title"
               lines={[t.system.title]}
-              className="mt-4 font-display text-display-md text-balance sm:mt-5 lg:text-[clamp(1.9rem,3vw,2.75rem)]"
+              className="mt-3 font-display text-[1.75rem] leading-[1.05] text-balance sm:mt-4 sm:text-display-md lg:text-[clamp(1.9rem,2.6vw,2.5rem)]"
             />
-            <p className="mt-4 hidden text-pretty leading-relaxed text-ash sm:block">{t.system.body}</p>
+            {/* The step cards say the same thing, so the intro only shows where there is room for it. */}
+            <p className="mt-4 hidden text-pretty leading-relaxed text-ash sm:block [@media(max-height:960px)]:hidden">{t.system.body}</p>
 
             <p className="mt-3 text-pretty text-[0.8125rem] font-medium leading-6 text-ash sm:mt-4">
               {t.system.inputs.join(" · ")} →{" "}
@@ -111,30 +147,56 @@ export function SystemChapter() {
               → {t.system.outputs.join(" · ")}
             </p>
 
-            {reduce ? (
-              <ol className="mt-6 space-y-6 border-t border-white/10 pt-6">
+            {/* All four steps on show; auto-play spotlights one at a time (and morphs the engine). */}
+            <div className="mt-4 border-t border-white/10 pt-4 sm:mt-5 sm:pt-5">
+              <div className="flex items-center justify-between gap-3">
+                <p className="eyebrow text-ash">{t.system.stepsHeading}</p>
+                {reduce ? null : (
+                  // This section's own pause (WCAG 2.2.2), on top of the site-wide Pause.
+                  <button
+                    type="button"
+                    onClick={() => setStopped((v) => !v)}
+                    aria-pressed={stopped}
+                    aria-label={stopped ? t.system.playSteps : t.system.pauseSteps}
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-ash ring-1 ring-inset ring-white/15 transition-colors hover:bg-white/[0.06] hover:text-bone"
+                  >
+                    {stopped ? <Play aria-hidden="true" size={13} strokeWidth={2} /> : <Pause aria-hidden="true" size={13} strokeWidth={2} />}
+                  </button>
+                )}
+              </div>
+              <ol className="mt-3 grid grid-cols-2 gap-2 sm:gap-2.5">
                 {steps.map((step, i) => (
-                  <li key={step.title} className="grid grid-cols-[2.75rem_1fr] gap-x-4">
-                    <span className="grid h-9 w-9 place-items-center rounded-full bg-white/[0.06] text-sm font-medium tabular text-bone ring-1 ring-inset ring-aqua/50">
-                      0{i + 1}
-                    </span>
-                    <div>
-                      <h3 className="font-display text-3xl leading-none">{step.title}</h3>
-                      <p className="mt-2 leading-relaxed text-ash">{step.body}</p>
-                    </div>
-                  </li>
+                  <StepCard
+                    key={step.title}
+                    index={i}
+                    count={count}
+                    title={step.title}
+                    body={step.body}
+                    on={!reduce && i === active}
+                    interactive={!reduce}
+                    tick={tick}
+                    onPick={() => pick(i)}
+                  />
                 ))}
               </ol>
-            ) : (
-              <div className="mt-4 grid grid-cols-[auto_1fr] gap-x-5 border-t border-white/10 pt-5 sm:mt-6 sm:gap-x-6 sm:pt-6">
-                <StepRail progress={progress} steps={steps} active={step} onSelect={setStep} />
-                <ol className="relative h-[11.5rem] sm:h-[10.5rem]">
-                  {steps.map((s, i) => (
-                    <Step key={s.title} index={i} count={count} active={step} title={s.title} body={s.body} />
+              {/* Phones: the cards show titles only; the spotlit step's description sits here.
+                  (Stacked in one grid cell, so the box is as tall as the longest; each card keeps its own description for screen readers.) */}
+              {reduce ? null : (
+                <div aria-hidden="true" className="mt-3 grid sm:hidden">
+                  {steps.map((step, i) => (
+                    <motion.p
+                      key={step.title}
+                      className="text-pretty text-[0.875rem] leading-snug text-ash [grid-area:1/1]"
+                      initial={false}
+                      animate={{ opacity: i === active ? 1 : 0, y: i === active ? 0 : 6 }}
+                      transition={{ duration: 0.45, ease: EASE_EDITORIAL }}
+                    >
+                      {step.body}
+                    </motion.p>
                   ))}
-                </ol>
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -142,98 +204,56 @@ export function SystemChapter() {
   );
 }
 
-function Step({ index, count, active, title, body }: { index: number; count: number; active: number; title: string; body: string }) {
-  const on = index === active;
-  // Outgoing steps lift away; incoming rise from below. The loop back to 01 enters from below too.
-  const y = on ? 0 : index < active ? -28 : 28;
-  return (
-    <motion.li
-      className="absolute inset-0"
-      initial={false}
-      animate={{ opacity: on ? 1 : 0, y, filter: on ? "blur(0px)" : "blur(6px)" }}
-      transition={on ? { duration: 0.7, delay: 0.12, ease: EASE_OUT } : { duration: 0.35, ease: EASE_IN_OUT }}
-    >
-      <p className="text-[0.8125rem] font-medium leading-5 tabular text-ash">
-        <span className="text-bone">0{index + 1}</span> / 0{count}
-      </p>
-      <h3 className="mt-2 font-display text-[2.5rem] leading-none sm:text-5xl">{title}</h3>
-      <p className="mt-3 max-w-sm text-pretty text-[0.9375rem] leading-relaxed text-ash sm:text-base">{body}</p>
-    </motion.li>
-  );
-}
-
 /**
- * Slim rounded track. The fill creeps toward the next marker while a step holds
- * (a quiet countdown), and each marker lights as the fill reaches it.
- * Markers are buttons: click/tap to jump to that step.
+ * One step card. The spotlit card brightens, gets the accent ring and a timer line
+ * that fills over the step's time on screen. The whole card is clickable through a
+ * stretched button (headings can't live inside a <button>); aria-pressed marks the spotlit one.
  */
-function StepRail({
-  progress,
-  steps,
-  active,
-  onSelect,
+function StepCard({
+  index,
+  count,
+  title,
+  body,
+  on,
+  interactive,
+  tick,
+  onPick,
 }: {
-  progress: MotionValue<number>;
-  steps: readonly { title: string }[];
-  active: number;
-  onSelect: (i: number) => void;
+  index: number;
+  count: number;
+  title: string;
+  body: string;
+  on: boolean;
+  interactive: boolean;
+  tick: MotionValue<number>;
+  onPick: () => void;
 }) {
-  const count = steps.length;
-  const fill = useTransform(progress, (p) => Math.min(1, (p * count) / (count - 1)));
   return (
-    <div className="relative h-[11.5rem] w-[3px] rounded-full bg-white/10 sm:h-[10.5rem]">
-      <motion.span
-        aria-hidden="true"
-        className="absolute inset-0 block origin-top rounded-full bg-gradient-to-b from-aqua-deep to-aqua"
-        style={{ scaleY: fill }}
-      />
-      {steps.map((s, i) => (
-        <RailMarker
-          key={s.title}
-          fill={fill}
-          at={i / (count - 1)}
-          current={i === active}
-          label={`0${i + 1} — ${s.title}`}
-          onClick={() => onSelect(i)}
-        />
-      ))}
-    </div>
-  );
-}
-
-function RailMarker({
-  fill,
-  at,
-  current,
-  label,
-  onClick,
-}: {
-  fill: MotionValue<number>;
-  at: number;
-  current: boolean;
-  label: string;
-  onClick: () => void;
-}) {
-  const lit = useTransform(fill, [at - 0.035, at - 0.005], [0, 1]);
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      aria-current={current ? "step" : undefined}
-      className="group absolute left-1/2 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full focus-visible:outline-none"
-      style={{ top: `${at * 100}%` }}
+    <li
+      className={`relative rounded-[16px] p-3 ring-1 ring-inset sm:rounded-[18px] transition-[background-color,box-shadow] duration-500 sm:p-4 ${
+        on ? "bg-white/[0.07] ring-aqua/45 shadow-[0_0_28px_-10px_rgba(232,223,207,0.45)]" : "bg-white/[0.025] ring-white/10"
+      }`}
     >
-      <span
-        className={`grid h-3 w-3 place-items-center rounded-full bg-ink-800 ring-1 ring-inset transition-[transform,box-shadow] duration-300 ease-out group-hover:scale-125 group-focus-visible:ring-2 group-focus-visible:ring-aqua ${
-          current ? "scale-125 ring-aqua/70" : "ring-white/25"
-        }`}
-      >
-        <motion.span
-          className="block h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(232,223,207,0.7)]"
-          style={{ opacity: lit }}
+      <div className="flex items-center gap-2.5">
+        <span className={`text-xs font-medium tabular transition-colors duration-500 ${on ? "text-bone" : "text-ash"}`}>
+          0{index + 1}
+          <span className="sr-only"> / 0{count}</span>
+        </span>
+        <span aria-hidden="true" className="relative h-[2px] flex-1 overflow-hidden rounded-full bg-white/10">
+          {on ? <motion.span className="absolute inset-0 block origin-left rounded-full bg-aqua" style={{ scaleX: tick }} /> : null}
+        </span>
+      </div>
+      <h3 className={`mt-2 font-display text-xl leading-none sm:text-2xl transition-colors duration-500 ${on ? "text-bone" : "text-bone/80"}`}>{title}</h3>
+      <p className={`mt-1.5 text-pretty text-[0.8125rem] leading-snug text-ash ${interactive ? "max-sm:sr-only" : ""}`}>{body}</p>
+      {interactive ? (
+        <button
+          type="button"
+          aria-pressed={on}
+          aria-label={`0${index + 1} / 0${count}: ${title}`}
+          onClick={onPick}
+          className="absolute inset-0 rounded-[18px] focus-visible:outline-offset-2"
         />
-      </span>
-    </button>
+      ) : null}
+    </li>
   );
 }

@@ -27,9 +27,8 @@ export function Stage() {
   const filmScale = useTransform(hero.progress, [0.36, 0.8], [0.22, 1.08]);
   const filmRotateX = useTransform(hero.progress, [0.36, 0.8], [32, 0]);
   const filmRotateZ = useTransform(hero.progress, [0.36, 0.8], [-6, 0]);
-  const archOpacity = useTransform(system.raw, [0.05, 0.3, 0.7, 0.95], [0, 0.32, 0.32, 0]);
-  // Film finish: grain is always faintly present; vignette deepens on the dark chapters.
-  const grainOpacity = useTransform(ink, [0, 1], [0.035, 0.075]);
+  const archOpacity = useTransform(system.progress, [0, 0.1, 0.9, 1], [0, 0.32, 0.32, 0]);
+  // Vignette deepens on the dark chapters.
   const vignetteOpacity = useTransform(ink, [0, 1], [0, 0.85]);
 
   const [active, setActive] = useState(false);
@@ -38,7 +37,10 @@ export function Stage() {
   useEffect(() => {
     try {
       const c = document.createElement("canvas");
-      setWebgl(Boolean(c.getContext("webgl2") || c.getContext("webgl")));
+      const g = (c.getContext("webgl2") || c.getContext("webgl")) as WebGLRenderingContext | null;
+      setWebgl(Boolean(g));
+      // Release the probe context now, instead of a later GC teardown stalling the GPU.
+      g?.getExtension("WEBGL_lose_context")?.loseContext();
     } catch {
       setWebgl(false);
     }
@@ -59,10 +61,23 @@ export function Stage() {
     return () => io.disconnect();
   }, [hero.ref, system.ref, finale.ref]);
 
+  // Keep the engine moving through its 500ms fade-out (a frozen frame dissolving reads as a hitch).
+  const [running, setRunning] = useState(false);
+  useEffect(() => {
+    if (active) {
+      setRunning(true);
+      return;
+    }
+    const id = window.setTimeout(() => setRunning(false), 550);
+    return () => window.clearTimeout(id);
+  }, [active]);
+
   if (reduce) return null;
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    // h-lvh: the backdrop keeps the large-viewport height, so the phone URL bar sliding in/out
+    // never resizes (and re-renders) the two canvases mid-scroll.
+    <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 z-0 h-screen h-lvh overflow-hidden">
       <div className="absolute inset-0 bg-ink" />
 
       {/* Light threads run behind every section; translucent sections let them glow through. */}
@@ -87,7 +102,7 @@ export function Stage() {
       {webgl ? (
         <div className={`absolute inset-0 transition-opacity duration-500 ${active ? "opacity-100" : "opacity-0"}`}>
         <Engine3D
-          active={active && !paused}
+          active={running && !paused}
           desktop={desktop}
           hero={hero.progress}
           system={system.progress}
@@ -102,13 +117,6 @@ export function Stage() {
         className="absolute inset-0"
         style={{ opacity: vignetteOpacity, background: "radial-gradient(ellipse at 55% 50%, transparent 45%, rgba(13,13,11,0.75) 100%)" }}
       />
-      {/* Film grain: a tiny tiled texture nudged in steps — matches the Higgsfield footage */}
-      <motion.div className="absolute inset-0 overflow-hidden mix-blend-overlay" style={{ opacity: grainOpacity }}>
-        <div
-          className={`absolute -inset-[10%] ${paused ? "" : "animate-grain"}`}
-          style={{ backgroundImage: `url(${asset("/media/grain.png")})`, backgroundSize: "160px 160px" }}
-        />
-      </motion.div>
     </div>
   );
 }
