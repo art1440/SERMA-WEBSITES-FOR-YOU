@@ -111,7 +111,8 @@ export function Stage() {
           className="absolute inset-0 overflow-hidden"
           style={{ opacity: filmOpacity, scale: filmScale, rotateX: filmRotateX, rotateZ: filmRotateZ }}
         >
-          <LayerVideo src={asset("/media/hero")} poster={asset("/media/hero-poster.jpg")} visibility={filmOpacity} paused={paused} />
+          {/* Poster = the film's own first frame, so nothing jumps when playback takes over. */}
+          <LayerVideo src={asset("/media/hero")} poster={asset("/media/hero-film-poster.jpg")} visibility={filmOpacity} paused={paused} />
           <div className="absolute inset-0 bg-ink/45" />
         </motion.div>
       </div>
