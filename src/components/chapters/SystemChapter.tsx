@@ -1,26 +1,72 @@
 "use client";
 
-import { motion, useTransform, type MotionValue } from "framer-motion";
+import { animate, motion, useInView, useTransform, type MotionValue } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
 import { SectionChip } from "@/components/ui/SectionHeader";
 
+/** Seconds each step holds before the next one plays — shorter on phones, where people scroll faster. */
+const DWELL_DESKTOP = 4.6;
+const DWELL_MOBILE = 3.5;
+const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+const EASE_IN_OUT = [0.65, 0, 0.35, 1] as const;
+
 /**
- * The System — pinned while scroll drives the 3D engine through four
- * particle formations (scatter → captured → pulse → calendar → orbit).
- * Each step's copy cross-fades in lockstep. All four steps stay in the DOM
- * for screen readers; only their visual opacity changes.
+ * The System — a normal-height section (no scroll pin). While it's on screen,
+ * a timeline plays the four steps on its own: the copy cross-fades, the rail
+ * fills toward the next marker like a countdown, and the 3D engine morphs
+ * through its formations (it reads the same `system.progress` value).
+ * After "Return" the rail rewinds and the loop starts over.
  *
- * The copy floats on one dark glass panel over the engine and film. Real blur
- * on desktop (medium surface over a detailed backdrop); on phones the panel
- * covers most of the screen, so it keeps the dense tint and drops the blur.
+ * Hover or focus pauses it; markers jump to a step. Offscreen, hidden tab or the
+ * site-wide pause switch stop the clock. All four steps stay in the DOM for
+ * screen readers; only their visual opacity changes.
  */
 export function SystemChapter() {
   const { t } = useLanguage();
-  const { system, reduce } = useScene();
+  const { system, reduce, desktop } = useScene();
+  const dwell = desktop ? DWELL_DESKTOP : DWELL_MOBILE;
+  const { paused } = useMotionPause();
   const steps = t.system.steps;
+  const count = steps.length;
+  const progress = system.progress;
+
+  const panelRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(panelRef, { amount: 0.35 });
+  const [step, setStep] = useState(0);
+  const [held, setHeld] = useState(false);
+  const live = inView && !paused && !reduce;
+  const running = live && !held;
+
+  useEffect(() => {
+    // `live`: glide the rail to the chosen step (marker jumps work even while hovered).
+    // `running`: also count down and advance. Hover only freezes the countdown.
+    if (!live) return;
+    const start = step / count;
+    const end = (step + 1) / count;
+    let ctrl: { stop: () => void } | undefined;
+    const play = () => {
+      if (!running) return;
+      const remaining = Math.max(0, end - progress.get()) * count * dwell;
+      ctrl = animate(progress, end, {
+        duration: remaining,
+        ease: "linear",
+        onComplete: () => setStep((s) => (s + 1) % count),
+      });
+    };
+    const p = progress.get();
+    if (p < start - 0.001 || p > end) {
+      // Jumped (marker click) or looping back from the last step: glide the rail there first.
+      ctrl = animate(progress, start, { duration: p > end && step === 0 ? 1.1 : 0.7, ease: EASE_IN_OUT, onComplete: play });
+    } else {
+      play();
+    }
+    return () => ctrl?.stop();
+  }, [live, running, step, count, progress, dwell]);
 
   return (
     <section
@@ -28,17 +74,24 @@ export function SystemChapter() {
       ref={system.ref}
       aria-labelledby="system-title"
       data-theme="dark"
-      className="relative text-bone motion-safe:h-[240vh] motion-reduce:isolate motion-reduce:overflow-hidden motion-reduce:py-24"
+      className="relative isolate text-bone motion-reduce:overflow-hidden motion-reduce:py-24"
     >
       {/* Reduced motion: no 3D stage behind, so the panel sits in a dark light field instead of flat ink. */}
       <AmbientField tone="dark" variant={1} className="hidden motion-reduce:block" />
 
-      <div className="relative motion-safe:sticky motion-safe:top-0 motion-safe:h-[100svh] motion-safe:overflow-hidden">
+      <div className="relative">
         {/* Legibility scrim on phones, where the panel sits over the particles */}
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink via-ink/85 to-transparent lg:hidden" />
 
-        <div className="frame relative flex h-full flex-col pb-4 pt-20 motion-safe:justify-end sm:pb-10 sm:pt-24 lg:pb-6 lg:pt-20 lg:motion-safe:justify-center">
-          <div className="glass-dark glass-solid w-full rounded-glass p-4 [--glass-blur:26px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:max-w-[34rem] sm:rounded-glass-lg sm:p-8 lg:w-6/12 lg:max-w-[36rem]">
+        <div className="frame relative flex flex-col pb-4 pt-20 motion-safe:min-h-[100svh] motion-safe:justify-end sm:pb-10 sm:pt-24 lg:pb-6 lg:pt-20 lg:motion-safe:justify-center">
+          <div
+            ref={panelRef}
+            onPointerEnter={(e) => e.pointerType === "mouse" && setHeld(true)}
+            onPointerLeave={() => setHeld(false)}
+            onFocus={() => setHeld(true)}
+            onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setHeld(false)}
+            className="glass-dark glass-solid w-full rounded-glass p-4 [--glass-blur:26px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:max-w-[34rem] sm:rounded-glass-lg sm:p-8 lg:w-6/12 lg:max-w-[36rem]"
+          >
             <Reveal y={12}>
               <SectionChip index={t.system.index} label={t.system.eyebrow} />
             </Reveal>
@@ -74,10 +127,10 @@ export function SystemChapter() {
               </ol>
             ) : (
               <div className="mt-4 grid grid-cols-[auto_1fr] gap-x-5 border-t border-white/10 pt-5 sm:mt-6 sm:gap-x-6 sm:pt-6">
-                <StepRail progress={system.progress} count={steps.length} />
+                <StepRail progress={progress} steps={steps} active={step} onSelect={setStep} />
                 <ol className="relative h-[11.5rem] sm:h-[10.5rem]">
-                  {steps.map((step, i) => (
-                    <Step key={step.title} index={i} count={steps.length} progress={system.progress} title={step.title} body={step.body} />
+                  {steps.map((s, i) => (
+                    <Step key={s.title} index={i} count={count} active={step} title={s.title} body={s.body} />
                   ))}
                 </ol>
               </div>
@@ -89,31 +142,17 @@ export function SystemChapter() {
   );
 }
 
-function Step({
-  index,
-  count,
-  progress,
-  title,
-  body,
-}: {
-  index: number;
-  count: number;
-  progress: MotionValue<number>;
-  title: string;
-  body: string;
-}) {
-  const a = index / count;
-  const b = (index + 1) / count;
-  const first = index === 0;
-  const last = index === count - 1;
-  const input = first ? [0, b - 0.04, b + 0.01] : last ? [a - 0.01, a + 0.04, 1] : [a - 0.01, a + 0.04, b - 0.04, b + 0.01];
-  const opacityOut = first ? [1, 1, 0] : last ? [0, 1, 1] : [0, 1, 1, 0];
-  const yOut = first ? [0, 0, -36] : last ? [36, 0, 0] : [36, 0, 0, -36];
-  const opacity = useTransform(progress, input, opacityOut);
-  const y = useTransform(progress, input, yOut);
-
+function Step({ index, count, active, title, body }: { index: number; count: number; active: number; title: string; body: string }) {
+  const on = index === active;
+  // Outgoing steps lift away; incoming rise from below. The loop back to 01 enters from below too.
+  const y = on ? 0 : index < active ? -28 : 28;
   return (
-    <motion.li className="absolute inset-0" style={{ opacity, y }}>
+    <motion.li
+      className="absolute inset-0"
+      initial={false}
+      animate={{ opacity: on ? 1 : 0, y, filter: on ? "blur(0px)" : "blur(6px)" }}
+      transition={on ? { duration: 0.7, delay: 0.12, ease: EASE_OUT } : { duration: 0.35, ease: EASE_IN_OUT }}
+    >
       <p className="text-[0.8125rem] font-medium leading-5 tabular text-ash">
         <span className="text-bone">0{index + 1}</span> / 0{count}
       </p>
@@ -123,33 +162,78 @@ function Step({
   );
 }
 
-/** Slim rounded track: aqua fill grows with scroll; each round marker lights as the fill reaches it. */
-function StepRail({ progress, count }: { progress: MotionValue<number>; count: number }) {
-  const fill = useTransform(progress, [0, 1], [0, 1]);
+/**
+ * Slim rounded track. The fill creeps toward the next marker while a step holds
+ * (a quiet countdown), and each marker lights as the fill reaches it.
+ * Markers are buttons: click/tap to jump to that step.
+ */
+function StepRail({
+  progress,
+  steps,
+  active,
+  onSelect,
+}: {
+  progress: MotionValue<number>;
+  steps: readonly { title: string }[];
+  active: number;
+  onSelect: (i: number) => void;
+}) {
+  const count = steps.length;
+  const fill = useTransform(progress, (p) => Math.min(1, (p * count) / (count - 1)));
   return (
-    <div aria-hidden="true" className="relative h-[11.5rem] w-[3px] rounded-full bg-white/10 sm:h-[10.5rem]">
+    <div className="relative h-[11.5rem] w-[3px] rounded-full bg-white/10 sm:h-[10.5rem]">
       <motion.span
+        aria-hidden="true"
         className="absolute inset-0 block origin-top rounded-full bg-gradient-to-b from-aqua-deep to-aqua"
         style={{ scaleY: fill }}
       />
-      {Array.from({ length: count }).map((_, i) => (
-        <RailMarker key={i} progress={progress} at={i / (count - 1)} />
+      {steps.map((s, i) => (
+        <RailMarker
+          key={s.title}
+          fill={fill}
+          at={i / (count - 1)}
+          current={i === active}
+          label={`0${i + 1} — ${s.title}`}
+          onClick={() => onSelect(i)}
+        />
       ))}
     </div>
   );
 }
 
-function RailMarker({ progress, at }: { progress: MotionValue<number>; at: number }) {
-  const lit = useTransform(progress, [at - 0.03, at], [0, 1]);
+function RailMarker({
+  fill,
+  at,
+  current,
+  label,
+  onClick,
+}: {
+  fill: MotionValue<number>;
+  at: number;
+  current: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  const lit = useTransform(fill, [at - 0.035, at - 0.005], [0, 1]);
   return (
-    <span
-      className="absolute left-1/2 grid h-3 w-3 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-ink-800 ring-1 ring-inset ring-white/25"
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      aria-current={current ? "step" : undefined}
+      className="group absolute left-1/2 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full focus-visible:outline-none"
       style={{ top: `${at * 100}%` }}
     >
-      <motion.span
-        className="block h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(232,223,207,0.7)]"
-        style={{ opacity: lit }}
-      />
-    </span>
+      <span
+        className={`grid h-3 w-3 place-items-center rounded-full bg-ink-800 ring-1 ring-inset transition-[transform,box-shadow] duration-300 ease-out group-hover:scale-125 group-focus-visible:ring-2 group-focus-visible:ring-aqua ${
+          current ? "scale-125 ring-aqua/70" : "ring-white/25"
+        }`}
+      >
+        <motion.span
+          className="block h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(232,223,207,0.7)]"
+          style={{ opacity: lit }}
+        />
+      </span>
+    </button>
   );
 }
