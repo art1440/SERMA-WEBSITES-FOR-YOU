@@ -14,6 +14,8 @@ const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
  * Fixed, full-screen backdrop shared by the transparent chapters (hero, system, finale).
  * Dark-first. Layer order (back → front):
  *   ink base → light threads (whole page) → hero film (3D dive) → architecture film → WebGL engine
+ * The architecture film is the ambient "site being built" layer: faint behind the hero's first
+ * screen, then behind How it works.
  * Opaque chapters (dashboard, simulator, …) simply cover it; the engine's render loop
  * stops whenever none of the transparent chapters is on screen.
  */
@@ -27,7 +29,18 @@ export function Stage() {
   const filmScale = useTransform(hero.progress, [0.36, 0.8], [0.22, 1.08]);
   const filmRotateX = useTransform(hero.progress, [0.36, 0.8], [32, 0]);
   const filmRotateZ = useTransform(hero.progress, [0.36, 0.8], [-6, 0]);
-  const archOpacity = useTransform(system.progress, [0, 0.1, 0.9, 1], [0, 0.32, 0.32, 0]);
+  // The ambient "site being built" film: dimly behind the hero's first screen (gone before the
+  // hero film flies in), then again behind How it works while its steps play.
+  const archHero = useTransform(hero.progress, [0, 0.26, 0.38], [0.24, 0.24, 0]);
+  const archSystem = useTransform(system.progress, [0, 0.1, 0.9, 1], [0, 0.32, 0.32, 0]);
+  const archOpacity = useTransform([archHero, archSystem], ([h, s]: number[]) => Math.max(h, s));
+  // On phones the first-screen copy covers the lower half, so there the film is masked to the top
+  // (behind the sculpture). The flag flips once, while the film is invisible between the two uses.
+  const [archInHero, setArchInHero] = useState(true);
+  useMotionValueEvent(hero.progress, "change", (v) => {
+    const inHero = v < 0.5;
+    if (inHero !== archInHero) setArchInHero(inHero);
+  });
   // Vignette deepens on the dark chapters.
   const vignetteOpacity = useTransform(ink, [0, 1], [0, 0.85]);
 
@@ -94,8 +107,18 @@ export function Stage() {
         </motion.div>
       </div>
 
-      <motion.div className="absolute inset-0" style={{ opacity: archOpacity }}>
-        <LayerVideo src={asset("/media/architecture")} poster={asset("/media/architecture-poster.jpg")} visibility={archOpacity} paused={paused} />
+      <motion.div
+        className={`absolute inset-0 ${archInHero ? "max-lg:[mask-image:linear-gradient(to_bottom,#000_0%,#000_30%,transparent_52%)]" : ""}`}
+        style={{ opacity: archOpacity }}
+      >
+        {/* Phones show a narrow strip of the frame: aim it at the lit pages on the right. */}
+        <LayerVideo
+          src={asset("/media/architecture")}
+          poster={asset("/media/architecture-poster.jpg")}
+          visibility={archOpacity}
+          paused={paused}
+          className="max-lg:object-[72%_50%]"
+        />
       </motion.div>
 
       {/* The engine's last frame stays on its canvas when it stops, so hide it off-chapter. */}
@@ -127,11 +150,13 @@ function LayerVideo({
   poster,
   visibility,
   paused,
+  className = "",
 }: {
   src: string;
   poster: string;
   visibility: MotionValue<number>;
   paused: boolean;
+  className?: string;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -155,7 +180,7 @@ function LayerVideo({
   return (
     <video
       ref={ref}
-      className="absolute inset-0 h-full w-full object-cover"
+      className={`absolute inset-0 h-full w-full object-cover ${className}`}
       poster={poster}
       muted
       loop
