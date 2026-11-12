@@ -44,9 +44,19 @@ function useChapter(offset: ["start start", "end end"] | ["start end", "end end"
   return { ref, progress, raw: scrollYProgress };
 }
 
+/**
+ * A chapter whose progress is driven by its own timeline (not scroll): the System chapter
+ * auto-plays its four steps, and the 3D engine follows the same MotionValue.
+ */
+function useTimelineChapter(): Chapter {
+  const ref = useRef<HTMLElement | null>(null);
+  const progress = useMotionValue(0);
+  return { ref, progress, raw: progress };
+}
+
 export function SceneProvider({ children }: { children: ReactNode }) {
   const hero = useChapter(["start start", "end end"]);
-  const system = useChapter(["start start", "end end"]);
+  const system = useTimelineChapter();
   const finale = useChapter(["start end", "end end"]);
   const reduce = useReducedMotionSafe();
   const [desktop, setDesktop] = useState(false);
