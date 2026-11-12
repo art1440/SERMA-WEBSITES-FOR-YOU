@@ -111,7 +111,7 @@ const en = {
     body: "No surprises and no hourly billing. Here is every step, from our first call to your site going live, and you see the finished pages before you pay anything.",
     items: [
       {
-        title: "A 15-minute call to get your details",
+        title: "A 15-minute intro call to get your details",
         detail: "Your services, team, hours, the booking tool you already use, and a few photos from your phone.",
       },
       {
@@ -308,14 +308,14 @@ const en = {
     index: "(08)",
     eyebrow: "Live demo & free audit",
     title: "Let's see what we can take off your plate.",
-    body: "A 15-minute walkthrough on your schedule. We'll show you where calls and bookings slip through today, what we'd hand off to the system, and what your week could look like after — no pricing pressure, no obligation.",
+    body: "A 15-minute intro call on your schedule. We'll show you where calls and bookings slip through today, what we'd hand off to the system, and what your week could look like after — no pricing pressure, no obligation.",
     expectLabel: "What you get",
-    expect: ["15-minute walkthrough", "Where your week leaks time", "Your industry's dashboard, live", "A plan you can keep"],
+    expect: ["15-minute intro call", "Where your week leaks time", "Your industry's dashboard, live", "A plan you can keep"],
     contactLabel: "Reach us directly",
     emailCta: "Email us to book a demo",
     phoneCta: "Call {phone}",
     includeLabel: "Helpful to include",
-    include: ["Your business name", "Your industry", "Two times that work for a 15-minute call"],
+    include: ["Your business name", "Your industry", "Two times that work for a 15-minute intro call"],
     emailSubject: "Live System Demo request",
     emailBody: "Hi SermaWebDesign,\n\nI'd like to book a live system demo.\n\nBusiness name:\nIndustry:\nBest times to talk:\n",
     formLabel: "Send your details",
@@ -456,7 +456,7 @@ const es: Dictionary = {
     body: "Sin sorpresas y sin cobro por hora. Aquí está cada paso, desde nuestra primera llamada hasta que su sitio está en línea, y usted ve las páginas terminadas antes de pagar nada.",
     items: [
       {
-        title: "Una llamada de 15 minutos para sus datos",
+        title: "Una llamada de presentación de 15 minutos",
         detail: "Sus servicios, su equipo, su horario, la herramienta de citas que ya usa y unas cuantas fotos de su teléfono.",
       },
       {
@@ -650,14 +650,14 @@ const es: Dictionary = {
     index: "(08)",
     eyebrow: "Demostración en vivo y auditoría gratuita",
     title: "Veamos qué podemos quitarle de encima.",
-    body: "Un recorrido de 15 minutos cuando a usted le convenga. Le mostraremos dónde se escapan hoy las llamadas y las citas, qué dejaríamos en manos del sistema y cómo podría verse su semana después, sin presión de precios ni compromiso.",
+    body: "Una llamada de presentación de 15 minutos cuando a usted le convenga. Le mostraremos dónde se escapan hoy las llamadas y las citas, qué dejaríamos en manos del sistema y cómo podría verse su semana después, sin presión de precios ni compromiso.",
     expectLabel: "Lo que recibe",
-    expect: ["Recorrido de 15 minutos", "Dónde se le va el tiempo", "El panel de su industria, en vivo", "Un plan que puede conservar"],
+    expect: ["Llamada de presentación de 15 minutos", "Dónde se le va el tiempo", "El panel de su industria, en vivo", "Un plan que puede conservar"],
     contactLabel: "Contáctenos directamente",
     emailCta: "Escríbanos para agendar una demostración",
     phoneCta: "Llamar al {phone}",
     includeLabel: "Útil incluir",
-    include: ["El nombre de su negocio", "Su industria", "Dos horarios disponibles para una llamada de 15 minutos"],
+    include: ["El nombre de su negocio", "Su industria", "Dos horarios disponibles para una llamada de presentación de 15 minutos"],
     emailSubject: "Solicitud de demostración en vivo",
     emailBody: "Hola, SermaWebDesign:\n\nMe gustaría agendar una demostración en vivo del sistema.\n\nNombre del negocio:\nIndustria:\nMejores horarios para hablar:\n",
     formLabel: "Mande sus datos",
