@@ -340,7 +340,7 @@ const en = {
     noFormNote: "No trackers, no cookies, no mailing list. Your details are used to reply to you, nothing else.",
   },
   footer: {
-    tagline: "Websites and quiet systems for local businesses — so the owner can get back to the work they love.",
+    tagline: "We handle the website. You run the business.",
     explore: "Explore",
     legal: "Legal",
     terms: "Terms of Service",
@@ -689,7 +689,7 @@ const es: Dictionary = {
     noFormNote: "Sin rastreadores, sin cookies y sin lista de correo. Sus datos se usan para contestarle, nada más.",
   },
   footer: {
-    tagline: "Sitios web y sistemas silenciosos para negocios locales, para que el dueño vuelva al trabajo que le gusta.",
+    tagline: "Nosotros nos encargamos del sitio web. Usted dirige su negocio.",
     explore: "Explorar",
     legal: "Legal",
     terms: "Términos de Servicio",
