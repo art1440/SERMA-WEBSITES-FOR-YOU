@@ -1,6 +1,7 @@
 "use client";
 
-import { animate, motion, useInView, useTransform, type MotionValue } from "framer-motion";
+import { animate, motion, useInView, useMotionValue, useMotionValueEvent, type MotionValue } from "framer-motion";
+import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { useLanguage } from "@/context/LanguageContext";
@@ -12,6 +13,8 @@ import { EASE_EDITORIAL } from "@/lib/motion";
 
 /** How long each step stays up before the next one plays in. */
 const STEP_MS = 4200;
+/** After the visitor picks a step by hand, auto-play picks up again after this long. */
+const RESUME_MS = 9000;
 /** Engine timeline position for step k: its formation has fully assembled (see Engine3D). */
 const stepAt = (k: number, count: number) => k / count + 0.15;
 
@@ -20,10 +23,12 @@ const stepAt = (k: number, count: number) => k / count + 0.15;
  * themselves (Capture → Respond → Book → Return, then loop), cross-fading the copy
  * while the 3D engine morphs through its formations on the same timeline.
  *
- * Control (WCAG 2.2.2): the site-wide Pause stops it, hovering or focusing the
- * panel holds it, and each rail marker is a button that jumps to that step (which
- * also stops the auto-play until the section is left). All four steps stay in the
- * DOM for screen readers; reduced motion shows them as a static list.
+ * It always plays on its own (a resting mouse or a tap never freezes it); the rail
+ * fills toward the next marker like a story timer. Control (WCAG 2.2.2): a pause
+ * button beside the steps, the site-wide Pause, keyboard focus inside the panel
+ * holds it, and each marker is a button that jumps to its step (auto-play resumes
+ * ~9s later). All four steps stay in the DOM for screen readers; reduced motion
+ * shows them as a static list.
  *
  * The copy floats on one dark glass panel over the engine and film. Real blur
  * on desktop; on phones the panel keeps the dense tint and drops the blur.
@@ -36,25 +41,46 @@ export function SystemChapter() {
   const count = steps.length;
 
   const panelRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(panelRef, { amount: 0.5 });
+  const inView = useInView(panelRef, { amount: 0.4 });
   const [active, setActive] = useState(0);
-  const [held, setHeld] = useState(false); // pointer over / focus inside the panel
-  const [manual, setManual] = useState(false); // the visitor picked a step themselves
+  const [held, setHeld] = useState(false); // keyboard focus inside the panel
+  const [manual, setManual] = useState(false); // the visitor just picked a step themselves
+  const [stopped, setStopped] = useState(false); // the visitor pressed this section's pause
   const prevActive = useRef(0);
+  // 0 → 1 over one step: drives the rail's "story timer" fill and the hand-off to the next step.
+  const tick = useMotionValue(0);
 
-  // Leaving the section: rewind to step 1 for the next visit and hand control back to auto-play.
+  // Leaving the section: rewind to step 1 for the next visit.
   useEffect(() => {
     if (inView) return;
     setActive(0);
     setManual(false);
-  }, [inView]);
+    tick.set(0);
+  }, [inView, tick]);
 
-  // Auto-advance while on screen, unless paused, held or chosen by hand.
+  // A step picked by hand stays up a while, then auto-play carries on from there.
   useEffect(() => {
-    if (reduce || !inView || paused || held || manual) return;
-    const id = window.setTimeout(() => setActive((a) => (a + 1) % count), STEP_MS);
+    if (!manual) return;
+    const id = window.setTimeout(() => setManual(false), RESUME_MS);
     return () => window.clearTimeout(id);
-  }, [reduce, inView, paused, held, manual, active, count]);
+  }, [manual, active]);
+
+  const running = !reduce && inView && !paused && !held && !manual && !stopped;
+
+  // Auto-advance: the timer runs from wherever it was (a pause holds it, play resumes it).
+  useEffect(() => {
+    if (!running) return;
+    const left = Math.max(0.05, 1 - tick.get());
+    const controls = animate(tick, 1, {
+      duration: (STEP_MS / 1000) * left,
+      ease: "linear",
+      onComplete: () => {
+        tick.set(0);
+        setActive((a) => (a + 1) % count);
+      },
+    });
+    return () => controls.stop();
+  }, [running, active, count, tick]);
 
   // Drive the shared timeline (the engine + architecture film read it).
   useEffect(() => {
@@ -70,6 +96,7 @@ export function SystemChapter() {
   }, [active, inView, reduce, count, system.progress]);
 
   const pick = (i: number) => {
+    tick.set(0);
     setManual(true);
     setActive(i);
   };
@@ -92,11 +119,10 @@ export function SystemChapter() {
         <div className="frame relative flex flex-col pb-4 pt-20 motion-safe:min-h-[100svh] motion-safe:justify-end sm:pb-10 sm:pt-24 lg:pb-6 lg:pt-20 lg:motion-safe:justify-center">
           <div
             ref={panelRef}
-            onPointerEnter={(e) => {
-              if (e.pointerType === "mouse") setHeld(true);
+            // Hold only for keyboard focus (so a resting mouse or a tap never freezes the steps).
+            onFocus={(e) => {
+              if (e.target.matches(":focus-visible")) setHeld(true);
             }}
-            onPointerLeave={() => setHeld(false)}
-            onFocus={() => setHeld(true)}
             onBlur={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHeld(false);
             }}
@@ -137,18 +163,30 @@ export function SystemChapter() {
             ) : (
               <div className="mt-4 grid grid-cols-[auto_1fr] gap-x-5 border-t border-white/10 pt-5 sm:mt-6 sm:gap-x-6 sm:pt-6">
                 <StepRail
-                  progress={system.progress}
+                  tick={tick}
                   count={count}
                   active={active}
                   titles={steps.map((st) => st.title)}
                   label={t.system.eyebrow}
                   onPick={pick}
                 />
-                <ol className="relative h-[11.5rem] sm:h-[10.5rem]">
-                  {steps.map((step, i) => (
-                    <Step key={step.title} index={i} count={count} active={active} title={step.title} body={step.body} />
-                  ))}
-                </ol>
+                <div className="relative">
+                  <ol className="relative h-[11.5rem] sm:h-[10.5rem]">
+                    {steps.map((step, i) => (
+                      <Step key={step.title} index={i} count={count} active={active} title={step.title} body={step.body} />
+                    ))}
+                  </ol>
+                  {/* This section's own pause (WCAG 2.2.2), beside the steps it controls. */}
+                  <button
+                    type="button"
+                    onClick={() => setStopped((v) => !v)}
+                    aria-pressed={stopped}
+                    aria-label={stopped ? t.system.playSteps : t.system.pauseSteps}
+                    className="absolute -top-1 right-0 grid h-9 w-9 place-items-center rounded-full text-ash ring-1 ring-inset ring-white/15 transition-colors hover:bg-white/[0.06] hover:text-bone"
+                  >
+                    {stopped ? <Play aria-hidden="true" size={14} strokeWidth={2} /> : <Pause aria-hidden="true" size={14} strokeWidth={2} />}
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -189,25 +227,31 @@ function Step({
 }
 
 /**
- * Slim rounded track: the fill follows the shared timeline, and each marker is a button
+ * Slim rounded track: the fill creeps toward the next marker while a step is up, and each marker is a button
  * (32px hit area) that jumps to its step. aria-pressed marks the step on screen.
  */
 function StepRail({
-  progress,
+  tick,
   count,
   active,
   titles,
   label,
   onPick,
 }: {
-  progress: MotionValue<number>;
+  tick: MotionValue<number>;
   count: number;
   active: number;
   titles: string[];
   label: string;
   onPick: (i: number) => void;
 }) {
-  const fill = useTransform(progress, [stepAt(0, count), stepAt(count - 1, count)], [0, 1]);
+  // Story-timer fill: reaches the next marker exactly as the next step plays in.
+  const fill = useMotionValue(0);
+  const activeRef = useRef(active);
+  activeRef.current = active;
+  const update = (v: number) => fill.set(Math.min(1, (activeRef.current + (activeRef.current < count - 1 ? v : 0)) / (count - 1)));
+  useMotionValueEvent(tick, "change", update);
+  useEffect(() => update(tick.get()));
   return (
     <div role="group" aria-label={label} className="relative h-[11.5rem] w-[3px] rounded-full bg-white/10 sm:h-[10.5rem]">
       <motion.span
