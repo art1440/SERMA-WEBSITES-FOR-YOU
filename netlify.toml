@@ -22,6 +22,8 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
 
 # Videos, posters and hashed build files never change — cache for a year.
+# So never overwrite a file in /media: give a changed file a new name (e.g. -v3) and update its reference,
+# otherwise returning visitors keep the old version for up to a year.
 [[headers]]
   for = "/media/*"
   [headers.values]
