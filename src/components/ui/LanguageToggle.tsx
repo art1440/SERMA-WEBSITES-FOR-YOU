@@ -1,7 +1,6 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Globe } from "lucide-react";
 import { useEffect, useId, useState, useTransition } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
@@ -30,22 +29,21 @@ const TONES = {
     track: "bg-ink/[0.05] shadow-[inset_0_1px_2px_rgba(13,13,11,0.1)] ring-ink/[0.2]",
     thumb: "bg-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_14px_-6px_rgba(13,13,11,0.6)]",
     label: "text-bone",
-    globe: "text-ink",
+    other: "text-ink",
   },
   dark: {
     track: "bg-white/[0.06] shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] ring-white/[0.28]",
     thumb: "bg-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_16px_-6px_rgba(0,0,0,0.7)]",
     label: "text-ink",
-    globe: "text-bone",
+    other: "text-bone",
   },
 } as const;
 
 /**
- * One-tap EN ⇄ ES switch. Only the current language is ever shown: it rides on
- * a solid thumb, and a globe marks the free side of the capsule. A tap slides
- * the thumb across (transform), stretches it like a drop of liquid (scaleX),
- * and rolls the label over (opacity + y), so the two codes never share the
- * screen. Zero cookies, zero reloads.
+ * One-tap EN ⇄ ES switch reading "EN | ES": the current language rides on a
+ * solid thumb and the other code sits dimmer on the free side of the capsule.
+ * A tap slides the thumb across (transform), stretches it like a drop of liquid
+ * (scaleX) and rolls its label over (opacity + y). Zero cookies, zero reloads.
  *
  * - Sized in px so the thumb's travel always matches the track, whatever the
  *   visitor's default font size.
@@ -110,15 +108,15 @@ export function LanguageToggle({ tone = "light" }: Props) {
           {SHORT[shown]}, {names[shown]}. {t.nav.switchLanguage}&nbsp;<span lang={next}>{names[next]}</span>
         </span>
 
-        {/* Globe on the free side; it crosses under the thumb as the two swap. */}
+        {/* The other language's code on the free side; it crosses under the thumb as the two swap. */}
         <motion.span
           aria-hidden="true"
-          className={`absolute left-[4px] top-[4px] grid h-[36px] w-[36px] place-items-center opacity-70 transition-opacity duration-300 group-hover:opacity-100 ${c.globe}`}
+          className={`absolute left-[4px] top-[4px] grid h-[36px] w-[36px] place-items-center text-[13px] font-semibold leading-none tracking-[0.02em] opacity-80 transition-opacity duration-300 group-hover:opacity-100 ${c.other}`}
           initial={false}
           animate={{ x: isEs ? 0 : "100%" }}
           transition={slide}
         >
-          <Globe size={15} strokeWidth={1.75} />
+          {SHORT[next]}
         </motion.span>
 
         {/* Thumb */}
