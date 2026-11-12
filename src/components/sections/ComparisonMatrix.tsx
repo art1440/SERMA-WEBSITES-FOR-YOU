@@ -28,12 +28,12 @@ type Row = { capability: string; brochure: string; engine: string };
 const FACE = "flex h-full flex-col rounded-glass-lg border border-transparent p-5 sm:p-6";
 const FRONT_FACE =
   `${FACE} text-bone ` +
-  "[background:linear-gradient(160deg,rgba(46,46,44,0.9)_0%,rgba(26,26,25,0.92)_55%,rgba(33,33,32,0.92)_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.22),rgba(255,255,255,0.04)_30%,rgba(255,255,255,0.02)_70%,rgba(255,255,255,0.1))_border-box] " +
+  "[background:linear-gradient(160deg,rgba(41,59,87,0.9)_0%,rgba(30,46,72,0.92)_55%,rgba(23,37,59,0.92)_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.22),rgba(255,255,255,0.04)_30%,rgba(255,255,255,0.02)_70%,rgba(255,255,255,0.1))_border-box] " +
   "shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_24px_48px_-24px_rgba(0,0,0,0.85)]";
 const BACK_FACE =
   `${FACE} text-bone ` +
-  "[background:radial-gradient(120%_90%_at_100%_100%,rgba(61,219,201,0.2),transparent_58%)_padding-box,linear-gradient(160deg,rgba(20,44,42,0.95)_0%,rgba(14,28,27,0.95)_55%,rgba(17,36,34,0.95)_100%)_padding-box,linear-gradient(150deg,rgba(127,242,227,0.7),rgba(255,255,255,0.12)_30%,rgba(255,255,255,0.05)_70%,rgba(61,219,201,0.65))_border-box] " +
-  "shadow-[inset_0_1px_0_rgba(127,242,227,0.22),inset_0_-1px_0_rgba(0,0,0,0.3),0_12px_24px_-16px_rgba(0,0,0,0.7),0_30px_64px_-28px_rgba(61,219,201,0.4)]";
+  "[background:radial-gradient(120%_90%_at_100%_100%,rgba(232,223,207,0.2),transparent_58%)_padding-box,linear-gradient(160deg,rgba(23,37,59,0.95)_0%,rgba(15,26,42,0.95)_55%,rgba(19,32,51,0.95)_100%)_padding-box,linear-gradient(150deg,rgba(243,237,225,0.7),rgba(255,255,255,0.12)_30%,rgba(255,255,255,0.05)_70%,rgba(232,223,207,0.65))_border-box] " +
+  "shadow-[inset_0_1px_0_rgba(243,237,225,0.22),inset_0_-1px_0_rgba(0,0,0,0.3),0_12px_24px_-16px_rgba(0,0,0,0.7),0_30px_64px_-28px_rgba(232,223,207,0.4)]";
 const TITLE = "mt-4 font-display text-2xl leading-[1.05] tracking-[-0.03em] text-balance xl:text-[1.75rem]";
 const STATEMENT = "mt-4 flex gap-3 text-[0.9375rem] leading-snug";
 const BADGE = "grid h-6 w-6 shrink-0 place-items-center rounded-full";
@@ -133,7 +133,7 @@ function FlipCard({
     <div className={BACK_FACE}>
       {/* aqua on the tinted capsule over the teal body ≥ 6.5:1 */}
       <p className="eyebrow inline-flex items-center gap-2 self-start rounded-full bg-aqua/10 px-3 py-1 text-aqua ring-1 ring-inset ring-aqua/25">
-        <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(61,219,201,0.55)]" />
+        <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(232,223,207,0.55)]" />
         {engineLabel}
       </p>
       <p aria-hidden="true" className={TITLE}>
@@ -141,7 +141,7 @@ function FlipCard({
       </p>
       <p className={STATEMENT}>
         <span
-          className={`${BADGE} bg-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_6px_14px_-6px_rgba(61,219,201,0.7)]`}
+          className={`${BADGE} bg-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_6px_14px_-6px_rgba(232,223,207,0.7)]`}
         >
           <Check aria-hidden="true" size={13} strokeWidth={2.5} />
         </span>

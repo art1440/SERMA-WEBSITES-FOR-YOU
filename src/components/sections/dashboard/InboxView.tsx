@@ -184,7 +184,7 @@ const OWNER: Record<NicheId, string> = {
 };
 
 /** The email "paper": also used to cut the ticket notches in detail cards. */
-const EMAIL_BG = "bg-[#121617]";
+const EMAIL_BG = "bg-[#132033]";
 const SCROLLBAR = "[scrollbar-color:rgba(255,255,255,0.16)_transparent] [scrollbar-width:thin]";
 
 type Slot = "primary" | "secondary";
@@ -570,7 +570,7 @@ function MessageRow({
           {unread ? (
             <motion.span
               key="dot"
-              className="h-2 w-2 rounded-full bg-aqua shadow-[0_0_8px_rgba(61,219,201,0.65)]"
+              className="h-2 w-2 rounded-full bg-aqua shadow-[0_0_8px_rgba(232,223,207,0.65)]"
               initial={{ opacity: 0, scale: 0.4 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.4 }}
@@ -827,7 +827,7 @@ function Reader({
         className={`mx-3 mt-4 rounded-[14px] ${EMAIL_BG} shadow-[inset_0_0_0_1px_rgba(255,255,255,0.07),0_18px_40px_-24px_rgba(0,0,0,0.9)] sm:mx-5`}
       >
         {/* Brand strip: ink on aqua is 11.3:1. */}
-        <div className="flex items-center justify-between gap-3 rounded-t-[14px] bg-[linear-gradient(90deg,#2FCBB9_0%,#3DDBC9_45%,#6FE9DA_100%)] px-4 py-2 text-ink sm:px-6">
+        <div className="flex items-center justify-between gap-3 rounded-t-[14px] bg-[linear-gradient(90deg,#C9B893_0%,#E8DFCF_45%,#F3EDE1_100%)] px-4 py-2 text-ink sm:px-6">
           <span className="inline-flex items-center gap-1.5 font-display text-[0.8125rem] tracking-[-0.01em]">
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-ink" />
             SermaWebDesign
@@ -904,7 +904,7 @@ function Reader({
                       <button
                         type="button"
                         onClick={() => sendReply(i)}
-                        className="group flex min-h-[44px] w-full items-center gap-3 rounded-[14px] bg-white/[0.05] px-3.5 py-2.5 text-left text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-transform duration-200 ease-editorial hover:-translate-y-px hover:bg-aqua/[0.08] hover:shadow-[inset_0_0_0_1px_rgba(61,219,201,0.45)] active:scale-[0.99]"
+                        className="group flex min-h-[44px] w-full items-center gap-3 rounded-[14px] bg-white/[0.05] px-3.5 py-2.5 text-left text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-transform duration-200 ease-editorial hover:-translate-y-px hover:bg-aqua/[0.08] hover:shadow-[inset_0_0_0_1px_rgba(232,223,207,0.45)] active:scale-[0.99]"
                       >
                         <span className="flex-1">
                           {r[locale]}
@@ -982,7 +982,7 @@ function Reader({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
               >
-                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#6FE9DA_0%,#3DDBC9_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(61,219,201,0.6)]">
+                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(232,223,207,0.6)]">
                   <span className="sr-only">{COPY.youSent[locale]} </span>
                   {replies[i]?.[locale]}
                 </p>
@@ -995,7 +995,7 @@ function Reader({
             ))}
             {leadText ? (
               <li className="flex flex-col items-end">
-                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#6FE9DA_0%,#3DDBC9_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(61,219,201,0.6)]">
+                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(232,223,207,0.6)]">
                   <span className="sr-only">{COPY.youSentFromLeads[locale]} </span>
                   {leadText}
                 </p>

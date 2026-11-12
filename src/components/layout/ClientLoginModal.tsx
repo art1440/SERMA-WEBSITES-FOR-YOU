@@ -99,7 +99,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
             aria-labelledby="login-title"
             aria-describedby="login-description"
             data-theme="dark"
-            className="glass-dark glass-solid relative flex max-h-[92svh] w-full max-w-xl flex-col rounded-t-glass-lg text-bone [--glass-blur:30px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] max-lg:![background:linear-gradient(160deg,#1f1e1b,#121210)] [@media(max-height:820px)]:[-webkit-backdrop-filter:none] [@media(max-height:820px)]:[backdrop-filter:none] [@media(max-height:820px)]:![background:linear-gradient(160deg,#1f1e1b,#121210)] sm:rounded-glass-lg"
+            className="glass-dark glass-solid relative flex max-h-[92svh] w-full max-w-xl flex-col rounded-t-glass-lg text-bone [--glass-blur:30px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] max-lg:![background:linear-gradient(160deg,#1E2E48,#132033)] [@media(max-height:820px)]:[-webkit-backdrop-filter:none] [@media(max-height:820px)]:[backdrop-filter:none] [@media(max-height:820px)]:![background:linear-gradient(160deg,#1E2E48,#132033)] sm:rounded-glass-lg"
             initial={{ y: 48, opacity: 0, scale: 0.985 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 28, opacity: 0, scale: 0.99 }}
@@ -174,7 +174,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + i * 0.08, duration: 0.5, ease: EASE_EDITORIAL }}
                   >
-                    <span className="tabular grid h-7 w-7 shrink-0 place-items-center rounded-full bg-aqua text-xs font-semibold text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_0_10px_rgba(61,219,201,0.35)]">
+                    <span className="tabular grid h-7 w-7 shrink-0 place-items-center rounded-full bg-aqua text-xs font-semibold text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_0_10px_rgba(232,223,207,0.35)]">
                       0{i + 1}
                     </span>
                     <span className="block pt-1 text-sm leading-snug sm:pt-0">{step}</span>

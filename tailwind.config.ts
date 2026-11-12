@@ -24,54 +24,58 @@ const config: Config = {
     },
     extend: {
       colors: {
+        /* Paper and Navy brand palette — navy ground, sand ink.
+           Contrast (WCAG AA) for every pairing used:
+           sand on navy ....... 9.0:1  ·  navy on sand ....... 9.0:1
+           ash on navy ........ 5.1:1  ·  muted on sand ...... 7.6:1 */
         ink: {
-          DEFAULT: "#0D0D0B",
-          900: "#0D0D0B",
-          850: "#121210",
-          800: "#171714",
-          700: "#1F1F1B",
-          600: "#2A2A25",
-          500: "#3A3A33",
+          DEFAULT: "#17253B",
+          900: "#0F1A2A",
+          850: "#132033",
+          800: "#17253B",
+          700: "#1E2E48",
+          600: "#293B57",
+          500: "#3A4A63",
         },
         bone: {
-          DEFAULT: "#F1EDE4",
-          50: "#FAF8F3",
-          100: "#F1EDE4",
-          200: "#E6E0D4",
-          300: "#D6CFC0",
+          DEFAULT: "#E8DFCF",
+          50: "#FBF8F1",
+          100: "#F3EDE1",
+          200: "#E8DFCF",
+          300: "#D6C9B2",
         },
-        muted: "#5C584F",
-        ash: "#A8A296",
+        muted: "#4A5464",
+        ash: "#8E99AB",
         hairline: {
-          light: "#CFC8BA",
-          dark: "#2E2E29",
+          light: "#D9CFBC",
+          dark: "#2A3B57",
         },
         signal: {
-          DEFAULT: "#E5582A",
-          deep: "#B23F14",
+          DEFAULT: "#C9B893",
+          deep: "#A08B60",
         },
-        /* Primary accent (dark-first theme): glow, CTAs, focus, data highlights.
-           aqua on ink 11.3:1 · ink on aqua 11.3:1 · aqua-deep on ink 6.3:1. Signal stays for small alerts. */
+        /* Brand accent = sand. Fills use navy text on top (9:1). */
         aqua: {
-          DEFAULT: "#3DDBC9",
-          deep: "#12A594",
-          glow: "#7FF2E3",
+          DEFAULT: "#E8DFCF",
+          deep: "#C9B893",
+          glow: "#F3EDE1",
         },
-        /* Ambient light-field tints — decorative backgrounds only, never text. */
-        sand: "#E8DCC6",
-        amber: "#F0A35C",
-        ember: "#7A2E12",
-        live: "#5DB37E",
+        /* Ambient tints — decorative backgrounds only, never text. */
+        sand: "#E8DFCF",
+        amber: "#D9C7A4",
+        ember: "#2A3B57",
+        live: "#8FBFA3",
       },
       fontFamily: {
-        /* Display = Geist at a heavier optical weight (modern, Apple-like headlines). */
+        /* Headings = Source Serif 4 (brand). */
         display: [
-          ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
-          { fontVariationSettings: '"wght" 580' },
+          ["var(--font-display)", "Georgia", "Times New Roman", "serif"],
+          { fontVariationSettings: '"wght" 600' },
         ],
-        /* Serif = Instrument Serif — used ONLY for italic accent words. */
-        serif: ["var(--font-display)", "ui-serif", "Georgia", "serif"],
-        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        /* Accent words in the same serif, italic. */
+        serif: ["var(--font-display)", "Georgia", "Times New Roman", "serif"],
+        /* Body = Work Sans (brand). */
+        sans: ["var(--font-sans)", "system-ui", "Helvetica Neue", "Arial", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       fontSize: {

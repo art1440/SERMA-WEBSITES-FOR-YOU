@@ -3,13 +3,14 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
 import { AmbientField } from "@/components/ui/AmbientField";
-import { MagneticButton } from "@/components/ui/MagneticButton";
+
 import { Reveal, RevealLines } from "@/components/ui/Reveal";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
 import { fill } from "@/i18n/types";
 import { EASE_EDITORIAL, VIEWPORT_ONCE } from "@/lib/motion";
+import { EnquiryForm } from "./EnquiryForm";
 
 /** Small numbered pebble: bone numeral on an aqua-tinted, light-catching ring (≥4.5:1 on dark glass). Read aloud as before. */
 function NumberBadge({ n, size = "md" }: { n: number; size?: "sm" | "md" }) {
@@ -94,11 +95,11 @@ export function DemoContact() {
             {/* Static aqua light behind the panel: gives the glass rim and tint something to catch. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-4 -top-14 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(61,219,201,0.24),rgba(18,165,148,0.14)_55%,transparent)] sm:-right-16 sm:-top-20 sm:h-96 sm:w-96"
+              className="pointer-events-none absolute -right-4 -top-14 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(232,223,207,0.24),rgba(201,184,147,0.14)_55%,transparent)] sm:-right-16 sm:-top-20 sm:h-96 sm:w-96"
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-16 -left-12 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(127,242,227,0.1),transparent)]"
+              className="pointer-events-none absolute -bottom-16 -left-12 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(243,237,225,0.1),transparent)]"
             />
 
             <div className="glass-dark glass-solid relative rounded-glass-lg p-5 text-bone [-webkit-backdrop-filter:none] [backdrop-filter:none] sm:p-8 xl:p-10">
@@ -124,38 +125,22 @@ export function DemoContact() {
                 transition={{ duration: 1.2, ease: EASE_EDITORIAL, delay: 0.2 }}
               />
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <MagneticButton
-                  href={mailto}
-                  data-primary-action
-                  className="btn-aqua whitespace-normal text-center"
-                >
-                  <Mail aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
-                  {t.demo.emailCta}
-                </MagneticButton>
+              {/* Four fields, nothing else: name, business, phone, what they need. */}
+              <EnquiryForm />
+
+              {/* Some people never fill in a form. Give them the address and the number right here. */}
+              <div className="mt-7 flex flex-col gap-2.5 border-t border-white/10 pt-6 text-[0.9375rem]">
+                <a href={mailto} className="link-quiet break-all">
+                  <Mail aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0" />
+                  {siteConfig.contactEmail}
+                </a>
                 {phone ? (
-                  <a
-                    href={`tel:${phone.e164}`}
-                    className="btn-line-dark glass-flat whitespace-normal text-center"
-                  >
-                    <Phone aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
+                  <a href={`tel:${phone.e164}`} className="link-quiet">
+                    <Phone aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0" />
                     {fill(t.demo.phoneCta, { phone: phone.display })}
                   </a>
                 ) : null}
               </div>
-
-              <h3 className="eyebrow mt-10 text-ash">{t.demo.includeLabel}</h3>
-              <ol className="mt-4 grid gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-1 lg:gap-2.5 xl:grid-cols-3 xl:gap-3">
-                {t.demo.include.map((item, i) => (
-                  <li
-                    key={item}
-                    className="glass-dark glass-flat flex items-center gap-3 rounded-glass-sm p-3.5 sm:flex-col sm:items-start sm:p-4 lg:flex-row lg:items-center lg:p-3.5 xl:flex-col xl:items-start xl:p-4"
-                  >
-                    <NumberBadge n={i + 1} size="sm" />
-                    <span className="text-pretty text-sm leading-snug text-bone">{item}</span>
-                  </li>
-                ))}
-              </ol>
 
               <p className="mt-8 flex items-start gap-3 border-t border-white/10 pt-6 text-sm leading-relaxed text-ash">
                 <span

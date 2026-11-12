@@ -26,11 +26,11 @@ export type EngineInputs = {
 
 type Props = EngineInputs & { active: boolean; desktop: boolean };
 
-const INK = new THREE.Color("#0D0D0B");
-const BONE = new THREE.Color("#F1EDE4");
+const INK = new THREE.Color("#17253B");
+const BONE = new THREE.Color("#E8DFCF");
 /** Brand accent on the dark-first site (aqua). Particles keep a warm ember minority for depth. */
-const ACCENT = new THREE.Color("#3DDBC9");
-const EMBER = new THREE.Color("#E5582A");
+const ACCENT = new THREE.Color("#E8DFCF");
+const EMBER = new THREE.Color("#C9B893");
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 /** Smoothstep of x between a and b. */
@@ -498,31 +498,31 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
   return (
     <>
       <ambientLight intensity={0.35} />
-      <directionalLight ref={keyLight} position={[4, 5, 6]} intensity={2.4} color="#FFD9B0" />
-      <directionalLight position={[-6, -2, -4]} intensity={1.4} color="#BFD3FF" />
-      <pointLight position={[0, 0, 0]} intensity={6} distance={4} color="#3DDBC9" />
+      <directionalLight ref={keyLight} position={[4, 5, 6]} intensity={2.4} color="#F3EDE1" />
+      <directionalLight position={[-6, -2, -4]} intensity={1.4} color="#8E99AB" />
+      <pointLight position={[0, 0, 0]} intensity={6} distance={4} color="#E8DFCF" />
 
       <group ref={root}>
         {/* Glowing heart, seen through the glass core */}
         <mesh ref={heart}>
           <icosahedronGeometry args={[0.3, 1]} />
-          <meshBasicMaterial color="#7FF2E3" toneMapped={false} />
+          <meshBasicMaterial color="#F3EDE1" toneMapped={false} />
         </mesh>
         <sprite ref={heartGlow} scale={2.4}>
-          <spriteMaterial map={glowTexture} color="#3DDBC9" transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+          <spriteMaterial map={glowTexture} color="#E8DFCF" transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
         </sprite>
 
         <mesh ref={core} geometry={coreGeometry}>
           {desktop ? (
             // Dark refractive glass: bends the heart's light and the particles behind it.
             <meshPhysicalMaterial
-              color="#1C2624"
+              color="#17253B"
               metalness={0.1}
               roughness={0.08}
               transmission={0.92}
               thickness={1.4}
               ior={1.5}
-              attenuationColor="#0E3B36"
+              attenuationColor="#132033"
               attenuationDistance={1.6}
               clearcoat={1}
               clearcoatRoughness={0.05}
@@ -530,7 +530,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
               envMapIntensity={1.8}
             />
           ) : (
-            <meshStandardMaterial color="#1A1A17" metalness={0.85} roughness={0.2} flatShading envMapIntensity={1.4} transparent opacity={0.88} />
+            <meshStandardMaterial color="#1E2E48" metalness={0.85} roughness={0.2} flatShading envMapIntensity={1.4} transparent opacity={0.88} />
           )}
         </mesh>
         <lineSegments ref={cage} geometry={cageGeometry} material={lineMaterial} />

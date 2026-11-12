@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Providers } from "@/components/layout/Providers";
 import { SkipLink } from "@/components/layout/SkipLink";
-import { displaySerif, geistMono, geistSans } from "./fonts";
+import { displaySerif, geistMono, workSans } from "./fonts";
 import { buildCsp } from "@/config/csp";
 import { asset } from "@/lib/asset";
 import "./globals.css";
 
-const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
+const siteUrl = process.env.SITE_URL ?? "https://sermawebdesign.com";
 /** Only for static hosts that can't send headers (Netlify sends them via netlify.toml). */
 const cspMeta = process.env.CSP_META === "true";
 
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0D0D0B",
+  themeColor: "#17253B",
   colorScheme: "dark",
 };
 
@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${displaySerif.variable} ${geistSans.variable} ${geistMono.variable}`}
+      className={`${displaySerif.variable} ${workSans.variable} ${geistMono.variable}`}
     >
       {cspMeta ? (
         <head>

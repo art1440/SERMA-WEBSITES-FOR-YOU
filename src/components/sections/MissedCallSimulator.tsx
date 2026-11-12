@@ -57,24 +57,24 @@ const phaseAt = (v: number): Phase => SCROLL_STARTS.find(([, start]) => v >= sta
 
 /** Light-catching 1px rim around the device: bright top-left, aqua bottom-right. */
 const DEVICE_RIM =
-  "linear-gradient(150deg, rgba(255,255,255,0.62), rgba(255,255,255,0.1) 26%, rgba(255,255,255,0.03) 60%, rgba(61,219,201,0.4))";
+  "linear-gradient(150deg, rgba(255,255,255,0.62), rgba(255,255,255,0.1) 26%, rgba(255,255,255,0.03) 60%, rgba(232,223,207,0.4))";
 /** Glossy dark titanium body. */
-const DEVICE_BODY = "linear-gradient(160deg, #302e2a 0%, #181715 40%, #0f0f0d 68%, #24221e 100%)";
+const DEVICE_BODY = "linear-gradient(160deg, #293B57 0%, #132033 40%, #0F1A2A 68%, #1E2E48 100%)";
 /** Aqua halo and soft contact shadow that give the device depth on the dark field. */
-const DEVICE_HALO = "radial-gradient(closest-side, rgba(61,219,201,0.16), rgba(18,165,148,0.09) 55%, transparent)";
+const DEVICE_HALO = "radial-gradient(closest-side, rgba(232,223,207,0.16), rgba(201,184,147,0.09) 55%, transparent)";
 const DEVICE_SHADOW = "radial-gradient(closest-side, rgba(0,0,0,0.62), transparent)";
 /** Screen wallpaper: near-black with an aqua glow (top) and slate glow (bottom). */
 const SCREEN_WALLPAPER =
-  "radial-gradient(120% 55% at 100% 0%, rgba(61,219,201,0.14), transparent 62%), radial-gradient(120% 60% at 0% 100%, rgba(43,52,64,0.55), transparent 66%), linear-gradient(180deg, #0e0e0c, #080807)";
+  "radial-gradient(120% 55% at 100% 0%, rgba(232,223,207,0.14), transparent 62%), radial-gradient(120% 60% at 0% 100%, rgba(43,52,64,0.55), transparent 66%), linear-gradient(180deg, #0F1A2A, #0F1A2A)";
 /** Diagonal glare across the cover glass. */
 const SCREEN_GLARE = "linear-gradient(118deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.016) 30%, rgba(255,255,255,0) 44%)";
 /** Call-screen glows: aqua while ringing, signal (alert) once missed (cross-faded with opacity). */
-const CALL_GLOW_INCOMING = "radial-gradient(90% 55% at 50% 0%, rgba(61,219,201,0.24), transparent 72%)";
+const CALL_GLOW_INCOMING = "radial-gradient(90% 55% at 50% 0%, rgba(232,223,207,0.24), transparent 72%)";
 const CALL_GLOW_MISSED = "radial-gradient(90% 55% at 50% 0%, rgba(229,88,42,0.36), transparent 72%)";
 
 /** Outgoing bubble: the business's own messages in aqua, with a specular top edge (ink on aqua 11:1). */
 const AQUA_BUBBLE =
-  "bg-gradient-to-b from-[#6FE9DA] to-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(13,13,11,0.08),0_10px_22px_-12px_rgba(0,0,0,0.85)]";
+  "bg-gradient-to-b from-[#F3EDE1] to-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(13,13,11,0.08),0_10px_22px_-12px_rgba(0,0,0,0.85)]";
 /** Inner surface for cards nested inside a glass panel (level 2: tint + hairline ring, not another glass). */
 const INNER_SURFACE = "bg-white/[0.035] ring-1 ring-inset ring-white/[0.08]";
 
@@ -239,9 +239,9 @@ export function MissedCallSimulator() {
                           aria-hidden="true"
                           className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-[0.6875rem] font-semibold tabular ${
                             done
-                              ? "bg-gradient-to-b from-aqua-glow to-aqua text-ink shadow-[inset_0_1px_0_rgba(230,255,252,0.7),0_6px_14px_-6px_rgba(61,219,201,0.8)]"
+                              ? "bg-gradient-to-b from-aqua-glow to-aqua text-ink shadow-[inset_0_1px_0_rgba(230,255,252,0.7),0_6px_14px_-6px_rgba(232,223,207,0.8)]"
                               : current
-                                ? "bg-aqua/15 text-bone ring-1 ring-inset ring-aqua/70 shadow-[0_0_16px_-3px_rgba(61,219,201,0.75)]"
+                                ? "bg-aqua/15 text-bone ring-1 ring-inset ring-aqua/70 shadow-[0_0_16px_-3px_rgba(232,223,207,0.75)]"
                                 : "bg-white/[0.05] text-ash ring-1 ring-inset ring-white/10"
                           }`}
                         >
@@ -306,7 +306,7 @@ export function MissedCallSimulator() {
                           <motion.li
                             key={`new-${niche.id}`}
                             layout
-                            className="flex items-center justify-between gap-3 rounded-glass-sm bg-aqua/10 p-3 shadow-[0_14px_32px_-16px_rgba(61,219,201,0.6)] ring-1 ring-inset ring-aqua/45"
+                            className="flex items-center justify-between gap-3 rounded-glass-sm bg-aqua/10 p-3 shadow-[0_14px_32px_-16px_rgba(232,223,207,0.6)] ring-1 ring-inset ring-aqua/45"
                             initial={{ opacity: 0, y: -24, scale: 0.97 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0 }}
@@ -409,13 +409,13 @@ function Phone({ phase }: { phase: Phase }) {
         <span
           key={pos}
           aria-hidden="true"
-          className={`pointer-events-none absolute w-[3px] bg-gradient-to-b from-[#5c5952] via-[#2f2d29] to-[#48453f] ${pos}`}
+          className={`pointer-events-none absolute w-[3px] bg-gradient-to-b from-[#8E99AB] via-[#293B57] to-[#3A4A63] ${pos}`}
         />
       ))}
 
       {/* Frame: a 1px light-catching rim around a glossy dark body. */}
       <div
-        className="rounded-[2.75rem] p-px shadow-[0_60px_100px_-45px_rgba(0,0,0,0.95),0_30px_60px_-36px_rgba(18,165,148,0.45)]"
+        className="rounded-[2.75rem] p-px shadow-[0_60px_100px_-45px_rgba(0,0,0,0.95),0_30px_60px_-36px_rgba(201,184,147,0.45)]"
         style={{ backgroundImage: DEVICE_RIM }}
       >
         <div
@@ -423,7 +423,7 @@ function Phone({ phase }: { phase: Phase }) {
           style={{ backgroundImage: DEVICE_BODY }}
         >
           {/* Phones: height capped so the Simulate button and the idle screen fit in one view (the thread still fits). */}
-          <div className="relative isolate aspect-[9/18.5] w-full overflow-hidden rounded-[2.125rem] bg-[#080807] ring-1 ring-white/[0.05] max-md:max-h-[max(26rem,58svh)]">
+          <div className="relative isolate aspect-[9/18.5] w-full overflow-hidden rounded-[2.125rem] bg-[#0F1A2A] ring-1 ring-white/[0.05] max-md:max-h-[max(26rem,58svh)]">
             <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ backgroundImage: SCREEN_WALLPAPER }} />
 
             {/* Status bar */}
@@ -529,8 +529,8 @@ function Phone({ phase }: { phase: Phase }) {
                     <span
                       className={`relative grid h-16 w-16 place-items-center rounded-full text-ink ${
                         phase === "missed"
-                          ? "bg-gradient-to-b from-[#F07A4F] to-signal shadow-[inset_0_1px_0_rgba(255,225,200,0.75),0_14px_34px_-10px_rgba(229,88,42,0.75)]"
-                          : "bg-gradient-to-b from-aqua-glow to-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_14px_34px_-12px_rgba(61,219,201,0.6)]"
+                          ? "bg-gradient-to-b from-[#C9B893] to-signal shadow-[inset_0_1px_0_rgba(255,225,200,0.75),0_14px_34px_-10px_rgba(229,88,42,0.75)]"
+                          : "bg-gradient-to-b from-aqua-glow to-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_14px_34px_-12px_rgba(232,223,207,0.6)]"
                       }`}
                     >
                       {phase === "missed" ? (

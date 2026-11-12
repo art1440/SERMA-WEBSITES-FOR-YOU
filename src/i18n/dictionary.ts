@@ -64,7 +64,7 @@ const en = {
     eyebrow: "For barbershops, salons, restaurants and the trades",
     headline: ["Websites that", "book clients", "for you."],
     headlineEmphasis: "for you",
-    sub: "Missed calls get a text back in seconds. Clients book themselves 24/7, with deposits and reminders built in. Regulars get a nudge when they’re due. And your hands stay on the work you opened the doors for.",
+    sub: "A real website for your shop, written and built for you, and you see it finished before you pay. When you want the phone answered as well, that is the next thing I build.",
     status: "Booking while you work",
     statusDetail: "Calls · Bookings · Follow-ups",
     secondaryCta: "See how it works",
@@ -104,8 +104,56 @@ const en = {
       { title: "Return", body: "Review requests and re-booking nudges keep customers coming back on schedule." },
     ],
   },
-  industries: {
+  included: {
     index: "(02)",
+    eyebrow: "What you get",
+    title: "Exactly what you buy, in the order it happens",
+    body: "No mystery box and no hourly billing. These are the eight things I build for your shop, and you see the pages before you pay anything.",
+    items: [
+      {
+        title: "A 30 minute call to get your details",
+        detail: "Services, barbers, hours, the booking tool you already use, and a handful of photos from your phone.",
+      },
+      {
+        title: "Your best photos, picked and cropped",
+        detail: "You send the photos you already post. I choose the ones that sell the shop and crop them to fit the site.",
+      },
+      {
+        title: "Your pages written, not templated",
+        detail: "Home, services, hours and location, written from what you tell me and corrected by you before anything goes public.",
+      },
+      {
+        title: "Your first draft, before you pay",
+        detail: "I send the link to the finished draft, you mark what reads wrong or looks wrong, and I fix it.",
+      },
+      {
+        title: "Your own domain pointing at it",
+        detail: "Your address, your email, your photos. The domain and the photos stay in your name.",
+      },
+      {
+        title: "A call button on every screen",
+        detail: "One tap to ring you, in the header and at the bottom of every page, because most people will look on a phone.",
+      },
+      {
+        title: "Fast on a phone, on shop wifi",
+        detail: "Pages built to open quickly on mobile data, not just on a laptop at home.",
+      },
+      {
+        title: "An answer within one business day, from me",
+        detail: "Message or call and you hear back inside one business day. Site changes get handled in that same thread.",
+      },
+    ],
+    roadmapLabel: "Not offered yet, building it now",
+    roadmapTitle: "The phone side",
+    roadmap: [
+      "Missed calls answered by text in seconds, with your booking link.",
+      "Online booking, with the deposit taken when they book.",
+      "A reminder the day before, sent automatically.",
+    ],
+    roadmapNote: "Ask me where it stands and I will tell you straight. Websites come first.",
+  },
+  industries: {
+    index: "(03)",
     eyebrow: "Built for",
     title: ["Built around your trade.", "Not around software."],
     titleEmphasis: "Not around software.",
@@ -118,7 +166,7 @@ const en = {
     swipeHint: "Swipe · Drag · Arrows",
   },
   dashboard: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Your dashboard",
     title: "Know how the week went in ten seconds.",
     body: "No spreadsheets, no guessing. One screen shows who booked, who's coming back and what came in while you were busy. Pick an industry to see yours.",
@@ -148,7 +196,7 @@ const en = {
     newItemsOne: "new",
   },
   simulator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "When you can't pick up",
     scrollHint: "Scroll to play the call — scroll back to rewind.",
     title: "You keep working. It answers the phone.",
@@ -184,7 +232,7 @@ const en = {
     announceBooked: "{name} booked {service} for {time}. {amount} added to the dashboard.",
   },
   calculator: {
-    index: "(05)",
+    index: "(06)",
     eyebrow: "The calls you can't take",
     title: "What do the calls you can't answer cost you?",
     body: "Move the sliders to match a normal week. The math is on the page — no inflated promises.",
@@ -203,7 +251,7 @@ const en = {
     cta: "Get a free audit of your week",
   },
   compare: {
-    index: "(06)",
+    index: "(07)",
     eyebrow: "The difference",
     title: ["A website that waits.", "Or one that works while you do."],
     body: "Most local business websites sit there until someone calls — and then you still have to answer. Here's what changes when the website handles the follow-up.",
@@ -257,7 +305,7 @@ const en = {
     ],
   },
   demo: {
-    index: "(07)",
+    index: "(08)",
     eyebrow: "Live demo & free audit",
     title: "Let's see what we can take off your plate.",
     body: "A 30-minute walkthrough on your schedule. We'll show you where calls and bookings slip through today, what we'd hand off to the system, and what your week could look like after — no pricing pressure, no obligation.",
@@ -270,7 +318,19 @@ const en = {
     include: ["Your business name", "Your industry", "Two times that work for a 30-minute call"],
     emailSubject: "Live System Demo request",
     emailBody: "Hi SermaWebDesign,\n\nI'd like to book a live system demo.\n\nBusiness name:\nIndustry:\nBest times to talk:\n",
-    noFormNote: "No forms and no tracking — this site doesn't collect your information. You decide what to send us.",
+    formLabel: "Send your details",
+    fieldName: "Your name",
+    fieldBusiness: "Business name",
+    fieldPhone: "Phone",
+    fieldNeed: "What do you need?",
+    fieldNeedHint: "One line is enough. Example: a site for my barbershop on South Congress.",
+    submit: "Send it to me",
+    sending: "Sending…",
+    thanksTitle: "Thanks, I have it.",
+    thanksBody: "I'll get back to you within one business day.",
+    errorBody: "That did not send. Try again, or email me:",
+    formNote: "Four boxes and that's it. Your details come to my inbox, nowhere else.",
+    noFormNote: "No trackers, no cookies, no mailing list. Your details are used to reply to you, nothing else.",
   },
   footer: {
     tagline: "Websites and quiet systems for local businesses — so the owner can get back to the work they love.",
@@ -349,7 +409,7 @@ const es: Dictionary = {
     eyebrow: "Para barberías, salones, restaurantes y contratistas",
     headline: ["Sitios web que", "agendan citas", "por usted."],
     headlineEmphasis: "por usted",
-    sub: "Las llamadas perdidas reciben un mensaje de texto en segundos. Sus clientes agendan solos, 24/7, con depósito y recordatorios. Los clientes fijos reciben un aviso cuando les toca volver. Y usted sigue en lo suyo: el trabajo por el que abrió su negocio.",
+    sub: "Un sitio web de verdad para su negocio, escrito y construido para usted, y lo ve terminado antes de pagar. Cuando quiera que también se conteste el teléfono, eso es lo siguiente que construyo.",
     status: "Agendando mientras usted trabaja",
     statusDetail: "Llamadas · Citas · Seguimiento",
     secondaryCta: "Vea cómo funciona",
@@ -389,8 +449,56 @@ const es: Dictionary = {
       { title: "Regreso", body: "Las solicitudes de reseñas y los recordatorios para volver a reservar hacen que sus clientes regresen a tiempo." },
     ],
   },
-  industries: {
+  included: {
     index: "(02)",
+    eyebrow: "Lo que recibe",
+    title: "Exactamente lo que compra, en el orden en que pasa",
+    body: "Sin caja cerrada y sin cobro por hora. Estas son las ocho cosas que construyo para su negocio, y usted ve las páginas antes de pagar nada.",
+    items: [
+      {
+        title: "Una llamada de 30 minutos para sus datos",
+        detail: "Servicios, barberos, horario, la herramienta de citas que ya usa y unas cuantas fotos de su teléfono.",
+      },
+      {
+        title: "Sus mejores fotos, elegidas y recortadas",
+        detail: "Usted manda las fotos que ya publica. Yo elijo las que venden el negocio y las recorto para que encajen en el sitio.",
+      },
+      {
+        title: "Sus páginas escritas, no de plantilla",
+        detail: "Inicio, servicios, horario y ubicación, escritos con lo que usted me cuenta y corregidos por usted antes de publicar.",
+      },
+      {
+        title: "Su primer borrador, antes de pagar",
+        detail: "Le mando el enlace del borrador terminado, usted marca lo que está mal escrito o mal visto, y yo lo corrijo.",
+      },
+      {
+        title: "Su propio dominio apuntando al sitio",
+        detail: "Su dirección, su correo y sus fotos. El dominio y las fotos quedan a su nombre.",
+      },
+      {
+        title: "Un botón para llamar en cada pantalla",
+        detail: "Un toque para llamarle, arriba y al final de cada página, porque la mayoría lo va a ver desde el teléfono.",
+      },
+      {
+        title: "Rápido en el teléfono, con datos",
+        detail: "Páginas hechas para abrir rápido con datos móviles, no solo en una computadora en casa.",
+      },
+      {
+        title: "Respuesta dentro de un día hábil, de mi parte",
+        detail: "Escriba o llame y le contesto dentro de un día hábil. Los cambios del sitio se resuelven en ese mismo hilo.",
+      },
+    ],
+    roadmapLabel: "Todavía no lo ofrezco, lo estoy construyendo",
+    roadmapTitle: "El lado del teléfono",
+    roadmap: [
+      "Llamadas perdidas contestadas por texto en segundos, con su enlace de citas.",
+      "Citas en línea, con el anticipo cobrado al reservar.",
+      "Un recordatorio el día antes, enviado automáticamente.",
+    ],
+    roadmapNote: "Pregúnteme cómo va y le digo la verdad. Los sitios web van primero.",
+  },
+  industries: {
+    index: "(03)",
     eyebrow: "Diseñado para",
     title: ["Hecho para su oficio,", "no para el software."],
     titleEmphasis: "no para el software.",
@@ -403,7 +511,7 @@ const es: Dictionary = {
     swipeHint: "Deslice · Arrastre · Flechas",
   },
   dashboard: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Su panel",
     title: "Sepa cómo fue la semana en diez segundos.",
     body: "Sin hojas de cálculo ni suposiciones. Una sola pantalla muestra quién agendó, quién regresa y qué entró mientras usted estaba ocupado. Elija una industria para ver la suya.",
@@ -430,7 +538,7 @@ const es: Dictionary = {
     newItemsOne: "nuevo",
   },
   simulator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "Cuando no puede contestar",
     scrollHint: "Desplácese para reproducir la llamada; regrese para rebobinar.",
     title: "Usted sigue trabajando. El sistema contesta.",
@@ -466,7 +574,7 @@ const es: Dictionary = {
     announceBooked: "{name} agendó {service} para {time}. Se agregaron {amount} al panel.",
   },
   calculator: {
-    index: "(05)",
+    index: "(06)",
     eyebrow: "Las llamadas que no puede tomar",
     title: "¿Cuánto le cuestan las llamadas que no puede contestar?",
     body: "Mueva los controles según una semana normal. El cálculo está a la vista, sin promesas infladas.",
@@ -485,7 +593,7 @@ const es: Dictionary = {
     cta: "Solicite una auditoría gratuita de su semana",
   },
   compare: {
-    index: "(06)",
+    index: "(07)",
     eyebrow: "La diferencia",
     title: ["Un sitio web que espera.", "O uno que trabaja mientras usted trabaja."],
     body: "La mayoría de los sitios web de negocios locales esperan a que alguien llame, y luego usted todavía tiene que contestar. Esto es lo que cambia cuando el sitio se encarga del seguimiento.",
@@ -539,7 +647,7 @@ const es: Dictionary = {
     ],
   },
   demo: {
-    index: "(07)",
+    index: "(08)",
     eyebrow: "Demostración en vivo y auditoría gratuita",
     title: "Veamos qué podemos quitarle de encima.",
     body: "Un recorrido de 30 minutos cuando a usted le convenga. Le mostraremos dónde se escapan hoy las llamadas y las citas, qué dejaríamos en manos del sistema y cómo podría verse su semana después, sin presión de precios ni compromiso.",
@@ -552,7 +660,19 @@ const es: Dictionary = {
     include: ["El nombre de su negocio", "Su industria", "Dos horarios disponibles para una llamada de 30 minutos"],
     emailSubject: "Solicitud de demostración en vivo",
     emailBody: "Hola, SermaWebDesign:\n\nMe gustaría agendar una demostración en vivo del sistema.\n\nNombre del negocio:\nIndustria:\nMejores horarios para hablar:\n",
-    noFormNote: "Sin formularios y sin rastreo: este sitio no recopila su información. Usted decide qué enviarnos.",
+    formLabel: "Mande sus datos",
+    fieldName: "Su nombre",
+    fieldBusiness: "Nombre del negocio",
+    fieldPhone: "Teléfono",
+    fieldNeed: "¿Qué necesita?",
+    fieldNeedHint: "Una línea basta. Ejemplo: un sitio para mi barbería en South Congress.",
+    submit: "Mándemelo",
+    sending: "Enviando…",
+    thanksTitle: "Gracias, ya lo tengo.",
+    thanksBody: "Le contesto dentro de un día hábil.",
+    errorBody: "No se envió. Intente otra vez o escríbame a:",
+    formNote: "Cuatro casillas y ya. Sus datos llegan a mi correo y a ningún otro lado.",
+    noFormNote: "Sin rastreadores, sin cookies y sin lista de correo. Sus datos se usan para contestarle, nada más.",
   },
   footer: {
     tagline: "Sitios web y sistemas silenciosos para negocios locales, para que el dueño vuelva al trabajo que le gusta.",
