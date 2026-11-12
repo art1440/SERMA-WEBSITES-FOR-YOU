@@ -1,6 +1,6 @@
 "use client";
 
-import { animate, motion, useInView, useMotionValue, useMotionValueEvent, type MotionValue } from "framer-motion";
+import { animate, motion, useInView, useMotionValue, type MotionValue } from "framer-motion";
 import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
@@ -20,15 +20,15 @@ const stepAt = (k: number, count: number) => k / count + 0.15;
 
 /**
  * The System — one screen. Once the section is in view, the four steps play by
- * themselves (Capture → Respond → Book → Return, then loop), cross-fading the copy
+ * themselves (Capture → Respond → Book → Return, then loop), spotlighting each step
  * while the 3D engine morphs through its formations on the same timeline.
  *
- * It always plays on its own (a resting mouse or a tap never freezes it); the rail
- * fills toward the next marker like a story timer. Control (WCAG 2.2.2): a pause
- * button beside the steps, the site-wide Pause, keyboard focus inside the panel
- * holds it, and each marker is a button that jumps to its step (auto-play resumes
- * ~9s later). All four steps stay in the DOM for screen readers; reduced motion
- * shows them as a static list.
+ * All four steps are on show as cards (2×2 from sm, stacked on phones). Auto-play
+ * spotlights one at a time, with a timer line filling across it, and the engine morphs
+ * to match; a resting mouse or a tap never freezes it. Control (WCAG 2.2.2): a pause
+ * button by the steps, the site-wide Pause, keyboard focus inside the panel holds it,
+ * and each card is a button that spotlights it (auto-play resumes ~9s later).
+ * Reduced motion: the same four cards, nothing moves.
  *
  * The copy floats on one dark glass panel over the engine and film. Real blur
  * on desktop; on phones the panel keeps the dense tint and drops the blur.
@@ -126,16 +126,17 @@ export function SystemChapter() {
             onBlur={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHeld(false);
             }}
-            className="glass-dark glass-solid w-full rounded-glass p-4 [--glass-blur:14px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:max-w-[34rem] sm:rounded-glass-lg sm:p-8 lg:w-6/12 lg:max-w-[36rem]">
+            className="glass-dark glass-solid w-full rounded-glass p-4 [--glass-blur:14px] max-lg:[-webkit-backdrop-filter:none] max-lg:[backdrop-filter:none] sm:max-w-[40rem] sm:rounded-glass-lg sm:p-7 lg:w-7/12 lg:max-w-[46rem] lg:p-7 xl:p-8">
             <Reveal y={12}>
               <SectionChip index={t.system.index} label={t.system.eyebrow} />
             </Reveal>
             <RevealLines
               id="system-title"
               lines={[t.system.title]}
-              className="mt-4 font-display text-display-md text-balance sm:mt-5 lg:text-[clamp(1.9rem,3vw,2.75rem)]"
+              className="mt-3 font-display text-[1.75rem] leading-[1.05] text-balance sm:mt-4 sm:text-display-md lg:text-[clamp(1.9rem,2.6vw,2.5rem)]"
             />
-            <p className="mt-4 hidden text-pretty leading-relaxed text-ash sm:block">{t.system.body}</p>
+            {/* The step cards say the same thing, so the intro only shows where there is room for it. */}
+            <p className="mt-4 hidden text-pretty leading-relaxed text-ash sm:block [@media(max-height:960px)]:hidden">{t.system.body}</p>
 
             <p className="mt-3 text-pretty text-[0.8125rem] font-medium leading-6 text-ash sm:mt-4">
               {t.system.inputs.join(" · ")} →{" "}
@@ -146,49 +147,56 @@ export function SystemChapter() {
               → {t.system.outputs.join(" · ")}
             </p>
 
-            {reduce ? (
-              <ol className="mt-6 space-y-6 border-t border-white/10 pt-6">
-                {steps.map((step, i) => (
-                  <li key={step.title} className="grid grid-cols-[2.75rem_1fr] gap-x-4">
-                    <span className="grid h-9 w-9 place-items-center rounded-full bg-white/[0.06] text-sm font-medium tabular text-bone ring-1 ring-inset ring-aqua/50">
-                      0{i + 1}
-                    </span>
-                    <div>
-                      <h3 className="font-display text-3xl leading-none">{step.title}</h3>
-                      <p className="mt-2 leading-relaxed text-ash">{step.body}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <div className="mt-4 grid grid-cols-[auto_1fr] gap-x-5 border-t border-white/10 pt-5 sm:mt-6 sm:gap-x-6 sm:pt-6">
-                <StepRail
-                  tick={tick}
-                  count={count}
-                  active={active}
-                  titles={steps.map((st) => st.title)}
-                  label={t.system.eyebrow}
-                  onPick={pick}
-                />
-                <div className="relative">
-                  <ol className="relative h-[11.5rem] sm:h-[10.5rem]">
-                    {steps.map((step, i) => (
-                      <Step key={step.title} index={i} count={count} active={active} title={step.title} body={step.body} />
-                    ))}
-                  </ol>
-                  {/* This section's own pause (WCAG 2.2.2), beside the steps it controls. */}
+            {/* All four steps on show; auto-play spotlights one at a time (and morphs the engine). */}
+            <div className="mt-4 border-t border-white/10 pt-4 sm:mt-5 sm:pt-5">
+              <div className="flex items-center justify-between gap-3">
+                <p className="eyebrow text-ash">{t.system.stepsHeading}</p>
+                {reduce ? null : (
+                  // This section's own pause (WCAG 2.2.2), on top of the site-wide Pause.
                   <button
                     type="button"
                     onClick={() => setStopped((v) => !v)}
                     aria-pressed={stopped}
                     aria-label={stopped ? t.system.playSteps : t.system.pauseSteps}
-                    className="absolute -top-1 right-0 grid h-9 w-9 place-items-center rounded-full text-ash ring-1 ring-inset ring-white/15 transition-colors hover:bg-white/[0.06] hover:text-bone"
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-ash ring-1 ring-inset ring-white/15 transition-colors hover:bg-white/[0.06] hover:text-bone"
                   >
-                    {stopped ? <Play aria-hidden="true" size={14} strokeWidth={2} /> : <Pause aria-hidden="true" size={14} strokeWidth={2} />}
+                    {stopped ? <Play aria-hidden="true" size={13} strokeWidth={2} /> : <Pause aria-hidden="true" size={13} strokeWidth={2} />}
                   </button>
-                </div>
+                )}
               </div>
-            )}
+              <ol className="mt-3 grid grid-cols-2 gap-2 sm:gap-2.5">
+                {steps.map((step, i) => (
+                  <StepCard
+                    key={step.title}
+                    index={i}
+                    count={count}
+                    title={step.title}
+                    body={step.body}
+                    on={!reduce && i === active}
+                    interactive={!reduce}
+                    tick={tick}
+                    onPick={() => pick(i)}
+                  />
+                ))}
+              </ol>
+              {/* Phones: the cards show titles only; the spotlit step's description sits here.
+                  (Stacked in one grid cell, so the box is as tall as the longest; each card keeps its own description for screen readers.) */}
+              {reduce ? null : (
+                <div aria-hidden="true" className="mt-3 grid sm:hidden">
+                  {steps.map((step, i) => (
+                    <motion.p
+                      key={step.title}
+                      className="text-pretty text-[0.875rem] leading-snug text-ash [grid-area:1/1]"
+                      initial={false}
+                      animate={{ opacity: i === active ? 1 : 0, y: i === active ? 0 : 6 }}
+                      transition={{ duration: 0.45, ease: EASE_EDITORIAL }}
+                    >
+                      {step.body}
+                    </motion.p>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -196,92 +204,56 @@ export function SystemChapter() {
   );
 }
 
-function Step({
+/**
+ * One step card. The spotlit card brightens, gets the accent ring and a timer line
+ * that fills over the step's time on screen. The whole card is clickable through a
+ * stretched button (headings can't live inside a <button>); aria-pressed marks the spotlit one.
+ */
+function StepCard({
   index,
   count,
-  active,
   title,
   body,
+  on,
+  interactive,
+  tick,
+  onPick,
 }: {
   index: number;
   count: number;
-  active: number;
   title: string;
   body: string;
-}) {
-  const on = index === active;
-  return (
-    <motion.li
-      className="absolute inset-0"
-      initial={false}
-      animate={{ opacity: on ? 1 : 0, y: on ? 0 : index < active ? -24 : 24 }}
-      transition={{ duration: on ? 0.7 : 0.45, delay: on ? 0.15 : 0, ease: EASE_EDITORIAL }}
-    >
-      <p className="text-[0.8125rem] font-medium leading-5 tabular text-ash">
-        <span className="text-bone">0{index + 1}</span> / 0{count}
-      </p>
-      <h3 className="mt-2 font-display text-[2.5rem] leading-none sm:text-5xl">{title}</h3>
-      <p className="mt-3 max-w-sm text-pretty text-[0.9375rem] leading-relaxed text-ash sm:text-base">{body}</p>
-    </motion.li>
-  );
-}
-
-/**
- * Slim rounded track: the fill creeps toward the next marker while a step is up, and each marker is a button
- * (32px hit area) that jumps to its step. aria-pressed marks the step on screen.
- */
-function StepRail({
-  tick,
-  count,
-  active,
-  titles,
-  label,
-  onPick,
-}: {
+  on: boolean;
+  interactive: boolean;
   tick: MotionValue<number>;
-  count: number;
-  active: number;
-  titles: string[];
-  label: string;
-  onPick: (i: number) => void;
+  onPick: () => void;
 }) {
-  // Story-timer fill: reaches the next marker exactly as the next step plays in.
-  const fill = useMotionValue(0);
-  const activeRef = useRef(active);
-  activeRef.current = active;
-  const update = (v: number) => fill.set(Math.min(1, (activeRef.current + (activeRef.current < count - 1 ? v : 0)) / (count - 1)));
-  useMotionValueEvent(tick, "change", update);
-  useEffect(() => update(tick.get()));
   return (
-    <div role="group" aria-label={label} className="relative h-[11.5rem] w-[3px] rounded-full bg-white/10 sm:h-[10.5rem]">
-      <motion.span
-        aria-hidden="true"
-        className="absolute inset-0 block origin-top rounded-full bg-gradient-to-b from-aqua-deep to-aqua"
-        style={{ scaleY: fill }}
-      />
-      {titles.map((title, i) => {
-        const lit = i <= active;
-        return (
-          <button
-            key={title}
-            type="button"
-            aria-pressed={i === active}
-            aria-label={`0${i + 1} / 0${count}: ${title}`}
-            onClick={() => onPick(i)}
-            className="group absolute left-1/2 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
-            style={{ top: `${(i / (count - 1)) * 100}%` }}
-          >
-            <span className="grid h-3 w-3 place-items-center rounded-full bg-ink-800 ring-1 ring-inset ring-white/25 transition-transform duration-200 group-hover:scale-125">
-              <motion.span
-                className="block h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(232,223,207,0.7)]"
-                initial={false}
-                animate={{ opacity: lit ? 1 : 0, scale: lit ? 1 : 0.4 }}
-                transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
-              />
-            </span>
-          </button>
-        );
-      })}
-    </div>
+    <li
+      className={`relative rounded-[16px] p-3 ring-1 ring-inset sm:rounded-[18px] transition-[background-color,box-shadow] duration-500 sm:p-4 ${
+        on ? "bg-white/[0.07] ring-aqua/45 shadow-[0_0_28px_-10px_rgba(232,223,207,0.45)]" : "bg-white/[0.025] ring-white/10"
+      }`}
+    >
+      <div className="flex items-center gap-2.5">
+        <span className={`text-xs font-medium tabular transition-colors duration-500 ${on ? "text-bone" : "text-ash"}`}>
+          0{index + 1}
+          <span className="sr-only"> / 0{count}</span>
+        </span>
+        <span aria-hidden="true" className="relative h-[2px] flex-1 overflow-hidden rounded-full bg-white/10">
+          {on ? <motion.span className="absolute inset-0 block origin-left rounded-full bg-aqua" style={{ scaleX: tick }} /> : null}
+        </span>
+      </div>
+      <h3 className={`mt-2 font-display text-xl leading-none sm:text-2xl transition-colors duration-500 ${on ? "text-bone" : "text-bone/80"}`}>{title}</h3>
+      <p className={`mt-1.5 text-pretty text-[0.8125rem] leading-snug text-ash ${interactive ? "max-sm:sr-only" : ""}`}>{body}</p>
+      {interactive ? (
+        <button
+          type="button"
+          aria-pressed={on}
+          aria-label={`0${index + 1} / 0${count}: ${title}`}
+          onClick={onPick}
+          className="absolute inset-0 rounded-[18px] focus-visible:outline-offset-2"
+        />
+      ) : null}
+    </li>
   );
 }

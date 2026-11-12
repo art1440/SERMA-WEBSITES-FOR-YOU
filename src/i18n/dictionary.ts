@@ -97,6 +97,7 @@ const en = {
     inputs: ["Calls", "Web forms", "Texts"],
     core: "SermaWebDesign Engine",
     outputs: ["Bookings", "Revenue", "Reviews"],
+    stepsHeading: "Four steps, start to finish",
     pauseSteps: "Pause the steps",
     playSteps: "Play the steps",
     steps: [
@@ -444,6 +445,7 @@ const es: Dictionary = {
     inputs: ["Llamadas", "Formularios", "Mensajes"],
     core: "Motor SermaWebDesign",
     outputs: ["Citas", "Ingresos", "Reseñas"],
+    stepsHeading: "Cuatro pasos, de principio a fin",
     pauseSteps: "Pausar los pasos",
     playSteps: "Reproducir los pasos",
     steps: [
