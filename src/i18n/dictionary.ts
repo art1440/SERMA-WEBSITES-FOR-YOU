@@ -9,7 +9,7 @@ import type { Locale, Widen } from "./types";
  */
 const en = {
   meta: {
-    title: "SermaWebDesign — Websites That Keep Your Phone Ringing",
+    title: "SermaWebDesign — Websites That Bring In Customers",
   },
   common: {
     skipToContent: "Skip to main content",
@@ -62,8 +62,8 @@ const en = {
   },
   hero: {
     eyebrow: "For barbershops, salons, restaurants and the trades",
-    headline: ["Websites that", "keep your phone", "ringing."],
-    headlineEmphasis: "ringing",
+    headline: ["Websites that", "bring in", "customers."],
+    headlineEmphasis: "customers",
     sub: "A real website for your business, written and built for you, and you see it finished before you pay. When you want the phone answered as well, that is the next thing we build.",
     status: "Booking while you work",
     statusDetail: "Calls · Bookings · Follow-ups",
@@ -362,7 +362,7 @@ export type Dictionary = Widen<typeof en>;
 
 const es: Dictionary = {
   meta: {
-    title: "SermaWebDesign — Sitios web que hacen sonar su teléfono",
+    title: "SermaWebDesign — Sitios web que le traen clientes",
   },
   common: {
     skipToContent: "Saltar al contenido principal",
@@ -414,8 +414,8 @@ const es: Dictionary = {
   },
   hero: {
     eyebrow: "Para barberías, salones, restaurantes y contratistas",
-    headline: ["Sitios web que", "hacen sonar", "su teléfono."],
-    headlineEmphasis: "su teléfono",
+    headline: ["Sitios web que", "le traen", "clientes."],
+    headlineEmphasis: "clientes",
     sub: "Un sitio web de verdad para su negocio, escrito y construido para usted, y lo ve terminado antes de pagar. Cuando quiera que también se conteste el teléfono, eso es lo siguiente que construimos.",
     status: "Agendando mientras usted trabaja",
     statusDetail: "Llamadas · Citas · Seguimiento",

@@ -14,7 +14,7 @@ const cspMeta = process.env.CSP_META === "true";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "SermaWebDesign — Websites That Keep Your Phone Ringing",
+    default: "SermaWebDesign — Websites That Bring In Customers",
     template: "%s — SermaWebDesign",
   },
   description:
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "SermaWebDesign",
-    title: "Websites that keep your phone ringing",
+    title: "Websites that bring in customers",
     description:
       "Missed calls get a text back. Clients book themselves, day or night, with deposits and reminders. You stay with the work you opened the doors for.",
     images: [{ url: asset("/media/hero-poster.jpg"), width: 1600, height: 900, alt: "SermaWebDesign" }],
