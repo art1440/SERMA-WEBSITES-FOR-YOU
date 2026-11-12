@@ -53,7 +53,7 @@ export const NICHES: Niche[] = [
     id: "barbershop",
     label: { en: "Barbershops", es: "Barberías" },
     shortLabel: { en: "Barbers", es: "Barberías" },
-    tagline: { en: "Chairs full. No-shows covered.", es: "Sillas llenas. Inasistencias cubiertas." },
+    tagline: { en: "Chairs full. Cash flowing.", es: "Sillas llenas. Dinero entrando." },
     media: {
       src: asset("/media/barbershop-v3"),
       poster: asset("/media/barbershop-v3-poster.jpg"),

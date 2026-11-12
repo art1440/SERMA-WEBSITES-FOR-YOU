@@ -14,7 +14,7 @@ const cspMeta = process.env.CSP_META === "true";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "SermaWebDesign — Websites That Book Clients for You",
+    default: "SermaWebDesign — Websites That Bring In Customers",
     template: "%s — SermaWebDesign",
   },
   description:
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "SermaWebDesign",
-    title: "Websites that book clients for you",
+    title: "Websites that bring in customers",
     description:
       "Missed calls get a text back. Clients book themselves, day or night, with deposits and reminders. You stay with the work you opened the doors for.",
     // Its own file (not the hero poster): the standard 1200x630 size, and a new URL so social sites drop cached previews.

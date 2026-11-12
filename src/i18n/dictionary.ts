@@ -9,7 +9,7 @@ import type { Locale, Widen } from "./types";
  */
 const en = {
   meta: {
-    title: "SermaWebDesign — Websites That Book Clients for You",
+    title: "SermaWebDesign — Websites That Bring In Customers",
   },
   common: {
     skipToContent: "Skip to main content",
@@ -62,9 +62,9 @@ const en = {
   },
   hero: {
     eyebrow: "For barbershops, salons, restaurants and the trades",
-    headline: ["Websites that", "book clients", "for you."],
-    headlineEmphasis: "for you",
-    sub: "A real website for your shop, written and built for you, and you see it finished before you pay. When you want the phone answered as well, that is the next thing I build.",
+    headline: ["Websites that", "bring in", "customers."],
+    headlineEmphasis: "customers",
+    sub: "A real website for your business, written and built for you, and you see it finished before you pay. When you want the phone answered as well, that is the next thing we build.",
     status: "Booking while you work",
     statusDetail: "Calls · Bookings · Follow-ups",
     secondaryCta: "See how it works",
@@ -117,7 +117,7 @@ const en = {
       },
       {
         title: "Your best photos, picked and cropped",
-        detail: "Send the photos you already post. I pick the ones that sell your business and crop them to fit.",
+        detail: "Send the photos you already post. We pick the ones that sell your business and crop them to fit.",
       },
       {
         title: "Pages written for you, not from a template",
@@ -133,15 +133,15 @@ const en = {
       },
       {
         title: "Your finished draft, before you pay",
-        detail: "I send you a link. You point out anything that reads or looks wrong, and I fix it.",
+        detail: "We send you a link. You point out anything that reads or looks wrong, and we fix it.",
       },
       {
         title: "Live on your own domain",
         detail: "Your site goes live at your own web address. The domain and your photos stay in your name.",
       },
       {
-        title: "Answers from me within one business day",
-        detail: "Message or call me directly and hear back within one business day, site changes included.",
+        title: "Answers from us within one business day",
+        detail: "Message or call us directly and hear back within one business day, site changes included.",
       },
     ],
     roadmapLabel: "Not offered yet, building it now",
@@ -151,7 +151,7 @@ const en = {
       "Online booking, with the deposit taken when they book.",
       "A reminder the day before, sent automatically.",
     ],
-    roadmapNote: "Ask me where it stands and I will tell you straight. Websites come first.",
+    roadmapNote: "Ask us where it stands and we will tell you straight. Websites come first.",
   },
   industries: {
     index: "(03)",
@@ -325,16 +325,22 @@ const en = {
     fieldPhone: "Phone",
     fieldNeed: "What do you need?",
     fieldNeedHint: "One line is enough. Example: a site for my barbershop on South Congress.",
-    submit: "Send it to me",
+    submit: "Send it to us",
     sending: "Sending…",
-    thanksTitle: "Thanks, I have it.",
-    thanksBody: "I'll get back to you within one business day.",
-    errorBody: "That did not send. Try again, or email me:",
-    formNote: "Four boxes and that's it. Your details come to my inbox, nowhere else.",
+    thanksTitle: "Thanks, we have it.",
+    thanksBody: "We'll get back to you within one business day.",
+    errorBody: "That did not send. Try again, or email us:",
+    consentPrefix: "I agree to the",
+    consentPrivacy: "Privacy Policy",
+    consentAnd: "and",
+    consentTerms: "Terms of Service",
+    consentSuffix: ", and to be contacted about my request.",
+    phoneHint: "Digits only is fine, e.g. 512 555 0134.",
+    formNote: "Four boxes and that's it. Your details come to our inbox, nowhere else.",
     noFormNote: "No trackers, no cookies, no mailing list. Your details are used to reply to you, nothing else.",
   },
   footer: {
-    tagline: "Websites and quiet systems for local businesses — so the owner can get back to the work they love.",
+    tagline: "We handle the website. You run the business.",
     explore: "Explore",
     legal: "Legal",
     terms: "Terms of Service",
@@ -356,7 +362,7 @@ export type Dictionary = Widen<typeof en>;
 
 const es: Dictionary = {
   meta: {
-    title: "SermaWebDesign — Sitios web que agendan citas por usted",
+    title: "SermaWebDesign — Sitios web que le traen clientes",
   },
   common: {
     skipToContent: "Saltar al contenido principal",
@@ -408,9 +414,9 @@ const es: Dictionary = {
   },
   hero: {
     eyebrow: "Para barberías, salones, restaurantes y contratistas",
-    headline: ["Sitios web que", "agendan citas", "por usted."],
-    headlineEmphasis: "por usted",
-    sub: "Un sitio web de verdad para su negocio, escrito y construido para usted, y lo ve terminado antes de pagar. Cuando quiera que también se conteste el teléfono, eso es lo siguiente que construyo.",
+    headline: ["Sitios web que", "le traen", "clientes."],
+    headlineEmphasis: "clientes",
+    sub: "Un sitio web de verdad para su negocio, escrito y construido para usted, y lo ve terminado antes de pagar. Cuando quiera que también se conteste el teléfono, eso es lo siguiente que construimos.",
     status: "Agendando mientras usted trabaja",
     statusDetail: "Llamadas · Citas · Seguimiento",
     secondaryCta: "Vea cómo funciona",
@@ -463,7 +469,7 @@ const es: Dictionary = {
       },
       {
         title: "Sus mejores fotos, elegidas y recortadas",
-        detail: "Mándeme las fotos que ya publica. Yo elijo las que venden su negocio y las recorto a la medida.",
+        detail: "Mándenos las fotos que ya publica. Nosotros elegimos las que venden su negocio y las recortamos a la medida.",
       },
       {
         title: "Páginas escritas para usted, sin plantillas",
@@ -479,25 +485,25 @@ const es: Dictionary = {
       },
       {
         title: "Su borrador terminado, antes de pagar",
-        detail: "Le mando un enlace. Usted señala lo que se lee o se ve mal, y yo lo corrijo.",
+        detail: "Le mandamos un enlace. Usted señala lo que se lee o se ve mal, y nosotros lo corregimos.",
       },
       {
         title: "En línea con su propio dominio",
         detail: "Su sitio se publica en su propia dirección web. El dominio y sus fotos quedan a su nombre.",
       },
       {
-        title: "Respuesta de mi parte en un día hábil",
-        detail: "Escríbame o llámeme directamente y le contesto en un día hábil, cambios del sitio incluidos.",
+        title: "Respuesta de nuestra parte en un día hábil",
+        detail: "Escríbanos o llámenos directamente y le contestamos en un día hábil, cambios del sitio incluidos.",
       },
     ],
-    roadmapLabel: "Todavía no lo ofrezco, lo estoy construyendo",
+    roadmapLabel: "Todavía no lo ofrecemos, lo estamos construyendo",
     roadmapTitle: "El lado del teléfono",
     roadmap: [
       "Llamadas perdidas contestadas por texto en segundos, con su enlace de citas.",
       "Citas en línea, con el anticipo cobrado al reservar.",
       "Un recordatorio el día antes, enviado automáticamente.",
     ],
-    roadmapNote: "Pregúnteme cómo va y le digo la verdad. Los sitios web van primero.",
+    roadmapNote: "Pregúntenos cómo va y le decimos la verdad. Los sitios web van primero.",
   },
   industries: {
     index: "(03)",
@@ -668,16 +674,22 @@ const es: Dictionary = {
     fieldPhone: "Teléfono",
     fieldNeed: "¿Qué necesita?",
     fieldNeedHint: "Una línea basta. Ejemplo: un sitio para mi barbería en South Congress.",
-    submit: "Mándemelo",
+    submit: "Mándenoslo",
     sending: "Enviando…",
-    thanksTitle: "Gracias, ya lo tengo.",
-    thanksBody: "Le contesto dentro de un día hábil.",
-    errorBody: "No se envió. Intente otra vez o escríbame a:",
-    formNote: "Cuatro casillas y ya. Sus datos llegan a mi correo y a ningún otro lado.",
+    thanksTitle: "Gracias, ya lo tenemos.",
+    thanksBody: "Le contestamos dentro de un día hábil.",
+    errorBody: "No se envió. Intente otra vez o escríbanos a:",
+    consentPrefix: "Acepto la",
+    consentPrivacy: "Política de Privacidad",
+    consentAnd: "y los",
+    consentTerms: "Términos del Servicio",
+    consentSuffix: ", y que me contacten sobre mi solicitud.",
+    phoneHint: "Basta con los dígitos, p. ej. 512 555 0134.",
+    formNote: "Cuatro casillas y ya. Sus datos llegan a nuestro correo y a ningún otro lado.",
     noFormNote: "Sin rastreadores, sin cookies y sin lista de correo. Sus datos se usan para contestarle, nada más.",
   },
   footer: {
-    tagline: "Sitios web y sistemas silenciosos para negocios locales, para que el dueño vuelva al trabajo que le gusta.",
+    tagline: "Nosotros nos encargamos del sitio web. Usted dirige su negocio.",
     explore: "Explorar",
     legal: "Legal",
     terms: "Términos de Servicio",
