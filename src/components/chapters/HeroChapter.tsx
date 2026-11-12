@@ -129,7 +129,7 @@ export function HeroChapter() {
           {/* Static stand-in for the 3D engine when motion is reduced */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={asset("/media/hero-poster.jpg")}
+            src={asset("/media/hero-v2-poster.jpg")}
             alt=""
             className="mt-10 hidden aspect-[16/9] w-full rounded-glass-lg object-cover shadow-[0_30px_70px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/15 motion-reduce:block"
           />
