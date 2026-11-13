@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SERMA Business Cards</title>
+<!--
+  SERMA business card template — US standard 3.5 × 2 in, 0.125 in bleed.
+  1. Edit the CARD object below (name/title are optional — leave "" to hide).
+  2. Open in a browser to preview (hover / tap a card to flip it).
+  3. Print → "Save as PDF", margins: None, background graphics: ON.
+     Print output = one page per side at 3.75 × 2.25 in (trim 3.5 × 2 + bleed).
+-->
+<style>
+  @font-face { font-family: "Source Serif 4"; src: url("../../src/app/fonts/SourceSerif4-latin.woff2") format("woff2"); font-weight: 200 900; font-style: normal; }
+  @font-face { font-family: "Source Serif 4"; src: url("../../src/app/fonts/SourceSerif4-Italic-latin.woff2") format("woff2"); font-weight: 200 900; font-style: italic; }
+  @font-face { font-family: "Work Sans"; src: url("../../src/app/fonts/WorkSans-latin.woff2") format("woff2"); font-weight: 100 900; }
+
+  :root {
+    --navy: #17253B; --navy-900: #0F1A2A; --navy-700: #1E2E48; --navy-hair: #2A3B57;
+    --sand: #E8DFCF; --sand-50: #FBF8F1; --sand-100: #F3EDE1; --sand-300: #D6C9B2;
+    --gold: #C9B893; --gold-deep: #A08B60; --muted: #4A5464; --ash: #8E99AB;
+    --serif: "Source Serif 4", Georgia, serif;
+    --sans: "Work Sans", system-ui, sans-serif;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    /* Card geometry — everything inside is sized in these units so it prints exact. */
+    --bleed: 0.125in; --trim-w: 3.5in; --trim-h: 2in; --safe: 0.1875in;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--navy-900); color: var(--sand); font-family: var(--sans); min-height: 100vh; }
+
+  /* ---------- Screen preview ---------- */
+  .stage { max-width: 72rem; margin: 0 auto; padding: 3rem 16px 4rem; }
+  .stage header { margin-bottom: 2.5rem; }
+  .stage h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -0.02em; }
+  .stage h1 em { font-style: italic; color: var(--gold); font-weight: 500; }
+  .stage p.note { color: var(--ash); margin-top: .5rem; font-size: .95rem; max-width: 40rem; line-height: 1.5; }
+  .row { display: flex; flex-wrap: wrap; gap: 2.5rem; align-items: flex-start; }
+  .label { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ash); margin-bottom: .75rem; }
+
+  /* The flip: one card, two faces, physical-feeling spring on hover. */
+  .flipper { perspective: 1400px; width: calc(var(--trim-w) * 1.35); max-width: 100%; aspect-ratio: 3.5 / 2; cursor: pointer; }
+  .flipper .inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+    transition: transform 900ms var(--ease); animation: settle 1.4s var(--ease) both; }
+  .flipper:hover .inner, .flipper.flipped .inner { transform: rotateY(180deg) rotateZ(-1.5deg); }
+  .flipper .inner > .card { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px;
+    box-shadow: 0 30px 60px -25px rgba(0,0,0,.75), 0 0 0 1px rgba(232,223,207,.08); }
+  .flipper .inner > .card.back { transform: rotateY(180deg); }
+  @keyframes settle { from { transform: translateY(24px) rotateX(18deg) rotateZ(4deg); opacity: 0; } to { opacity: 1; } }
+
+  /* Flat sheet: both sides side by side at trim size, with bleed shown dashed. */
+  .flat .card { border-radius: 6px; width: calc(var(--trim-w) * 1.35); max-width: 100%; aspect-ratio: 3.5 / 2; }
+
+  /* ---------- The card (shared by screen & print) ---------- */
+  .card { position: relative; overflow: hidden; container-type: inline-size; }
+  /* 1cqw ≈ 1/100 of trim width, so the layout scales identically on screen & paper. */
+
+  .front { background: radial-gradient(120% 90% at 85% 10%, var(--navy-700) 0%, var(--navy) 45%, var(--navy-900) 100%); color: var(--sand); }
+  .front .orbit { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .front .mark { position: absolute; left: 70cqw; top: 14cqw; width: 18cqw; height: 18cqw; filter: drop-shadow(0 1.2cqw 1.6cqw rgba(0,0,0,.45)); }
+  .front .wordmark { position: absolute; left: 7.4cqw; bottom: 9cqw; font-family: var(--serif); font-weight: 600;
+    font-size: 15.5cqw; letter-spacing: .06em; line-height: .8; text-transform: uppercase; }
+  .front .sub { position: absolute; left: 8.2cqw; bottom: 4.2cqw; font-size: 2.55cqw; letter-spacing: .34em; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+  .front .grain { position: absolute; inset: 0; opacity: .14; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  .back { background: var(--sand-50); color: var(--navy); }
+  .back::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2.4cqw; background: var(--navy); }
+  .back::after { content: ""; position: absolute; left: 2.4cqw; top: 0; bottom: 0; width: .6cqw; background: var(--gold); }
+  .back .top { position: absolute; left: 10cqw; right: 8cqw; top: 9cqw; }
+  .back .person { font-family: var(--serif); font-weight: 600; font-size: 5.6cqw; letter-spacing: -.01em; line-height: 1.05; }
+  .back .role { font-size: 2.5cqw; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-deep); font-weight: 600; margin-top: 1.4cqw; }
+  .back .tagline { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 4.7cqw; line-height: 1.18; letter-spacing: -.01em; }
+  .back .tagline b { font-weight: 600; font-style: normal; }
+  .back .contact { position: absolute; left: 10cqw; right: 8cqw; bottom: 8.5cqw; display: grid; gap: 1.7cqw; font-size: 3.05cqw; font-weight: 500; }
+  .back .contact div { display: flex; align-items: center; gap: 2.4cqw; }
+  .back .contact svg { width: 2.9cqw; height: 2.9cqw; flex: none; stroke: var(--gold-deep); }
+  .back .rule { height: 1px; background: var(--sand-300); margin: 4.2cqw 0 0; width: 22cqw; }
+  .back .corner { position: absolute; right: 7cqw; bottom: 8.2cqw; width: 8cqw; height: 8cqw; opacity: .95; }
+
+  /* ---------- Print: one card side per page, with bleed ---------- */
+  @page { size: calc(3.5in + 0.25in) calc(2in + 0.25in); margin: 0; }
+  @media print {
+    body { background: none; }
+    .stage > header, .label, .flipper-wrap { display: none !important; }
+    .stage { padding: 0; max-width: none; }
+    .row { display: block; }
+    .flat .card { width: calc(var(--trim-w) + 2 * var(--bleed)); height: calc(var(--trim-h) + 2 * var(--bleed));
+      aspect-ratio: auto; max-width: none; border-radius: 0; break-after: page; padding: 0;
+      /* Content is laid out against the trim box; the bleed just extends the background. */ }
+    .flat .card > .trim { position: absolute; inset: var(--bleed); container-type: inline-size; }
+    .flat { gap: 0 !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  .trim { position: absolute; inset: 0; container-type: inline-size; }
+  @media screen { .flat .card { outline: 1px dashed rgba(201,184,147,.35); outline-offset: 6px; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flipper .inner { transition: none; animation: none; }
+  }
+</style>
+</head>
+<body>
+<main class="stage">
+  <header>
+    <h1>SERMA, <em>in your pocket.</em></h1>
+    <p class="note">Hover or tap the card to flip it. Print this page (margins: none, background graphics: on) for a press-ready PDF: one page per side, 3.5 × 2 in trim with 0.125 in bleed.</p>
+  </header>
+
+  <div class="row">
+    <div class="flipper-wrap">
+      <div class="label">Preview</div>
+      <div class="flipper" tabindex="0" role="button" aria-label="Flip card" onclick="this.classList.toggle('flipped')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped')}">
+        <div class="inner" id="flip"></div>
+      </div>
+    </div>
+    <div>
+      <div class="label">Print sheet</div>
+      <div class="flat row" id="flat" style="gap:1.5rem"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ====== EDIT ME ====== */
+const CARD = {
+  name: "",                          // e.g. "Jane Doe" (leave "" for a brand-only card)
+  title: "",                         // e.g. "Founder & Lead Designer"
+  tagline: "We handle the website.<br><b>You run the business.</b>",
+  phone: "(512) 774-0374",
+  email: "serma.support@gmail.com",
+  web: "sermawebdesign.com",
+  place: "Texas, USA",
+  sub: "Web Design",
+};
+/* ===================== */
+
+const icon = {
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
+  email: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>',
+  web: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  place: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+};
+
+/* Brand mark — lifted from src/components/ui/Wordmark.tsx (tile dropped: the card is the tile). */
+const mark = (tone = "sand") => {
+  const c = tone === "sand"
+    ? ["#E8DFCF", "#D6C9B2", "#C9B893", "#F3EDE1", "#E8DFCF"]
+    : ["#17253B", "#293B57", "#3A4A63", "#1E2E48", "#17253B"];
+  return `<svg viewBox="4 4 56 56" aria-hidden="true">
+    <g transform="rotate(-22 32 32)"><ellipse cx="32" cy="32" rx="26" ry="9.5" fill="none" stroke="${c[4]}" stroke-width="3.2" stroke-dasharray="58 8" stroke-dashoffset="-34"/></g>
+    <polygon points="32,14 47,26 42,46 22,46 17,26" fill="${c[0]}"/><polygon points="32,14 47,26 32,31" fill="${c[1]}"/>
+    <polygon points="17,26 32,31 22,46" fill="${c[2]}"/><polygon points="32,31 42,46 22,46" fill="${c[3]}"/>
+    <g transform="rotate(-22 32 32)"><path d="M6 32 A26 9.5 0 0 0 58 32" fill="none" stroke="${c[4]}" stroke-width="3.2"/></g></svg>`;
+};
+
+const front = () => `
+  <div class="trim">
+    <svg class="orbit" viewBox="0 0 100 57.143" aria-hidden="true">
+      <g transform="rotate(-22 79 23)" fill="none">
+        <ellipse cx="79" cy="23" rx="58" ry="17" stroke="#C9B893" stroke-opacity=".45" stroke-width=".28"/>
+        <ellipse cx="79" cy="23" rx="86" ry="27" stroke="#E8DFCF" stroke-opacity=".12" stroke-width=".22"/>
+        <ellipse cx="79" cy="23" rx="31" ry="9.5" stroke="#E8DFCF" stroke-opacity=".18" stroke-width=".22" stroke-dasharray="1 1.4"/>
+        <circle cx="34.6" cy="12.1" r=".9" fill="#C9B893" stroke="none"/>
+      </g>
+    </svg>
+    <div class="mark">${mark("sand")}</div>
+    <div class="wordmark">Serma</div>
+    <div class="sub">${CARD.sub}</div>
+  </div>
+  <div class="grain"></div>`;
+
+const back = () => {
+  const head = CARD.name
+    ? `<div class="person">${CARD.name}</div>${CARD.title ? `<div class="role">${CARD.title}</div>` : ""}`
+    : `<div class="tagline">${CARD.tagline}</div>`;
+  const rows = ["phone", "email", "web", "place"].filter(k => CARD[k])
+    .map(k => `<div>${icon[k]}<span>${CARD[k]}</span></div>`).join("");
+  return `<div class="trim">
+    <div class="top">${head}<div class="rule"></div></div>
+    <div class="contact">${rows}</div>
+    <div class="corner">${mark("navy")}</div>
+  </div>`;
+};
+
+document.getElementById("flip").innerHTML =
+  `<div class="card front">${front()}</div><div class="card back">${back()}</div>`;
+document.getElementById("flat").innerHTML =
+  `<div class="card front">${front()}</div><div class="card back">${back()}</div>`;
+</script>
+</body>
+</html>
