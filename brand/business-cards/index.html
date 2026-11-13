@@ -65,22 +65,36 @@
   .front .grain { position: absolute; inset: 0; opacity: .14; mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
-  .back { background: var(--sand-50); color: var(--navy); }
-  .back::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2.4cqw; background: var(--navy); }
-  .back::after { content: ""; position: absolute; left: 2.4cqw; top: 0; bottom: 0; width: .6cqw; background: var(--gold); }
+  /* Back = the site's "ambient field": ink wash + static sand / slate / ember orbs (see AmbientField.tsx),
+     with the light-thread bundle (LightThreads.tsx) drawn as vector strands and one glass tile on top. */
+  .back { color: var(--sand); background:
+      radial-gradient(70% 90% at 92% 8%, rgba(201,184,147,.22), transparent 70%),
+      radial-gradient(60% 80% at 4% 96%, rgba(36,58,72,.85), transparent 70%),
+      radial-gradient(45% 60% at 70% 100%, rgba(229,88,42,.07), transparent 70%),
+      radial-gradient(50% 60% at 20% 10%, rgba(232,223,207,.06), transparent 70%),
+      linear-gradient(160deg, var(--navy-700), var(--navy) 45%, var(--navy-900)); }
+  .back .threads { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .back .grain { position: absolute; inset: 0; opacity: .12; mix-blend-mode: overlay; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
   .back .top { position: absolute; left: 10cqw; right: 8cqw; top: 9cqw; }
   .back .person { font-family: var(--serif); font-weight: 600; font-size: 5.6cqw; letter-spacing: -.01em; line-height: 1.05; }
-  .back .role { font-size: 2.5cqw; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-deep); font-weight: 600; margin-top: 1.4cqw; }
+  .back .role { font-size: 2.5cqw; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-top: 1.4cqw; }
   .back .tagline { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 4.7cqw; line-height: 1.18; letter-spacing: -.01em; }
-  .back .tagline b { font-weight: 600; font-style: normal; }
-  .back .contact { position: absolute; left: 10cqw; right: 8cqw; bottom: 8.5cqw; display: grid; gap: 1.7cqw; font-size: 3.05cqw; font-weight: 500; }
+  .back .tagline b { font-weight: 600; font-style: normal; color: var(--sand-50); }
+  .back .contact { position: absolute; left: 10cqw; right: 8cqw; bottom: 8.5cqw; display: grid; gap: 1.7cqw; font-size: 3.05cqw; font-weight: 500; color: var(--sand-100); }
   .back .contact div { display: flex; align-items: center; gap: 2.4cqw; }
-  .back .contact svg { width: 2.9cqw; height: 2.9cqw; flex: none; stroke: var(--gold-deep); }
-  .back .rule { height: 1px; background: var(--sand-300); margin: 4.2cqw 0 0; width: 22cqw; }
+  .back .contact svg { width: 2.9cqw; height: 2.9cqw; flex: none; stroke: var(--gold); }
+  .back .rule { height: 1px; background: linear-gradient(90deg, var(--gold), transparent); margin: 4.2cqw 0 0; width: 26cqw; }
   /* QR: navy on cream, ~0.68in wide, the cream card itself is the quiet zone (nothing within 4 modules). */
-  .back .qr { position: absolute; right: 8cqw; bottom: 8.5cqw; width: 19.5cqw; display: grid; justify-items: center; gap: 1.6cqw; }
+  /* Liquid-glass tile (the site's .glass.glass-solid.glass-flat, no blur so it prints): sand glass,
+     specular rim on top, soft drop. Its light fill doubles as the QR quiet zone. */
+  .back .qr { position: absolute; right: 7cqw; bottom: 7cqw; width: 21.5cqw; display: grid; justify-items: center; gap: 1.3cqw;
+    padding: 2.2cqw 2.2cqw 1.7cqw; border-radius: 2.6cqw;
+    background: linear-gradient(140deg, rgba(251,248,241,.97), rgba(243,237,225,.9) 55%, rgba(232,223,207,.94));
+    box-shadow: inset 0 .35cqw 0 rgba(255,255,255,.85), inset 0 0 0 .2cqw rgba(255,255,255,.45),
+      0 0 0 .2cqw rgba(232,223,207,.18), 0 2.4cqw 4.5cqw -1.6cqw rgba(5,10,20,.75); }
   .back .qr svg { width: 100%; height: auto; display: block; }
-  .back .qr span { font-size: 1.85cqw; letter-spacing: .24em; text-transform: uppercase; color: var(--gold-deep); font-weight: 600; white-space: nowrap; }
+  .back .qr span { font-size: 1.7cqw; letter-spacing: .22em; text-transform: uppercase; color: var(--gold-deep); font-weight: 700; white-space: nowrap; }
 
   /* ---------- Print: one card side per page, with bleed ---------- */
   @page { size: calc(3.5in + 0.25in) calc(2in + 0.25in); margin: 0; }
@@ -179,13 +193,39 @@ const front = () => `
   </div>
   <div class="grain"></div>`;
 
+/* Light threads — the site's WebGL strand bundle, frozen as vectors. 18 strands ride a curved
+   spine through the top-right, pinching and fanning like a twisted ribbon; one ember strand. */
+const threads = () => {
+  const N = 18, STEPS = 90, A = [30, -10], C = [86, 8], B = [94, 72];
+  const pt = t => [0, 1].map(k => (1-t)*(1-t)*A[k] + 2*t*(1-t)*C[k] + t*t*B[k]);
+  const tan = t => [0, 1].map(k => 2*(1-t)*(C[k]-A[k]) + 2*t*(B[k]-C[k]));
+  let out = "";
+  for (let i = 0; i < N; i++) {
+    const fi = i / (N - 1) - 0.5;
+    let d = "";
+    for (let s = 0; s <= STEPS; s++) {
+      const t = s / STEPS, [x, y] = pt(t), [tx, ty] = tan(t), L = Math.hypot(tx, ty);
+      const w = 4 + 20 * Math.abs(Math.sin(0.9 + t * 3.6 + fi * 0.6));   // twist: pinch ↔ fan
+      const off = fi * w + 0.5 * Math.sin(t * 9 + i * 1.7);              // wobble
+      d += `${s ? "L" : "M"}${(x - ty / L * off).toFixed(2)} ${(y + tx / L * off).toFixed(2)}`;
+    }
+    const edge = 1 - Math.abs(fi) * 1.6;                                   // bright core, faint edges
+    const ember = i === 11;
+    const col = ember ? "#E5582A" : "#E8DFCF";
+    const a = ember ? 0.42 : 0.07 + 0.38 * Math.max(edge, 0) ** 1.5;
+    out += `<path d="${d}" stroke="${col}" stroke-opacity="${(a * 0.22).toFixed(3)}" stroke-width="1.1"/>`
+         + `<path d="${d}" stroke="${col}" stroke-opacity="${a.toFixed(3)}" stroke-width="${ember ? 0.2 : 0.14}"/>`;
+  }
+  return `<svg class="threads" viewBox="0 0 100 57.143" preserveAspectRatio="xMidYMid slice" fill="none" stroke-linecap="round" aria-hidden="true">${out}</svg>`;
+};
+
 const back = () => {
   const head = CARD.name
     ? `<div class="person">${CARD.name}</div>${CARD.title ? `<div class="role">${CARD.title}</div>` : ""}`
     : `<div class="tagline">${CARD.tagline}</div>`;
   const rows = ["phone", "email", "web", "place"].filter(k => CARD[k])
     .map(k => `<div>${icon[k]}<span>${CARD[k]}</span></div>`).join("");
-  return `<div class="trim">
+  return `${threads()}<div class="grain"></div><div class="trim">
     <div class="top">${head}<div class="rule"></div></div>
     <div class="contact">${rows}</div>
     ${CARD.qrPath ? `<div class="qr">
