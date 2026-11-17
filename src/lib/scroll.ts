@@ -1,13 +1,15 @@
 import { asset } from "@/lib/asset";
+import { showTab } from "@/lib/tabs";
 
 /**
- * Scrolls to the "Book a Live System Demo" section and moves keyboard focus to
- * its primary action. Falls back to navigating home from other routes (e.g. /privacy).
+ * Opens the "Book a Live System Demo" tab and moves keyboard focus to its
+ * primary action. Falls back to navigating home from other routes (e.g. /privacy).
  */
-export function goToDemo() {
+export async function goToDemo() {
+  const opened = await showTab("demo");
   const section = document.getElementById("demo");
   const form = document.getElementById("enquiry-form");
-  if (!section && !form) {
+  if (!opened || (!section && !form)) {
     window.location.assign(asset("/#demo"));
     return;
   }

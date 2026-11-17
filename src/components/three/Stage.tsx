@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
+import { useTabs } from "@/context/TabsContext";
 import { asset } from "@/lib/asset";
 import { LightThreads } from "./LightThreads";
 
@@ -20,8 +21,25 @@ const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
  * stops whenever none of the transparent chapters is on screen.
  */
 export function Stage() {
-  const { hero, system, finale, reduce, desktop } = useScene();
+  const scene = useScene();
+  const { system, reduce, desktop } = scene;
   const { paused } = useMotionPause();
+  const tabs = useTabs();
+  const activeTab = tabs?.active ?? "home";
+
+  // Tabs: a hidden chapter's scroll track can't be measured, so off-tab the hero reads as
+  // finished (1) and the finale as not yet reached (0) — the poses they had on the long page.
+  const onHero = useMotionValue(activeTab === "home" ? 1 : 0);
+  const onFinale = useMotionValue(activeTab === "demo" ? 1 : 0);
+  useEffect(() => {
+    onHero.set(activeTab === "home" ? 1 : 0);
+    onFinale.set(activeTab === "demo" ? 1 : 0);
+  }, [activeTab, onHero, onFinale]);
+  const heroProgress = useTransform([scene.hero.progress, onHero], ([p, on]: number[]) => (on ? p : 1));
+  const heroRaw = useTransform([scene.hero.raw, onHero], ([p, on]: number[]) => (on ? p : 1));
+  const finaleProgress = useTransform([scene.finale.progress, onFinale], ([p, on]: number[]) => (on ? p : 0));
+  const hero = { ref: scene.hero.ref, progress: heroProgress, raw: heroRaw };
+  const finale = { ref: scene.finale.ref, progress: finaleProgress };
 
   // The site is dark from the first frame (the engine reads 1 = ink backdrop).
   const ink = useMotionValue(1);
