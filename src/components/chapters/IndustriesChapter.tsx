@@ -1,5 +1,6 @@
 "use client";
 
+import { showTab } from "@/lib/tabs";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, MoveHorizontal } from "lucide-react";
 import { startTransition, useMemo, useState } from "react";
@@ -42,8 +43,7 @@ export function IndustriesChapter() {
 
   const openDashboard = () => {
     setNicheId(NICHES[active].id);
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document.getElementById("dashboard")?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+    showTab("dashboard");
   };
 
   const niche = NICHES[active];
