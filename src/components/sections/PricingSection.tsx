@@ -1,10 +1,9 @@
 "use client";
 
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { AnimatePresence, animate, motion, useInView, type Variants } from "framer-motion";
 import { ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
-import { useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
-import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -14,6 +13,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
 import { TIERS, type Tier } from "@/data/pricing";
 import { fill } from "@/i18n/types";
+import { formatCurrency } from "@/lib/format";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
 import { goToForm } from "@/lib/scroll";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
@@ -38,6 +38,46 @@ const tickVariants: Variants = {
   hidden: { pathLength: 0 },
   shown: { pathLength: 1, transition: { duration: 0.45, ease: EASE_EDITORIAL, delay: 0.08 } },
 };
+
+/**
+ * The price, which rolls up from 60% to its value as the card lands. The real
+ * price is the text from the first render: if the roll never runs (reduced motion,
+ * or the view trigger is missed), the visitor still sees the right number, never $0.
+ */
+function Price({ value, delay, className }: { value: number; delay: number; className?: string }) {
+  const { intlLocale } = useLanguage();
+  const reduce = useReducedMotionSafe();
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+  const final = formatCurrency(value, intlLocale);
+  const played = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.textContent = final;
+    // Plays once per visit: a language switch or a re-render just shows the price.
+    if (!inView || reduce || played.current) return;
+    played.current = true;
+    const controls = animate(value * 0.6, value, {
+      duration: 1.1,
+      delay: delay + 0.35,
+      ease: EASE_EDITORIAL,
+      onUpdate: (v) => (el.textContent = formatCurrency(v, intlLocale)),
+      onComplete: () => (el.textContent = final),
+    });
+    return () => {
+      controls.stop();
+      el.textContent = final;
+    };
+  }, [inView, reduce, value, delay, intlLocale, final]);
+
+  return (
+    <span ref={ref} className={`tabular ${className ?? ""}`}>
+      {final}
+    </span>
+  );
+}
 
 /** A check mark that draws itself in as its row arrives. */
 function Tick({ soon }: { soon?: boolean }) {
@@ -91,7 +131,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
               {tier.price === null ? (
                 <span className="font-display text-[3rem] leading-none tracking-[-0.04em] text-bone/40">$&thinsp;—</span>
               ) : (
-                <AnimatedNumber value={tier.price} format="currency" className="font-display text-[3rem] leading-none tracking-[-0.04em]" />
+                <Price value={tier.price} delay={delay} className="font-display text-[3rem] leading-none tracking-[-0.04em]" />
               )}
               <span className="text-sm text-ash">{p.oneTime}</span>
             </p>
