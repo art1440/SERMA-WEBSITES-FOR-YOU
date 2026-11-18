@@ -52,7 +52,7 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
     <motion.figure
       style={opacity ? { opacity } : undefined}
       aria-labelledby="hero-flow-title"
-      className={`glass-dark rounded-glass-lg p-5 [--glass-blur:18px] ${className ?? ""}`}
+      className={`glass-dark rounded-glass-lg p-5 [--glass-blur:18px] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_2px_6px_rgb(var(--bone)/0.08),0_40px_80px_-24px_rgb(var(--bone)/0.26)] ${className ?? ""}`}
     >
       <div className="flex items-center justify-between gap-3">
         <p id="hero-flow-title" className="text-[0.9375rem] font-medium tracking-[-0.01em] text-bone">
