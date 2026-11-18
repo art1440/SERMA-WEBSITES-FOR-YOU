@@ -187,7 +187,7 @@ export function EnquiryForm({ prefill }: { prefill?: string } = {}) {
           name="consent"
           value="yes"
           required
-          className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-[#2A6BBF]"
+          className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-aqua"
         />
         <span>
           {t.pricing.consentPrefix}{" "}

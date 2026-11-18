@@ -74,7 +74,7 @@ export function NicheTabs() {
                 aria-hidden="true"
                 // Radius set via style so Framer corrects it during the layout slide (no squashed ends).
                 style={{ borderRadius: 22 }}
-                className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_55%,#1F58A3_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_-1px_0_rgba(30,64,120,0.036),0_0_0_1px_rgba(42,107,191,0.35),0_8px_22px_-8px_rgba(42,107,191,0.55),0_1px_2px_rgba(30,64,120,0.135)]"
+                className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(var(--aqua-hi))_0%,rgb(var(--aqua))_55%,rgb(var(--aqua-deep))_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_-1px_0_rgba(30,64,120,0.036),0_0_0_1px_rgba(42,107,191,0.35),0_8px_22px_-8px_rgba(42,107,191,0.55),0_1px_2px_rgba(30,64,120,0.135)]"
                 transition={SPRING_SOFT}
               />
             ) : null}

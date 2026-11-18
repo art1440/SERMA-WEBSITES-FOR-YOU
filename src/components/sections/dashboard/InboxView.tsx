@@ -184,7 +184,7 @@ const OWNER: Record<NicheId, string> = {
 };
 
 /** The email "paper": also used to cut the ticket notches in detail cards. */
-const EMAIL_BG = "bg-[#FBFDFF]";
+const EMAIL_BG = "bg-ink-850";
 const SCROLLBAR = "[scrollbar-color:rgba(255,255,255,0.16)_transparent] [scrollbar-width:thin]";
 
 type Slot = "primary" | "secondary";
@@ -827,7 +827,7 @@ function Reader({
         className={`mx-3 mt-4 rounded-[14px] ${EMAIL_BG} shadow-[inset_0_0_0_1px_rgba(255,255,255,0.07),0_18px_40px_-24px_rgba(30,64,120,0.35)] sm:mx-5`}
       >
         {/* Brand strip: ink on aqua is 11.3:1. */}
-        <div className="flex items-center justify-between gap-3 rounded-t-[14px] bg-[linear-gradient(90deg,#1F58A3_0%,#2A6BBF_45%,#4A8BDA_100%)] px-4 py-2 text-ink sm:px-6">
+        <div className="flex items-center justify-between gap-3 rounded-t-[14px] bg-[linear-gradient(90deg,rgb(var(--aqua-deep))_0%,rgb(var(--aqua))_45%,rgb(var(--aqua-hi))_100%)] px-4 py-2 text-ink sm:px-6">
           <span className="inline-flex items-center gap-1.5 font-display text-[0.8125rem] tracking-[-0.01em]">
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-ink" />
             SermaWebDesign
@@ -982,7 +982,7 @@ function Reader({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
               >
-                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(42,107,191,0.6)]">
+                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,rgb(var(--aqua-hi))_0%,rgb(var(--aqua))_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(42,107,191,0.6)]">
                   <span className="sr-only">{COPY.youSent[locale]} </span>
                   {replies[i]?.[locale]}
                 </p>
@@ -995,7 +995,7 @@ function Reader({
             ))}
             {leadText ? (
               <li className="flex flex-col items-end">
-                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(42,107,191,0.6)]">
+                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,rgb(var(--aqua-hi))_0%,rgb(var(--aqua))_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(42,107,191,0.6)]">
                   <span className="sr-only">{COPY.youSentFromLeads[locale]} </span>
                   {leadText}
                 </p>

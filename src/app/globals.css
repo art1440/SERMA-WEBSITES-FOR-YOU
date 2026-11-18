@@ -3,6 +3,97 @@
 @tailwind utilities;
 
 /* ------------------------------------------------------------------ *
+ * Colour tokens (channel form, consumed by tailwind.config.ts as
+ * rgb(var(--x) / <alpha-value>)). Light = :root, dark = html.dark.
+ * The scheme is a class on <html>, NOT data-theme (a legacy styling hook).
+ *
+ * LIGHT "morning sky" — WCAG AA for every pairing used:
+ *   bone on ink ...... 12.4:1  ·  ash on ink ........ 5.4:1
+ *   aqua on ink ....... 5.1:1  ·  ink on aqua ....... 5.1:1
+ *   bone on sky-btn ... 10.0:1 ·  live on ink ....... 5.1:1
+ *
+ * DARK "deep navy" (ground #0A1220, lifted surfaces up to #1F3050) — WCAG AA:
+ *   bone  #E6EDF7 on ground ... ~15.9:1 · on ink-900 ~14.3:1 · on ink-600 ~11:1
+ *   ash   #9CADC6 on ground ... ~8.2:1  · on ink-900 ~7.4:1  · on ink-600 ~5.8:1
+ *   muted #A9B8CE on ink-900 .. ~8.5:1
+ *   aqua  #5B9DEB on ground ... ~6.5:1  · on ink-900 ~5.9:1   (text accent >= 4.5:1)
+ *   ink on aqua fill .......... ~6.5:1  (fills keep dark text, as in light)
+ *   live  #4CC38A on ground ... ~8.5:1  · signal-deep #7FB2EE on ground ~8.8:1
+ *   bone on dark sky-btn ...... ~10:1
+ * ------------------------------------------------------------------ */
+:root {
+  color-scheme: light;
+  --ink: 247 250 254;
+  --ink-900: 255 255 255;
+  --ink-850: 251 253 255;
+  --ink-800: 247 250 254;
+  --ink-700: 238 245 253;
+  --ink-600: 226 237 250;
+  --ink-500: 207 224 245;
+  --bone: 21 49 90;
+  --bone-50: 13 36 71;
+  --bone-100: 17 43 82;
+  --bone-200: 21 49 90;
+  --bone-300: 46 76 120;
+  --muted: 74 95 126;
+  --ash: 82 105 138;
+  --hairline: 214 228 244;
+  --signal: 156 203 246;
+  --signal-deep: 42 107 191;
+  --aqua: 42 107 191;
+  --aqua-deep: 31 88 163;
+  --aqua-glow: 90 151 224;
+  --aqua-hi: 74 139 218;
+  --sand: 220 235 251;
+  --amber: 188 217 245;
+  --ember: 230 240 251;
+  --live: 31 122 80;
+  /* Shadow tint (blue on light, black on dark), selection, primary-button sky gradient. */
+  --shadow: 30 64 120;
+  --sel-bg: 207 229 252;
+  --btn-top: 234 244 255;
+  --btn-mid: 211 232 253;
+  --btn-bot: 190 219 250;
+  /* Warm moon / stars (only drawn in dark mode). */
+  --star: 246 214 139;
+  --mark-tile: rgb(42 107 191);
+}
+html.dark {
+  color-scheme: dark;
+  --ink: 10 18 32;
+  --ink-900: 19 31 53;
+  --ink-850: 14 24 42;
+  --ink-800: 10 18 32;
+  --ink-700: 24 39 64;
+  --ink-600: 31 48 80;
+  --ink-500: 44 65 102;
+  --bone: 230 237 247;
+  --bone-50: 244 247 252;
+  --bone-100: 238 243 250;
+  --bone-200: 230 237 247;
+  --bone-300: 195 208 227;
+  --muted: 169 184 206;
+  --ash: 156 173 198;
+  --hairline: 42 60 90;
+  --signal: 127 178 238;
+  --signal-deep: 127 178 238;
+  --aqua: 91 157 235;
+  --aqua-deep: 66 128 214;
+  --aqua-glow: 141 187 245;
+  --aqua-hi: 111 172 240;
+  --sand: 22 37 61;
+  --amber: 28 51 85;
+  --ember: 19 33 58;
+  --live: 76 195 138;
+  --shadow: 0 0 0;
+  --sel-bg: 44 78 128;
+  --btn-top: 44 74 120;
+  --btn-mid: 35 62 104;
+  --btn-bot: 27 50 88;
+  --mark-tile: rgb(58 118 208);
+}
+
+/* ------------------------------------------------------------------ *
  * Base — tactile, crisp scrolling
  * ------------------------------------------------------------------ */
 @layer base {
@@ -25,7 +116,6 @@
 
   body {
     @apply bg-ink font-sans text-bone antialiased;
-    color-scheme: light;
     font-feature-settings: "ss01", "cv11";
   }
 
@@ -59,14 +149,14 @@
   }
 
   ::selection {
-    background: #CFE5FC;
-    color: #15315A;
+    background: rgb(var(--sel-bg));
+    color: rgb(var(--bone));
   }
 
   /* Visible, high-contrast keyboard focus (WCAG 2.4.7 / 1.4.11). */
   /* Light site: friendly-blue ring (5:1 on white). */
   :focus-visible {
-    outline: 2px solid #2A6BBF;
+    outline: 2px solid rgb(var(--aqua));
     outline-offset: 3px;
   }
 
@@ -128,7 +218,7 @@
   /* Both materials are light now (the site is white + sky blue); .glass-dark is kept as a
      name so existing markup re-themes in place. It is the slightly bluer, denser of the two. */
   .glass {
-    color: #15315A;
+    color: rgb(var(--bone));
     background: linear-gradient(140deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.46) 55%, rgba(255, 255, 255, 0.6) 100%);
     border: 1px solid rgba(255, 255, 255, 0.75);
     box-shadow:
@@ -137,7 +227,7 @@
       0 18px 44px -20px rgba(42, 107, 191, 0.28);
   }
   .glass-dark {
-    color: #15315A;
+    color: rgb(var(--bone));
     background: linear-gradient(140deg, rgba(255, 255, 255, 0.82) 0%, rgba(244, 249, 255, 0.66) 55%, rgba(236, 245, 254, 0.74) 100%);
     border: 1px solid rgba(42, 107, 191, 0.12);
     box-shadow:
@@ -212,6 +302,41 @@
     background: radial-gradient(320px circle at var(--mx, 50%) var(--my, -20%), rgba(156, 203, 246, 0.32), transparent 62%);
   }
 
+  /* ---- Dark scheme: the same materials, re-tinted as smoked navy glass. ---- */
+  html.dark .glass,
+  html.dark .glass-dark {
+    color: rgb(var(--bone));
+    background: linear-gradient(140deg, rgba(34, 52, 86, 0.74) 0%, rgba(22, 36, 62, 0.52) 55%, rgba(28, 44, 74, 0.64) 100%);
+    border: 1px solid rgba(150, 190, 240, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 1px 2px rgba(0, 0, 0, 0.3),
+      0 18px 44px -20px rgba(0, 0, 0, 0.65);
+  }
+  html.dark .glass-dark {
+    background: linear-gradient(140deg, rgba(26, 42, 72, 0.84) 0%, rgba(19, 31, 54, 0.7) 55%, rgba(22, 36, 62, 0.78) 100%);
+  }
+  html.dark .glass.glass-solid,
+  html.dark .glass-dark.glass-solid {
+    background: linear-gradient(140deg, rgba(24, 39, 66, 0.95), rgba(17, 29, 50, 0.92));
+  }
+  html.dark .glass.glass-flat,
+  html.dark .glass-dark.glass-flat {
+    background: linear-gradient(140deg, rgba(28, 44, 74, 0.9) 0%, rgba(20, 33, 58, 0.8) 55%, rgba(24, 38, 66, 0.86) 100%);
+  }
+  html.dark .glass.glass-solid.glass-flat,
+  html.dark .glass-dark.glass-solid.glass-flat {
+    background: linear-gradient(140deg, rgba(24, 39, 66, 0.97), rgba(17, 29, 50, 0.95));
+  }
+  html.dark .glass::before,
+  html.dark .glass-dark::before {
+    background: linear-gradient(150deg, rgba(190, 215, 250, 0.32), rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0) 68%, rgba(120, 170, 235, 0.3));
+  }
+  html.dark .glass::after,
+  html.dark .glass-dark::after {
+    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, -20%), rgba(120, 170, 235, 0.2), transparent 62%);
+  }
+
   /* "Pause animations" (MotionPauseContext) also freezes CSS keyframe loops
      such as the live pulse and the scroll cue (WCAG 2.2.2). */
   html[data-motion-paused="true"] *,
@@ -264,26 +389,41 @@
   .btn-signal,
   .btn-aqua {
     @apply btn text-bone;
-    background: linear-gradient(180deg, #EAF4FF 0%, #D3E8FD 55%, #BEDBFA 100%);
+    background: linear-gradient(180deg, rgb(var(--btn-top)) 0%, rgb(var(--btn-mid)) 55%, rgb(var(--btn-bot)) 100%);
     --btn-glow: rgba(255, 255, 255, 0.85);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -1px 0 rgba(42, 107, 191, 0.12),
-      0 0 0 1px rgba(42, 107, 191, 0.16),
-      0 14px 30px -14px rgba(42, 107, 191, 0.55);
+      inset 0 -1px 0 rgb(var(--aqua) / 0.12),
+      0 0 0 1px rgb(var(--aqua) / 0.16),
+      0 14px 30px -14px rgb(var(--aqua) / 0.55);
+  }
+  html.dark .btn-ink,
+  html.dark .btn-bone,
+  html.dark .btn-signal,
+  html.dark .btn-aqua {
+    --btn-glow: rgba(150, 190, 245, 0.3);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgb(var(--aqua) / 0.35),
+      0 14px 30px -14px rgba(0, 0, 0, 0.7);
   }
   /* Quiet secondary: no fill, a single hairline, deep-blue label. */
   .btn-line,
   .btn-line-dark {
     @apply btn text-bone;
     background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(21, 49, 90, 0.18);
+    border: 1px solid rgb(var(--bone) / 0.18);
     box-shadow: none;
     --glass-blur: 0px;
   }
+  html.dark .btn-line,
+  html.dark .btn-line-dark {
+    background: rgba(40, 62, 100, 0.45);
+  }
   .btn-line:hover,
   .btn-line-dark:hover {
-    border-color: rgba(42, 107, 191, 0.5);
+    border-color: rgb(var(--aqua) / 0.5);
   }
 
   /* Example links and inline actions: text with a hairline underline, never a capsule. */
@@ -293,7 +433,7 @@
   }
   .link-quiet:hover,
   .link-quiet:focus-visible {
-    text-decoration-color: rgba(42, 107, 191, 0.9);
+    text-decoration-color: rgb(var(--aqua) / 0.9);
   }
 
   /* Two sizes only: .btn (in-page CTAs, 50px) and .btn-sm (nav, footer, legal, utility; 44px).
@@ -301,6 +441,11 @@
      size each variant copies in from .btn. */
   .btn-sm.btn-sm {
     @apply min-h-[44px] px-4 py-2 text-sm;
+  }
+
+  /* Dark-mode toggle: presses a little deeper than other buttons. */
+  .theme-toggle:active {
+    transform: scale(0.94);
   }
 
   /* Small glass capsule for labels/status ("chips"). */
@@ -315,7 +460,7 @@
 
   /* Form controls — rounded, glassy, 16px+ text (prevents iOS zoom). */
   .field {
-    @apply block w-full rounded-glass-sm border border-bone/15 bg-white px-4 py-3 text-base text-bone placeholder:text-ash hover:border-bone/35 focus:border-aqua;
+    @apply block w-full rounded-glass-sm border border-bone/15 bg-ink-900 px-4 py-3 text-base text-bone placeholder:text-ash hover:border-bone/35 focus:border-aqua;
   }
   .field[aria-invalid="true"] {
     @apply border-signal-deep;
@@ -328,17 +473,17 @@
   .range::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 999px;
-    background: linear-gradient(to right, #2A6BBF 0%, #5A97E0 var(--fill, 50%), rgba(21, 49, 90, 0.12) var(--fill, 50%), rgba(21, 49, 90, 0.12) 100%);
+    background: linear-gradient(to right, rgb(var(--aqua)) 0%, rgb(var(--aqua-glow)) var(--fill, 50%), rgb(var(--bone) / 0.14) var(--fill, 50%), rgb(var(--bone) / 0.14) 100%);
   }
   .range::-moz-range-track {
     height: 6px;
     border-radius: 999px;
-    background: rgba(21, 49, 90, 0.12);
+    background: rgb(var(--bone) / 0.14);
   }
   .range::-moz-range-progress {
     height: 6px;
     border-radius: 999px;
-    background: linear-gradient(to right, #2A6BBF, #5A97E0);
+    background: linear-gradient(to right, rgb(var(--aqua)), rgb(var(--aqua-glow)));
   }
   .range::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -348,8 +493,8 @@
     width: 26px;
     border-radius: 999px;
     border: 1px solid rgba(42, 107, 191, 0.35);
-    background: radial-gradient(circle at 35% 30%, #fff 0%, #F2F8FF 55%, #D3E8FD 100%);
-    box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(90, 151, 224, 0.2), 0 6px 14px -4px rgba(42, 107, 191, 0.5);
+    background: radial-gradient(circle at 35% 30%, rgb(var(--ink-900)) 0%, rgb(var(--ink-700)) 55%, rgb(var(--btn-mid)) 100%);
+    box-shadow: inset 0 1px 0 rgb(var(--ink-900)), 0 0 0 4px rgb(var(--aqua-glow) / 0.2), 0 6px 14px -4px rgb(var(--aqua) / 0.5);
     transition: transform var(--dur-fast, 150ms) var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1));
   }
   .range::-moz-range-thumb {
@@ -357,8 +502,8 @@
     width: 26px;
     border-radius: 999px;
     border: 1px solid rgba(42, 107, 191, 0.35);
-    background: radial-gradient(circle at 35% 30%, #fff 0%, #F2F8FF 55%, #D3E8FD 100%);
-    box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(90, 151, 224, 0.2), 0 6px 14px -4px rgba(42, 107, 191, 0.5);
+    background: radial-gradient(circle at 35% 30%, rgb(var(--ink-900)) 0%, rgb(var(--ink-700)) 55%, rgb(var(--btn-mid)) 100%);
+    box-shadow: inset 0 1px 0 rgb(var(--ink-900)), 0 0 0 4px rgb(var(--aqua-glow) / 0.2), 0 6px 14px -4px rgb(var(--aqua) / 0.5);
     transition: transform var(--dur-fast, 150ms) var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1));
   }
   .range:active::-webkit-slider-thumb {
@@ -373,24 +518,48 @@
 }
 
 /* ------------------------------------------------------------------ *
+ * Theme switch: circular reveal (View Transitions API). The new scheme is
+ * clipped by a circle animated from script (src/lib/theme.ts); the default
+ * cross-fade is turned off. Reduced motion never starts a transition.
+ * ------------------------------------------------------------------ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Glass fallbacks & accessibility
  *  - no backdrop-filter support → solid tinted panels
  *  - prefers-reduced-transparency → solid panels (WCAG-friendly)
  *  - prefers-contrast: more → solid + stronger borders
  * ------------------------------------------------------------------ */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass { background: rgba(255, 255, 255, 0.96) !important; }
-  .glass-dark { background: rgba(250, 252, 255, 0.97) !important; }
+  .glass { background: rgb(var(--ink-900) / 0.96) !important; }
+  .glass-dark { background: rgb(var(--ink-850) / 0.97) !important; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .glass, .glass-dark { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-  .glass { background: #FFFFFF !important; }
-  .glass-dark { background: #FAFCFF !important; }
+  .glass { background: rgb(var(--ink-900)) !important; }
+  .glass-dark { background: rgb(var(--ink-850)) !important; }
   .ambient-field { opacity: 0.5; }
 }
 @media (prefers-contrast: more) {
   .glass, .glass-dark { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-  .glass, .glass-dark { background: #ffffff !important; border-color: #15315A !important; }
+  .glass, .glass-dark { background: rgb(var(--ink-900)) !important; border-color: rgb(var(--bone)) !important; }
 }
 
 /* ------------------------------------------------------------------ *

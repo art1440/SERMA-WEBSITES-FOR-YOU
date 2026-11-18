@@ -6,6 +6,7 @@ import { ArrowUpRight, Lock, Menu, Pause, Play, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent } from "react";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
@@ -137,6 +138,7 @@ export function Navbar() {
             )}
 
             <div className="flex shrink-0 items-center gap-1.5">
+              <ThemeToggle className="hidden sm:inline-flex" />
               <button
                 type="button"
                 onClick={toggleMotion}
@@ -242,6 +244,7 @@ export function Navbar() {
                     ))}
                   </ul>
                   <div className="mx-2 mt-2 grid gap-2 border-t border-bone/[0.14] pb-2 pt-4">
+                    <ThemeToggle variant="menu" className="sm:hidden" />
                     <button type="button" onClick={toggleMotion} aria-pressed={paused} className="btn-line-dark glass-flat w-full sm:hidden">
                       {paused ? <Play aria-hidden="true" size={13} strokeWidth={1.75} /> : <Pause aria-hidden="true" size={13} strokeWidth={1.75} />}
                       {paused ? t.common.playAll : t.common.pauseAll}

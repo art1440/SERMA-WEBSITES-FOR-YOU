@@ -20,6 +20,7 @@ const en = {
     playMotion: "Play background video",
     pauseAll: "Pause animations",
     playAll: "Play animations",
+    darkMode: "Switch to dark mode",
     scroll: "Scroll",
     /** FTC micro-copy, one per surface (see SimulationDisclaimer `variant`). */
     simulationDisclaimer: {
@@ -371,6 +372,7 @@ const es: Dictionary = {
     playMotion: "Reproducir video de fondo",
     pauseAll: "Pausar animaciones",
     playAll: "Reanudar animaciones",
+    darkMode: "Cambiar a modo oscuro",
     scroll: "Desplácese",
     simulationDisclaimer: {
       dashboard:

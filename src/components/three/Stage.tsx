@@ -12,7 +12,8 @@ import { LightThreads } from "./LightThreads";
 const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
 
 /** Develops the dark films into light ones: invert the tones, rotate the hue back, soften. */
-const FILM_LIGHT = "[filter:invert(1)_hue-rotate(180deg)_saturate(0.85)_brightness(1.04)]";
+/** The films were shot dark: inverted for the light scheme, shown as shot in dark mode. */
+const FILM_LIGHT = "[filter:invert(1)_hue-rotate(180deg)_saturate(0.85)_brightness(1.04)] dark:[filter:none]";
 
 /**
  * Fixed, full-screen backdrop shared by the transparent chapters (hero, system, finale).
@@ -121,12 +122,12 @@ export function Stage() {
     // h-lvh: the backdrop keeps the large-viewport height, so the phone URL bar sliding in/out
     // never resizes (and re-renders) the two canvases mid-scroll.
     <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 z-0 h-screen h-lvh overflow-hidden">
-      {/* Morning-sky base: white, with a soft blue light pooling from the top right. */}
+      {/* Base ground (morning sky in light, deep navy in dark), with a soft blue light pooling from the top right. */}
       <div
         className="absolute inset-0 bg-ink"
         style={{
           backgroundImage:
-            "radial-gradient(90% 70% at 85% 0%, rgba(188,217,245,0.55), transparent 70%), radial-gradient(70% 60% at 0% 100%, rgba(220,235,251,0.7), transparent 70%)",
+            "radial-gradient(90% 70% at 85% 0%, rgb(var(--amber) / 0.55), transparent 70%), radial-gradient(70% 60% at 0% 100%, rgb(var(--sand) / 0.7), transparent 70%)",
         }}
       />
 
@@ -186,7 +187,7 @@ export function Stage() {
       {/* Soft sky-blue edge light (static): frames the scene without darkening it. */}
       <div
         className="absolute inset-0"
-        style={{ background: "radial-gradient(ellipse at 55% 50%, transparent 55%, rgba(207,224,245,0.55) 100%)" }}
+        style={{ background: "radial-gradient(ellipse at 55% 50%, transparent 55%, rgb(var(--ink-500) / 0.55) 100%)" }}
       />
     </div>
   );

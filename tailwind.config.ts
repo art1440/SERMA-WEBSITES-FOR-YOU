@@ -8,6 +8,8 @@ import plugin from "tailwindcss/plugin";
  * Hairlines are decorative structure only (never the sole carrier of meaning).
  */
 const config: Config = {
+  /* The scheme is `html.dark` (not data-theme: that attribute is a legacy styling hook). */
+  darkMode: "class",
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     screens: {
@@ -19,51 +21,51 @@ const config: Config = {
     },
     extend: {
       colors: {
-        /* "Morning sky" palette — white ground, soft sky-blue washes, deep blue ink.
-           Token names are kept from the old dark theme so every component re-themes at once:
-             ink  = page / surface (whites and pale blues)   bone = primary text (deep blue)
-             ash  = secondary text                           aqua = the one accent (friendly blue)
-           Contrast (WCAG AA) for every pairing used:
-             bone on ink ...... 12.4:1  ·  ash on ink ........ 5.4:1
-             aqua on ink ....... 5.1:1  ·  ink on aqua ....... 5.1:1
-             bone on sky-btn ... 10.0:1 ·  live on ink ....... 5.1:1 */
+        /* Every colour token is a CSS variable in "R G B" channel form, defined in
+           src/app/globals.css (light in :root, dark in html.dark), so all opacity
+           modifiers (bg-ink/90, text-bone/[0.21], from-ink …) keep working.
+           Token names come from the old dark theme:
+             ink  = page / surface        bone = primary text
+             ash  = secondary text        aqua = the one accent (friendly blue)
+           WCAG AA contrast tables for BOTH schemes sit next to the values in globals.css. */
         ink: {
-          DEFAULT: "#F7FAFE",
-          900: "#FFFFFF",
-          850: "#FBFDFF",
-          800: "#F7FAFE",
-          700: "#EEF5FD",
-          600: "#E2EDFA",
-          500: "#CFE0F5",
+          DEFAULT: "rgb(var(--ink) / <alpha-value>)",
+          900: "rgb(var(--ink-900) / <alpha-value>)",
+          850: "rgb(var(--ink-850) / <alpha-value>)",
+          800: "rgb(var(--ink-800) / <alpha-value>)",
+          700: "rgb(var(--ink-700) / <alpha-value>)",
+          600: "rgb(var(--ink-600) / <alpha-value>)",
+          500: "rgb(var(--ink-500) / <alpha-value>)",
         },
         bone: {
-          DEFAULT: "#15315A",
-          50: "#0D2447",
-          100: "#112B52",
-          200: "#15315A",
-          300: "#2E4C78",
+          DEFAULT: "rgb(var(--bone) / <alpha-value>)",
+          50: "rgb(var(--bone-50) / <alpha-value>)",
+          100: "rgb(var(--bone-100) / <alpha-value>)",
+          200: "rgb(var(--bone-200) / <alpha-value>)",
+          300: "rgb(var(--bone-300) / <alpha-value>)",
         },
-        muted: "#4A5F7E",
-        ash: "#52698A",
+        muted: "rgb(var(--muted) / <alpha-value>)",
+        ash: "rgb(var(--ash) / <alpha-value>)",
         hairline: {
-          light: "#D6E4F4",
-          dark: "#D6E4F4",
+          light: "rgb(var(--hairline) / <alpha-value>)",
+          dark: "rgb(var(--hairline) / <alpha-value>)",
         },
         signal: {
-          DEFAULT: "#9CCBF6",
-          deep: "#2A6BBF",
+          DEFAULT: "rgb(var(--signal) / <alpha-value>)",
+          deep: "rgb(var(--signal-deep) / <alpha-value>)",
         },
-        /* Brand accent = friendly blue. Fills take white (ink) text on top (5.1:1). */
+        /* Brand accent = friendly blue. Fills take ink text on top. */
         aqua: {
-          DEFAULT: "#2A6BBF",
-          deep: "#1F58A3",
-          glow: "#5A97E0",
+          DEFAULT: "rgb(var(--aqua) / <alpha-value>)",
+          deep: "rgb(var(--aqua-deep) / <alpha-value>)",
+          glow: "rgb(var(--aqua-glow) / <alpha-value>)",
+          hi: "rgb(var(--aqua-hi) / <alpha-value>)",
         },
         /* Ambient tints — decorative backgrounds only, never text. */
-        sand: "#DCEBFB",
-        amber: "#BCD9F5",
-        ember: "#E6F0FB",
-        live: "#1F7A50",
+        sand: "rgb(var(--sand) / <alpha-value>)",
+        amber: "rgb(var(--amber) / <alpha-value>)",
+        ember: "rgb(var(--ember) / <alpha-value>)",
+        live: "rgb(var(--live) / <alpha-value>)",
       },
       fontFamily: {
         /* Headings = Source Serif 4 (brand). */
