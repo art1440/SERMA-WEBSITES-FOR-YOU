@@ -47,12 +47,12 @@ export function SectionHeader({ index, eyebrow, title, body, headingId, wide = f
   const lines = typeof title === "string" ? [title] : title;
   return (
     <div className={wide ? "max-w-6xl" : "max-w-5xl"}>
-      <Reveal y={12}>
+      <Reveal>
         <SectionChip index={index} label={eyebrow} />
       </Reveal>
       <RevealLines id={headingId} lines={lines} className="mt-5 font-display text-display-md text-balance text-bone lg:mt-6" />
       {body ? (
-        <Reveal delay={0.15} y={16}>
+        <Reveal delay={0.12}>
           <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ash md:text-lg">{body}</p>
         </Reveal>
       ) : null}

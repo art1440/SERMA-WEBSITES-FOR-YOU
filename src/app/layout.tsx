@@ -6,6 +6,7 @@ import { displaySerif, geistMono, workSans } from "./fonts";
 import { buildCsp } from "@/config/csp";
 import { asset } from "@/lib/asset";
 import "./globals.css";
+import "./motion.css";
 
 const siteUrl = process.env.SITE_URL ?? "https://sermawebdesign.com";
 /** Only for static hosts that can't send headers (Netlify sends them via netlify.toml). */

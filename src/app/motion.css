@@ -1,0 +1,29 @@
+/* Motion durations: one small set shared by CSS and Tailwind (`duration-fast|base|slow`).
+ * Easing is the editorial curve from src/lib/motion.ts (`ease-editorial`).
+ *   fast 150ms: press / small state flips
+ *   base 250ms: hover, focus, colour, fades
+ *   slow 450ms: panels, larger moves
+ */
+:root {
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 450ms;
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms;
+    --dur-base: 1ms;
+    --dur-slow: 1ms;
+  }
+}
+
+/* Colour hover for every interactive element that doesn't set its own transition.
+ * :where() keeps specificity at 0, so any `.btn` / `transition-*` utility wins.
+ * Colour properties only: transform/opacity stay with Framer or explicit utilities. */
+:where(a, button, [role="tab"], [role="switch"], [role="button"], summary, input, select, textarea) {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: var(--dur-base);
+  transition-timing-function: var(--ease-editorial);
+}

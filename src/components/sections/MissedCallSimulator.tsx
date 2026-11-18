@@ -505,12 +505,12 @@ function Phone({ phase }: { phase: Phase }) {
                 >
                   <span
                     aria-hidden="true"
-                    className={`pointer-events-none absolute inset-0 -z-10 rounded-[inherit] transition-opacity duration-700 ease-editorial ${phase === "missed" ? "opacity-0" : "opacity-100"}`}
+                    className={`pointer-events-none absolute inset-0 -z-10 rounded-[inherit] transition-opacity duration-slow ease-editorial ${phase === "missed" ? "opacity-0" : "opacity-100"}`}
                     style={{ backgroundImage: CALL_GLOW_INCOMING }}
                   />
                   <span
                     aria-hidden="true"
-                    className={`pointer-events-none absolute inset-0 -z-10 rounded-[inherit] transition-opacity duration-700 ease-editorial ${phase === "missed" ? "opacity-100" : "opacity-0"}`}
+                    className={`pointer-events-none absolute inset-0 -z-10 rounded-[inherit] transition-opacity duration-slow ease-editorial ${phase === "missed" ? "opacity-100" : "opacity-0"}`}
                     style={{ backgroundImage: CALL_GLOW_MISSED }}
                   />
                   <div className="relative grid h-20 w-20 place-items-center">

@@ -336,7 +336,7 @@ function Sidebar({ desktop }: { desktop: boolean }) {
               // Below lg: icon above label (radius concentric with the plate: 22 − 6px padding = 16).
               // lg+: one capsule row; the 10.25rem track fits the longest label + badge ("Prospectos" 2) untruncated.
               // Selection is a tint + shadow only, so forced colors get a system-colour outline.
-              className={`relative flex min-h-[52px] min-w-0 flex-col items-center justify-center gap-1 rounded-[16px] px-1.5 py-1.5 text-[0.8125rem] leading-tight lg:min-h-[44px] lg:flex-row lg:justify-start lg:gap-1.5 lg:rounded-full lg:px-2.5 lg:py-0 lg:text-sm ${
+              className={`relative flex min-h-[52px] min-w-0 flex-col transition-[transform,background-color,color] duration-base ease-editorial active:scale-[0.97] items-center justify-center gap-1 rounded-[16px] px-1.5 py-1.5 text-[0.8125rem] leading-tight lg:min-h-[44px] lg:flex-row lg:justify-start lg:gap-1.5 lg:rounded-full lg:px-2.5 lg:py-0 lg:text-sm ${
                 selected
                   ? "bg-aqua/[0.104] font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.09),inset_0_0_0_1px_rgba(255,255,255,0.05)] forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]"
                   : "text-ash hover:bg-aqua/[0.065] hover:text-bone"
@@ -622,7 +622,7 @@ function NichePreview({ idle = false }: { idle?: boolean }) {
           type="button"
           onClick={() => setUserPaused(!paused)}
           aria-label={paused ? t.common.playMotion : t.common.pauseMotion}
-          className="-my-1.5 grid h-11 w-11 shrink-0 place-items-center rounded-full bg-aqua/[0.078] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)] transition-transform duration-300 ease-editorial hover:bg-aqua/[0.13] active:scale-95"
+          className="-my-1.5 grid h-11 w-11 shrink-0 place-items-center rounded-full bg-aqua/[0.078] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)] transition-transform duration-base ease-editorial hover:bg-aqua/[0.13] active:scale-95"
         >
           {paused ? <Play aria-hidden="true" size={14} strokeWidth={1.5} /> : <Pause aria-hidden="true" size={14} strokeWidth={1.5} />}
         </button>
