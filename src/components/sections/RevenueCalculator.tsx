@@ -114,7 +114,8 @@ export function RevenueCalculator() {
                         aria-pressed={active}
                         onClick={() => loadPreset(n.id)}
                         whileHover={active ? undefined : { y: -2 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={SPRING_SOFT}
                         className={`relative isolate min-h-[44px] rounded-full px-4 py-2 text-sm font-medium tracking-[-0.01em] ${
                           active ? "z-10" : `z-0 ${PRESET_IDLE}`
                         }`}

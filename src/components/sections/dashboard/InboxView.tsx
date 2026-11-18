@@ -438,8 +438,8 @@ function InboxClient({ nicheId }: { nicheId: NicheId }) {
               type="button"
               onClick={markAllRead}
               aria-disabled={unreadCount === 0 || undefined}
-              className={`${PILL} ${
-                unreadCount === 0 ? "cursor-default text-ash/70" : "text-ash hover:bg-aqua/[0.078] hover:text-bone"
+              className={`${PILL} transition-[transform,background-color,color] duration-base ease-editorial ${
+                unreadCount === 0 ? "cursor-default text-ash/70" : "text-ash hover:bg-aqua/[0.078] hover:text-bone active:scale-[0.97]"
               }`}
             >
               <CheckCheck aria-hidden="true" size={14} strokeWidth={1.9} />

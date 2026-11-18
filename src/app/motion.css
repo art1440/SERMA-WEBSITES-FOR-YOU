@@ -18,3 +18,12 @@
     --dur-slow: 1ms;
   }
 }
+
+/* Colour hover for every interactive element that doesn't set its own transition.
+ * :where() keeps specificity at 0, so any `.btn` / `transition-*` utility wins.
+ * Colour properties only: transform/opacity stay with Framer or explicit utilities. */
+:where(a, button, [role="tab"], [role="switch"], [role="button"], summary, input, select, textarea) {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: var(--dur-base);
+  transition-timing-function: var(--ease-editorial);
+}

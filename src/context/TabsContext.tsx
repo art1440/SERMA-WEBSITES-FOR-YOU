@@ -17,8 +17,9 @@ type TabsValue = {
 
 const TabsContext = createContext<TabsValue | null>(null);
 
-const OUT_S = 0.18;
-const IN_S = 0.55;
+// Same scale as the CSS duration tokens (motion.css): fast out, slow in.
+const OUT_S = 0.15;
+const IN_S = 0.45;
 
 function prefersReduced() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -67,9 +68,12 @@ export function TabsProvider({ children }: { children: ReactNode }) {
       if (mine !== token.current) return;
       activeRef.current = id;
       setActive(id);
-      // Let React commit the new panel before measuring/scrolling.
+      // Let React commit the new panel (and the browser lay it out) while the veil is still
+      // at 0, then reset scroll, then wait one more frame so the scroll-linked scenes
+      // re-measure at the top. Only then fade in: the new panel never shows at the old offset.
       await new Promise<void>((r) => requestAnimationFrame(() => r()));
       resetScroll();
+      await new Promise<void>((r) => requestAnimationFrame(() => r()));
       if (mine !== token.current) return;
       animate(veil, 1, { duration: IN_S, ease: EASE_EDITORIAL });
     },

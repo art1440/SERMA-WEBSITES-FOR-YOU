@@ -1,5 +1,6 @@
 "use client";
 
+import { Reveal, staggerDelay } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -26,17 +27,19 @@ export function InclusionsList() {
         <ol className="mt-12 grid gap-x-10 md:mt-14 md:grid-cols-2 md:gap-x-14">
           {section.items.map((item, i) => (
             <li key={item.title} className="border-t border-hairline-dark py-6 md:py-7">
-              <div className="flex items-baseline gap-4">
-                <span aria-hidden="true" className="tabular shrink-0 font-mono text-[0.6875rem] text-ash">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className="min-w-0">
-                  <h3 className="font-display text-[1.1875rem] leading-snug text-balance text-bone md:text-xl">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-pretty text-[0.9375rem] leading-relaxed text-ash">{item.detail}</p>
+              <Reveal delay={staggerDelay(Math.floor(i / 2))}>
+                <div className="flex items-baseline gap-4">
+                  <span aria-hidden="true" className="tabular shrink-0 font-mono text-[0.6875rem] text-ash">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-[1.1875rem] leading-snug text-balance text-bone md:text-xl">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-pretty text-[0.9375rem] leading-relaxed text-ash">{item.detail}</p>
+                  </div>
                 </div>
-              </div>
+              </Reveal>
             </li>
           ))}
         </ol>
