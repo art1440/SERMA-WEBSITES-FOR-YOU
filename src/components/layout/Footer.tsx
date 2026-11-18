@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUp, ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
+import { ArrowUp, ArrowUpRight, Mail, Pause, Phone, Play, ShieldCheck } from "lucide-react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { Reveal } from "@/components/ui/Reveal";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMotionPause } from "@/context/MotionPauseContext";
 import { fill } from "@/i18n/types";
 
 /** Footer link: calm sans, with a small arrow that glides in on hover (transform + opacity). */
@@ -77,6 +78,9 @@ export function Footer() {
                 <ShieldCheck aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0 text-aqua" />
                 {t.footer.privacyBadge}
               </p>
+              {/* WCAG 2.2.2: the one control that stops the 3D engine and every looping video. It lives in the
+                  footer (outside the tab panels), so it is reachable from every tab. */}
+              <PauseMotionButton />
             </div>
           </div>
 
@@ -120,5 +124,25 @@ export function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function PauseMotionButton() {
+  const { t } = useLanguage();
+  const { paused, toggle } = useMotionPause();
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-pressed={paused}
+      className="chip-dark glass-flat min-h-[44px] text-bone transition-transform duration-200 ease-editorial hover:text-bone active:scale-[0.97]"
+    >
+      {paused ? (
+        <Play aria-hidden="true" size={14} strokeWidth={1.75} className="shrink-0 text-aqua" />
+      ) : (
+        <Pause aria-hidden="true" size={14} strokeWidth={1.75} className="shrink-0 text-aqua" />
+      )}
+      {paused ? t.common.playAll : t.common.pauseAll}
+    </button>
   );
 }

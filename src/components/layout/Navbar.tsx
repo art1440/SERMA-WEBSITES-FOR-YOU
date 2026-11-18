@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Lock, Menu, Pause, Play, X } from "lucide-react";
+import { ArrowUpRight, Lock, Menu, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent } from "react";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { useLanguage } from "@/context/LanguageContext";
-import { useMotionPause } from "@/context/MotionPauseContext";
 import { useTabs } from "@/context/TabsContext";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
 import { TAB_IDS, type TabId } from "@/lib/tabs";
@@ -28,7 +27,6 @@ const BAR_BUTTON = "btn-sm h-11 py-0";
  */
 export function Navbar() {
   const { t } = useLanguage();
-  const { paused, toggle: toggleMotion } = useMotionPause();
   const [loginOpen, setLoginOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -139,16 +137,6 @@ export function Navbar() {
 
             <div className="flex shrink-0 items-center gap-1.5">
               <ThemeToggle className="hidden sm:inline-flex" />
-              <button
-                type="button"
-                onClick={toggleMotion}
-                aria-pressed={paused}
-                aria-label={paused ? t.common.playAll : t.common.pauseAll}
-                title={paused ? t.common.playAll : t.common.pauseAll}
-                className={`${BAR_ICON} hidden sm:inline-flex`}
-              >
-                {paused ? <Play aria-hidden="true" size={14} strokeWidth={1.75} /> : <Pause aria-hidden="true" size={14} strokeWidth={1.75} />}
-              </button>
               {/* With the tab bar in the capsule (lg and up) the login folds to its lock icon. */}
               <button
                 type="button"
@@ -245,10 +233,6 @@ export function Navbar() {
                   </ul>
                   <div className="mx-2 mt-2 grid gap-2 border-t border-bone/[0.14] pb-2 pt-4">
                     <ThemeToggle variant="menu" className="sm:hidden" />
-                    <button type="button" onClick={toggleMotion} aria-pressed={paused} className="btn-line-dark glass-flat w-full sm:hidden">
-                      {paused ? <Play aria-hidden="true" size={13} strokeWidth={1.75} /> : <Pause aria-hidden="true" size={13} strokeWidth={1.75} />}
-                      {paused ? t.common.playAll : t.common.pauseAll}
-                    </button>
                     <button type="button" onClick={openLogin} className="btn-line-dark glass-flat w-full">
                       <Lock aria-hidden="true" size={13} strokeWidth={1.75} />
                       {t.nav.clientLogin}
