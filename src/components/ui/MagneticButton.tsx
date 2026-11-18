@@ -16,7 +16,7 @@ type Props = {
   "aria-label"?: string;
   /** Keeps the button focusable while signalling it is unavailable (unlike `disabled`). */
   "aria-disabled"?: boolean;
-  /** Marks the action that receives focus after "Book a demo" scrolls here. */
+  /** Marks the action that receives focus after a CTA scrolls here. */
   "data-primary-action"?: boolean;
 };
 

@@ -7,9 +7,9 @@ import { Navbar } from "@/components/layout/Navbar";
 import { TabPanels } from "@/components/layout/TabPanels";
 import { ComparisonMatrix } from "@/components/sections/ComparisonMatrix";
 import { DashboardShowcase } from "@/components/sections/DashboardShowcase";
-import { DemoContact } from "@/components/sections/DemoContact";
 import { InclusionsList } from "@/components/sections/InclusionsList";
 import { MissedCallSimulator } from "@/components/sections/MissedCallSimulator";
+import { PricingSection } from "@/components/sections/PricingSection";
 import { RevenueCalculator } from "@/components/sections/RevenueCalculator";
 import { Stage } from "@/components/three/Stage";
 import { DocumentTitle } from "@/components/ui/DocumentTitle";
@@ -43,7 +43,7 @@ export default function HomePage() {
                 { id: "simulator", node: <MissedCallSimulator /> },
                 { id: "calculator", node: <RevenueCalculator /> },
                 { id: "compare", node: <ComparisonMatrix /> },
-                { id: "demo", node: <DemoContact /> },
+                { id: "pricing", node: <PricingSection /> },
               ]}
             />
           </main>

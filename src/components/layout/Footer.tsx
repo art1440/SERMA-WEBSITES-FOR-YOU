@@ -37,7 +37,7 @@ export function Footer() {
     { href: "/#simulator", label: t.nav.links.simulator },
     { href: "/#calculator", label: t.nav.links.calculator },
     { href: "/#compare", label: t.nav.links.compare },
-    { href: "/#demo", label: t.common.bookDemo },
+    { href: "/#pricing", label: t.nav.tabs.pricing },
   ];
   const legal = [
     { href: "/terms", label: t.footer.terms },

@@ -12,7 +12,7 @@ import { useMotionPause } from "@/context/MotionPauseContext";
 import { useTabs } from "@/context/TabsContext";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
 import { TAB_IDS, type TabId } from "@/lib/tabs";
-import { goToDemo } from "@/lib/scroll";
+import { goToForm } from "@/lib/scroll";
 import { ClientLoginModal } from "./ClientLoginModal";
 
 /** Controls inside the glass bar: flat glass pebbles (no nested blur), 44px tall. */
@@ -57,10 +57,10 @@ export function Navbar() {
     return () => document.removeEventListener("keydown", onKey);
   }, [menuOpen]);
 
-  const onDemoClick = (e: MouseEvent<HTMLElement>) => {
+  const onStartClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setMenuOpen(false);
-    goToDemo();
+    goToForm();
   };
 
   const openLogin = () => {
@@ -158,8 +158,8 @@ export function Navbar() {
                 <Lock aria-hidden="true" size={13} strokeWidth={1.75} className="hidden lg:block" />
                 <span className={tabs ? "lg:sr-only" : undefined}>{t.nav.clientLogin}</span>
               </button>
-              <MagneticButton href="#demo" onClick={onDemoClick} className={`btn-aqua ${BAR_BUTTON} hidden md:inline-flex`}>
-                {t.common.bookDemoShort}
+              <MagneticButton href="#enquiry-form" onClick={onStartClick} className={`btn-aqua ${BAR_BUTTON} hidden md:inline-flex`}>
+                {t.common.getStarted}
                 <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.75} className="hidden lg:block" />
               </MagneticButton>
               {/* Language switch sits right of the CTAs: their labels change width with the language,
@@ -250,8 +250,8 @@ export function Navbar() {
                       <Lock aria-hidden="true" size={13} strokeWidth={1.75} />
                       {t.nav.clientLogin}
                     </button>
-                    <a href="#demo" onClick={onDemoClick} className="btn-aqua w-full">
-                      {t.common.bookDemo}
+                    <a href="#enquiry-form" onClick={onStartClick} className="btn-aqua w-full">
+                      {t.common.getStarted}
                     </a>
                   </div>
                 </nav>
