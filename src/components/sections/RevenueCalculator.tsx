@@ -36,20 +36,20 @@ const posFromTicket = (ticket: number) =>
  * ------------------------------------------------------------------ */
 /** Idle preset capsule: a faint light pebble inside the dark panel (level 2: tint, not another glass). */
 const PRESET_IDLE =
-  "bg-white/[0.06] text-bone hover:bg-white/[0.12] " +
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.3)]";
+  "bg-aqua/[0.078] text-bone hover:bg-aqua/[0.156] " +
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.1),0_1px_2px_rgba(30,64,120,0.135)]";
 /** Result card: dark flat glass (it sits in a preserve-3d chain) with an aqua under-glow. */
 const RESULT_CARD =
   "glass-dark glass-flat flex h-full flex-col justify-between rounded-glass-lg p-6 text-bone sm:p-8 lg:p-9 " +
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_0_-1px_0_rgba(255,255,255,0.04),0_2px_6px_rgba(0,0,0,0.3),0_40px_80px_-32px_rgba(0,0,0,0.75),0_70px_140px_-60px_rgba(232,223,207,0.32)]";
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_0_-1px_0_rgba(255,255,255,0.04),0_2px_6px_rgba(30,64,120,0.135),0_40px_80px_-32px_rgba(30,64,120,0.338),0_70px_140px_-60px_rgba(42,107,191,0.32)]";
 const RESULT_GLOW =
   "pointer-events-none absolute inset-0 -z-10 rounded-[inherit] " +
-  "bg-[radial-gradient(90%_70%_at_88%_0%,rgba(232,223,207,0.16),transparent_60%),radial-gradient(70%_60%_at_0%_100%,rgba(201,184,147,0.12),transparent_65%)]";
+  "bg-[radial-gradient(90%_70%_at_88%_0%,rgba(42,107,191,0.16),transparent_60%),radial-gradient(70%_60%_at_0%_100%,rgba(90,151,224,0.12),transparent_65%)]";
 /** Inner tiles: concentric radius (card 30 − ~16px inset ≈ 14). */
 const TILE_BASE =
   "flex items-center justify-between gap-4 rounded-glass-sm px-4 py-3 ring-1 ring-inset " +
   "shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:block sm:p-4 lg:flex lg:px-4 lg:py-3 xl:block xl:p-4";
-const TILE = `${TILE_BASE} bg-white/[0.05] ring-white/[0.08]`;
+const TILE = `${TILE_BASE} bg-aqua/[0.065] ring-bone/[0.112]`;
 const TILE_ACCENT = `${TILE_BASE} bg-aqua/[0.08] ring-aqua/25`;
 /* bone/70 keeps ≥ 4.5:1 on both tile tints. */
 const TILE_LABEL = "text-[0.8125rem] font-medium leading-snug text-bone/70";
@@ -125,7 +125,7 @@ export function RevenueCalculator() {
                             aria-hidden="true"
                             // Radius set via style so Framer corrects it during the slide (no squashed ends).
                             style={{ borderRadius: 9999 }}
-                            className="absolute inset-0 -z-10 bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_20px_-8px_rgba(232,223,207,0.6),0_1px_2px_rgba(0,0,0,0.3)]"
+                            className="absolute inset-0 -z-10 bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_20px_-8px_rgba(42,107,191,0.6),0_1px_2px_rgba(30,64,120,0.135)]"
                             transition={SPRING_SOFT}
                           />
                         ) : null}
@@ -137,7 +137,7 @@ export function RevenueCalculator() {
               </fieldset>
 
               {/* Soft light-catching divider (decorative). */}
-              <div aria-hidden="true" className="my-7 h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent sm:my-8" />
+              <div aria-hidden="true" className="my-7 h-px bg-gradient-to-r from-transparent via-bone/[0.168] to-transparent sm:my-8" />
 
               <div className="space-y-6 sm:space-y-7">
                 <Slider

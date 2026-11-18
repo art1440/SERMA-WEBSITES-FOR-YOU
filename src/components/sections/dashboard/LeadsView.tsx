@@ -518,7 +518,7 @@ function LeadsBoard({ nicheId }: { nicheId: NicheId }) {
           ) : (
             <div className="grid flex-1 place-items-center px-6 py-12 text-center">
               <div>
-                <span aria-hidden="true" className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-white/[0.06] text-aqua">
+                <span aria-hidden="true" className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-aqua/[0.078] text-aqua">
                   <Users size={18} strokeWidth={1.75} />
                 </span>
                 <p className="mt-3 text-sm font-medium text-bone">{COPY.emptyTitle[locale]}</p>
@@ -586,7 +586,7 @@ function LeadsBoard({ nicheId }: { nicheId: NicheId }) {
 function SourceChip({ source, locale }: { source: LeadSource; locale: Locale }) {
   const { label, icon: Icon } = SOURCE[source];
   return (
-    <span className="inline-flex max-w-full shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-white/[0.03] px-2 py-0.5 text-[0.6875rem] font-medium text-bone/80 ring-1 ring-inset ring-white/[0.12]">
+    <span className="inline-flex max-w-full shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-aqua/[0.039] px-2 py-0.5 text-[0.6875rem] font-medium text-bone/80 ring-1 ring-inset ring-bone/[0.168]">
       <Icon aria-hidden="true" size={12} strokeWidth={2} className={source === "missedCall" ? "text-signal" : "text-ash"} />
       {label[locale]}
     </span>
@@ -655,11 +655,11 @@ type Step = {
 const STEP_ICON_TONE: Record<Step["tone"], string> = {
   alert: "bg-signal/[0.12] text-signal ring-1 ring-inset ring-signal/30",
   auto: "bg-aqua/[0.1] text-aqua ring-1 ring-inset ring-aqua/25",
-  team: "bg-white/[0.07] text-bone ring-1 ring-inset ring-white/10",
+  team: "bg-aqua/[0.091] text-bone ring-1 ring-inset ring-bone/[0.14]",
   done: "bg-live/[0.12] text-live ring-1 ring-inset ring-live/30",
   you: "bg-aqua text-ink",
-  pending: "border border-dashed border-white/25 text-ash",
-  lost: "bg-white/[0.05] text-ash ring-1 ring-inset ring-white/10",
+  pending: "border border-dashed border-bone/[0.35] text-ash",
+  lost: "bg-aqua/[0.065] text-ash ring-1 ring-inset ring-bone/[0.14]",
 };
 
 function LeadDetail({
@@ -793,7 +793,7 @@ function LeadDetail({
       </div>
       <p className="mt-2 text-[0.6875rem] text-ash">{COPY.demoNote[locale]}</p>
 
-      <dl className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 border-t border-white/[0.07] pt-4 text-[0.8125rem]">
+      <dl className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 border-t border-bone/[0.098] pt-4 text-[0.8125rem]">
         {facts.map((f) => (
           <div key={f.label} className="contents">
             <dt className="text-ash">{f.label}</dt>
@@ -802,7 +802,7 @@ function LeadDetail({
         ))}
       </dl>
 
-      <div className="mt-4 rounded-[12px] bg-white/[0.035] px-3 py-2.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]">
+      <div className="mt-4 rounded-[12px] bg-aqua/[0.046] px-3 py-2.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]">
         <p className="text-[0.6875rem] font-medium text-ash">{COPY.note[locale]}</p>
         <p className="mt-0.5 text-[0.8125rem] leading-snug text-bone/90">{lead.note[locale]}</p>
       </div>
@@ -820,14 +820,14 @@ function LeadDetail({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
             >
-              {!last ? <span aria-hidden="true" className="absolute bottom-0 left-[11.5px] top-7 w-px bg-white/10" /> : null}
+              {!last ? <span aria-hidden="true" className="absolute bottom-0 left-[11.5px] top-7 w-px bg-aqua/[0.13]" /> : null}
               <span aria-hidden="true" className={`relative grid h-6 w-6 shrink-0 place-items-center rounded-full ${STEP_ICON_TONE[step.tone]}`}>
                 <Icon size={12} strokeWidth={2.25} />
               </span>
               <div className="min-w-0 flex-1 pt-[3px]">
                 <p className={`text-[0.8125rem] leading-snug ${step.tone === "pending" ? "text-ash" : "text-bone"}`}>{step.title}</p>
                 {step.bubble ? (
-                  <p className="mt-1.5 rounded-[12px] rounded-tl-[4px] bg-aqua/[0.1] px-3 py-2 text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(232,223,207,0.22)]">
+                  <p className="mt-1.5 rounded-[12px] rounded-tl-[4px] bg-aqua/[0.1] px-3 py-2 text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(42,107,191,0.22)]">
                     “{step.bubble}”
                   </p>
                 ) : null}

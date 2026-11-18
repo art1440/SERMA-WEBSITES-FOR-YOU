@@ -95,11 +95,11 @@ export function DemoContact() {
             {/* Static aqua light behind the panel: gives the glass rim and tint something to catch. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-4 -top-14 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(232,223,207,0.24),rgba(201,184,147,0.14)_55%,transparent)] sm:-right-16 sm:-top-20 sm:h-96 sm:w-96"
+              className="pointer-events-none absolute -right-4 -top-14 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(42,107,191,0.24),rgba(90,151,224,0.14)_55%,transparent)] sm:-right-16 sm:-top-20 sm:h-96 sm:w-96"
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-16 -left-12 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(243,237,225,0.1),transparent)]"
+              className="pointer-events-none absolute -bottom-16 -left-12 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.1),transparent)]"
             />
 
             <div className="glass-dark glass-solid relative rounded-glass-lg p-5 text-bone [-webkit-backdrop-filter:none] [backdrop-filter:none] sm:p-8 xl:p-10">
@@ -129,7 +129,7 @@ export function DemoContact() {
               <EnquiryForm />
 
               {/* Some people never fill in a form. Give them the address and the number right here. */}
-              <div className="mt-7 flex flex-col gap-2.5 border-t border-white/10 pt-6 text-[0.9375rem]">
+              <div className="mt-7 flex flex-col gap-2.5 border-t border-bone/[0.14] pt-6 text-[0.9375rem]">
                 <a href={mailto} className="link-quiet break-all">
                   <Mail aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0" />
                   {siteConfig.contactEmail}
@@ -142,10 +142,10 @@ export function DemoContact() {
                 ) : null}
               </div>
 
-              <p className="mt-8 flex items-start gap-3 border-t border-white/10 pt-6 text-sm leading-relaxed text-ash">
+              <p className="mt-8 flex items-start gap-3 border-t border-bone/[0.14] pt-6 text-sm leading-relaxed text-ash">
                 <span
                   aria-hidden="true"
-                  className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/[0.06] text-aqua ring-1 ring-inset ring-white/10"
+                  className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-aqua/[0.078] text-aqua ring-1 ring-inset ring-bone/[0.14]"
                 >
                   <ShieldCheck size={16} strokeWidth={1.75} />
                 </span>

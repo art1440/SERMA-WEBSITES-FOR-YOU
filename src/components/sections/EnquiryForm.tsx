@@ -99,7 +99,7 @@ export function EnquiryForm() {
 
   if (status === "done") {
     return (
-      <div className="mt-6 rounded-glass-sm border border-hairline-dark bg-white/[0.04] p-5 sm:p-6">
+      <div className="mt-6 rounded-glass-sm border border-hairline-dark bg-aqua/[0.052] p-5 sm:p-6">
         <p
           ref={doneRef}
           tabIndex={-1}
@@ -174,7 +174,7 @@ export function EnquiryForm() {
           name="consent"
           value="yes"
           required
-          className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-[#3DDBC9]"
+          className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-[#2A6BBF]"
         />
         <span>
           {t.demo.consentPrefix}{" "}

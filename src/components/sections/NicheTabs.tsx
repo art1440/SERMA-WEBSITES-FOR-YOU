@@ -41,7 +41,7 @@ export function NicheTabs() {
       role="tablist"
       aria-label={t.dashboard.tablistLabel}
       onKeyDown={onKeyDown}
-      className="grid grid-cols-2 gap-1 rounded-[26px] bg-black/30 p-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.45),inset_0_0_0_1px_rgba(255,255,255,0.06),0_1px_0_rgba(255,255,255,0.05)] sm:grid-cols-3 lg:grid-cols-6 lg:rounded-full"
+      className="grid grid-cols-2 gap-1 rounded-[26px] bg-aqua/[0.09] p-1 shadow-[inset_0_1px_3px_rgba(30,64,120,0.203),inset_0_0_0_1px_rgba(255,255,255,0.06),0_1px_0_rgba(255,255,255,0.05)] sm:grid-cols-3 lg:grid-cols-6 lg:rounded-full"
     >
       {NICHES.map((niche, i) => {
         const selected = niche.id === nicheId;
@@ -64,7 +64,7 @@ export function NicheTabs() {
             className={`relative isolate flex min-h-[44px] items-center gap-2 rounded-[22px] px-3.5 py-2 text-left ${
               selected
                 ? "z-10 forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]"
-                : "z-0 hover:bg-white/[0.06]"
+                : "z-0 hover:bg-aqua/[0.078]"
             }`}
           >
             {selected ? (
@@ -73,7 +73,7 @@ export function NicheTabs() {
                 aria-hidden="true"
                 // Radius set via style so Framer corrects it during the layout slide (no squashed ends).
                 style={{ borderRadius: 22 }}
-                className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_55%,#C9B893_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_-1px_0_rgba(13,13,11,0.08),0_0_0_1px_rgba(232,223,207,0.35),0_8px_22px_-8px_rgba(232,223,207,0.55),0_1px_2px_rgba(0,0,0,0.3)]"
+                className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_55%,#1F58A3_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_-1px_0_rgba(30,64,120,0.036),0_0_0_1px_rgba(42,107,191,0.35),0_8px_22px_-8px_rgba(42,107,191,0.55),0_1px_2px_rgba(30,64,120,0.135)]"
                 transition={SPRING_SOFT}
               />
             ) : null}

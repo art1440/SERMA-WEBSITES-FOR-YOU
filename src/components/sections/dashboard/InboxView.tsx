@@ -184,7 +184,7 @@ const OWNER: Record<NicheId, string> = {
 };
 
 /** The email "paper": also used to cut the ticket notches in detail cards. */
-const EMAIL_BG = "bg-[#132033]";
+const EMAIL_BG = "bg-[#FBFDFF]";
 const SCROLLBAR = "[scrollbar-color:rgba(255,255,255,0.16)_transparent] [scrollbar-width:thin]";
 
 type Slot = "primary" | "secondary";
@@ -429,7 +429,7 @@ function InboxClient({ nicheId }: { nicheId: NicheId }) {
           <h4 id={listHeadingId} className="sr-only">
             {COPY.messages[locale]}
           </h4>
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.06] px-2.5 py-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-bone/[0.084] px-2.5 py-2">
             <div role="group" aria-label={COPY.filterLabel[locale]} className="flex items-center gap-1.5">
               <FilterPill on={filter === "all"} label={COPY.all[locale]} count={messages.length} onPress={() => chooseFilter("all")} />
               <FilterPill on={filter === "unread"} label={COPY.unread[locale]} count={unreadCount} onPress={() => chooseFilter("unread")} />
@@ -439,7 +439,7 @@ function InboxClient({ nicheId }: { nicheId: NicheId }) {
               onClick={markAllRead}
               aria-disabled={unreadCount === 0 || undefined}
               className={`${PILL} ${
-                unreadCount === 0 ? "cursor-default text-ash/70" : "text-ash hover:bg-white/[0.06] hover:text-bone"
+                unreadCount === 0 ? "cursor-default text-ash/70" : "text-ash hover:bg-aqua/[0.078] hover:text-bone"
               }`}
             >
               <CheckCheck aria-hidden="true" size={14} strokeWidth={1.9} />
@@ -514,7 +514,7 @@ function KindChip({ kind }: { kind: InboxKind }) {
   const { locale } = useLanguage();
   const Icon = KIND_ICON[kind];
   return (
-    <span className="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[0.6875rem] font-medium leading-4 text-bone/85 ring-1 ring-inset ring-white/15">
+    <span className="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[0.6875rem] font-medium leading-4 text-bone/85 ring-1 ring-inset ring-bone/[0.21]">
       <Icon aria-hidden="true" size={11} strokeWidth={2} className="text-aqua" />
       {KIND_LABEL[kind][locale]}
     </span>
@@ -570,7 +570,7 @@ function MessageRow({
           {unread ? (
             <motion.span
               key="dot"
-              className="h-2 w-2 rounded-full bg-aqua shadow-[0_0_8px_rgba(232,223,207,0.65)]"
+              className="h-2 w-2 rounded-full bg-aqua shadow-[0_0_8px_rgba(42,107,191,0.65)]"
               initial={{ opacity: 0, scale: 0.4 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.4 }}
@@ -628,7 +628,7 @@ function NoSelection() {
   const { locale } = useLanguage();
   return (
     <div className="flex h-full min-h-[16rem] flex-col items-center justify-center px-6 py-10 text-center">
-      <span aria-hidden="true" className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.06] text-ash ring-1 ring-inset ring-white/10">
+      <span aria-hidden="true" className="grid h-11 w-11 place-items-center rounded-full bg-aqua/[0.078] text-ash ring-1 ring-inset ring-bone/[0.14]">
         <MailOpen size={18} strokeWidth={1.75} />
       </span>
       <p className="mt-3 text-sm font-medium text-bone">{COPY.pickTitle[locale]}</p>
@@ -788,7 +788,7 @@ function Reader({
         <button
           type="button"
           onClick={onBack}
-          className="-ml-1 mb-2 inline-flex min-h-[44px] items-center gap-2 rounded-full px-3 text-sm font-medium text-bone hover:bg-white/[0.06] lg:hidden"
+          className="-ml-1 mb-2 inline-flex min-h-[44px] items-center gap-2 rounded-full px-3 text-sm font-medium text-bone hover:bg-aqua/[0.078] lg:hidden"
         >
           <ArrowLeft aria-hidden="true" size={16} strokeWidth={1.9} />
           {COPY.back[locale]}
@@ -804,7 +804,7 @@ function Reader({
         >
           {m.subject[locale]}
         </h4>
-        <div className="mt-3 flex items-start gap-3 border-b border-white/[0.06] pb-4">
+        <div className="mt-3 flex items-start gap-3 border-b border-bone/[0.084] pb-4">
           <SenderMark m={m} />
           <div className="min-w-0 flex-1 text-[0.8125rem] leading-5">
             <p className="text-bone">
@@ -824,10 +824,10 @@ function Reader({
 
       {/* ── The email ── */}
       <div
-        className={`mx-3 mt-4 rounded-[14px] ${EMAIL_BG} shadow-[inset_0_0_0_1px_rgba(255,255,255,0.07),0_18px_40px_-24px_rgba(0,0,0,0.9)] sm:mx-5`}
+        className={`mx-3 mt-4 rounded-[14px] ${EMAIL_BG} shadow-[inset_0_0_0_1px_rgba(255,255,255,0.07),0_18px_40px_-24px_rgba(30,64,120,0.35)] sm:mx-5`}
       >
         {/* Brand strip: ink on aqua is 11.3:1. */}
-        <div className="flex items-center justify-between gap-3 rounded-t-[14px] bg-[linear-gradient(90deg,#C9B893_0%,#E8DFCF_45%,#F3EDE1_100%)] px-4 py-2 text-ink sm:px-6">
+        <div className="flex items-center justify-between gap-3 rounded-t-[14px] bg-[linear-gradient(90deg,#1F58A3_0%,#2A6BBF_45%,#4A8BDA_100%)] px-4 py-2 text-ink sm:px-6">
           <span className="inline-flex items-center gap-1.5 font-display text-[0.8125rem] tracking-[-0.01em]">
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-ink" />
             SermaWebDesign
@@ -904,7 +904,7 @@ function Reader({
                       <button
                         type="button"
                         onClick={() => sendReply(i)}
-                        className="group flex min-h-[44px] w-full items-center gap-3 rounded-[14px] bg-white/[0.05] px-3.5 py-2.5 text-left text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-transform duration-200 ease-editorial hover:-translate-y-px hover:bg-aqua/[0.08] hover:shadow-[inset_0_0_0_1px_rgba(232,223,207,0.45)] active:scale-[0.99]"
+                        className="group flex min-h-[44px] w-full items-center gap-3 rounded-[14px] bg-aqua/[0.065] px-3.5 py-2.5 text-left text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-transform duration-200 ease-editorial hover:-translate-y-px hover:bg-aqua/[0.08] hover:shadow-[inset_0_0_0_1px_rgba(42,107,191,0.45)] active:scale-[0.99]"
                       >
                         <span className="flex-1">
                           {r[locale]}
@@ -936,7 +936,7 @@ function Reader({
           <p className="mt-6 text-sm text-bone/85">{m.email.signoff[locale]}</p>
         </div>
 
-        <div className="border-t border-white/[0.06] px-4 py-3 text-[0.6875rem] leading-4 text-ash sm:px-6">
+        <div className="border-t border-bone/[0.084] px-4 py-3 text-[0.6875rem] leading-4 text-ash sm:px-6">
           {COPY.footer[locale]}{" "}
           <button
             type="button"
@@ -964,7 +964,7 @@ function Reader({
           <ol role="list" className="mt-3 space-y-3">
             {incoming ? (
               <li className="flex flex-col items-start">
-                <p className="max-w-[85%] rounded-[18px] rounded-bl-[6px] bg-white/[0.08] px-3.5 py-2 text-sm leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+                <p className="max-w-[85%] rounded-[18px] rounded-bl-[6px] bg-aqua/[0.104] px-3.5 py-2 text-sm leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
                   <span className="sr-only">{fill(COPY.theySaid[locale], { name: contact, time: m.received[locale] })} </span>
                   {unquote(incoming[locale])}
                 </p>
@@ -982,7 +982,7 @@ function Reader({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
               >
-                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(232,223,207,0.6)]">
+                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(42,107,191,0.6)]">
                   <span className="sr-only">{COPY.youSent[locale]} </span>
                   {replies[i]?.[locale]}
                 </p>
@@ -995,7 +995,7 @@ function Reader({
             ))}
             {leadText ? (
               <li className="flex flex-col items-end">
-                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(232,223,207,0.6)]">
+                <p className="max-w-[85%] rounded-[18px] rounded-br-[6px] bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_100%)] px-3.5 py-2 text-sm leading-snug text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_8px_20px_-12px_rgba(42,107,191,0.6)]">
                   <span className="sr-only">{COPY.youSentFromLeads[locale]} </span>
                   {leadText}
                 </p>
@@ -1076,7 +1076,7 @@ type Details = NonNullable<InboxMessage["email"]["details"]>;
 /** Dashed tear line with ticket notches cut in the email paper colour. */
 function Perforation() {
   return (
-    <div aria-hidden="true" className="relative h-0 border-t border-dashed border-white/[0.12]">
+    <div aria-hidden="true" className="relative h-0 border-t border-dashed border-bone/[0.168]">
       <span className={`absolute -left-[7px] -top-[7px] h-3.5 w-3.5 rounded-full ${EMAIL_BG} shadow-[inset_-1px_0_0_rgba(255,255,255,0.08)]`} />
       <span className={`absolute -right-[7px] -top-[7px] h-3.5 w-3.5 rounded-full ${EMAIL_BG} shadow-[inset_1px_0_0_rgba(255,255,255,0.08)]`} />
     </div>
@@ -1101,7 +1101,7 @@ function DetailsCard({ kind, details }: { kind: InboxKind; details: Details }) {
   const Icon = KIND_ICON[kind];
   const id = useId();
   return (
-    <section aria-labelledby={id} className="relative mt-5 rounded-[12px] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+    <section aria-labelledby={id} className="relative mt-5 rounded-[12px] bg-aqua/[0.052] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]">
       <div className="flex items-center gap-2 px-4 py-2.5">
         <Icon aria-hidden="true" size={14} strokeWidth={1.9} className="text-aqua" />
         <h5 id={id} className="text-[0.75rem] font-medium text-ash">
@@ -1109,7 +1109,7 @@ function DetailsCard({ kind, details }: { kind: InboxKind; details: Details }) {
         </h5>
       </div>
       <Perforation />
-      <dl className="divide-y divide-white/[0.05] px-4 py-1">
+      <dl className="divide-y divide-bone/[0.07] px-4 py-1">
         {details.map((d, i) => (
           <div key={i} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 py-2">
             <dt className="text-[0.8125rem] text-ash">{d.label[locale]}</dt>
@@ -1138,7 +1138,7 @@ function StatGrid({ details }: { details: Details }) {
         {details.map((d, i) => (
           <div
             key={i}
-            className="flex flex-col-reverse justify-end rounded-[12px] bg-white/[0.04] px-3 py-2.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+            className="flex flex-col-reverse justify-end rounded-[12px] bg-aqua/[0.052] px-3 py-2.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
           >
             <dt className="mt-1 text-[0.75rem] leading-4 text-ash">{d.label[locale]}</dt>
             <dd className="tabular font-display text-lg leading-tight tracking-[-0.02em] text-bone">{d.value[locale]}</dd>
@@ -1158,7 +1158,7 @@ function PaymentSummary({ m }: { m: InboxMessage }) {
   const card = details.find((d) => /card|paid with/i.test(d.label.en));
   const meta = [total?.label[locale], number?.value[locale], card?.value[locale]].filter(Boolean).join(" · ");
   return (
-    <div className="mt-5 flex items-center gap-3.5 rounded-[12px] bg-white/[0.04] px-4 py-3.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+    <div className="mt-5 flex items-center gap-3.5 rounded-[12px] bg-aqua/[0.052] px-4 py-3.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]">
       <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-live/[0.12] text-live ring-1 ring-inset ring-live/30">
         <CreditCard size={17} strokeWidth={1.75} />
       </span>
@@ -1203,7 +1203,7 @@ function ReceiptCard({
     <motion.section
       ref={sectionRef}
       aria-labelledby={id}
-      className="relative mt-4 rounded-[12px] bg-white/[0.05] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.09),0_14px_30px_-20px_rgba(0,0,0,0.9)]"
+      className="relative mt-4 rounded-[12px] bg-aqua/[0.065] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.09),0_14px_30px_-20px_rgba(30,64,120,0.35)]"
       initial={animate ? { opacity: 0, y: -8 } : false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
@@ -1239,7 +1239,7 @@ function ReceiptCard({
         {total ? (
           <motion.div
             variants={item}
-            className="mt-2 flex items-end justify-between gap-4 border-t border-dashed border-white/[0.14] pt-3"
+            className="mt-2 flex items-end justify-between gap-4 border-t border-dashed border-bone/[0.196] pt-3"
           >
             <dt>
               <span className="block text-sm font-semibold text-bone">{COPY.totalPaid[locale]}</span>

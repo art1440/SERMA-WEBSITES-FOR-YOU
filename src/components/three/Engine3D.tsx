@@ -26,11 +26,13 @@ export type EngineInputs = {
 
 type Props = EngineInputs & { active: boolean; desktop: boolean };
 
-const INK = new THREE.Color("#17253B");
-const BONE = new THREE.Color("#E8DFCF");
-/** Brand accent on the dark-first site (aqua). Particles keep a warm ember minority for depth. */
-const ACCENT = new THREE.Color("#E8DFCF");
-const EMBER = new THREE.Color("#C9B893");
+/** Lines and particles on the light (white + sky blue) backdrop: a friendly mid blue. */
+const INK = new THREE.Color("#3A78C6");
+/** Used only if the backdrop is ever dark again (`ink` input = 1). */
+const BONE = new THREE.Color("#E8F2FD");
+/** Brand accent ring + a minority of brighter particles: the site's friendly blue. */
+const ACCENT = new THREE.Color("#2A6BBF");
+const EMBER = new THREE.Color("#5A97E0");
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 /** Smoothstep of x between a and b. */
@@ -485,7 +487,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
     }
     if (keyLight.current) keyLight.current.intensity = 2.2 + flare * 1.5 + ss(f, 0, 0.5) * 0.6;
 
-    // ---- Theme: ink lines on bone, bone lines on ink --------------------
+    // ---- Theme: blue lines on the light backdrop (pale lines if it is ever dark) ----
     const u = pointsMaterial.uniforms;
     u.uTime.value = time;
     u.uMorph.value = morph.current;
@@ -498,31 +500,32 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
   return (
     <>
       <ambientLight intensity={0.35} />
-      <directionalLight ref={keyLight} position={[4, 5, 6]} intensity={2.4} color="#F3EDE1" />
-      <directionalLight position={[-6, -2, -4]} intensity={1.4} color="#8E99AB" />
-      <pointLight position={[0, 0, 0]} intensity={6} distance={4} color="#E8DFCF" />
+      <directionalLight ref={keyLight} position={[4, 5, 6]} intensity={2.4} color="#FFFFFF" />
+      <directionalLight position={[-6, -2, -4]} intensity={1.4} color="#9CCBF6" />
+      <pointLight position={[0, 0, 0]} intensity={6} distance={4} color="#CFE5FC" />
 
       <group ref={root}>
         {/* Glowing heart, seen through the glass core */}
         <mesh ref={heart}>
           <icosahedronGeometry args={[0.3, 1]} />
-          <meshBasicMaterial color="#F3EDE1" toneMapped={false} />
+          <meshBasicMaterial color="#9CCBF6" toneMapped={false} />
         </mesh>
         <sprite ref={heartGlow} scale={2.4}>
-          <spriteMaterial map={glowTexture} color="#E8DFCF" transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+          {/* Normal blending: additive light disappears on a white backdrop. */}
+          <spriteMaterial map={glowTexture} color="#9CCBF6" transparent depthWrite={false} toneMapped={false} />
         </sprite>
 
         <mesh ref={core} geometry={coreGeometry}>
           {desktop ? (
-            // Dark refractive glass: bends the heart's light and the particles behind it.
+            // Pale sky-blue refractive glass: bends the heart's light and the particles behind it.
             <meshPhysicalMaterial
-              color="#17253B"
+              color="#DCEBFB"
               metalness={0.1}
               roughness={0.08}
               transmission={0.92}
               thickness={1.4}
               ior={1.5}
-              attenuationColor="#132033"
+              attenuationColor="#7FB4EC"
               attenuationDistance={1.6}
               clearcoat={1}
               clearcoatRoughness={0.05}
@@ -530,7 +533,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
               envMapIntensity={1.8}
             />
           ) : (
-            <meshStandardMaterial color="#1E2E48" metalness={0.85} roughness={0.2} flatShading envMapIntensity={1.4} transparent opacity={0.88} />
+            <meshStandardMaterial color="#DCEBFB" metalness={0.2} roughness={0.15} flatShading envMapIntensity={1.4} transparent opacity={0.9} />
           )}
         </mesh>
         <lineSegments ref={cage} geometry={cageGeometry} material={lineMaterial} />
@@ -543,7 +546,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
           {/* Soft halo around the accent ring */}
           <mesh ref={ringGlow}>
             <torusGeometry args={[1.8, 0.07, 12, 160]} />
-            <meshBasicMaterial color={ACCENT} transparent opacity={0.12} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+            <meshBasicMaterial color={EMBER} transparent opacity={0.12} depthWrite={false} toneMapped={false} />
           </mesh>
         </group>
         <group rotation={[-0.45, 0.9, 0]}>

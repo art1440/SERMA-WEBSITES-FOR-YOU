@@ -270,13 +270,13 @@ type ResTone = { bar: string; fill: string; soft: string; swatch: string };
 /** Aqua family + neutral/slate tints; the 4th adds a stripe pattern so it never relies on hue alone. */
 const RES_TONES: readonly ResTone[] = [
   { bar: "bg-aqua", fill: "bg-aqua/[0.16]", soft: "bg-aqua/[0.06]", swatch: "bg-aqua" },
-  { bar: "bg-[#8E99AB]", fill: "bg-[#8E99AB]/[0.17]", soft: "bg-[#8E99AB]/[0.06]", swatch: "bg-[#8E99AB]" },
+  { bar: "bg-[#52698A]", fill: "bg-[#52698A]/[0.17]", soft: "bg-[#52698A]/[0.06]", swatch: "bg-[#52698A]" },
   { bar: "bg-bone/80", fill: "bg-bone/[0.1]", soft: "bg-bone/[0.04]", swatch: "bg-bone/80" },
   {
     bar: "bg-aqua-deep",
-    fill: "bg-[repeating-linear-gradient(135deg,rgba(201,184,147,0.28)_0_4px,rgba(201,184,147,0.12)_4px_8px)]",
+    fill: "bg-[repeating-linear-gradient(135deg,rgba(90,151,224,0.28)_0_4px,rgba(90,151,224,0.12)_4px_8px)]",
     soft: "bg-aqua-deep/[0.07]",
-    swatch: "bg-[repeating-linear-gradient(135deg,#C9B893_0_2px,rgba(201,184,147,0.4)_2px_4px)]",
+    swatch: "bg-[repeating-linear-gradient(135deg,#1F58A3_0_2px,rgba(90,151,224,0.4)_2px_4px)]",
   },
 ];
 const toneAt = (i: number) => RES_TONES[((i % RES_TONES.length) + RES_TONES.length) % RES_TONES.length];
@@ -286,8 +286,8 @@ const SELECTED_BLOCK =
   "ring-1 ring-inset ring-aqua/80 forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]";
 
 /** The grid sits in a solid, slightly recessed well so the sticky day headers can match it exactly. */
-const WELL = "#17253B";
-const WELL_TODAY = "#1E2E48";
+const WELL = "#F7FAFE";
+const WELL_TODAY = "#EEF5FD";
 
 /* ------------------------------ helpers ------------------------------ */
 
@@ -684,7 +684,7 @@ function WeekGrid({
         <div className="grid flex-1 grid-cols-[3.25rem_repeat(6,minmax(0,1fr))]">
           {/* Hour axis (decorative: every block carries its time in its accessible name). */}
           <div aria-hidden="true" className="flex flex-col">
-            <div className={`sticky top-0 z-20 ${headH} shrink-0 border-b border-white/[0.06]`} style={{ background: WELL }} />
+            <div className={`sticky top-0 z-20 ${headH} shrink-0 border-b border-bone/[0.084]`} style={{ background: WELL }} />
             <div className="relative min-h-[430px] flex-1">
               <div className="absolute inset-x-0 bottom-2 top-2.5">
                 {HOURS.map((h, i) =>
@@ -699,7 +699,7 @@ function WeekGrid({
                   ),
                 )}
                 <span
-                  className="tabular absolute right-1 z-10 -translate-y-1/2 rounded-full bg-aqua px-1.5 py-px text-[0.625rem] font-semibold leading-[14px] text-ink shadow-[0_0_12px_rgba(232,223,207,0.45)]"
+                  className="tabular absolute right-1 z-10 -translate-y-1/2 rounded-full bg-aqua px-1.5 py-px text-[0.625rem] font-semibold leading-[14px] text-ink shadow-[0_0_12px_rgba(42,107,191,0.45)]"
                   style={{ top: `${nowPct}%` }}
                 >
                   {shortClock(NOW, intlLocale)}
@@ -718,11 +718,11 @@ function WeekGrid({
               <section
                 key={d}
                 aria-labelledby={headingId}
-                className="flex min-w-0 flex-col border-l border-white/[0.06]"
+                className="flex min-w-0 flex-col border-l border-bone/[0.084]"
                 style={today ? { background: WELL_TODAY } : undefined}
               >
                 <div
-                  className={`sticky top-0 z-20 flex ${headH} shrink-0 flex-col justify-center border-b border-white/[0.06] px-2.5`}
+                  className={`sticky top-0 z-20 flex ${headH} shrink-0 flex-col justify-center border-b border-bone/[0.084] px-2.5`}
                   style={{ background: today ? WELL_TODAY : WELL }}
                 >
                   <h4
@@ -744,12 +744,12 @@ function WeekGrid({
                     {/* Hour and half-hour lines. */}
                     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
                       {HOURS.map((h, i) => (
-                        <span key={h} className="absolute inset-x-0 h-px bg-white/[0.06]" style={{ top: `${(i / (HOURS.length - 1)) * 100}%` }} />
+                        <span key={h} className="absolute inset-x-0 h-px bg-aqua/[0.078]" style={{ top: `${(i / (HOURS.length - 1)) * 100}%` }} />
                       ))}
                       {HOURS.slice(0, -1).map((h, i) => (
                         <span
                           key={`half-${h}`}
-                          className="absolute inset-x-0 h-px bg-white/[0.025]"
+                          className="absolute inset-x-0 h-px bg-aqua/[0.033]"
                           style={{ top: `${((i + 0.5) / (HOURS.length - 1)) * 100}%` }}
                         />
                       ))}
@@ -788,8 +788,8 @@ function WeekGrid({
                     >
                       {today ? (
                         <>
-                          <span className="absolute inset-x-0 -top-px h-[2px] rounded-full bg-aqua shadow-[0_0_10px_rgba(232,223,207,0.55)]" />
-                          <span className="absolute -left-[4px] -top-[4px] h-2 w-2 rounded-full bg-aqua shadow-[0_0_0_2px_#1E2E48]" />
+                          <span className="absolute inset-x-0 -top-px h-[2px] rounded-full bg-aqua shadow-[0_0_10px_rgba(42,107,191,0.55)]" />
+                          <span className="absolute -left-[4px] -top-[4px] h-2 w-2 rounded-full bg-aqua shadow-[0_0_0_2px_#EEF5FD]" />
                         </>
                       ) : (
                         <span className="absolute inset-x-0 top-0 h-px bg-aqua/20" />
@@ -891,7 +891,7 @@ function EventBlock({
         <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-[3px] ${tone.bar}`} />
         <span
           aria-hidden="true"
-          className={`pointer-events-none absolute inset-0 bg-white/[0.06] transition-opacity duration-150 ${selected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+          className={`pointer-events-none absolute inset-0 bg-aqua/[0.078] transition-opacity duration-150 ${selected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
         />
         {!narrow ? (
           <Icon
@@ -955,7 +955,7 @@ function PulseRing({ className }: { className: string }) {
   return (
     <motion.span
       aria-hidden="true"
-      className={`pointer-events-none absolute z-10 ring-2 ring-aqua shadow-[0_0_18px_rgba(232,223,207,0.5)] ${className}`}
+      className={`pointer-events-none absolute z-10 ring-2 ring-aqua shadow-[0_0_18px_rgba(42,107,191,0.5)] ${className}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: [0, 1, 0.15, 1, 0] }}
       transition={{ duration: 1.9, times: [0, 0.18, 0.45, 0.65, 1], ease: "easeInOut", delay: 0.25 }}
@@ -967,7 +967,7 @@ function OpenSlot({ nicheId, className }: { nicheId: NicheId; className: string 
   const { locale } = useLanguage();
   return (
     <div
-      className={`grid place-items-center rounded-[10px] border border-dashed border-white/[0.18] bg-white/[0.015] px-2 text-center text-[0.6875rem] leading-snug text-ash ${className}`}
+      className={`grid place-items-center rounded-[10px] border border-dashed border-bone/[0.252] bg-aqua/[0.019] px-2 text-center text-[0.6875rem] leading-snug text-ash ${className}`}
     >
       <span className="inline-flex flex-col items-center gap-1">
         <Globe aria-hidden="true" size={13} strokeWidth={1.9} className="text-aqua" />
@@ -993,7 +993,7 @@ function WeekStats({ nicheId, stats, layout }: { nicheId: NicheId; stats: Stats;
   return (
     <dl className={`grid shrink-0 grid-cols-2 gap-1.5 ${layout === "strip" ? "sm:grid-cols-4" : ""}`}>
       {tiles.map((t) => (
-        <div key={t.label} className="rounded-[12px] bg-white/[0.04] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.04)]">
+        <div key={t.label} className="rounded-[12px] bg-aqua/[0.052] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.04)]">
           <dt className="truncate text-[0.6875rem] font-medium text-ash">{t.label}</dt>
           <dd className="mt-1 flex items-center gap-1.5 font-display text-lg leading-none tracking-[-0.02em] text-bone">
             <span className="tabular">{t.value}</span>
@@ -1094,7 +1094,7 @@ function WeekSummary({
         })}
       </ul>
 
-      <p className="mt-5 flex gap-2 border-t border-white/[0.07] pt-4 text-[0.75rem] leading-snug text-ash">
+      <p className="mt-5 flex gap-2 border-t border-bone/[0.098] pt-4 text-[0.75rem] leading-snug text-ash">
         <Globe aria-hidden="true" size={14} strokeWidth={1.9} className="mt-px shrink-0 text-aqua" />
         {fill(COPY.onlineNote[locale], { book: BOOK_VERB(nicheId) })}
       </p>
@@ -1222,11 +1222,11 @@ function EventDetail({
       </div>
 
       {/* The time "ticket". */}
-      <div className="mt-4 flex items-center gap-3 rounded-[12px] bg-white/[0.04] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.04)]">
+      <div className="mt-4 flex items-center gap-3 rounded-[12px] bg-aqua/[0.052] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.04)]">
         <span
           aria-hidden="true"
           className={`grid h-10 w-10 shrink-0 place-items-center rounded-[10px] text-center ${
-            ev.day === TODAY ? "bg-aqua text-ink" : "bg-white/[0.07] text-bone ring-1 ring-inset ring-white/10"
+            ev.day === TODAY ? "bg-aqua text-ink" : "bg-aqua/[0.091] text-bone ring-1 ring-inset ring-bone/[0.14]"
           }`}
         >
           <span className="text-[0.6875rem] font-semibold leading-tight">
@@ -1302,8 +1302,8 @@ function EventDetail({
             transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
             className={`mt-1.5 rounded-[12px] rounded-tl-[4px] px-3 py-2 text-[0.8125rem] leading-snug ${
               reminded
-                ? "bg-aqua/[0.1] text-bone shadow-[inset_0_0_0_1px_rgba(232,223,207,0.22)]"
-                : "bg-white/[0.035] text-bone/85 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]"
+                ? "bg-aqua/[0.1] text-bone shadow-[inset_0_0_0_1px_rgba(42,107,191,0.22)]"
+                : "bg-aqua/[0.046] text-bone/85 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]"
             }`}
           >
             {reminder}
@@ -1317,7 +1317,7 @@ function EventDetail({
       )}
 
       {lead || email ? (
-        <div className="mt-4 border-t border-white/[0.07] pt-4">
+        <div className="mt-4 border-t border-bone/[0.098] pt-4">
           <Sub className={LABEL}>{COPY.related[locale]}</Sub>
           <ul className="mt-2 grid grid-cols-1 gap-1.5">
             {lead ? (
@@ -1360,7 +1360,7 @@ function RelatedLink({ icon: Icon, label, meta, onPress }: { icon: LucideIcon; l
     <button
       type="button"
       onClick={onPress}
-      className={`${ROW} flex min-h-[44px] w-full items-center gap-2.5 bg-white/[0.03] px-2.5 py-2 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]`}
+      className={`${ROW} flex min-h-[44px] w-full items-center gap-2.5 bg-aqua/[0.039] px-2.5 py-2 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]`}
     >
       <span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-aqua/[0.1] text-aqua ring-1 ring-inset ring-aqua/25">
         <Icon size={13} strokeWidth={2} />
@@ -1421,7 +1421,7 @@ function Agenda({
         const nowAt = today ? list.findIndex((e) => toMin(e.start) > NOW_MIN) : -1;
         const nowIndex = today ? (nowAt === -1 ? list.length : nowAt) : -1;
         return (
-          <section key={d} aria-labelledby={headingId} className="border-t border-white/[0.06] py-3 first:border-t-0">
+          <section key={d} aria-labelledby={headingId} className="border-t border-bone/[0.084] py-3 first:border-t-0">
             <div className="flex items-center justify-between gap-3 px-2">
               <h4 id={headingId} className={`flex items-center gap-2 text-sm font-medium ${today ? "text-aqua" : "text-bone"}`}>
                 {weekday(d, intlLocale, "long")}
@@ -1551,7 +1551,7 @@ function AgendaEntry({
         {detail ? (
           <motion.div
             id={detailId}
-            className="mx-0.5 mb-2 mt-1.5 rounded-glass-sm bg-white/[0.035] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.05)] sm:p-5"
+            className="mx-0.5 mb-2 mt-1.5 rounded-glass-sm bg-aqua/[0.046] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.05)] sm:p-5"
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: EASE_EDITORIAL }}

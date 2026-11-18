@@ -111,7 +111,7 @@ export function Footer() {
           <Wordmark tone="dark" size="xl" />
         </Reveal>
 
-        <div className="mt-8 flex flex-col gap-4 border-t border-white/10 pt-6 text-[0.8125rem] text-ash sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-4 border-t border-bone/[0.14] pt-6 text-[0.8125rem] text-ash sm:flex-row sm:items-center sm:justify-between">
           <p>{fill(t.footer.rights, { year, entity: siteConfig.legalEntity })}</p>
           <a href="#top" className="btn-line-dark btn-sm glass-flat self-start sm:self-auto">
             {t.footer.backToTop}

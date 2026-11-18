@@ -25,7 +25,7 @@
 
   body {
     @apply bg-ink font-sans text-bone antialiased;
-    color-scheme: dark;
+    color-scheme: light;
     font-feature-settings: "ss01", "cv11";
   }
 
@@ -59,18 +59,15 @@
   }
 
   ::selection {
-    background: #E8DFCF;
-    color: #17253B;
+    background: #CFE5FC;
+    color: #15315A;
   }
 
   /* Visible, high-contrast keyboard focus (WCAG 2.4.7 / 1.4.11). */
-  /* Dark-first site: aqua ring (11:1 on ink). Light surfaces opt back in with data-theme="light". */
+  /* Light site: friendly-blue ring (5:1 on white). */
   :focus-visible {
-    outline: 2px solid #E8DFCF;
+    outline: 2px solid #2A6BBF;
     outline-offset: 3px;
-  }
-  [data-theme="light"] :focus-visible {
-    outline-color: #0b6e63;
   }
 
   /* Media never blocks layout / never overflows on phones. */
@@ -128,31 +125,32 @@
     -webkit-backdrop-filter: blur(var(--glass-blur, 22px)) saturate(170%);
     backdrop-filter: blur(var(--glass-blur, 22px)) saturate(170%);
   }
+  /* Both materials are light now (the site is white + sky blue); .glass-dark is kept as a
+     name so existing markup re-themes in place. It is the slightly bluer, denser of the two. */
   .glass {
-    color: #17253B;
-    background: linear-gradient(140deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 255, 255, 0.36) 55%, rgba(255, 255, 255, 0.5) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: #15315A;
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.46) 55%, rgba(255, 255, 255, 0.6) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.75);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.85),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.25),
-      0 1px 2px rgba(13, 13, 11, 0.05),
-      0 18px 44px -18px rgba(60, 40, 20, 0.28);
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 1px 2px rgba(21, 49, 90, 0.05),
+      0 18px 44px -20px rgba(42, 107, 191, 0.28);
   }
   .glass-dark {
-    color: #E8DFCF;
-    background: linear-gradient(140deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(255, 255, 255, 0.08) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.13);
+    color: #15315A;
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.82) 0%, rgba(244, 249, 255, 0.66) 55%, rgba(236, 245, 254, 0.74) 100%);
+    border: 1px solid rgba(42, 107, 191, 0.12);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.04),
-      0 22px 50px -20px rgba(0, 0, 0, 0.65);
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      0 1px 2px rgba(21, 49, 90, 0.04),
+      0 24px 54px -24px rgba(42, 107, 191, 0.32);
   }
   /* Denser tints where body text lives (keeps WCAG AA over any backdrop). */
   .glass.glass-solid {
-    background: linear-gradient(140deg, rgba(252, 250, 246, 0.9), rgba(246, 242, 234, 0.8));
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.94), rgba(246, 250, 255, 0.88));
   }
   .glass-dark.glass-solid {
-    background: linear-gradient(140deg, rgba(24, 28, 29, 0.86), rgba(12, 14, 15, 0.82));
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.94), rgba(240, 247, 255, 0.9));
   }
   /* Flat = no backdrop blur (cheap). Tint slightly denser to compensate.
      One selector per rule on purpose: Tailwind turns a selector *list* into a
@@ -161,19 +159,19 @@
   .glass.glass-flat {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    background: linear-gradient(140deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.5) 55%, rgba(255, 255, 255, 0.64) 100%);
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.62) 55%, rgba(255, 255, 255, 0.74) 100%);
   }
   .glass-dark.glass-flat {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    background: linear-gradient(140deg, rgba(36, 41, 42, 0.92) 0%, rgba(19, 22, 23, 0.9) 55%, rgba(28, 32, 33, 0.92) 100%);
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.95) 0%, rgba(243, 248, 255, 0.92) 55%, rgba(236, 245, 254, 0.94) 100%);
   }
   /* Flat + solid: text-heavy panels without blur keep the dense tint. */
   .glass.glass-solid.glass-flat {
-    background: linear-gradient(140deg, rgba(252, 250, 246, 0.94), rgba(246, 242, 234, 0.88));
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.97), rgba(246, 250, 255, 0.94));
   }
   .glass-dark.glass-solid.glass-flat {
-    background: linear-gradient(140deg, rgba(24, 28, 29, 0.94), rgba(12, 14, 15, 0.92));
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.97), rgba(240, 247, 255, 0.95));
   }
 
   /* Specular rim: a light-catching gradient border (masked ring). */
@@ -192,7 +190,7 @@
     pointer-events: none;
   }
   .glass-dark::before {
-    background: linear-gradient(150deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 70%, rgba(232, 223, 207, 0.3));
+    background: linear-gradient(150deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 30%, rgba(156, 203, 246, 0) 70%, rgba(156, 203, 246, 0.55));
   }
   /* Pointer sheen: a soft highlight that follows the cursor (set by <GlassSheen/>). */
   .glass::after,
@@ -207,8 +205,11 @@
     transition: opacity 400ms cubic-bezier(0.22, 1, 0.36, 1);
     pointer-events: none;
   }
+  .glass::after {
+    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, -20%), rgba(156, 203, 246, 0.3), transparent 62%);
+  }
   .glass-dark::after {
-    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, -20%), rgba(255, 255, 255, 0.14), transparent 62%);
+    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, -20%), rgba(156, 203, 246, 0.32), transparent 62%);
   }
 
   /* "Pause animations" (MotionPauseContext) also freezes CSS keyframe loops
@@ -253,33 +254,34 @@
   .btn:focus-visible::after {
     opacity: 1;
   }
-  /* ONE primary button style across the whole site: sand capsule, navy label.
+  /* ONE primary button style across the whole site: sky-blue capsule, deep-blue label.
      Every former variant (.btn-ink / .btn-bone / .btn-signal / .btn-aqua) now
      resolves to this, so no surface is left with a stray accent colour. */
   .btn-ink,
   .btn-bone,
   .btn-signal,
   .btn-aqua {
-    @apply btn text-ink;
-    background: linear-gradient(180deg, #F3EDE1 0%, #E8DFCF 58%, #DCCFB6 100%);
-    --btn-glow: rgba(255, 255, 255, 0.55);
+    @apply btn text-bone;
+    background: linear-gradient(180deg, #EAF4FF 0%, #D3E8FD 55%, #BEDBFA 100%);
+    --btn-glow: rgba(255, 255, 255, 0.85);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.7),
-      0 0 0 1px rgba(232, 223, 207, 0.28),
-      0 12px 30px -14px rgba(0, 0, 0, 0.55);
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0 rgba(42, 107, 191, 0.12),
+      0 0 0 1px rgba(42, 107, 191, 0.16),
+      0 14px 30px -14px rgba(42, 107, 191, 0.55);
   }
-  /* Quiet secondary: no fill, a single hairline, sand label on navy. */
+  /* Quiet secondary: no fill, a single hairline, deep-blue label. */
   .btn-line,
   .btn-line-dark {
     @apply btn text-bone;
-    background: transparent;
-    border: 1px solid rgba(232, 223, 207, 0.32);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(21, 49, 90, 0.18);
     box-shadow: none;
     --glass-blur: 0px;
   }
   .btn-line:hover,
   .btn-line-dark:hover {
-    border-color: rgba(232, 223, 207, 0.6);
+    border-color: rgba(42, 107, 191, 0.5);
   }
 
   /* Example links and inline actions: text with a hairline underline, never a capsule. */
@@ -289,7 +291,7 @@
   }
   .link-quiet:hover,
   .link-quiet:focus-visible {
-    text-decoration-color: rgba(232, 223, 207, 0.9);
+    text-decoration-color: rgba(42, 107, 191, 0.9);
   }
 
   /* Two sizes only: .btn (in-page CTAs, 50px) and .btn-sm (nav, footer, legal, utility; 44px).
@@ -311,7 +313,7 @@
 
   /* Form controls — rounded, glassy, 16px+ text (prevents iOS zoom). */
   .field {
-    @apply block w-full rounded-glass-sm border border-white/15 bg-white/[0.06] px-4 py-3 text-base text-bone placeholder:text-ash hover:border-white/35 focus:border-aqua;
+    @apply block w-full rounded-glass-sm border border-bone/15 bg-white px-4 py-3 text-base text-bone placeholder:text-ash hover:border-bone/35 focus:border-aqua;
   }
   .field[aria-invalid="true"] {
     @apply border-signal-deep;
@@ -324,17 +326,17 @@
   .range::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 999px;
-    background: linear-gradient(to right, #C9B893 0%, #E8DFCF var(--fill, 50%), rgba(255, 255, 255, 0.16) var(--fill, 50%), rgba(255, 255, 255, 0.16) 100%);
+    background: linear-gradient(to right, #2A6BBF 0%, #5A97E0 var(--fill, 50%), rgba(21, 49, 90, 0.12) var(--fill, 50%), rgba(21, 49, 90, 0.12) 100%);
   }
   .range::-moz-range-track {
     height: 6px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(21, 49, 90, 0.12);
   }
   .range::-moz-range-progress {
     height: 6px;
     border-radius: 999px;
-    background: linear-gradient(to right, #C9B893, #E8DFCF);
+    background: linear-gradient(to right, #2A6BBF, #5A97E0);
   }
   .range::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -343,18 +345,18 @@
     height: 26px;
     width: 26px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    background: radial-gradient(circle at 35% 30%, #fff 0%, #F3EDE1 55%, #D6C9B2 100%);
-    box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(232, 223, 207, 0.18), 0 6px 14px -4px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(42, 107, 191, 0.35);
+    background: radial-gradient(circle at 35% 30%, #fff 0%, #F2F8FF 55%, #D3E8FD 100%);
+    box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(90, 151, 224, 0.2), 0 6px 14px -4px rgba(42, 107, 191, 0.5);
     transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .range::-moz-range-thumb {
     height: 26px;
     width: 26px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    background: radial-gradient(circle at 35% 30%, #fff 0%, #F3EDE1 55%, #D6C9B2 100%);
-    box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(232, 223, 207, 0.18), 0 6px 14px -4px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(42, 107, 191, 0.35);
+    background: radial-gradient(circle at 35% 30%, #fff 0%, #F2F8FF 55%, #D3E8FD 100%);
+    box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(90, 151, 224, 0.2), 0 6px 14px -4px rgba(42, 107, 191, 0.5);
     transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .range:active::-webkit-slider-thumb {
@@ -375,19 +377,18 @@
  *  - prefers-contrast: more → solid + stronger borders
  * ------------------------------------------------------------------ */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass { background: rgba(250, 248, 243, 0.96) !important; }
-  .glass-dark { background: rgba(26, 25, 22, 0.97) !important; }
+  .glass { background: rgba(255, 255, 255, 0.96) !important; }
+  .glass-dark { background: rgba(250, 252, 255, 0.97) !important; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .glass, .glass-dark { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-  .glass { background: #FBF8F1 !important; }
-  .glass-dark { background: #1a1916 !important; }
+  .glass { background: #FFFFFF !important; }
+  .glass-dark { background: #FAFCFF !important; }
   .ambient-field { opacity: 0.5; }
 }
 @media (prefers-contrast: more) {
   .glass, .glass-dark { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
-  .glass { background: #ffffff !important; border-color: #17253B !important; }
-  .glass-dark { background: #17253B !important; border-color: #E8DFCF !important; }
+  .glass, .glass-dark { background: #ffffff !important; border-color: #15315A !important; }
 }
 
 /* ------------------------------------------------------------------ *

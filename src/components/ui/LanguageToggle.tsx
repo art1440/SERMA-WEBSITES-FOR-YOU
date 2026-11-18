@@ -26,14 +26,14 @@ const ROLL = {
 
 const TONES = {
   light: {
-    track: "bg-ink/[0.05] shadow-[inset_0_1px_2px_rgba(13,13,11,0.1)] ring-ink/[0.2]",
-    thumb: "bg-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_14px_-6px_rgba(13,13,11,0.6)]",
+    track: "bg-ink/[0.05] shadow-[inset_0_1px_2px_rgba(30,64,120,0.045)] ring-ink/[0.2]",
+    thumb: "bg-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_6px_14px_-6px_rgba(30,64,120,0.27)]",
     label: "text-bone",
     other: "text-ink",
   },
   dark: {
-    track: "bg-white/[0.06] shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] ring-white/[0.28]",
-    thumb: "bg-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_16px_-6px_rgba(0,0,0,0.7)]",
+    track: "bg-aqua/[0.078] shadow-[inset_0_1px_2px_rgba(30,64,120,0.12)] ring-bone/[0.14]",
+    thumb: "bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_6px_16px_-6px_rgba(42,107,191,0.55)]",
     label: "text-ink",
     other: "text-bone",
   },

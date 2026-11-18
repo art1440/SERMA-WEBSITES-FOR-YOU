@@ -71,7 +71,7 @@ export function HeroChapter() {
             <p className="chip-dark text-bone">
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#8FBFA3]" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2E9E6A]" />
               </span>
               {t.hero.status}
             </p>
@@ -131,7 +131,7 @@ export function HeroChapter() {
           <img
             src={asset("/media/hero-v2-poster.jpg")}
             alt=""
-            className="mt-10 hidden aspect-[16/9] w-full rounded-glass-lg object-cover shadow-[0_30px_70px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/15 motion-reduce:block"
+            className="mt-10 hidden aspect-[16/9] w-full rounded-glass-lg object-cover shadow-[0_30px_70px_-30px_rgba(30,64,120,0.35)] ring-1 ring-bone/[0.21] motion-reduce:block"
           />
         </div>
 
@@ -159,7 +159,7 @@ export function HeroChapter() {
           className="eyebrow absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2.5 text-ash motion-safe:lg:flex"
         >
           {t.hero.scrollHint}
-          <span className="relative block h-10 w-[3px] overflow-hidden rounded-full bg-white/15">
+          <span className="relative block h-10 w-[3px] overflow-hidden rounded-full bg-bone/[0.21]">
             <span className="absolute inset-x-0 top-0 block h-1/2 animate-scroll-cue rounded-full bg-aqua" />
           </span>
         </motion.div>
