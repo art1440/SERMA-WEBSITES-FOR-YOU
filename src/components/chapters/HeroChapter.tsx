@@ -71,7 +71,7 @@ export function HeroChapter() {
             <p className="chip-dark text-bone">
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2E9E6A]" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-live" />
               </span>
               {t.hero.status}
             </p>
@@ -131,7 +131,7 @@ export function HeroChapter() {
           <img
             src={asset("/media/hero-v2-poster.jpg")}
             alt=""
-            className="mt-10 hidden aspect-[16/9] w-full rounded-glass-lg object-cover shadow-[0_30px_70px_-30px_rgba(30,64,120,0.35)] ring-1 ring-bone/[0.21] motion-reduce:block"
+            className="mt-10 hidden aspect-[16/9] w-full rounded-glass-lg object-cover shadow-[0_30px_70px_-30px_rgb(var(--shadow)/0.35)] ring-1 ring-bone/[0.21] motion-reduce:block"
           />
         </div>
 

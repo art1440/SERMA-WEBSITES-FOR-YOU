@@ -56,6 +56,7 @@
   --btn-bot: 190 219 250;
   /* Warm moon / stars (only drawn in dark mode). */
   --star: 246 214 139;
+  --mark-tile: rgb(42 107 191);
 }
 html.dark {
   color-scheme: dark;
@@ -89,6 +90,7 @@ html.dark {
   --btn-top: 44 74 120;
   --btn-mid: 35 62 104;
   --btn-bot: 27 50 88;
+  --mark-tile: rgb(58 118 208);
 }
 
 /* ------------------------------------------------------------------ *

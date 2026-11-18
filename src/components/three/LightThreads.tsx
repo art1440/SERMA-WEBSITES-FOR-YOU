@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useColorScheme } from "@/lib/useColorScheme";
 
 /**
  * Light threads — a bundle of thin luminous strands that sweeps across the
@@ -24,6 +25,7 @@ precision mediump float;
 uniform vec2 uRes;
 uniform float uTime;
 uniform float uScroll;
+uniform float uDark;
 const int N = 18;
 
 // Per-pixel terms shared by every strand are computed once in main() (same picture, ~35% less ALU).
@@ -60,8 +62,12 @@ void main() {
     float g = strand(q, i, c, base, wbase, px);
     float glow = pow(g, 2.2) * 1.4 + g * 0.06;
     // Sky-blue core strands, a deeper blue at the edges, one bright cyan strand.
-    vec3 tint = mix(vec3(0.42, 0.68, 0.95), vec3(0.16, 0.42, 0.75), abs(i / float(N - 1) - 0.5) * 2.0);
-    if (k == 6) tint = vec3(0.30, 0.74, 0.96);
+    float edge = abs(i / float(N - 1) - 0.5) * 2.0;
+    vec3 tint = mix(vec3(0.42, 0.68, 0.95), vec3(0.16, 0.42, 0.75), edge);
+    // Dark scheme: the strands become light — brighter, cooler blues that glow on the navy ground.
+    vec3 tintDark = mix(vec3(0.55, 0.78, 1.0), vec3(0.30, 0.55, 0.95), edge);
+    tint = mix(tint, tintDark, uDark);
+    if (k == 6) tint = mix(vec3(0.30, 0.74, 0.96), vec3(0.45, 0.88, 1.0), uDark);
     col += tint * glow;
     ink += glow;
   }
@@ -75,7 +81,7 @@ void main() {
     ? mix(0.07, 1.0, smoothstep(0.36, 0.72, uv.x))
     : mix(0.08, 1.0, smoothstep(0.5, 0.88, uv.y));
   ink *= calm;
-  gl_FragColor = vec4(col, clamp(ink * 0.85, 0.0, 0.9));
+  gl_FragColor = vec4(col, clamp(ink * mix(0.85, 0.7, uDark), 0.0, 0.9));
 }
 `;
 
@@ -94,6 +100,8 @@ function compile(gl: WebGLRenderingContext, type: number, src: string) {
 export function LightThreads({ paused, desktop }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const pausedRef = useRef(paused);
+  const scheme = useColorScheme();
+  const darkRef = useRef(scheme === "dark" ? 1 : 0);
   const runRef = useRef<() => void>(() => undefined);
   const resizeRef = useRef<() => void>(() => undefined);
   // Desktop-dependent settings live in a ref, so the GL context and shader are set up once
@@ -125,6 +133,7 @@ export function LightThreads({ paused, desktop }: Props) {
     const uRes = gl.getUniformLocation(prog, "uRes");
     const uTime = gl.getUniformLocation(prog, "uTime");
     const uScroll = gl.getUniformLocation(prog, "uScroll");
+    const uDark = gl.getUniformLocation(prog, "uDark");
 
     // Soft glow → render at a fraction of CSS pixels and let the browser scale it up.
     // Sized from the canvas (the backdrop is lvh-tall), and the scroll unit only changes with
@@ -162,6 +171,7 @@ export function LightThreads({ paused, desktop }: Props) {
       scroll += (target - scroll) * ease;
       gl.uniform1f(uTime, (now - start) / 1000);
       gl.uniform1f(uScroll, scroll);
+      gl.uniform1f(uDark, darkRef.current);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     const loop = (now: number) => {
@@ -217,6 +227,12 @@ export function LightThreads({ paused, desktop }: Props) {
     pausedRef.current = paused;
     runRef.current();
   }, [paused]);
+
+  // Colour scheme -> uniform only (no remount); runRef redraws the still frame when paused.
+  useEffect(() => {
+    darkRef.current = scheme === "dark" ? 1 : 0;
+    runRef.current();
+  }, [scheme]);
 
   return <canvas ref={ref} aria-hidden="true" tabIndex={-1} className="absolute inset-0 h-full w-full" />;
 }

@@ -12,25 +12,31 @@
  */
 type Props = { tone?: "light" | "dark"; variant?: 0 | 1 | 2; className?: string };
 
+/* Orb colours are token references (channel vars), so the field re-tints with the colour scheme:
+   glow = --aqua-glow, deep = --aqua, tint = --amber (a pale wash in light, a deep navy lift in dark). */
+const glow = (a: number) => `rgb(var(--aqua-glow) / ${a})`;
+const deep = (a: number) => `rgb(var(--aqua) / ${a})`;
+const tint = (a: number) => `rgb(var(--amber) / ${a})`;
+
 const ORBS = [
   // [x, y, size(vmax), color]
   [
-    ["12%", "18%", 65, "rgba(90,151,224,0.2)"],
-    ["88%", "35%", 55, "rgba(42,107,191,0.07)"],
-    ["60%", "100%", 70, "rgba(188,217,245,0.55)"],
-    ["35%", "60%", 40, "rgba(90,151,224,0.05)"],
+    ["12%", "18%", 65, glow(0.2)],
+    ["88%", "35%", 55, deep(0.07)],
+    ["60%", "100%", 70, tint(0.55)],
+    ["35%", "60%", 40, glow(0.05)],
   ],
   [
-    ["90%", "10%", 60, "rgba(90,151,224,0.18)"],
-    ["5%", "70%", 65, "rgba(188,217,245,0.5)"],
-    ["55%", "45%", 50, "rgba(42,107,191,0.06)"],
-    ["75%", "95%", 45, "rgba(90,151,224,0.05)"],
+    ["90%", "10%", 60, glow(0.18)],
+    ["5%", "70%", 65, tint(0.5)],
+    ["55%", "45%", 50, deep(0.06)],
+    ["75%", "95%", 45, glow(0.05)],
   ],
   [
-    ["50%", "0%", 70, "rgba(188,217,245,0.5)"],
-    ["0%", "60%", 55, "rgba(90,151,224,0.16)"],
-    ["100%", "75%", 60, "rgba(42,107,191,0.07)"],
-    ["50%", "100%", 45, "rgba(90,151,224,0.04)"],
+    ["50%", "0%", 70, tint(0.5)],
+    ["0%", "60%", 55, glow(0.16)],
+    ["100%", "75%", 60, deep(0.07)],
+    ["50%", "100%", 45, glow(0.04)],
   ],
 ] as const;
 

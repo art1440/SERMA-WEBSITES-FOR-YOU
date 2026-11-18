@@ -5,6 +5,7 @@ import type { MotionValue } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { useColorScheme } from "@/lib/useColorScheme";
 
 /**
  * The SermaWebDesign "engine": a real-time WebGL sculpture choreographed by scroll.
@@ -33,6 +34,21 @@ const BONE = new THREE.Color("#E8F2FD");
 /** Brand accent ring + a minority of brighter particles: the site's friendly blue. */
 const ACCENT = new THREE.Color("#2A6BBF");
 const EMBER = new THREE.Color("#5A97E0");
+
+/**
+ * Dark scheme (html.dark): the same sculpture, lit instead of inked. Lines and particles turn a
+ * luminous sky blue, the accent ring/halo brighten, and the refractive core becomes deep-blue glass
+ * that glows from within. The scheme is read from <html> (useColorScheme) and blended in the render
+ * loop — uniforms and material colours only, the canvas never remounts.
+ */
+const INK_DARK = new THREE.Color("#7DB4F2");
+const ACCENT_DARK = new THREE.Color("#6FAEF2");
+const EMBER_DARK = new THREE.Color("#9CC6F7");
+const CORE_LIGHT = new THREE.Color("#DCEBFB");
+const CORE_DARK = new THREE.Color("#4F7FC4");
+const ATTEN_LIGHT = new THREE.Color("#7FB4EC");
+const ATTEN_DARK = new THREE.Color("#2B5599");
+const scratch = new THREE.Color();
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 /** Smoothstep of x between a and b. */
@@ -267,6 +283,11 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
   const heartGlow = useRef<THREE.Sprite>(null);
   const ringGlow = useRef<THREE.Mesh>(null);
   const keyLight = useRef<THREE.DirectionalLight>(null);
+  // Colour scheme: target (from <html>) and the eased blend actually drawn; null = snap on first frame.
+  const scheme = useColorScheme();
+  const darkTarget = useRef(0);
+  darkTarget.current = scheme === "dark" ? 1 : 0;
+  const darkMix = useRef<number | null>(null);
   const cam = useRef({ z: 9, y: 0, x: 0, roll: 0, fov: 35, orbit: 0 });
   const glowTexture = useMemo(() => makeGlowTexture(), []);
   const pose = useRef<Pose>({ ...posesFor(desktop).hero });
@@ -492,9 +513,22 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
     u.uTime.value = time;
     u.uMorph.value = morph.current;
     u.uOpacity.value += (targetOpacity - u.uOpacity.value) * k;
-    (u.uColor.value as THREE.Color).copy(INK).lerp(BONE, darkness);
-    lineMaterial.color.copy(INK).lerp(BONE, darkness);
-    thinRingMaterial.color.copy(INK).lerp(BONE, darkness);
+    // Blend light -> dark scheme (eased, so a mid-view switch cross-fades the sculpture).
+    darkMix.current = darkMix.current === null ? darkTarget.current : darkMix.current + (darkTarget.current - darkMix.current) * k;
+    const dm = darkMix.current;
+    const mixed = scratch.copy(INK).lerp(INK_DARK, dm);
+    (u.uColor.value as THREE.Color).copy(mixed).lerp(BONE, darkness);
+    (u.uAccent.value as THREE.Color).copy(ACCENT).lerp(ACCENT_DARK, dm);
+    lineMaterial.color.copy(mixed).lerp(BONE, darkness);
+    thinRingMaterial.color.copy(mixed).lerp(BONE, darkness);
+    if (ringA.current) (ringA.current.material as THREE.MeshBasicMaterial).color.copy(ACCENT).lerp(ACCENT_DARK, dm);
+    (ringGlow.current?.material as THREE.MeshBasicMaterial | undefined)?.color.copy(EMBER).lerp(EMBER_DARK, dm);
+    (wave.current?.material as THREE.MeshBasicMaterial | undefined)?.color.copy(EMBER).lerp(EMBER_DARK, dm);
+    const coreMat = core.current?.material as (THREE.MeshPhysicalMaterial & THREE.MeshStandardMaterial) | undefined;
+    if (coreMat) {
+      coreMat.color.copy(CORE_LIGHT).lerp(CORE_DARK, dm);
+      if (coreMat.attenuationColor) coreMat.attenuationColor.copy(ATTEN_LIGHT).lerp(ATTEN_DARK, dm);
+    }
   });
 
   return (
