@@ -34,8 +34,9 @@ export function HeroLight({ className = "" }: { className?: string }) {
         <div className="absolute bottom-[10%] right-[10%] hidden h-[12%] w-[40%] bg-[radial-gradient(ellipse_at_center,theme(colors.bone.DEFAULT/0.1),transparent_70%)] lg:block" />
         {/* FRONT plane: the lightest area, behind the headline and sub copy. */}
         <div className="absolute inset-y-0 left-0 hidden w-[52%] bg-[radial-gradient(ellipse_at_30%_50%,theme(colors.ink.900/0.85),theme(colors.ink.900/0.7)_45%,transparent_78%)] lg:block" />
-        {/* Phones/tablets: keep the headline area light. */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_25%,theme(colors.ink.900/0.75),transparent_70%)] lg:hidden" />
+        {/* Phones/tablets: keep the headline area light. The copy sits in the lower half here and the
+            engine in the upper half, so the glow is centred low to avoid washing the engine out. */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_45%_at_40%_70%,theme(colors.ink.900/0.7),transparent_75%)] lg:hidden" />
       </div>
     </div>
   );
