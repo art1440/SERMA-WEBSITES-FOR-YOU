@@ -40,7 +40,7 @@ export function AnimatedNumber({ value, format = "number", className }: Props) {
   }, [inView, value, reduce, spring]);
 
   return (
-    <span ref={ref} className={`tabular ${className ?? ""}`}>
+    <span ref={ref} className={`tabular whitespace-nowrap [font-variant-numeric:tabular-nums] ${className ?? ""}`}>
       <motion.span aria-hidden="true">{text}</motion.span>
       <span className="sr-only">{formatMetric(value, format, intlLocale)}</span>
     </span>

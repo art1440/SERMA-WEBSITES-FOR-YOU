@@ -174,8 +174,8 @@ export function RevenueCalculator() {
 
           {/* Result — dark glass card. It lives inside TiltCard's preserve-3d chain, so it is
               glass-flat (backdrop blur would flatten the tilt) and never overflow-hidden. */}
-          <Reveal className="col-span-12 lg:col-span-6" delay={0.1}>
-            <TiltCard className="h-full" glare="rounded-glass-lg">
+          <div className="col-span-12 lg:col-span-6">
+            <TiltCard className="h-full" glare="rounded-glass-lg" delay={0.06}>
               <div data-theme="dark" className={RESULT_CARD}>
                 {/* Aqua inner light: sits above the glass body, below the content (isolated stack). */}
                 <span aria-hidden="true" className={RESULT_GLOW} />
@@ -232,7 +232,7 @@ export function RevenueCalculator() {
                 </MagneticButton>
               </div>
             </TiltCard>
-          </Reveal>
+          </div>
         </div>
 
         <SimulationDisclaimer variant="calculator" className="mt-6" />

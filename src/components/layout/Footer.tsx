@@ -22,7 +22,7 @@ function FooterLink({ href, label }: { href: string; label: string }) {
         aria-hidden="true"
         size={14}
         strokeWidth={1.75}
-        className="-translate-x-1 text-aqua opacity-0 transition-[transform,opacity] duration-300 ease-editorial group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+        className="-translate-x-1 text-aqua opacity-0 transition-[transform,opacity] duration-base ease-editorial group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
       />
     </Link>
   );

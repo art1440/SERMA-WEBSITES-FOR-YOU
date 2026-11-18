@@ -13,15 +13,18 @@ type RevealProps = {
   trigger?: "inView" | "mount";
 };
 
-/** Fade-up section entrance. Transform + opacity only. */
-export function Reveal({ children, className, delay = 0, y = 28, trigger = "inView" }: RevealProps) {
+/** Delay (seconds) for item `i` of a group of cards / list items: 60ms apart, capped so long lists don't drag. */
+export const staggerDelay = (i: number, base = 0) => base + Math.min(i, 8) * 0.06;
+
+/** Fade-up section entrance (16px rise). Transform + opacity only. */
+export function Reveal({ children, className, delay = 0, y = 16, trigger = "inView" }: RevealProps) {
   const target = { opacity: 1, y: 0 };
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0, y }}
       {...(trigger === "mount" ? { animate: target } : { whileInView: target, viewport: VIEWPORT_ONCE })}
-      transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay }}
+      transition={{ duration: 0.7, ease: EASE_EDITORIAL, delay }}
     >
       {children}
     </motion.div>

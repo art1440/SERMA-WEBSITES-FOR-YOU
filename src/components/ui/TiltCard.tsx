@@ -2,7 +2,7 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, type PointerEvent, type ReactNode } from "react";
-import { MOTION } from "@/lib/motion";
+import { EASE_EDITORIAL, MOTION, VIEWPORT_ONCE } from "@/lib/motion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 const SPRING = MOTION.smooth;
@@ -63,10 +63,10 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
       {/* Entrance: swings up into place once */}
       <motion.div
         className="h-full [transform-style:preserve-3d]"
-        initial={{ opacity: 0, rotateX: 35, y: 80 }}
-        whileInView={{ opacity: 1, rotateX: 0, y: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
-        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay }}
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={VIEWPORT_ONCE}
+        transition={{ duration: 0.7, ease: EASE_EDITORIAL, delay }}
       >
         {/* Pointer tilt */}
         <motion.div

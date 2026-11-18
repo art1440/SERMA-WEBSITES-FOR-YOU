@@ -622,7 +622,7 @@ function NichePreview({ idle = false }: { idle?: boolean }) {
           type="button"
           onClick={() => setUserPaused(!paused)}
           aria-label={paused ? t.common.playMotion : t.common.pauseMotion}
-          className="-my-1.5 grid h-11 w-11 shrink-0 place-items-center rounded-full bg-aqua/[0.078] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)] transition-transform duration-300 ease-editorial hover:bg-aqua/[0.13] active:scale-95"
+          className="-my-1.5 grid h-11 w-11 shrink-0 place-items-center rounded-full bg-aqua/[0.078] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)] transition-transform duration-base ease-editorial hover:bg-aqua/[0.13] active:scale-95"
         >
           {paused ? <Play aria-hidden="true" size={14} strokeWidth={1.5} /> : <Pause aria-hidden="true" size={14} strokeWidth={1.5} />}
         </button>

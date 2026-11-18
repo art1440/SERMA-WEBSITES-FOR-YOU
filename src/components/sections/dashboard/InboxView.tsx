@@ -904,7 +904,7 @@ function Reader({
                       <button
                         type="button"
                         onClick={() => sendReply(i)}
-                        className="group flex min-h-[44px] w-full items-center gap-3 rounded-[14px] bg-aqua/[0.065] px-3.5 py-2.5 text-left text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-transform duration-200 ease-editorial hover:-translate-y-px hover:bg-aqua/[0.08] hover:shadow-[inset_0_0_0_1px_rgba(42,107,191,0.45)] active:scale-[0.99]"
+                        className="group flex min-h-[44px] w-full items-center gap-3 rounded-[14px] bg-aqua/[0.065] px-3.5 py-2.5 text-left text-[0.8125rem] leading-snug text-bone shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] transition-[transform,background-color,box-shadow] duration-base ease-editorial hover:-translate-y-px hover:bg-aqua/[0.08] hover:shadow-[inset_0_0_0_1px_rgba(42,107,191,0.45)] active:scale-[0.97]"
                       >
                         <span className="flex-1">
                           {r[locale]}
@@ -1061,7 +1061,7 @@ function ActionButton({
           aria-hidden="true"
           size={14}
           strokeWidth={2}
-          className={`-mr-0.5 transition-transform duration-300 ease-editorial ${expanded ? "rotate-180" : ""}`}
+          className={`-mr-0.5 transition-transform duration-base ease-editorial ${expanded ? "rotate-180" : ""}`}
         />
       </button>
     );
