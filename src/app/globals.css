@@ -233,7 +233,9 @@
    * ================================================================ */
   .btn {
     @apply relative isolate inline-flex min-h-[50px] select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-7 py-3 text-[0.9375rem] font-medium tracking-[-0.01em] disabled:cursor-not-allowed disabled:opacity-60;
-    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition:
+      transform var(--dur-fast, 150ms) var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1)),
+      border-color var(--dur-base, 250ms) var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1));
   }
   .btn:active {
     transform: scale(0.97);
@@ -248,7 +250,7 @@
     border-radius: inherit;
     background: radial-gradient(120% 90% at 50% -10%, var(--btn-glow, rgba(255, 255, 255, 0.28)), transparent 60%);
     opacity: 0;
-    transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity var(--dur-base, 250ms) var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1));
   }
   .btn:hover::after,
   .btn:focus-visible::after {
@@ -287,7 +289,7 @@
   /* Example links and inline actions: text with a hairline underline, never a capsule. */
   .link-quiet {
     @apply inline-flex items-center gap-1.5 font-medium text-bone underline decoration-bone/40 decoration-1 underline-offset-[4px];
-    transition: text-decoration-color 240ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: text-decoration-color var(--dur-base, 250ms) var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1));
   }
   .link-quiet:hover,
   .link-quiet:focus-visible {
@@ -348,7 +350,7 @@
     border: 1px solid rgba(42, 107, 191, 0.35);
     background: radial-gradient(circle at 35% 30%, #fff 0%, #F2F8FF 55%, #D3E8FD 100%);
     box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(90, 151, 224, 0.2), 0 6px 14px -4px rgba(42, 107, 191, 0.5);
-    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--dur-fast, 150ms) var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1));
   }
   .range::-moz-range-thumb {
     height: 26px;
@@ -357,7 +359,7 @@
     border: 1px solid rgba(42, 107, 191, 0.35);
     background: radial-gradient(circle at 35% 30%, #fff 0%, #F2F8FF 55%, #D3E8FD 100%);
     box-shadow: inset 0 1px 0 #fff, 0 0 0 4px rgba(90, 151, 224, 0.2), 0 6px 14px -4px rgba(42, 107, 191, 0.5);
-    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--dur-fast, 150ms) var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1));
   }
   .range:active::-webkit-slider-thumb {
     transform: scale(1.12);

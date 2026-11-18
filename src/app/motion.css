@@ -1,0 +1,20 @@
+/* Motion durations: one small set shared by CSS and Tailwind (`duration-fast|base|slow`).
+ * Easing is the editorial curve from src/lib/motion.ts (`ease-editorial`).
+ *   fast 150ms: press / small state flips
+ *   base 250ms: hover, focus, colour, fades
+ *   slow 450ms: panels, larger moves
+ */
+:root {
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 450ms;
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms;
+    --dur-base: 1ms;
+    --dur-slow: 1ms;
+  }
+}

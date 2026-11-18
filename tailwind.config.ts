@@ -91,6 +91,11 @@ const config: Config = {
         glass: "22px",
         "glass-lg": "30px",
       },
+      transitionDuration: {
+        fast: "150ms",
+        base: "250ms",
+        slow: "450ms",
+      },
       transitionTimingFunction: {
         editorial: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
