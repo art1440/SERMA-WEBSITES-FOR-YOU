@@ -11,7 +11,7 @@ export const TAB_IDS = [
   "simulator",
   "calculator",
   "compare",
-  "demo",
+  "pricing",
 ] as const;
 
 export type TabId = (typeof TAB_IDS)[number];
@@ -25,7 +25,9 @@ export function tabFromHash(hash: string): TabId | null {
   const id = hash.replace(/^#/, "");
   if (!id || id === "top" || id === "main") return null;
   if (isTabId(id)) return id;
-  if (id === "enquiry-form") return "demo";
+  if (id === "enquiry-form") return "pricing";
+  // The Live Demo tab became Pricing; old "#demo" links land there.
+  if (id === "demo") return "pricing";
   // The old How It Works section is gone; its links open the section now called How It Works.
   if (id === "system") return "included";
   return null;

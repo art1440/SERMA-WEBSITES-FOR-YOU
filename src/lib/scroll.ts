@@ -1,25 +1,39 @@
 import { asset } from "@/lib/asset";
 import { showTab } from "@/lib/tabs";
 
+const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 /**
- * Opens the "Book a Live System Demo" tab and moves keyboard focus to its
- * primary action. Falls back to navigating home from other routes (e.g. /privacy).
+ * Opens the Pricing tab at its top (the three packages) and moves keyboard focus
+ * to the section heading. Falls back to navigating home from other routes (e.g. /privacy).
  */
-export async function goToDemo() {
-  const opened = await showTab("demo");
-  const section = document.getElementById("demo");
-  const form = document.getElementById("enquiry-form");
-  if (!opened || (!section && !form)) {
-    window.location.assign(asset("/#demo"));
+export async function goToPricing() {
+  const opened = await showTab("pricing");
+  const heading = document.getElementById("pricing-title");
+  if (!opened || !heading) {
+    window.location.assign(asset("/#pricing"));
     return;
   }
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const scrollTarget = form ?? section!;
-  // The form is the destination: land on the first field, not the section heading.
-  scrollTarget.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: form ? "center" : "start" });
-  const focusTarget =
-    form?.querySelector<HTMLElement>("input[name='name']") ??
-    section?.querySelector<HTMLElement>("[data-primary-action]");
+  heading.setAttribute("tabindex", "-1");
+  heading.focus({ preventScroll: true });
+}
+
+/**
+ * Opens the Pricing tab and glides down to the enquiry form, landing focus on its
+ * first field. Used by "Get started" and by the "Choose …" button on each package.
+ */
+export async function goToForm() {
+  const opened = await showTab("pricing");
+  const form = document.getElementById("enquiry-form");
+  if (!opened || !form) {
+    window.location.assign(asset("/#enquiry-form"));
+    return;
+  }
+  const reduce = reduced();
+  form.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
   // preventScroll keeps the smooth scroll from being cut short by the focus jump.
-  window.setTimeout(() => focusTarget?.focus({ preventScroll: true }), reduce ? 0 : 650);
+  window.setTimeout(
+    () => form.querySelector<HTMLElement>("input[name='name']")?.focus({ preventScroll: true }),
+    reduce ? 0 : 650,
+  );
 }

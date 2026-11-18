@@ -35,14 +35,27 @@ const phoneOk = (v: string) => /^[0-9+().\-\s]+$/.test(v) && (v.match(/\d/g)?.le
  * static definition Netlify detects at deploy). Same-origin POST, so the strict
  * CSP's connect-src 'self' still holds and no third party sees the data.
  */
-export function EnquiryForm() {
+export function EnquiryForm({ prefill }: { prefill?: string } = {}) {
   const { t } = useLanguage();
   const [status, setStatus] = useState<Status>("idle");
   const doneRef = useRef<HTMLParagraphElement>(null);
+  const needRef = useRef<HTMLTextAreaElement>(null);
+  const lastPrefill = useRef("");
   const shownAt = useRef(0);
   useEffect(() => {
     shownAt.current = Date.now();
   }, []);
+
+  // A plan picked on the Pricing tab is written into "What do you need?", unless the
+  // visitor has already typed something of their own there (then it is left alone).
+  useEffect(() => {
+    const box = needRef.current;
+    if (!box || !prefill) return;
+    if (box.value.trim() === "" || box.value === lastPrefill.current) {
+      box.value = prefill;
+      lastPrefill.current = prefill;
+    }
+  }, [prefill]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -58,7 +71,7 @@ export function EnquiryForm() {
 
     // Re-check after cleaning (a field of only spaces or symbols is empty now).
     const phoneInput = form.elements.namedItem("phone") as HTMLInputElement | null;
-    phoneInput?.setCustomValidity(phoneOk(fields.phone) ? "" : t.demo.phoneHint);
+    phoneInput?.setCustomValidity(phoneOk(fields.phone) ? "" : t.pricing.phoneHint);
     if (!fields.name || !fields.business || !fields.need || !phoneOk(fields.phone) || data.get("consent") !== "yes") {
       form.reportValidity();
       return;
@@ -113,8 +126,8 @@ export function EnquiryForm() {
             <Check size={15} strokeWidth={2.25} />
           </span>
           <span>
-            <span className="block font-display text-xl leading-snug text-balance">{t.demo.thanksTitle}</span>
-            <span className="mt-1 block text-[0.9375rem] leading-relaxed text-ash">{t.demo.thanksBody}</span>
+            <span className="block font-display text-xl leading-snug text-balance">{t.pricing.thanksTitle}</span>
+            <span className="mt-1 block text-[0.9375rem] leading-relaxed text-ash">{t.pricing.thanksBody}</span>
           </span>
         </p>
       </div>
@@ -133,24 +146,24 @@ export function EnquiryForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="eyebrow text-ash">{t.demo.fieldName}</span>
+          <span className="eyebrow text-ash">{t.pricing.fieldName}</span>
           <input name="name" required maxLength={MAX.name} autoComplete="name" className="field mt-2" />
         </label>
         <label className="block">
-          <span className="eyebrow text-ash">{t.demo.fieldBusiness}</span>
+          <span className="eyebrow text-ash">{t.pricing.fieldBusiness}</span>
           <input name="business" required maxLength={MAX.business} autoComplete="organization" className="field mt-2" />
         </label>
       </div>
 
       <label className="block">
-        <span className="eyebrow text-ash">{t.demo.fieldPhone}</span>
+        <span className="eyebrow text-ash">{t.pricing.fieldPhone}</span>
         <input
           name="phone"
           type="tel"
           required
           maxLength={MAX.phone}
           pattern="[0-9+\(\)\.\-\s]{7,25}"
-          title={t.demo.phoneHint}
+          title={t.pricing.phoneHint}
           aria-describedby="enquiry-phone-hint"
           onInput={(e) => e.currentTarget.setCustomValidity("")}
           autoComplete="tel"
@@ -158,13 +171,13 @@ export function EnquiryForm() {
           className="field mt-2"
         />
         <span id="enquiry-phone-hint" className="mt-1.5 block text-xs text-ash">
-          {t.demo.phoneHint}
+          {t.pricing.phoneHint}
         </span>
       </label>
 
       <label className="block">
-        <span className="eyebrow text-ash">{t.demo.fieldNeed}</span>
-        <textarea name="need" required maxLength={MAX.need} rows={3} className="field mt-2 resize-y" placeholder={t.demo.fieldNeedHint} />
+        <span className="eyebrow text-ash">{t.pricing.fieldNeed}</span>
+        <textarea ref={needRef} name="need" required maxLength={MAX.need} rows={3} className="field mt-2 resize-y" placeholder={t.pricing.fieldNeedHint} />
       </label>
 
       {/* Required consent before anything is sent; links open the legal pages in a new tab so the form is kept. */}
@@ -177,33 +190,33 @@ export function EnquiryForm() {
           className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-[#2A6BBF]"
         />
         <span>
-          {t.demo.consentPrefix}{" "}
+          {t.pricing.consentPrefix}{" "}
           <a href="/privacy" target="_blank" rel="noopener" className="link-quiet text-bone underline underline-offset-2">
-            {t.demo.consentPrivacy}
+            {t.pricing.consentPrivacy}
           </a>{" "}
-          {t.demo.consentAnd}{" "}
+          {t.pricing.consentAnd}{" "}
           <a href="/terms" target="_blank" rel="noopener" className="link-quiet text-bone underline underline-offset-2">
-            {t.demo.consentTerms}
+            {t.pricing.consentTerms}
           </a>
-          {t.demo.consentSuffix}
+          {t.pricing.consentSuffix}
         </span>
       </label>
 
       <div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center">
         <button type="submit" disabled={status === "sending"} className="btn-aqua">
-          {status === "sending" ? t.demo.sending : t.demo.submit}
+          {status === "sending" ? t.pricing.sending : t.pricing.submit}
           <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} />
         </button>
         <span aria-live="polite" className="text-sm leading-relaxed text-ash">
           {status === "error" ? (
             <span className="text-bone">
-              {t.demo.errorBody}{" "}
+              {t.pricing.errorBody}{" "}
               <a href={`mailto:${siteConfig.contactEmail}`} className="link-quiet">
                 {siteConfig.contactEmail}
               </a>
             </span>
           ) : (
-            t.demo.formNote
+            t.pricing.formNote
           )}
         </span>
       </div>

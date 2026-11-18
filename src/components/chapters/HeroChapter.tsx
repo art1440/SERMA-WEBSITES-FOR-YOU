@@ -9,7 +9,7 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
-import { goToDemo } from "@/lib/scroll";
+import { goToPricing } from "@/lib/scroll";
 import { asset } from "@/lib/asset";
 
 /** Per-line 3D exit: each line flies toward the camera on its own path. */
@@ -39,9 +39,9 @@ export function HeroChapter() {
   const stZ = useTransform(p, [0.5, 0.62, 0.84, 0.97], [-520, 0, 0, 420]);
   const stRotateX = useTransform(p, [0.5, 0.62], [24, 0]);
 
-  const onDemoClick = (e: MouseEvent<HTMLElement>) => {
+  const onPricingClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    goToDemo();
+    goToPricing();
   };
 
   return (
@@ -110,8 +110,8 @@ export function HeroChapter() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay: 0.6 }}
             >
-              <MagneticButton href="#demo" onClick={onDemoClick} className="btn-aqua">
-                {t.common.bookDemo}
+              <MagneticButton href="#pricing" onClick={onPricingClick} className="btn-aqua">
+                {t.common.seePricing}
                 <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} />
               </MagneticButton>
               <a href="#included" className="link-quiet group">

@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
-import { goToDemo } from "@/lib/scroll";
+import { goToPricing } from "@/lib/scroll";
 
 type Props = { open: boolean; onClose: () => void };
 
@@ -16,7 +16,7 @@ const FOCUSABLE =
 
 /**
  * "Velvet Rope" client login. No credential fields are collected here — access
- * is provisioned at onboarding — so the modal sells the demo instead.
+ * is provisioned at onboarding — so the modal points to the packages instead.
  * Accessible dialog: focus moves in, Tab is trapped, Esc closes, focus returns.
  */
 export function ClientLoginModal({ open, onClose }: Props) {
@@ -69,9 +69,9 @@ export function ClientLoginModal({ open, onClose }: Props) {
     };
   }, [open, onClose]);
 
-  const bookDemo = () => {
+  const seePricing = () => {
     onClose();
-    window.setTimeout(goToDemo, 60);
+    window.setTimeout(goToPricing, 60);
   };
 
   if (!mounted) return null;
@@ -183,7 +183,7 @@ export function ClientLoginModal({ open, onClose }: Props) {
               </ol>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <MagneticButton className="btn-aqua w-full sm:w-auto" onClick={bookDemo}>
+                <MagneticButton className="btn-aqua w-full sm:w-auto" onClick={seePricing}>
                   {t.login.primary}
                   <ArrowRight aria-hidden="true" size={15} strokeWidth={1.75} />
                 </MagneticButton>

@@ -17,6 +17,8 @@ type Props = {
    * catching a sheet of glass. Omit to disable.
    */
   glare?: string;
+  /** Seconds to wait before the entrance swing, for staggering a row of cards. */
+  delay?: number;
 };
 
 /**
@@ -27,7 +29,7 @@ type Props = {
  * flatten the 3D). The glare is a separate leaf layer that clips itself, so
  * the card's own corners are never cut by an ancestor.
  */
-export function TiltCard({ children, className, max = 9, glare }: Props) {
+export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Props) {
   const reduce = useReducedMotionSafe();
   const rect = useRef<DOMRect | null>(null);
   const rx = useSpring(useMotionValue(0), SPRING);
@@ -64,7 +66,7 @@ export function TiltCard({ children, className, max = 9, glare }: Props) {
         initial={{ opacity: 0, rotateX: 35, y: 80 }}
         whileInView={{ opacity: 1, rotateX: 0, y: 0 }}
         viewport={{ once: true, margin: "-10%" }}
-        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay }}
       >
         {/* Pointer tilt */}
         <motion.div

@@ -1,6 +1,6 @@
 # SermaWebDesign — Flagship Site (Milestone 1)
 
-Bilingual (EN/ES), cookieless, interactive sales showcase: hero, system architecture, 6-niche Client Dashboard, missed-call → SMS simulator, revenue calculator, comparison matrix, direct-contact demo booking, and legal pages. **The site collects no personal information** — no forms, no cookies, no trackers.
+Bilingual (EN/ES), cookieless, interactive sales showcase: hero, system architecture, 6-niche Client Dashboard, missed-call → SMS simulator, revenue calculator, comparison matrix, a three-package Pricing tab (prices in `src/data/pricing.ts`) with the enquiry form, and legal pages. **The site collects no personal information** — no forms, no cookies, no trackers.
 
 **Stack:** Next.js 16 (App Router) · React 19 · Tailwind CSS 3.4 · Framer Motion · three.js + React Three Fiber (WebGL) · Lucide · self-hosted fonts via `next/font/local` · Higgsfield-generated motion loops.
 
@@ -32,7 +32,7 @@ Set in your host (Vercel → Project → Settings → Environment Variables). Se
 
 ## Before launch — required edits
 
-1. **`src/config/site.ts`** — set `contactEmail` (the "Book a Live System Demo" buttons open an email to it; currently the placeholder `contact@example.com`), optionally `contactPhone` (shows a "Call" button), confirm `legalEntity`, set `governingLaw` (currently `[Your State]`).
+1. **`src/config/site.ts`** — set `contactEmail` (the email link on the Pricing tab opens an email to it; currently the placeholder `contact@example.com`), optionally `contactPhone` (shows a "Call" button), confirm `legalEntity`, set `governingLaw` (currently `[Your State]`).
 2. **Legal pages** (`src/i18n/legal.ts`) — the text is a structured draft. Have an attorney review it, or paste in static text exported from Termageddon / iubenda. Do **not** embed their JavaScript widget: the site's CSP would block it and it would break the zero-third-party promise.
 
 ## Compliance & performance notes

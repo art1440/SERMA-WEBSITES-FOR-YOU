@@ -16,7 +16,7 @@ import { NICHE_BY_ID, NICHES, type NicheId } from "@/data/niches";
 import { fill } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
 import { SPRING_SOFT } from "@/lib/motion";
-import { goToDemo } from "@/lib/scroll";
+import { goToPricing } from "@/lib/scroll";
 
 const WEEKS_PER_MONTH = 4.33;
 
@@ -82,7 +82,7 @@ export function RevenueCalculator() {
 
   const onCta = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    goToDemo();
+    goToPricing();
   };
 
   return (
@@ -223,7 +223,7 @@ export function RevenueCalculator() {
                 </div>
 
                 <MagneticButton
-                  href="#demo"
+                  href="#pricing"
                   onClick={onCta}
                   className="btn-aqua mt-8 self-start whitespace-normal text-left leading-snug"
                 >

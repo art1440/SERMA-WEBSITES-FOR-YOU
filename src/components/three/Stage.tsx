@@ -35,10 +35,10 @@ export function Stage() {
   // Tabs: a hidden chapter's scroll track can't be measured, so off-tab the hero reads as
   // finished (1) and the finale as not yet reached (0) — the poses they had on the long page.
   const onHero = useMotionValue(activeTab === "home" ? 1 : 0);
-  const onFinale = useMotionValue(activeTab === "demo" ? 1 : 0);
+  const onFinale = useMotionValue(activeTab === "pricing" ? 1 : 0);
   useEffect(() => {
     onHero.set(activeTab === "home" ? 1 : 0);
-    onFinale.set(activeTab === "demo" ? 1 : 0);
+    onFinale.set(activeTab === "pricing" ? 1 : 0);
   }, [activeTab, onHero, onFinale]);
   const heroProgress = useTransform([scene.hero.progress, onHero], ([p, on]: number[]) => (on ? p : 1));
   const heroRaw = useTransform([scene.hero.raw, onHero], ([p, on]: number[]) => (on ? p : 1));
