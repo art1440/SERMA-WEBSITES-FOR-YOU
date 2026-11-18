@@ -2,10 +2,10 @@
 
 import { motion, type MotionValue } from "framer-motion";
 import { BellRing, CalendarCheck, MessageSquareText, PhoneMissed, type LucideIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
-import { EASE_EDITORIAL } from "@/lib/motion";
+import { EASE_EDITORIAL, SPRING_SMOOTH } from "@/lib/motion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 const ICONS: LucideIcon[] = [PhoneMissed, MessageSquareText, CalendarCheck, BellRing];
@@ -48,6 +48,7 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
   }, [still, steps.length]);
 
   return (
+    <RiseAndFloat reduce={reduce} paused={paused}>
     <motion.figure
       style={opacity ? { opacity } : undefined}
       aria-labelledby="hero-flow-title"
@@ -126,5 +127,25 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
 
       <figcaption className="mt-3 border-t border-bone/[0.14] pt-3 text-xs leading-5 text-ash">{t.hero.flow.caption}</figcaption>
     </motion.figure>
+    </RiseAndFloat>
+  );
+}
+
+/** Entrance after the headline (rise + settle), then a slow ±4px idle float that stops while paused. */
+function RiseAndFloat({ reduce, paused, children }: { reduce: boolean; paused: boolean; children: ReactNode }) {
+  if (reduce) return <>{children}</>;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ ...SPRING_SMOOTH, delay: 0.75 }}
+    >
+      <motion.div
+        animate={paused ? { y: 0 } : { y: [0, -4, 0, 4, 0] }}
+        transition={paused ? SPRING_SMOOTH : { duration: 6, ease: "easeInOut", repeat: Infinity }}
+      >
+        {children}
+      </motion.div>
+    </motion.div>
   );
 }
