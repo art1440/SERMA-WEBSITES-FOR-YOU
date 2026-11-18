@@ -26,8 +26,8 @@ export function tabFromHash(hash: string): TabId | null {
   if (!id || id === "top" || id === "main") return null;
   if (isTabId(id)) return id;
   if (id === "enquiry-form") return "demo";
-  // How It Works was removed; its old links land on the home tab.
-  if (id === "system") return "home";
+  // The old How It Works section is gone; its links open the section now called How It Works.
+  if (id === "system") return "included";
   return null;
 }
 

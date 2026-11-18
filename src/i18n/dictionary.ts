@@ -43,7 +43,7 @@ const en = {
     tabsLabel: "Sections",
     tabs: {
       home: "Home",
-      included: "What You Get",
+      included: "How It Works",
       industries: "Industries",
       dashboard: "Dashboard",
       simulator: "Missed Calls",
@@ -98,7 +98,7 @@ const en = {
   },
   included: {
     index: "(01)",
-    eyebrow: "What you get",
+    eyebrow: "How it works",
     title: "Exactly what you get, in the order it happens",
     body: "No surprises and no hourly billing. Here is every step, from our first call to your site going live, and you see the finished pages before you pay anything.",
     items: [
@@ -385,7 +385,7 @@ const es: Dictionary = {
     tabsLabel: "Secciones",
     tabs: {
       home: "Inicio",
-      included: "Incluido",
+      included: "Cómo Funciona",
       industries: "Industrias",
       dashboard: "Panel",
       simulator: "Llamadas Perdidas",
@@ -440,7 +440,7 @@ const es: Dictionary = {
   },
   included: {
     index: "(01)",
-    eyebrow: "Lo que recibe",
+    eyebrow: "Cómo funciona",
     title: "Exactamente lo que recibe, en el orden en que pasa",
     body: "Sin sorpresas y sin cobro por hora. Aquí está cada paso, desde nuestra primera llamada hasta que su sitio está en línea, y usted ve las páginas terminadas antes de pagar nada.",
     items: [

@@ -114,7 +114,7 @@ export function HeroChapter() {
                 {t.common.bookDemo}
                 <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} />
               </MagneticButton>
-              <a href="#dashboard" className="link-quiet group">
+              <a href="#included" className="link-quiet group">
                 {t.hero.secondaryCta}
                 <ArrowDown
                   aria-hidden="true"
