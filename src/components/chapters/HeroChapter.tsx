@@ -72,8 +72,8 @@ export function HeroChapter() {
             style={reduce ? undefined : { opacity: copyOpacity }}
             className="flex flex-wrap items-center gap-2.5"
           >
-            <p className="chip-dark glass-flat hidden text-ash sm:inline-flex">{t.hero.eyebrow}</p>
-            <p className="chip-dark text-bone">
+            <p className="chip-dark glass-flat shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_1px_3px_rgb(var(--bone)/0.08),0_10px_22px_-10px_rgb(var(--bone)/0.22)] hidden text-ash sm:inline-flex">{t.hero.eyebrow}</p>
+            <p className="chip-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_1px_3px_rgb(var(--bone)/0.08),0_10px_22px_-10px_rgb(var(--bone)/0.22)] text-bone">
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-live" />
@@ -118,7 +118,7 @@ export function HeroChapter() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay: 0.6 }}
             >
-              <MagneticButton href="#pricing" onClick={onPricingClick} className="btn-aqua">
+              <MagneticButton href="#pricing" onClick={onPricingClick} className="btn-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_1px_3px_rgb(var(--bone)/0.08),0_12px_24px_-10px_rgb(var(--bone)/0.28)]">
                 {t.common.seePricing}
                 <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} />
               </MagneticButton>
