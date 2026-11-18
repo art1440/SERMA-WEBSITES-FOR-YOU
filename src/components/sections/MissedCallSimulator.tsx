@@ -59,13 +59,13 @@ const phaseAt = (v: number): Phase => SCROLL_STARTS.find(([, start]) => v >= sta
 const DEVICE_RIM =
   "linear-gradient(150deg, rgba(255,255,255,0.62), rgba(255,255,255,0.1) 26%, rgba(255,255,255,0.03) 60%, rgba(42,107,191,0.4))";
 /** Glossy dark titanium body. */
-const DEVICE_BODY = "linear-gradient(160deg, #E2EDFA 0%, #FBFDFF 40%, #FFFFFF 68%, #EEF5FD 100%)";
+const DEVICE_BODY = "linear-gradient(160deg, rgb(var(--ink-600)) 0%, rgb(var(--ink-850)) 40%, rgb(var(--ink-900)) 68%, rgb(var(--ink-700)) 100%)";
 /** Aqua halo and soft contact shadow that give the device depth on the dark field. */
 const DEVICE_HALO = "radial-gradient(closest-side, rgba(42,107,191,0.16), rgba(90,151,224,0.09) 55%, transparent)";
 const DEVICE_SHADOW = "radial-gradient(closest-side, rgba(30,64,120,0.279), transparent)";
 /** Screen wallpaper: near-black with an aqua glow (top) and slate glow (bottom). */
 const SCREEN_WALLPAPER =
-  "radial-gradient(120% 55% at 100% 0%, rgba(42,107,191,0.14), transparent 62%), radial-gradient(120% 60% at 0% 100%, rgba(220,235,251,0.55), transparent 66%), linear-gradient(180deg, #FFFFFF, #FFFFFF)";
+  "radial-gradient(120% 55% at 100% 0%, rgba(42,107,191,0.14), transparent 62%), radial-gradient(120% 60% at 0% 100%, rgb(var(--sand) / 0.55), transparent 66%), linear-gradient(180deg, rgb(var(--ink-900)), rgb(var(--ink-900)))";
 /** Diagonal glare across the cover glass. */
 const SCREEN_GLARE = "linear-gradient(118deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.016) 30%, rgba(255,255,255,0) 44%)";
 /** Call-screen glows: aqua while ringing, signal (alert) once missed (cross-faded with opacity). */
@@ -74,7 +74,7 @@ const CALL_GLOW_MISSED = "radial-gradient(90% 55% at 50% 0%, rgba(90,151,224,0.3
 
 /** Outgoing bubble: the business's own messages in aqua, with a specular top edge (ink on aqua 11:1). */
 const AQUA_BUBBLE =
-  "bg-gradient-to-b from-[#4A8BDA] to-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(30,64,120,0.036),0_10px_22px_-12px_rgba(30,64,120,0.35)]";
+  "bg-gradient-to-b from-aqua-hi to-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(30,64,120,0.036),0_10px_22px_-12px_rgba(30,64,120,0.35)]";
 /** Inner surface for cards nested inside a glass panel (level 2: tint + hairline ring, not another glass). */
 const INNER_SURFACE = "bg-aqua/[0.046] ring-1 ring-inset ring-bone/[0.112]";
 
@@ -409,7 +409,7 @@ function Phone({ phase }: { phase: Phase }) {
         <span
           key={pos}
           aria-hidden="true"
-          className={`pointer-events-none absolute w-[3px] bg-gradient-to-b from-[#52698A] via-[#E2EDFA] to-[#CFE0F5] ${pos}`}
+          className={`pointer-events-none absolute w-[3px] bg-gradient-to-b from-ash via-ink-600 to-ink-500 ${pos}`}
         />
       ))}
 
@@ -423,7 +423,7 @@ function Phone({ phase }: { phase: Phase }) {
           style={{ backgroundImage: DEVICE_BODY }}
         >
           {/* Phones: height capped so the Simulate button and the idle screen fit in one view (the thread still fits). */}
-          <div className="relative isolate aspect-[9/18.5] w-full overflow-hidden rounded-[2.125rem] bg-[#FFFFFF] ring-1 ring-bone/[0.07] max-md:max-h-[max(26rem,58svh)]">
+          <div className="relative isolate aspect-[9/18.5] w-full overflow-hidden rounded-[2.125rem] bg-ink-900 ring-1 ring-bone/[0.07] max-md:max-h-[max(26rem,58svh)]">
             <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ backgroundImage: SCREEN_WALLPAPER }} />
 
             {/* Status bar */}
@@ -529,7 +529,7 @@ function Phone({ phase }: { phase: Phase }) {
                     <span
                       className={`relative grid h-16 w-16 place-items-center rounded-full text-ink ${
                         phase === "missed"
-                          ? "bg-gradient-to-b from-[#1F58A3] to-signal shadow-[inset_0_1px_0_rgba(220,235,251,0.75),0_14px_34px_-10px_rgba(90,151,224,0.75)]"
+                          ? "bg-gradient-to-b from-aqua-deep to-signal shadow-[inset_0_1px_0_rgba(220,235,251,0.75),0_14px_34px_-10px_rgba(90,151,224,0.75)]"
                           : "bg-gradient-to-b from-aqua-glow to-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_14px_34px_-12px_rgba(42,107,191,0.6)]"
                       }`}
                     >

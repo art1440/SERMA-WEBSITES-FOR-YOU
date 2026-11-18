@@ -270,13 +270,13 @@ type ResTone = { bar: string; fill: string; soft: string; swatch: string };
 /** Aqua family + neutral/slate tints; the 4th adds a stripe pattern so it never relies on hue alone. */
 const RES_TONES: readonly ResTone[] = [
   { bar: "bg-aqua", fill: "bg-aqua/[0.16]", soft: "bg-aqua/[0.06]", swatch: "bg-aqua" },
-  { bar: "bg-[#52698A]", fill: "bg-[#52698A]/[0.17]", soft: "bg-[#52698A]/[0.06]", swatch: "bg-[#52698A]" },
+  { bar: "bg-ash", fill: "bg-ash/[0.17]", soft: "bg-ash/[0.06]", swatch: "bg-ash" },
   { bar: "bg-bone/80", fill: "bg-bone/[0.1]", soft: "bg-bone/[0.04]", swatch: "bg-bone/80" },
   {
     bar: "bg-aqua-deep",
     fill: "bg-[repeating-linear-gradient(135deg,rgba(90,151,224,0.28)_0_4px,rgba(90,151,224,0.12)_4px_8px)]",
     soft: "bg-aqua-deep/[0.07]",
-    swatch: "bg-[repeating-linear-gradient(135deg,#1F58A3_0_2px,rgba(90,151,224,0.4)_2px_4px)]",
+    swatch: "bg-[repeating-linear-gradient(135deg,rgb(var(--aqua-deep))_0_2px,rgb(var(--aqua-glow)/0.4)_2px_4px)]",
   },
 ];
 const toneAt = (i: number) => RES_TONES[((i % RES_TONES.length) + RES_TONES.length) % RES_TONES.length];
@@ -286,8 +286,8 @@ const SELECTED_BLOCK =
   "ring-1 ring-inset ring-aqua/80 forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]";
 
 /** The grid sits in a solid, slightly recessed well so the sticky day headers can match it exactly. */
-const WELL = "#F7FAFE";
-const WELL_TODAY = "#EEF5FD";
+const WELL = "rgb(var(--ink-800))";
+const WELL_TODAY = "rgb(var(--ink-700))";
 
 /* ------------------------------ helpers ------------------------------ */
 
@@ -789,7 +789,7 @@ function WeekGrid({
                       {today ? (
                         <>
                           <span className="absolute inset-x-0 -top-px h-[2px] rounded-full bg-aqua shadow-[0_0_10px_rgba(42,107,191,0.55)]" />
-                          <span className="absolute -left-[4px] -top-[4px] h-2 w-2 rounded-full bg-aqua shadow-[0_0_0_2px_#EEF5FD]" />
+                          <span className="absolute -left-[4px] -top-[4px] h-2 w-2 rounded-full bg-aqua shadow-[0_0_0_2px_rgb(var(--ink-700))]" />
                         </>
                       ) : (
                         <span className="absolute inset-x-0 top-0 h-px bg-aqua/20" />

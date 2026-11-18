@@ -646,7 +646,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
                       lang={lang}
                       className={`max-w-[92%] rounded-[18px] rounded-br-[6px] px-3.5 py-2.5 text-[0.8125rem] leading-snug sm:max-w-[86%] ${
                         s.textBack
-                          ? "bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_60%,#2A6BBF_100%)] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_16px_-10px_rgba(42,107,191,0.7)]"
+                          ? "bg-[linear-gradient(180deg,rgb(var(--aqua-hi))_0%,rgb(var(--aqua))_60%,rgb(var(--aqua))_100%)] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_16px_-10px_rgba(42,107,191,0.7)]"
                           : "border border-dashed border-bone/[0.28] bg-aqua/[0.052] text-bone/85"
                       }`}
                       initial={{ opacity: 0, y: 6 }}
@@ -856,7 +856,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
       </div>
 
       {/* ---------------- Save bar ---------------- */}
-      <div className="z-10 mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-glass-sm bg-[#F7FAFE] px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),inset_0_0_0_1px_rgba(255,255,255,0.06),0_-12px_28px_-14px_rgba(30,64,120,0.338)] max-lg:sticky max-lg:bottom-3 sm:mt-2 sm:pl-4">
+      <div className="z-10 mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-glass-sm bg-ink-800 px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),inset_0_0_0_1px_rgba(255,255,255,0.06),0_-12px_28px_-14px_rgba(30,64,120,0.338)] max-lg:sticky max-lg:bottom-3 sm:mt-2 sm:pl-4">
         <p className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1 text-xs leading-snug text-ash">
           {changes > 0 ? (
             <span className="inline-flex items-center gap-1.5 font-medium text-bone">
@@ -1000,7 +1000,7 @@ function Toggle({ on, locale }: { on: boolean; locale: Locale }) {
       </span>
       <span className="relative block h-[26px] w-[44px] rounded-full bg-aqua/[0.13] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16),inset_0_1px_2px_rgba(30,64,120,0.18)] forced-colors:border forced-colors:border-[CanvasText]">
         <span
-          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_55%,#1F58A3_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(42,107,191,0.6)] transition-opacity duration-200 ease-editorial ${
+          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,rgb(var(--aqua-hi))_0%,rgb(var(--aqua))_55%,rgb(var(--aqua-deep))_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(42,107,191,0.6)] transition-opacity duration-200 ease-editorial ${
             on ? "opacity-100" : "opacity-0"
           }`}
         />
