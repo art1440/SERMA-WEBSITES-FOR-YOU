@@ -28,7 +28,8 @@ export function HeroLight({ className = "" }: { className?: string }) {
         {/* BACK plane: a deep blue atmosphere centred behind the engine (right ~60%). */}
         <div className="absolute inset-y-0 right-0 hidden w-[68%] bg-[radial-gradient(ellipse_62%_62%_at_62%_52%,theme(colors.aqua.glow/0.55),theme(colors.signal.DEFAULT/0.5)_42%,theme(colors.signal.DEFAULT/0.18)_72%,transparent)] lg:block" />
         {/* Horizon: a darker band of bone across the lower right. */}
-        <div className="absolute bottom-0 right-0 hidden h-[42%] w-[68%] bg-[linear-gradient(to_top,theme(colors.bone.DEFAULT/0.1),theme(colors.bone.DEFAULT/0.06)_45%,transparent)] lg:block" />
+        {/* The mask feathers the left edge so the band never ends in a visible seam. */}
+        <div className="absolute bottom-0 right-0 hidden h-[42%] w-[68%] bg-[linear-gradient(to_top,theme(colors.bone.DEFAULT/0.1),theme(colors.bone.DEFAULT/0.06)_45%,transparent)] [mask-image:linear-gradient(to_right,transparent,#000_45%)] lg:block" />
         {/* Contact shadow grounding the engine. */}
         <div className="absolute bottom-[10%] right-[10%] hidden h-[12%] w-[40%] bg-[radial-gradient(ellipse_at_center,theme(colors.bone.DEFAULT/0.1),transparent_70%)] lg:block" />
         {/* FRONT plane: the lightest area, behind the headline and sub copy. */}
