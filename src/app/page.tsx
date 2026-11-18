@@ -2,7 +2,6 @@
 
 import { HeroChapter } from "@/components/chapters/HeroChapter";
 import { IndustriesChapter } from "@/components/chapters/IndustriesChapter";
-import { SystemChapter } from "@/components/chapters/SystemChapter";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { TabPanels } from "@/components/layout/TabPanels";
@@ -21,7 +20,7 @@ import { TabsProvider } from "@/context/TabsContext";
 
 /**
  * The page is a set of tabbed "chapters", one on screen at a time (picked from
- * the navbar). Transparent chapters (hero, system, finale) reveal the fixed 3D
+ * the navbar). Transparent chapters (hero, finale) reveal the fixed 3D
  * <Stage>; opaque chapters cover it. Each keeps its own scroll choreography.
  */
 export default function HomePage() {
@@ -38,7 +37,6 @@ export default function HomePage() {
             <TabPanels
               panels={[
                 { id: "home", node: <HeroChapter /> },
-                { id: "system", node: <SystemChapter /> },
                 { id: "included", node: <InclusionsList /> },
                 { id: "industries", node: <IndustriesChapter /> },
                 { id: "dashboard", node: <DashboardShowcase /> },

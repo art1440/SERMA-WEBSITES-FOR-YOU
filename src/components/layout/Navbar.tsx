@@ -35,7 +35,6 @@ export function Navbar() {
   const tabItems = TAB_IDS.map((id) => ({ id, label: t.nav.tabs[id] }));
 
   const links = [
-    { href: "/#system", label: t.nav.links.system },
     { href: "/#dashboard", label: t.nav.links.dashboard },
     { href: "/#simulator", label: t.nav.links.simulator },
     { href: "/#calculator", label: t.nav.links.calculator },

@@ -5,7 +5,6 @@
  */
 export const TAB_IDS = [
   "home",
-  "system",
   "included",
   "industries",
   "dashboard",
@@ -27,6 +26,8 @@ export function tabFromHash(hash: string): TabId | null {
   if (!id || id === "top" || id === "main") return null;
   if (isTabId(id)) return id;
   if (id === "enquiry-form") return "demo";
+  // How It Works was removed; its old links land on the home tab.
+  if (id === "system") return "home";
   return null;
 }
 

@@ -33,7 +33,6 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   const explore = [
-    { href: "/#system", label: t.nav.links.system },
     { href: "/#dashboard", label: t.nav.links.dashboard },
     { href: "/#simulator", label: t.nav.links.simulator },
     { href: "/#calculator", label: t.nav.links.calculator },
