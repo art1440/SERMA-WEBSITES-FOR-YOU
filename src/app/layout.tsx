@@ -5,6 +5,7 @@ import { SkipLink } from "@/components/layout/SkipLink";
 import { displaySerif, geistMono, workSans } from "./fonts";
 import { buildCsp } from "@/config/csp";
 import { asset } from "@/lib/asset";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 const siteUrl = process.env.SITE_URL ?? "https://sermawebdesign.com";
@@ -35,8 +36,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F7FAFE",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F7FAFE" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A1220" },
+  ],
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -45,12 +49,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="en"
       data-scroll-behavior="smooth"
       className={`${displaySerif.variable} ${workSans.variable} ${geistMono.variable}`}
+      // The inline script below may add `dark` to <html> before React hydrates.
+      suppressHydrationWarning
     >
-      {cspMeta ? (
-        <head>
-          <meta httpEquiv="Content-Security-Policy" content={buildCsp({ meta: true })} />
-        </head>
-      ) : null}
+      <head>
+        {cspMeta ? <meta httpEquiv="Content-Security-Policy" content={buildCsp({ meta: true })} /> : null}
+        {/* Sets html.dark before first paint (no flash of the wrong theme). Inline scripts are allowed by the CSP. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body>
         <Providers>
           <SkipLink />

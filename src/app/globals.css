@@ -54,6 +54,8 @@
   --btn-top: 234 244 255;
   --btn-mid: 211 232 253;
   --btn-bot: 190 219 250;
+  /* Warm moon / stars (only drawn in dark mode). */
+  --star: 246 214 139;
 }
 html.dark {
   color-scheme: dark;
@@ -437,6 +439,11 @@ html.dark {
     @apply min-h-[44px] px-4 py-2 text-sm;
   }
 
+  /* Dark-mode toggle: presses a little deeper than other buttons. */
+  .theme-toggle:active {
+    transform: scale(0.94);
+  }
+
   /* Small glass capsule for labels/status ("chips"). */
   .chip {
     @apply glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[0.8125rem] font-medium;
@@ -503,6 +510,30 @@ html.dark {
   }
   .range:focus-visible {
     outline-offset: 6px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Theme switch: circular reveal (View Transitions API). The new scheme is
+ * clipped by a circle animated from script (src/lib/theme.ts); the default
+ * cross-fade is turned off. Reduced motion never starts a transition.
+ * ------------------------------------------------------------------ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 

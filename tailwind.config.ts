@@ -8,6 +8,8 @@ import plugin from "tailwindcss/plugin";
  * Hairlines are decorative structure only (never the sole carrier of meaning).
  */
 const config: Config = {
+  /* The scheme is `html.dark` (not data-theme: that attribute is a legacy styling hook). */
+  darkMode: "class",
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     screens: {
