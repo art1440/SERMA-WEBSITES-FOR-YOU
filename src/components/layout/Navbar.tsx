@@ -35,7 +35,6 @@ export function Navbar() {
   const tabItems = TAB_IDS.map((id) => ({ id, label: t.nav.tabs[id] }));
 
   const links = [
-    { href: "/#system", label: t.nav.links.system },
     { href: "/#dashboard", label: t.nav.links.dashboard },
     { href: "/#simulator", label: t.nav.links.simulator },
     { href: "/#calculator", label: t.nav.links.calculator },
@@ -127,7 +126,7 @@ export function Navbar() {
                     >
                       <span
                         aria-hidden="true"
-                        className="absolute inset-x-0 inset-y-1 -z-10 rounded-full bg-white/[0.08] opacity-0 transition-opacity duration-300 ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100"
+                        className="absolute inset-x-0 inset-y-1 -z-10 rounded-full bg-aqua/[0.104] opacity-0 transition-opacity duration-300 ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100"
                       />
                       {link.label}
                     </Link>
@@ -211,8 +210,8 @@ export function Navbar() {
                                 closeMenu();
                                 tabs.go(item.id);
                               }}
-                              className={`flex min-h-[52px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.375rem] leading-tight tracking-[-0.03em] hover:bg-white/[0.06] ${
-                                tabs.selected === item.id ? "bg-white/[0.07] text-bone" : "text-bone/80"
+                              className={`flex min-h-[52px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.375rem] leading-tight tracking-[-0.03em] hover:bg-aqua/[0.078] ${
+                                tabs.selected === item.id ? "bg-aqua/[0.091] text-bone" : "text-bone/80"
                               }`}
                             >
                               {item.label}
@@ -232,7 +231,7 @@ export function Navbar() {
                         <Link
                           href={link.href}
                           onClick={closeMenu}
-                          className="flex min-h-[56px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.5rem] leading-tight tracking-[-0.03em] hover:bg-white/[0.06]"
+                          className="flex min-h-[56px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.5rem] leading-tight tracking-[-0.03em] hover:bg-aqua/[0.078]"
                         >
                           {link.label}
                           <span aria-hidden="true" className="tabular text-sm font-medium tracking-normal text-ash">
@@ -242,7 +241,7 @@ export function Navbar() {
                       </motion.li>
                     ))}
                   </ul>
-                  <div className="mx-2 mt-2 grid gap-2 border-t border-white/10 pb-2 pt-4">
+                  <div className="mx-2 mt-2 grid gap-2 border-t border-bone/[0.14] pb-2 pt-4">
                     <button type="button" onClick={toggleMotion} aria-pressed={paused} className="btn-line-dark glass-flat w-full sm:hidden">
                       {paused ? <Play aria-hidden="true" size={13} strokeWidth={1.75} /> : <Pause aria-hidden="true" size={13} strokeWidth={1.75} />}
                       {paused ? t.common.playAll : t.common.pauseAll}
@@ -341,14 +340,14 @@ function TabBar({
               {/* Hover wash (inactive tabs only). */}
               <span
                 aria-hidden="true"
-                className="absolute inset-x-0 inset-y-1.5 -z-10 rounded-full bg-white/[0.06] opacity-0 transition-opacity duration-300 ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100"
+                className="absolute inset-x-0 inset-y-1.5 -z-10 rounded-full bg-aqua/[0.078] opacity-0 transition-opacity duration-300 ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100"
               />
               {on ? (
                 <motion.span
                   layoutId="tab-pill"
                   aria-hidden="true"
                   transition={SPRING_SNAPPY}
-                  className="absolute inset-x-0 inset-y-1.5 -z-10 rounded-full bg-white/[0.11] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),inset_0_0_0_1px_rgba(255,255,255,0.1)]"
+                  className="absolute inset-x-0 inset-y-1.5 -z-10 rounded-full bg-aqua/[0.143] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),inset_0_0_0_1px_rgba(255,255,255,0.1)]"
                 >
                   {/* A short aqua filament under the label: the one coloured mark in the bar. */}
                   <span className="absolute bottom-[3px] left-1/2 h-[2px] w-4 -translate-x-1/2 rounded-full bg-aqua" />

@@ -85,7 +85,7 @@ export function LegalPage({ slug }: { slug: LegalSlug }) {
                 <LegalText text={doc.intro} tokens={tokens} />
               </p>
               {t.legal.translationNote ? (
-                <p className="mt-5 max-w-[62ch] rounded-glass-sm bg-white/[0.05] px-4 py-3 text-sm leading-relaxed text-ash shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-inset ring-white/10">
+                <p className="mt-5 max-w-[62ch] rounded-glass-sm bg-aqua/[0.065] px-4 py-3 text-sm leading-relaxed text-ash shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-inset ring-bone/[0.14]">
                   {t.legal.translationNote}
                 </p>
               ) : null}
@@ -109,7 +109,7 @@ export function LegalPage({ slug }: { slug: LegalSlug }) {
                         {/* Hover/focus pill: fades in (opacity only). */}
                         <span
                           aria-hidden="true"
-                          className="absolute inset-0 -z-10 rounded-full bg-white/[0.07] opacity-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_14px_-6px_rgba(0,0,0,0.5)] ring-1 ring-inset ring-white/10 transition-opacity duration-300 ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100 group-active:opacity-100"
+                          className="absolute inset-0 -z-10 rounded-full bg-aqua/[0.091] opacity-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_14px_-6px_rgba(30,64,120,0.225)] ring-1 ring-inset ring-bone/[0.14] transition-opacity duration-300 ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100 group-active:opacity-100"
                         />
                         {s.heading}
                       </a>
@@ -126,7 +126,7 @@ export function LegalPage({ slug }: { slug: LegalSlug }) {
                     key={section.id}
                     id={section.id}
                     aria-labelledby={`${section.id}-h`}
-                    className="border-t border-white/[0.08] py-9 first:border-t-0 first:pt-0 last:pb-0"
+                    className="border-t border-bone/[0.112] py-9 first:border-t-0 first:pt-0 last:pb-0"
                   >
                     <h2 id={`${section.id}-h`} className="font-display text-[1.5rem] leading-[1.15] tracking-[-0.025em] text-bone text-balance sm:text-[1.75rem]">
                       {section.heading}

@@ -1,21 +1,21 @@
 /**
- * The brand mark: a faceted core inside a sand orbit, on a navy app-icon tile.
+ * The brand mark: a white faceted core inside a white orbit, on a friendly-blue app-icon tile.
  * Decorative — the wordmark carries the accessible name.
  */
 function BrandMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false" className={className}>
-      <rect width="64" height="64" rx="16" fill="#17253B" />
-      <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" fill="none" stroke="#E8DFCF" strokeOpacity="0.22" strokeWidth="1.5" />
+      <rect width="64" height="64" rx="16" fill="#2A6BBF" />
+      <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" fill="none" stroke="#FFFFFF" strokeOpacity="0.3" strokeWidth="1.5" />
       <g transform="rotate(-22 32 32)">
-        <ellipse cx="32" cy="32" rx="26" ry="9.5" fill="none" stroke="#E8DFCF" strokeWidth="3.2" strokeDasharray="58 8" strokeDashoffset="-34" />
+        <ellipse cx="32" cy="32" rx="26" ry="9.5" fill="none" stroke="#CFE5FC" strokeWidth="3.2" strokeDasharray="58 8" strokeDashoffset="-34" />
       </g>
-      <polygon points="32,14 47,26 42,46 22,46 17,26" fill="#E8DFCF" />
-      <polygon points="32,14 47,26 32,31" fill="#D6C9B2" />
-      <polygon points="17,26 32,31 22,46" fill="#C9B893" />
-      <polygon points="32,31 42,46 22,46" fill="#F3EDE1" />
+      <polygon points="32,14 47,26 42,46 22,46 17,26" fill="#FFFFFF" />
+      <polygon points="32,14 47,26 32,31" fill="#DCEBFB" />
+      <polygon points="17,26 32,31 22,46" fill="#BCD9F5" />
+      <polygon points="32,31 42,46 22,46" fill="#F2F8FF" />
       <g transform="rotate(-22 32 32)">
-        <path d="M6 32 A26 9.5 0 0 0 58 32" fill="none" stroke="#E8DFCF" strokeWidth="3.2" />
+        <path d="M6 32 A26 9.5 0 0 0 58 32" fill="none" stroke="#FFFFFF" strokeWidth="3.2" />
       </g>
     </svg>
   );
@@ -23,7 +23,7 @@ function BrandMark({ className }: { className?: string }) {
 
 /**
  * SERMA wordmark — Source Serif 4, set firm, wide tracking, always on brand
- * (sand on the navy site). One accessible name (sr-only).
+ * (deep blue on the light site). One accessible name (sr-only).
  * `tone` is kept for API compatibility and ignored.
  */
 export function Wordmark({ size = "md" }: { tone?: "light" | "dark"; size?: "md" | "xl" }) {

@@ -72,16 +72,16 @@ const BAR_SPRING = SPRING_SMOOTH;
  * ------------------------------------------------------------------ */
 const WINDOW =
   "rounded-glass-lg border border-transparent p-1.5 text-bone sm:p-2 " +
-  "[background:linear-gradient(165deg,#1E2E48_0%,#132033_36%,#0F1A2A_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.4),rgba(255,255,255,0.07)_28%,rgba(255,255,255,0.03)_68%,rgba(232,223,207,0.34))_border-box] " +
-  "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_2px_6px_rgba(0,0,0,0.3),0_40px_80px_-28px_rgba(0,0,0,0.7),0_0_120px_-40px_rgba(232,223,207,0.22),0_90px_150px_-60px_rgba(0,0,0,0.6)]";
+  "[background:linear-gradient(165deg,#EEF5FD_0%,#FBFDFF_36%,#FFFFFF_100%)_padding-box,linear-gradient(150deg,rgba(255,255,255,0.4),rgba(255,255,255,0.07)_28%,rgba(255,255,255,0.03)_68%,rgba(42,107,191,0.34))_border-box] " +
+  "shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_2px_6px_rgba(30,64,120,0.135),0_40px_80px_-28px_rgba(30,64,120,0.315),0_0_120px_-40px_rgba(42,107,191,0.22),0_90px_150px_-60px_rgba(30,64,120,0.27)]";
 const PLATE = "glass-dark glass-flat rounded-glass";
 /** The window's full width (its max-w); the pinned stage always lays it out at this width. */
 const WINDOW_W = 1240;
 const CARD =
-  "rounded-glass-sm bg-white/[0.04] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)] sm:p-5 lg:p-4";
+  "rounded-glass-sm bg-aqua/[0.052] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)] sm:p-5 lg:p-4";
 /* Ash on the lightest plate corner is still ≥ 5:1. */
 const LABEL = "eyebrow text-ash";
-const TRAFFIC_DOT = "h-3 w-3 rounded-full bg-white/[0.16] shadow-[inset_0_0_0_0.5px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.25)]";
+const TRAFFIC_DOT = "h-3 w-3 rounded-full bg-aqua/[0.208] shadow-[inset_0_0_0_0.5px_rgba(30,64,120,0.158),inset_0_1px_1px_rgba(255,255,255,0.25)]";
 
 export function DashboardShowcase() {
   const { t } = useLanguage();
@@ -162,7 +162,7 @@ export function DashboardShowcase() {
               // Sits on the chip row (top-right), so it costs the pinned stage no height.
               <p className="eyebrow absolute right-0 top-0 flex min-h-[2.125rem] items-center gap-2.5 text-ash">
                 {/* Static scroll capsule (no looping animation: the Pause control doesn't reach CSS keyframes). */}
-                <span aria-hidden="true" className="relative block h-4 w-[3px] shrink-0 overflow-hidden rounded-full bg-white/15">
+                <span aria-hidden="true" className="relative block h-4 w-[3px] shrink-0 overflow-hidden rounded-full bg-bone/[0.21]">
                   <span className="absolute inset-x-0 top-0 block h-1/2 rounded-full bg-aqua" />
                 </span>
                 {t.dashboard.scrollHint}
@@ -249,7 +249,7 @@ function WindowChrome() {
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-ash">
         <span className="hidden sm:inline">{t.dashboard.period}</span>
         <SampleTag className="py-1" />
-        <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white/[0.07] px-2.5 py-1 font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+        <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-aqua/[0.091] px-2.5 py-1 font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
           <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
             <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-live" />
@@ -338,8 +338,8 @@ function Sidebar({ desktop }: { desktop: boolean }) {
               // Selection is a tint + shadow only, so forced colors get a system-colour outline.
               className={`relative flex min-h-[52px] min-w-0 flex-col items-center justify-center gap-1 rounded-[16px] px-1.5 py-1.5 text-[0.8125rem] leading-tight lg:min-h-[44px] lg:flex-row lg:justify-start lg:gap-1.5 lg:rounded-full lg:px-2.5 lg:py-0 lg:text-sm ${
                 selected
-                  ? "bg-white/[0.08] font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.09),inset_0_0_0_1px_rgba(255,255,255,0.05)] forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]"
-                  : "text-ash hover:bg-white/[0.05] hover:text-bone"
+                  ? "bg-aqua/[0.104] font-medium text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.09),inset_0_0_0_1px_rgba(255,255,255,0.05)] forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]"
+                  : "text-ash hover:bg-aqua/[0.065] hover:text-bone"
               }`}
             >
               <Icon aria-hidden="true" size={15} strokeWidth={1.75} className={`shrink-0 ${selected ? "text-aqua" : ""}`} />
@@ -351,7 +351,7 @@ function Sidebar({ desktop }: { desktop: boolean }) {
                   <span className="sr-only"> {badge === 1 ? t.dashboard.newItemsOne : t.dashboard.newItems}</span>
                 </span>
               ) : selected ? (
-                <span aria-hidden="true" className="ml-auto hidden h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_rgba(232,223,207,0.7)] lg:block" />
+                <span aria-hidden="true" className="ml-auto hidden h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_rgba(42,107,191,0.7)] lg:block" />
               ) : null}
             </button>
           );
@@ -567,7 +567,7 @@ function RevenueChart() {
             <AnimatedNumber value={total} format="currency" />
           </p>
         </div>
-        <p className="rounded-full bg-white/[0.06] px-3 py-1 text-xs font-medium text-bone/75 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+        <p className="rounded-full bg-aqua/[0.078] px-3 py-1 text-xs font-medium text-bone/75 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
           {t.dashboard.revenueTotal}
         </p>
       </div>
@@ -578,12 +578,12 @@ function RevenueChart() {
           {niche.weekly.map((value, i) => {
             const last = i === niche.weekly.length - 1;
             return (
-              <div key={i} className="relative isolate h-full flex-1 overflow-hidden rounded-[8px] bg-white/[0.035]">
+              <div key={i} className="relative isolate h-full flex-1 overflow-hidden rounded-[8px] bg-aqua/[0.046]">
                 <motion.div
                   className={`gpu absolute inset-0 rounded-[8px] ${
                     last
-                      ? "bg-[linear-gradient(to_top,#C9B893,#E8DFCF_70%)] shadow-[inset_0_1px_0_rgba(214,255,250,0.65)]"
-                      : "bg-[linear-gradient(to_top,rgba(241,237,228,0.4),rgba(241,237,228,0.88))] shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
+                      ? "bg-[linear-gradient(to_top,#1F58A3,#2A6BBF_70%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]"
+                      : "bg-[linear-gradient(to_top,rgba(156,203,246,0.55),rgba(188,217,245,0.95))] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
                   }`}
                   initial={{ y: "100%" }}
                   animate={{ y: inView ? `${(1 - value / max) * 100}%` : "100%" }}
@@ -622,7 +622,7 @@ function NichePreview({ idle = false }: { idle?: boolean }) {
           type="button"
           onClick={() => setUserPaused(!paused)}
           aria-label={paused ? t.common.playMotion : t.common.pauseMotion}
-          className="-my-1.5 grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white/[0.06] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)] transition-transform duration-300 ease-editorial hover:bg-white/[0.1] active:scale-95"
+          className="-my-1.5 grid h-11 w-11 shrink-0 place-items-center rounded-full bg-aqua/[0.078] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.08)] transition-transform duration-300 ease-editorial hover:bg-aqua/[0.13] active:scale-95"
         >
           {paused ? <Play aria-hidden="true" size={14} strokeWidth={1.5} /> : <Pause aria-hidden="true" size={14} strokeWidth={1.5} />}
         </button>
@@ -698,10 +698,10 @@ function Pipeline() {
             {/* Capsule meter: the fill slides in (translate, not scale) so its rounded end stays crisp. */}
             <div
               aria-hidden="true"
-              className="relative isolate mt-2 h-2 w-full overflow-hidden rounded-full bg-white/[0.07] shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)]"
+              className="relative isolate mt-2 h-2 w-full overflow-hidden rounded-full bg-aqua/[0.091] shadow-[inset_0_1px_2px_rgba(30,64,120,0.158)]"
             >
               <motion.div
-                className="h-full w-full rounded-full bg-[linear-gradient(90deg,rgba(201,184,147,0.75),#E8DFCF)] shadow-[inset_0_1px_0_rgba(214,255,250,0.6)]"
+                className="h-full w-full rounded-full bg-[linear-gradient(90deg,rgba(90,151,224,0.75),#2A6BBF)] shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
                 initial={{ x: "-100%" }}
                 animate={{ x: inView ? `${(stage.count / top - 1) * 100}%` : "-100%" }}
                 transition={{ ...BAR_SPRING, delay: inView ? i * 0.06 : 0 }}
@@ -730,7 +730,7 @@ function ActivityStream() {
       <AnimatePresence mode="wait" initial={false}>
         <motion.ul
           key={`${niche.id}-${locale}`}
-          className="mt-2 divide-y divide-white/[0.07]"
+          className="mt-2 divide-y divide-bone/[0.098]"
           initial="hidden"
           animate="show"
           exit="exit"
@@ -783,7 +783,7 @@ function Modules() {
             <li key={mod.name.en} className="flex gap-2.5">
               <span
                 aria-hidden="true"
-                className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-full bg-aqua text-ink shadow-[inset_0_1px_0_rgba(214,255,250,0.7),0_0_0_3px_rgba(232,223,207,0.14)]"
+                className="mt-px grid h-5 w-5 shrink-0 place-items-center rounded-full bg-aqua text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_0_0_3px_rgba(42,107,191,0.14)]"
               >
                 <Check size={12} strokeWidth={2.5} />
               </span>

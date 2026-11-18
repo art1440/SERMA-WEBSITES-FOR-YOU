@@ -34,7 +34,6 @@ const en = {
   nav: {
     primaryLabel: "Primary",
     links: {
-      system: "How It Works",
       dashboard: "Dashboard",
       simulator: "Missed Calls",
       calculator: "ROI",
@@ -44,8 +43,7 @@ const en = {
     tabsLabel: "Sections",
     tabs: {
       home: "Home",
-      system: "How It Works",
-      included: "What You Get",
+      included: "How It Works",
       industries: "Industries",
       dashboard: "Dashboard",
       simulator: "Missed Calls",
@@ -98,29 +96,9 @@ const en = {
     },
     stack: ["A website that books", "Calls that get answered", "Reminders that send themselves", "Customers who come back", "Evenings that stay yours"],
   },
-  system: {
+  included: {
     index: "(01)",
     eyebrow: "How it works",
-    title: "It handles the busywork, so you don't have to.",
-    body: "Every call, text and online request lands in one place and gets a reply — even when your hands are full. You see the results. You don't manage the process.",
-    figure: "Fig. 02 — Lead routing, visualized.",
-    videoLabel: "Abstract motion graphic: thin lines of light travel from every edge and converge into a single glowing core, then stream out in an organized line.",
-    inputsLabel: "In",
-    outputsLabel: "Out",
-    inputs: ["Calls", "Web forms", "Texts"],
-    core: "SermaWebDesign Engine",
-    outputs: ["Bookings", "Revenue", "Reviews"],
-    stepsHeading: "Four steps, start to finish",
-    steps: [
-      { title: "Capture", body: "Calls, web forms, and booking requests land in one place — nothing lives in a voicemail box." },
-      { title: "Respond", body: "Missed calls get an instant, personalized text back in seconds, even when your hands are full." },
-      { title: "Book", body: "Customers pick a time, pay a deposit if you require one, and get reminders automatically." },
-      { title: "Return", body: "Review requests and re-booking nudges keep customers coming back on schedule." },
-    ],
-  },
-  included: {
-    index: "(02)",
-    eyebrow: "What you get",
     title: "Exactly what you get, in the order it happens",
     body: "No surprises and no hourly billing. Here is every step, from our first call to your site going live, and you see the finished pages before you pay anything.",
     items: [
@@ -167,7 +145,7 @@ const en = {
     roadmapNote: "Ask us where it stands and we will tell you straight. Websites come first.",
   },
   industries: {
-    index: "(03)",
+    index: "(02)",
     eyebrow: "Built for",
     title: ["A website built around your business"],
     titleEmphasis: "your business",
@@ -180,7 +158,7 @@ const en = {
     swipeHint: "Swipe · Drag · Arrows",
   },
   dashboard: {
-    index: "(04)",
+    index: "(03)",
     eyebrow: "Your dashboard",
     title: "Know how the week went in ten seconds.",
     body: "No spreadsheets, no guessing. One screen shows who booked, who's coming back and what came in while you were busy. Pick an industry to see yours.",
@@ -210,7 +188,7 @@ const en = {
     newItemsOne: "new",
   },
   simulator: {
-    index: "(05)",
+    index: "(04)",
     eyebrow: "When you can't pick up",
     scrollHint: "Scroll to play the call — scroll back to rewind.",
     title: "You keep working. It answers the phone.",
@@ -246,7 +224,7 @@ const en = {
     announceBooked: "{name} booked {service} for {time}. {amount} added to the dashboard.",
   },
   calculator: {
-    index: "(06)",
+    index: "(05)",
     eyebrow: "The calls you can't take",
     title: "What do the calls you can't answer cost you?",
     body: "Move the sliders to match a normal week. The math is on the page — no inflated promises.",
@@ -265,7 +243,7 @@ const en = {
     cta: "Get a free audit of your week",
   },
   compare: {
-    index: "(07)",
+    index: "(06)",
     eyebrow: "The difference",
     title: ["Most websites just sit there.", "Yours should bring in customers."],
     body: "Most local business websites are slow, hard to use on a phone, and hide the phone number. Here's what's different when the site is built to turn visitors into calls.",
@@ -319,7 +297,7 @@ const en = {
     ],
   },
   demo: {
-    index: "(08)",
+    index: "(07)",
     eyebrow: "Live demo & free audit",
     title: "Let's see what we can take off your plate.",
     body: "A 15-minute intro call on your schedule. We'll show you where calls and bookings slip through today, what we'd hand off to the system, and what your week could look like after — no pricing pressure, no obligation.",
@@ -399,7 +377,6 @@ const es: Dictionary = {
   nav: {
     primaryLabel: "Principal",
     links: {
-      system: "Cómo Funciona",
       dashboard: "Panel",
       simulator: "Llamadas Perdidas",
       calculator: "Retorno",
@@ -408,8 +385,7 @@ const es: Dictionary = {
     tabsLabel: "Secciones",
     tabs: {
       home: "Inicio",
-      system: "Cómo Funciona",
-      included: "Incluido",
+      included: "Cómo Funciona",
       industries: "Industrias",
       dashboard: "Panel",
       simulator: "Llamadas Perdidas",
@@ -462,29 +438,9 @@ const es: Dictionary = {
     },
     stack: ["Un sitio que agenda", "Llamadas que se contestan", "Recordatorios que se envían solos", "Clientes que regresan", "Noches que siguen siendo suyas"],
   },
-  system: {
+  included: {
     index: "(01)",
     eyebrow: "Cómo funciona",
-    title: "Se encarga del trabajo pesado, para que usted no tenga que hacerlo.",
-    body: "Cada llamada, mensaje y solicitud en línea llega a un solo lugar y recibe respuesta, aunque usted tenga las manos ocupadas. Usted ve los resultados; no tiene que administrar el proceso.",
-    figure: "Fig. 02 — Enrutamiento de prospectos, visualizado.",
-    videoLabel: "Gráfico abstracto en movimiento: delgadas líneas de luz viajan desde los bordes, convergen en un núcleo luminoso y salen en una sola línea ordenada.",
-    inputsLabel: "Entrada",
-    outputsLabel: "Salida",
-    inputs: ["Llamadas", "Formularios", "Mensajes"],
-    core: "Motor SermaWebDesign",
-    outputs: ["Citas", "Ingresos", "Reseñas"],
-    stepsHeading: "Cuatro pasos, de principio a fin",
-    steps: [
-      { title: "Captura", body: "Llamadas, formularios web y solicitudes de cita llegan a un solo lugar; nada se queda en el buzón de voz." },
-      { title: "Respuesta", body: "Las llamadas perdidas reciben un texto inmediato y personalizado en segundos, aunque usted tenga las manos ocupadas." },
-      { title: "Agenda", body: "Sus clientes eligen horario, pagan un depósito si usted lo requiere y reciben recordatorios automáticos." },
-      { title: "Regreso", body: "Las solicitudes de reseñas y los recordatorios para volver a reservar hacen que sus clientes regresen a tiempo." },
-    ],
-  },
-  included: {
-    index: "(02)",
-    eyebrow: "Lo que recibe",
     title: "Exactamente lo que recibe, en el orden en que pasa",
     body: "Sin sorpresas y sin cobro por hora. Aquí está cada paso, desde nuestra primera llamada hasta que su sitio está en línea, y usted ve las páginas terminadas antes de pagar nada.",
     items: [
@@ -531,7 +487,7 @@ const es: Dictionary = {
     roadmapNote: "Pregúntenos cómo va y le decimos la verdad. Los sitios web van primero.",
   },
   industries: {
-    index: "(03)",
+    index: "(02)",
     eyebrow: "Diseñado para",
     title: ["Un sitio web hecho a la medida de su negocio"],
     titleEmphasis: "su negocio",
@@ -544,7 +500,7 @@ const es: Dictionary = {
     swipeHint: "Deslice · Arrastre · Flechas",
   },
   dashboard: {
-    index: "(04)",
+    index: "(03)",
     eyebrow: "Su panel",
     title: "Sepa cómo fue la semana en diez segundos.",
     body: "Sin hojas de cálculo ni suposiciones. Una sola pantalla muestra quién agendó, quién regresa y qué entró mientras usted estaba ocupado. Elija una industria para ver la suya.",
@@ -571,7 +527,7 @@ const es: Dictionary = {
     newItemsOne: "nuevo",
   },
   simulator: {
-    index: "(05)",
+    index: "(04)",
     eyebrow: "Cuando no puede contestar",
     scrollHint: "Desplácese para reproducir la llamada; regrese para rebobinar.",
     title: "Usted sigue trabajando. El sistema contesta.",
@@ -607,7 +563,7 @@ const es: Dictionary = {
     announceBooked: "{name} agendó {service} para {time}. Se agregaron {amount} al panel.",
   },
   calculator: {
-    index: "(06)",
+    index: "(05)",
     eyebrow: "Las llamadas que no puede tomar",
     title: "¿Cuánto le cuestan las llamadas que no puede contestar?",
     body: "Mueva los controles según una semana normal. El cálculo está a la vista, sin promesas infladas.",
@@ -626,7 +582,7 @@ const es: Dictionary = {
     cta: "Solicite una auditoría gratuita de su semana",
   },
   compare: {
-    index: "(07)",
+    index: "(06)",
     eyebrow: "La diferencia",
     title: ["La mayoría de los sitios web solo están ahí.", "El suyo debería traerle clientes."],
     body: "La mayoría de los sitios web de negocios locales son lentos, difíciles de usar en el teléfono y esconden el número. Esto es lo que cambia cuando el sitio está hecho para convertir visitas en llamadas.",
@@ -680,7 +636,7 @@ const es: Dictionary = {
     ],
   },
   demo: {
-    index: "(08)",
+    index: "(07)",
     eyebrow: "Demostración en vivo y auditoría gratuita",
     title: "Veamos qué podemos quitarle de encima.",
     body: "Una llamada de presentación de 15 minutos cuando a usted le convenga. Le mostraremos dónde se escapan hoy las llamadas y las citas, qué dejaríamos en manos del sistema y cómo podría verse su semana después, sin presión de precios ni compromiso.",

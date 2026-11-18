@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 /**
  * Light threads — a bundle of thin luminous strands that sweeps across the
- * page and twists as you scroll (aqua, with a single ember strand).
+ * page and twists as you scroll (sky blue, with a single brighter cyan strand).
  *
  * One full-screen fragment shader on its own tiny WebGL context: no three.js,
  * one draw call per frame. Rendered at reduced resolution (the glow is soft,
@@ -51,26 +51,31 @@ void main() {
   float wbase = q.x * 7.0 + t * 0.4;
   float px = 1.6 / uRes.y;                       // ~constant on-screen width
 
+  // On a light page the strands are ink, not light: accumulate how much of each tint
+  // lands on the pixel, then draw that tint at that strength (no additive glow on white).
   vec3 col = vec3(0.0);
+  float ink = 0.0;
   for (int k = 0; k < N; k++) {
     float i = float(k);
     float g = strand(q, i, c, base, wbase, px);
     float glow = pow(g, 2.2) * 1.4 + g * 0.06;
-    // Aqua core strands, a deeper teal at the edges, one warm ember strand.
-    vec3 tint = mix(vec3(0.24, 0.86, 0.79), vec3(0.07, 0.45, 0.52), abs(i / float(N - 1) - 0.5) * 2.0);
-    if (k == 6) tint = vec3(0.90, 0.40, 0.18);
+    // Sky-blue core strands, a deeper blue at the edges, one bright cyan strand.
+    vec3 tint = mix(vec3(0.42, 0.68, 0.95), vec3(0.16, 0.42, 0.75), abs(i / float(N - 1) - 0.5) * 2.0);
+    if (k == 6) tint = vec3(0.30, 0.74, 0.96);
     col += tint * glow;
+    ink += glow;
   }
+  col /= max(ink, 1e-4);
   // Soft overall falloff toward the edges so text columns stay calm.
   float vign = smoothstep(1.25, 0.15, length((uv - vec2(0.62, 0.5)) * vec2(1.0, 1.25)));
-  col *= vign;
+  ink *= vign;
   // Keep the reading column calm: on wide screens copy sits on the left, on
   // phones it sits in the lower half, so the threads dim to under 10% there.
   float calm = uRes.x > uRes.y
     ? mix(0.07, 1.0, smoothstep(0.36, 0.72, uv.x))
     : mix(0.08, 1.0, smoothstep(0.5, 0.88, uv.y));
-  col *= calm;
-  gl_FragColor = vec4(col, clamp(max(col.r, max(col.g, col.b)), 0.0, 1.0));
+  ink *= calm;
+  gl_FragColor = vec4(col, clamp(ink * 0.85, 0.0, 0.9));
 }
 `;
 

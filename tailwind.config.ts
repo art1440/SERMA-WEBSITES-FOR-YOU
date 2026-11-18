@@ -3,13 +3,8 @@ import plugin from "tailwindcss/plugin";
 
 /**
  * SermaWebDesign — "Liquid Glass" token system (see docs/design-system.md).
- * Warm brand palette (ink · bone · signal) rendered through translucent,
- * light-catching glass surfaces. No purple / neon.
- * Contrast (WCAG 2.1 AA) verified for every text pairing used:
- *  - ink on bone ........ 16.6:1   - muted on bone ...... 6.1:1
- *  - bone on ink ........ 16.6:1   - ash on ink ......... 7.7:1
- *  - signal-deep on bone   5.0:1   - signal on ink ...... 5.3:1
- *  - ink on signal ...... 5.3:1    - live on ink ........ 7.6:1
+ * Light "morning sky" palette rendered through translucent, light-catching
+ * glass surfaces. No purple / neon. Contrast table lives with the colours below.
  * Hairlines are decorative structure only (never the sole carrier of meaning).
  */
 const config: Config = {
@@ -24,47 +19,51 @@ const config: Config = {
     },
     extend: {
       colors: {
-        /* Paper and Navy brand palette — navy ground, sand ink.
+        /* "Morning sky" palette — white ground, soft sky-blue washes, deep blue ink.
+           Token names are kept from the old dark theme so every component re-themes at once:
+             ink  = page / surface (whites and pale blues)   bone = primary text (deep blue)
+             ash  = secondary text                           aqua = the one accent (friendly blue)
            Contrast (WCAG AA) for every pairing used:
-           sand on navy ....... 9.0:1  ·  navy on sand ....... 9.0:1
-           ash on navy ........ 5.1:1  ·  muted on sand ...... 7.6:1 */
+             bone on ink ...... 12.4:1  ·  ash on ink ........ 5.4:1
+             aqua on ink ....... 5.1:1  ·  ink on aqua ....... 5.1:1
+             bone on sky-btn ... 10.0:1 ·  live on ink ....... 5.1:1 */
         ink: {
-          DEFAULT: "#17253B",
-          900: "#0F1A2A",
-          850: "#132033",
-          800: "#17253B",
-          700: "#1E2E48",
-          600: "#293B57",
-          500: "#3A4A63",
+          DEFAULT: "#F7FAFE",
+          900: "#FFFFFF",
+          850: "#FBFDFF",
+          800: "#F7FAFE",
+          700: "#EEF5FD",
+          600: "#E2EDFA",
+          500: "#CFE0F5",
         },
         bone: {
-          DEFAULT: "#E8DFCF",
-          50: "#FBF8F1",
-          100: "#F3EDE1",
-          200: "#E8DFCF",
-          300: "#D6C9B2",
+          DEFAULT: "#15315A",
+          50: "#0D2447",
+          100: "#112B52",
+          200: "#15315A",
+          300: "#2E4C78",
         },
-        muted: "#4A5464",
-        ash: "#8E99AB",
+        muted: "#4A5F7E",
+        ash: "#52698A",
         hairline: {
-          light: "#D9CFBC",
-          dark: "#2A3B57",
+          light: "#D6E4F4",
+          dark: "#D6E4F4",
         },
         signal: {
-          DEFAULT: "#C9B893",
-          deep: "#A08B60",
+          DEFAULT: "#9CCBF6",
+          deep: "#2A6BBF",
         },
-        /* Brand accent = sand. Fills use navy text on top (9:1). */
+        /* Brand accent = friendly blue. Fills take white (ink) text on top (5.1:1). */
         aqua: {
-          DEFAULT: "#E8DFCF",
-          deep: "#C9B893",
-          glow: "#F3EDE1",
+          DEFAULT: "#2A6BBF",
+          deep: "#1F58A3",
+          glow: "#5A97E0",
         },
         /* Ambient tints — decorative backgrounds only, never text. */
-        sand: "#E8DFCF",
-        amber: "#D9C7A4",
-        ember: "#2A3B57",
-        live: "#8FBFA3",
+        sand: "#DCEBFB",
+        amber: "#BCD9F5",
+        ember: "#E6F0FB",
+        live: "#1F7A50",
       },
       fontFamily: {
         /* Headings = Source Serif 4 (brand). */

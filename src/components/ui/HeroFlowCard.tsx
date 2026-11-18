@@ -58,9 +58,9 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
           {t.hero.flow.title}
         </p>
         <span aria-hidden="true" className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_2px_rgba(232,223,207,0.6)]" />
-          <span className="h-1.5 w-1.5 rounded-full bg-white/25" />
-          <span className="h-1.5 w-1.5 rounded-full bg-white/25" />
+          <span className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_8px_2px_rgba(42,107,191,0.6)]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-bone/[0.35]" />
+          <span className="h-1.5 w-1.5 rounded-full bg-bone/[0.35]" />
         </span>
       </div>
 
@@ -74,7 +74,7 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
             <li key={step.label} className="relative grid grid-cols-[2.25rem_1fr] items-center gap-3 py-1.5">
               {/* Connector to the next step: fills (scaleY) once this step is reached. */}
               {i < steps.length - 1 ? (
-                <span aria-hidden="true" className="absolute left-[1.0625rem] top-[2.6rem] h-[calc(100%-1.9rem)] w-[2px] overflow-hidden rounded-full bg-white/10">
+                <span aria-hidden="true" className="absolute left-[1.0625rem] top-[2.6rem] h-[calc(100%-1.9rem)] w-[2px] overflow-hidden rounded-full bg-aqua/[0.13]">
                   <motion.span
                     className="block h-full w-full origin-top rounded-full bg-gradient-to-b from-aqua to-aqua-deep"
                     initial={false}
@@ -84,7 +84,7 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
                 </span>
               ) : null}
               <span className="relative grid h-9 w-9 place-items-center">
-                <span aria-hidden="true" className="absolute inset-0 rounded-full bg-white/[0.06] ring-1 ring-inset ring-white/15" />
+                <span aria-hidden="true" className="absolute inset-0 rounded-full bg-aqua/[0.078] ring-1 ring-inset ring-bone/[0.21]" />
                 {/* Idle icon (bone) and lit disc + ink icon cross-fade: opacity/scale only, no colour animation. */}
                 <motion.span
                   aria-hidden="true"
@@ -98,7 +98,7 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
                 <motion.span
                   aria-hidden="true"
                   className={`absolute inset-0 grid place-items-center rounded-full text-ink ${
-                    alert ? "bg-signal shadow-[0_0_16px_2px_rgba(229,88,42,0.45)]" : "bg-aqua shadow-[0_0_16px_2px_rgba(232,223,207,0.45)]"
+                    alert ? "bg-signal shadow-[0_0_16px_2px_rgba(90,151,224,0.45)]" : "bg-aqua shadow-[0_0_16px_2px_rgba(42,107,191,0.45)]"
                   }`}
                   initial={false}
                   animate={{ opacity: on ? 1 : 0, scale: on ? 1 : 0.6 }}
@@ -115,7 +115,7 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
                 <motion.span
                   aria-hidden="true"
                   layoutId="hero-flow-current"
-                  className="pointer-events-none absolute -inset-x-2 inset-y-0 -z-10 rounded-glass-sm bg-white/[0.05] ring-1 ring-inset ring-white/10"
+                  className="pointer-events-none absolute -inset-x-2 inset-y-0 -z-10 rounded-glass-sm bg-aqua/[0.065] ring-1 ring-inset ring-bone/[0.14]"
                   transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
                 />
               ) : null}
@@ -124,7 +124,7 @@ export function HeroFlowCard({ opacity, className }: { opacity?: MotionValue<num
         })}
       </ol>
 
-      <figcaption className="mt-3 border-t border-white/10 pt-3 text-xs leading-5 text-ash">{t.hero.flow.caption}</figcaption>
+      <figcaption className="mt-3 border-t border-bone/[0.14] pt-3 text-xs leading-5 text-ash">{t.hero.flow.caption}</figcaption>
     </motion.figure>
   );
 }

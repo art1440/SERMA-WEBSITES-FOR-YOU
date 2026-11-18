@@ -198,7 +198,7 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
                     if (dragged.current) return;
                     goTo(i, true);
                   }}
-                  className="group relative isolate block h-full w-full overflow-hidden rounded-glass bg-ink-800 text-left shadow-[0_30px_60px_-30px_rgba(0,0,0,0.85)] outline-offset-4 xl:rounded-glass-lg"
+                  className="group relative isolate block h-full w-full overflow-hidden rounded-glass bg-ink-800 text-left shadow-[0_30px_60px_-30px_rgba(30,64,120,0.35)] outline-offset-4 xl:rounded-glass-lg"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -241,7 +241,7 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
                     </span>
                     <span
                       aria-hidden="true"
-                      className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white/10 text-[0.625rem] font-medium tabular text-bone/85 ring-1 ring-inset ring-white/15 xl:h-7 xl:w-7 xl:text-[0.6875rem]"
+                      className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-aqua/[0.13] text-[0.625rem] font-medium tabular text-bone/85 ring-1 ring-inset ring-bone/[0.21] xl:h-7 xl:w-7 xl:text-[0.6875rem]"
                     >
                       0{i + 1}
                     </span>
@@ -259,13 +259,13 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
         </button>
         {/* Arrows are flat glass (static dark gradient behind: blur would be invisible cost).
             Capsule pagination: the active dot stretches into an aqua pill and glides (layout = transform). */}
-        <ol aria-hidden="true" className="flex items-center gap-4 rounded-full bg-white/[0.05] px-5 py-3.5 ring-1 ring-inset ring-white/10">
+        <ol aria-hidden="true" className="flex items-center gap-4 rounded-full bg-aqua/[0.065] px-5 py-3.5 ring-1 ring-inset ring-bone/[0.14]">
           {items.map((item, i) => (
             <li key={item.id} className="relative h-2 w-2 rounded-full bg-bone/25">
               {i === active ? (
                 <motion.span
                   layoutId="carousel-dot"
-                  className="absolute -inset-x-1.5 inset-y-0 rounded-full bg-aqua shadow-[0_0_10px_rgba(232,223,207,0.55)]"
+                  className="absolute -inset-x-1.5 inset-y-0 rounded-full bg-aqua shadow-[0_0_10px_rgba(42,107,191,0.55)]"
                 />
               ) : null}
             </li>

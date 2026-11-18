@@ -5,7 +5,6 @@
  */
 export const TAB_IDS = [
   "home",
-  "system",
   "included",
   "industries",
   "dashboard",
@@ -27,6 +26,8 @@ export function tabFromHash(hash: string): TabId | null {
   if (!id || id === "top" || id === "main") return null;
   if (isTabId(id)) return id;
   if (id === "enquiry-form") return "demo";
+  // The old How It Works section is gone; its links open the section now called How It Works.
+  if (id === "system") return "included";
   return null;
 }
 

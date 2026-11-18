@@ -11,10 +11,15 @@ import { LightThreads } from "./LightThreads";
 
 const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
 
+/** Develops the dark films into light ones: invert the tones, rotate the hue back, soften. */
+const FILM_LIGHT = "[filter:invert(1)_hue-rotate(180deg)_saturate(0.85)_brightness(1.04)]";
+
 /**
  * Fixed, full-screen backdrop shared by the transparent chapters (hero, system, finale).
- * Dark-first. Layer order (back → front):
- *   ink base → light threads (whole page) → hero film (3D dive) → architecture film → WebGL engine
+ * Light (white + sky blue). Layer order (back → front):
+ *   sky base → light threads (whole page) → hero film (3D dive) → architecture film → WebGL engine
+ * The films were shot dark; they are shown "developed" (inverted, hue kept) so they read as
+ * pale blue-and-white pages instead of navy ones.
  * The architecture film is the ambient "site being built" layer: faint behind the hero's first
  * screen, then behind How it works.
  * Opaque chapters (dashboard, simulator, …) simply cover it; the engine's render loop
@@ -41,8 +46,8 @@ export function Stage() {
   const hero = { ref: scene.hero.ref, progress: heroProgress, raw: heroRaw };
   const finale = { ref: scene.finale.ref, progress: finaleProgress };
 
-  // The site is dark from the first frame (the engine reads 1 = ink backdrop).
-  const ink = useMotionValue(1);
+  // The site is light (white + sky blue): the engine reads 0 = light backdrop.
+  const ink = useMotionValue(0);
   const filmOpacity = useTransform(hero.progress, [0.36, 0.48, 0.86, 0.97], [0, 1, 1, 0]);
   const filmScale = useTransform(hero.progress, [0.36, 0.8], [0.22, 1.08]);
   const filmRotateX = useTransform(hero.progress, [0.36, 0.8], [32, 0]);
@@ -68,8 +73,6 @@ export function Stage() {
     const inHero = v < 0.5;
     if (inHero !== archInHero) setArchInHero(inHero);
   });
-  // Vignette deepens on the dark chapters.
-  const vignetteOpacity = useTransform(ink, [0, 1], [0, 0.85]);
 
   const [active, setActive] = useState(false);
   const [webgl, setWebgl] = useState(false);
@@ -118,7 +121,14 @@ export function Stage() {
     // h-lvh: the backdrop keeps the large-viewport height, so the phone URL bar sliding in/out
     // never resizes (and re-renders) the two canvases mid-scroll.
     <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 z-0 h-screen h-lvh overflow-hidden">
-      <div className="absolute inset-0 bg-ink" />
+      {/* Morning-sky base: white, with a soft blue light pooling from the top right. */}
+      <div
+        className="absolute inset-0 bg-ink"
+        style={{
+          backgroundImage:
+            "radial-gradient(90% 70% at 85% 0%, rgba(188,217,245,0.55), transparent 70%), radial-gradient(70% 60% at 0% 100%, rgba(220,235,251,0.7), transparent 70%)",
+        }}
+      />
 
       {/* Light threads run behind every section; translucent sections let them glow through. */}
       <LightThreads paused={paused} desktop={desktop} />
@@ -130,8 +140,14 @@ export function Stage() {
           style={{ opacity: filmOpacity, scale: filmScale, rotateX: filmRotateX, rotateZ: filmRotateZ }}
         >
           {/* Poster = the film's own first frame, so nothing jumps when playback takes over. */}
-          <LayerVideo src={asset("/media/hero-v2")} poster={asset("/media/hero-v2-film-poster.jpg")} visibility={filmOpacity} paused={paused} />
-          <div className="absolute inset-0 bg-ink/45" />
+          <LayerVideo
+            src={asset("/media/hero-v2")}
+            poster={asset("/media/hero-v2-film-poster.jpg")}
+            visibility={filmOpacity}
+            paused={paused}
+            className={FILM_LIGHT}
+          />
+          <div className="absolute inset-0 bg-ink/40" />
         </motion.div>
       </div>
 
@@ -149,7 +165,7 @@ export function Stage() {
           poster={asset("/media/architecture-v2-poster.jpg")}
           visibility={archOpacity}
           paused={paused}
-          className="max-lg:object-[72%_50%]"
+          className={`max-lg:object-[72%_50%] ${FILM_LIGHT}`}
         />
       </motion.div>
 
@@ -167,10 +183,10 @@ export function Stage() {
         </div>
       ) : null}
 
-      {/* Vignette (transform/opacity only) */}
-      <motion.div
+      {/* Soft sky-blue edge light (static): frames the scene without darkening it. */}
+      <div
         className="absolute inset-0"
-        style={{ opacity: vignetteOpacity, background: "radial-gradient(ellipse at 55% 50%, transparent 45%, rgba(13,13,11,0.75) 100%)" }}
+        style={{ background: "radial-gradient(ellipse at 55% 50%, transparent 55%, rgba(207,224,245,0.55) 100%)" }}
       />
     </div>
   );

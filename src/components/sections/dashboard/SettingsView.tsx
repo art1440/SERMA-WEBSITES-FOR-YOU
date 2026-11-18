@@ -586,7 +586,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
                 {!s.email && !s.sms ? (
                   <motion.p
                     key="alerts-off"
-                    className="mt-2.5 flex items-start gap-2 rounded-[10px] bg-white/[0.04] px-2.5 py-2 text-xs leading-snug text-bone/90 shadow-[inset_2px_0_0_rgba(229,88,42,0.75)]"
+                    className="mt-2.5 flex items-start gap-2 rounded-[10px] bg-aqua/[0.052] px-2.5 py-2 text-xs leading-snug text-bone/90 shadow-[inset_2px_0_0_rgba(90,151,224,0.75)]"
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
@@ -626,7 +626,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
 
               <figure
                 aria-labelledby={id("preview")}
-                className="mt-2 rounded-[14px] bg-black/25 p-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_2px_rgba(0,0,0,0.3)]"
+                className="mt-2 rounded-[14px] bg-aqua/[0.08] p-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.07),inset_0_1px_2px_rgba(30,64,120,0.135)]"
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
                   <figcaption id={id("preview")} className="text-xs font-medium text-bone">
@@ -635,7 +635,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
                   </figcaption>
                   <span className="text-[0.6875rem] text-ash">{COPY.textMessage[locale]}</span>
                 </div>
-                <p className="mx-auto mt-2.5 flex w-fit items-center gap-1.5 rounded-full bg-white/[0.05] px-2.5 py-1 text-[0.6875rem] font-medium text-bone/85">
+                <p className="mx-auto mt-2.5 flex w-fit items-center gap-1.5 rounded-full bg-aqua/[0.065] px-2.5 py-1 text-[0.6875rem] font-medium text-bone/85">
                   <PhoneMissed aria-hidden="true" size={12} strokeWidth={2.25} className="text-signal" />
                   {fill(COPY.missedCall[locale], { time: missedTime })}
                 </p>
@@ -646,8 +646,8 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
                       lang={lang}
                       className={`max-w-[92%] rounded-[18px] rounded-br-[6px] px-3.5 py-2.5 text-[0.8125rem] leading-snug sm:max-w-[86%] ${
                         s.textBack
-                          ? "bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_60%,#E8DFCF_100%)] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_16px_-10px_rgba(232,223,207,0.7)]"
-                          : "border border-dashed border-white/20 bg-white/[0.04] text-bone/85"
+                          ? "bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_60%,#2A6BBF_100%)] text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_16px_-10px_rgba(42,107,191,0.7)]"
+                          : "border border-dashed border-bone/[0.28] bg-aqua/[0.052] text-bone/85"
                       }`}
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -729,7 +729,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
                 <div
                   role="group"
                   aria-labelledby={id("deposit")}
-                  className="flex items-center gap-1 rounded-full bg-black/25 p-1 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_2px_rgba(0,0,0,0.35)]"
+                  className="flex items-center gap-1 rounded-full bg-aqua/[0.08] p-1 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_2px_rgba(30,64,120,0.158)]"
                 >
                   <StepButton
                     label={fill(COPY.decrease[locale], { step: money(step) })}
@@ -831,7 +831,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
                 description={COPY.hoursBody[locale]}
                 aside={<StatusChip tone="neutral">{COPY.readOnly[locale]}</StatusChip>}
               />
-              <dl className="mt-2.5 divide-y divide-white/[0.06]">
+              <dl className="mt-2.5 divide-y divide-bone/[0.084]">
                 {trade.hours.map(([open, close], i) => (
                   <div key={i} className="flex items-center justify-between gap-3 py-[0.4375rem] text-[0.8125rem]">
                     <dt className="text-bone/90">{dayName(i)}</dt>
@@ -856,11 +856,11 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
       </div>
 
       {/* ---------------- Save bar ---------------- */}
-      <div className="z-10 mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-glass-sm bg-[#17253B] px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),inset_0_0_0_1px_rgba(255,255,255,0.06),0_-12px_28px_-14px_rgba(0,0,0,0.75)] max-lg:sticky max-lg:bottom-3 sm:mt-2 sm:pl-4">
+      <div className="z-10 mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-glass-sm bg-[#F7FAFE] px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),inset_0_0_0_1px_rgba(255,255,255,0.06),0_-12px_28px_-14px_rgba(30,64,120,0.338)] max-lg:sticky max-lg:bottom-3 sm:mt-2 sm:pl-4">
         <p className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1 text-xs leading-snug text-ash">
           {changes > 0 ? (
             <span className="inline-flex items-center gap-1.5 font-medium text-bone">
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_0_3px_rgba(232,223,207,0.18)]" />
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-aqua shadow-[0_0_0_3px_rgba(42,107,191,0.18)]" />
               {changes === 1 ? COPY.unsavedOne[locale] : fill(COPY.unsaved[locale], { n: changes })}
             </span>
           ) : saved ? (
@@ -916,7 +916,7 @@ function CardHead({
     <div className="flex items-start gap-3">
       <span
         aria-hidden="true"
-        className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-white/[0.06] text-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_0_0_1px_rgba(255,255,255,0.06)]"
+        className="grid h-8 w-8 shrink-0 place-items-center rounded-[10px] bg-aqua/[0.078] text-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_0_0_1px_rgba(255,255,255,0.06)]"
       >
         <Icon size={16} strokeWidth={1.9} />
       </span>
@@ -935,7 +935,7 @@ function CardHead({
 }
 
 function Divider() {
-  return <div aria-hidden="true" className="my-3 h-px bg-white/[0.07]" />;
+  return <div aria-hidden="true" className="my-3 h-px bg-aqua/[0.091]" />;
 }
 
 /**
@@ -998,14 +998,14 @@ function Toggle({ on, locale }: { on: boolean; locale: Locale }) {
         <span className={`col-start-1 row-start-1 ${on ? "" : "invisible"}`}>{COPY.on[locale]}</span>
         <span className={`col-start-1 row-start-1 ${on ? "invisible" : ""}`}>{COPY.off[locale]}</span>
       </span>
-      <span className="relative block h-[26px] w-[44px] rounded-full bg-white/[0.1] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16),inset_0_1px_2px_rgba(0,0,0,0.4)] forced-colors:border forced-colors:border-[CanvasText]">
+      <span className="relative block h-[26px] w-[44px] rounded-full bg-aqua/[0.13] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16),inset_0_1px_2px_rgba(30,64,120,0.18)] forced-colors:border forced-colors:border-[CanvasText]">
         <span
-          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,#F3EDE1_0%,#E8DFCF_55%,#C9B893_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(232,223,207,0.6)] transition-opacity duration-200 ease-editorial ${
+          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_55%,#1F58A3_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(42,107,191,0.6)] transition-opacity duration-200 ease-editorial ${
             on ? "opacity-100" : "opacity-0"
           }`}
         />
         <motion.span
-          className="absolute left-[3px] top-[3px] block h-5 w-5 rounded-full bg-bone shadow-[0_1px_2px_rgba(0,0,0,0.45),0_3px_8px_-2px_rgba(0,0,0,0.45)] [forced-color-adjust:none] forced-colors:bg-[CanvasText]"
+          className="absolute left-[3px] top-[3px] block h-5 w-5 rounded-full bg-white shadow-[0_1px_2px_rgba(30,64,120,0.203),0_3px_8px_-2px_rgba(30,64,120,0.203)] [forced-color-adjust:none] forced-colors:bg-[CanvasText]"
           initial={false}
           animate={{ x: on ? 18 : 0 }}
           transition={SPRING_SNAPPY}
@@ -1040,12 +1040,12 @@ function Segmented<T extends string>({
       role="group"
       aria-labelledby={labelledBy}
       aria-describedby={describedBy}
-      className={`relative grid w-full rounded-full bg-black/25 p-1 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_2px_rgba(0,0,0,0.35)] sm:max-w-sm ${className ?? ""}`}
+      className={`relative grid w-full rounded-full bg-aqua/[0.08] p-1 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_2px_rgba(30,64,120,0.158)] sm:max-w-sm ${className ?? ""}`}
       style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
     >
       <motion.span
         aria-hidden="true"
-        className="absolute bottom-1 left-1 top-1 rounded-full bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_14px_-6px_rgba(232,223,207,0.75)] [forced-color-adjust:none] forced-colors:bg-[Highlight]"
+        className="absolute bottom-1 left-1 top-1 rounded-full bg-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_14px_-6px_rgba(42,107,191,0.75)] [forced-color-adjust:none] forced-colors:bg-[Highlight]"
         style={{ width: `calc((100% - 0.5rem) / ${options.length})` }}
         initial={false}
         animate={{ x: `${index * 100}%` }}
@@ -1062,7 +1062,7 @@ function Segmented<T extends string>({
             onClick={() => onChange(o.value)}
             className={`relative min-h-[36px] whitespace-nowrap rounded-full px-1.5 text-[0.75rem] font-medium leading-tight sm:px-2 sm:text-[0.8125rem] ${
               // No backplate on the pressed label, so HighlightText sits on the Highlight indicator (as in LanguageToggle).
-              on ? "text-ink forced-colors:text-[HighlightText] forced-colors:[forced-color-adjust:none]" : "text-bone/90 hover:bg-white/[0.06]"
+              on ? "text-ink forced-colors:text-[HighlightText] forced-colors:[forced-color-adjust:none]" : "text-bone/90 hover:bg-aqua/[0.078]"
             }`}
           >
             {o.label}
@@ -1106,7 +1106,7 @@ function StepButton({
       className={`grid h-11 w-11 place-items-center rounded-full transition-transform duration-200 ease-editorial ${
         atBound
           ? "cursor-not-allowed text-bone/35 forced-colors:text-[GrayText]"
-          : "bg-white/[0.07] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.1)] hover:bg-white/[0.12] active:scale-[0.94]"
+          : "bg-aqua/[0.091] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.1)] hover:bg-aqua/[0.156] active:scale-[0.94]"
       }`}
     >
       <Icon aria-hidden="true" size={16} strokeWidth={2.25} />

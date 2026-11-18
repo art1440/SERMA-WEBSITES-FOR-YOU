@@ -148,7 +148,7 @@ function Stars({ value, label, size = 14 }: { value: number; label: string; size
         return (
           <span key={i} aria-hidden="true" className="relative block shrink-0" style={{ width: size, height: size }}>
             {/* Empty slots at white/40 (≈3.7:1 on the card); in forced colors GrayText vs CanvasText. */}
-            <Star size={size} strokeWidth={0} fill="currentColor" className="absolute inset-0 text-white/40 forced-colors:text-[GrayText]" />
+            <Star size={size} strokeWidth={0} fill="currentColor" className="absolute inset-0 text-bone/[0.5] forced-colors:text-[GrayText]" />
             {part > 0 ? (
               <span className="absolute inset-0" style={part < 1 ? { clipPath: `inset(0 ${(1 - part) * 100}% 0 0)` } : undefined}>
                 <Star size={size} strokeWidth={0} fill="currentColor" className="text-aqua forced-colors:text-[CanvasText]" />
@@ -163,7 +163,7 @@ function Stars({ value, label, size = 14 }: { value: number; label: string; size
 
 function PlatformChip({ platform }: { platform: ReviewPlatform }) {
   return (
-    <span className="inline-flex shrink-0 items-center rounded-full bg-white/[0.03] px-2 py-0.5 text-[0.6875rem] font-medium text-bone/80 ring-1 ring-inset ring-white/[0.12]">
+    <span className="inline-flex shrink-0 items-center rounded-full bg-aqua/[0.039] px-2 py-0.5 text-[0.6875rem] font-medium text-bone/80 ring-1 ring-inset ring-bone/[0.168]">
       {PLATFORM[platform]}
     </span>
   );
@@ -334,7 +334,7 @@ function ReviewsBoard({ nicheId }: { nicheId: NicheId }) {
         ) : (
           <div className={`${CARD} grid place-items-center py-12 text-center`}>
             <div>
-              <span aria-hidden="true" className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-white/[0.06] text-aqua">
+              <span aria-hidden="true" className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-aqua/[0.078] text-aqua">
                 <MessageSquareQuote size={18} strokeWidth={1.75} />
               </span>
               <p className="mt-3 text-sm font-medium text-bone">{COPY.emptyTitle[locale]}</p>
@@ -395,9 +395,9 @@ function RatingSummary({
                 {stars}
                 <Star size={10} strokeWidth={0} fill="currentColor" className="text-ash" />
               </span>
-              <span aria-hidden="true" className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
+              <span aria-hidden="true" className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-aqua/[0.091]">
                 <motion.span
-                  className="absolute inset-0 rounded-full bg-[linear-gradient(90deg,#C9B893,#E8DFCF)]"
+                  className="absolute inset-0 rounded-full bg-[linear-gradient(90deg,#1F58A3,#2A6BBF)]"
                   initial={{ x: "-100%" }}
                   animate={{ x: `${shown - 100}%` }}
                   transition={{ ...SPRING_SMOOTH, delay: 0.1 + i * 0.05 }}
@@ -470,16 +470,16 @@ function ReviewCard({
   // A card opened from a cross-link gets the aqua selection ring.
   const edge = low
     ? highlighted
-      ? "shadow-[inset_3px_0_0_rgba(229,88,42,0.8),inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(232,223,207,0.45)]"
-      : "shadow-[inset_3px_0_0_rgba(229,88,42,0.8),inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(229,88,42,0.16)]"
+      ? "shadow-[inset_3px_0_0_rgba(90,151,224,0.8),inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(42,107,191,0.45)]"
+      : "shadow-[inset_3px_0_0_rgba(90,151,224,0.8),inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(90,151,224,0.16)]"
     : highlighted
-      ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(232,223,207,0.45)]"
+      ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(42,107,191,0.45)]"
       : "shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)]";
 
   return (
     <article
       aria-labelledby={uid(r.id, "author")}
-      className={`rounded-glass-sm bg-white/[0.04] p-4 sm:p-5 lg:p-4 ${edge} ${highlighted ? HIGHLIGHT_FORCED : ""}`}
+      className={`rounded-glass-sm bg-aqua/[0.052] p-4 sm:p-5 lg:p-4 ${edge} ${highlighted ? HIGHLIGHT_FORCED : ""}`}
     >
       <div className="flex items-start gap-3">
         <Avatar name={r.author} />
@@ -519,7 +519,7 @@ function ReviewCard({
         <motion.div
           key="owner"
           data-reveal=""
-          className="mt-3 rounded-[12px] bg-white/[0.035] px-3 py-2.5 shadow-[inset_2px_0_0_rgba(232,223,207,0.6)]"
+          className="mt-3 rounded-[12px] bg-aqua/[0.046] px-3 py-2.5 shadow-[inset_2px_0_0_rgba(42,107,191,0.6)]"
           initial={repliedNow ? { opacity: 0, y: 6 } : false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: EASE_EDITORIAL }}
@@ -544,7 +544,7 @@ function ReviewCard({
         <motion.div
           key="draft"
           data-reveal=""
-          className="mt-3 rounded-[12px] bg-white/[0.03] p-3 shadow-[inset_0_0_0_1px_rgba(232,223,207,0.28)]"
+          className="mt-3 rounded-[12px] bg-aqua/[0.039] p-3 shadow-[inset_0_0_0_1px_rgba(42,107,191,0.28)]"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
@@ -567,7 +567,7 @@ function ReviewCard({
             <span className="text-[0.6875rem] text-ash">{COPY.readOnly[locale]}</span>
           </div>
           {/* Looks like a text field, but it is plain text: nothing to type, nothing collected. */}
-          <p className="mt-2 rounded-[10px] bg-black/25 px-3 py-2.5 text-[0.8125rem] leading-relaxed text-bone shadow-[inset_0_1px_2px_rgba(0,0,0,0.35),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+          <p className="mt-2 rounded-[10px] bg-aqua/[0.08] px-3 py-2.5 text-[0.8125rem] leading-relaxed text-bone shadow-[inset_0_1px_2px_rgba(30,64,120,0.158),inset_0_0_0_1px_rgba(255,255,255,0.08)]">
             {r.suggestedReply[locale]}
           </p>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
