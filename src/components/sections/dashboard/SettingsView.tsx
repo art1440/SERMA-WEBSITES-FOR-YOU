@@ -571,7 +571,7 @@ function SettingsBoard({ nicheId, niche }: { nicheId: NicheId; niche: Niche }) {
                       type="button"
                       aria-pressed={on}
                       onClick={() => set("scope", value)}
-                      className={`${PILL} ${on ? PILL_ON : PILL_OFF} transition-transform duration-200 ease-editorial active:scale-[0.97]`}
+                      className={`${PILL} ${on ? PILL_ON : PILL_OFF} transition-[transform,background-color,color] duration-base ease-editorial active:scale-[0.97]`}
                     >
                       {on ? <Check aria-hidden="true" size={13} strokeWidth={2.5} /> : null}
                       {(value === "all" ? COPY.scopeAll : COPY.scopeBookings)[locale]}
@@ -1000,7 +1000,11 @@ function Toggle({ on, locale }: { on: boolean; locale: Locale }) {
       </span>
       <span className="relative block h-[26px] w-[44px] rounded-full bg-aqua/[0.13] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16),inset_0_1px_2px_rgba(30,64,120,0.18)] forced-colors:border forced-colors:border-[CanvasText]">
         <span
+<<<<<<< HEAD
           className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,rgb(var(--aqua-hi))_0%,rgb(var(--aqua))_55%,rgb(var(--aqua-deep))_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(42,107,191,0.6)] transition-opacity duration-200 ease-editorial ${
+=======
+          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_55%,#1F58A3_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(42,107,191,0.6)] transition-opacity duration-base ease-editorial ${
+>>>>>>> polish
             on ? "opacity-100" : "opacity-0"
           }`}
         />
@@ -1103,7 +1107,7 @@ function StepButton({
       // aria-disabled (not disabled) keeps focus on the button at the limit; pressing it announces the bound.
       aria-disabled={atBound || undefined}
       onClick={onPress}
-      className={`grid h-11 w-11 place-items-center rounded-full transition-transform duration-200 ease-editorial ${
+      className={`grid h-11 w-11 place-items-center rounded-full transition-[transform,background-color,color] duration-base ease-editorial ${
         atBound
           ? "cursor-not-allowed text-bone/35 forced-colors:text-[GrayText]"
           : "bg-aqua/[0.091] text-bone shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.1)] hover:bg-aqua/[0.156] active:scale-[0.94]"

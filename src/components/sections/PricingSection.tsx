@@ -24,7 +24,7 @@ import { EnquiryForm } from "./EnquiryForm";
  * swing in a beat later, so the row opens outward from the recommendation
  * instead of reading left to right like a table.
  */
-const CARD_DELAY: Record<Tier["id"], number> = { business: 0, starter: 0.12, growth: 0.12 };
+const CARD_DELAY: Record<Tier["id"], number> = { starter: 0, business: 0.06, growth: 0.12 };
 
 const listVariants: Variants = {
   hidden: {},
@@ -77,7 +77,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
                 initial={{ opacity: 0, scale: 0.6, y: 6 }}
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ ...SPRING_SNAPPY, delay: delay + 0.7 }}
+                transition={{ ...SPRING_SNAPPY, delay: delay + 0.45 }}
               >
                 {p.popular}
               </motion.span>
@@ -121,7 +121,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
           <motion.ul
             className="mt-4 grid gap-3"
             variants={listVariants}
-            custom={delay + 0.55}
+            custom={delay + 0.35}
             initial="hidden"
             whileInView="shown"
             viewport={{ once: true, margin: "-10%" }}
@@ -192,13 +192,13 @@ export function PricingSection() {
           ))}
         </ol>
 
-        <Reveal y={12} delay={0.1}>
+        <Reveal delay={0.1}>
           <p className="mt-8 text-center text-sm leading-relaxed text-ash">{p.footnote}</p>
         </Reveal>
 
         {/* Start: what happens next + the form. */}
         <div className="mt-20 grid grid-cols-12 gap-x-4 gap-y-10 lg:mt-28 lg:gap-x-10">
-          <Reveal className="col-span-12 lg:col-span-5" y={16}>
+          <Reveal className="col-span-12 lg:col-span-5">
             <h3 className="font-display text-[clamp(1.6rem,2.6vw,2.4rem)] leading-[1.08] tracking-[-0.03em] text-balance">{p.nextTitle}</h3>
             <ol className="mt-6 grid gap-2.5">
               {p.next.map((step, i) => (

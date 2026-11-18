@@ -461,7 +461,7 @@ function LeadsBoard({ nicheId }: { nicheId: NicheId }) {
                     type="button"
                     aria-pressed={on}
                     onClick={() => changeFilter(f.id)}
-                    className={`${PILL} ${on ? PILL_ON : PILL_OFF} transition-transform duration-200 ease-editorial active:scale-[0.97]`}
+                    className={`${PILL} ${on ? PILL_ON : PILL_OFF} transition-[transform,background-color,color] duration-base ease-editorial active:scale-[0.97]`}
                   >
                     {f.label[locale]}
                     <span className={`tabular text-[0.75rem] ${on ? "text-ink/70" : "text-ash"}`}>{counts[f.id]}</span>
@@ -619,7 +619,7 @@ function LeadRow({
       onClick={onOpen}
       aria-controls={controls}
       aria-current={selected ? "true" : undefined}
-      className={`${ROW} ${selected ? ROW_SELECTED : ""} grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-x-3 px-2.5 py-2.5 text-left transition-colors duration-150 focus-visible:[outline-offset:-2px] xl:grid-cols-[2rem_minmax(0,1fr)_8.25rem_6.5rem_7.5rem] xl:py-2`}
+      className={`${ROW} ${selected ? ROW_SELECTED : ""} grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-center gap-x-3 px-2.5 py-2.5 text-left transition-colors duration-fast focus-visible:[outline-offset:-2px] xl:grid-cols-[2rem_minmax(0,1fr)_8.25rem_6.5rem_7.5rem] xl:py-2`}
     >
       <Avatar name={lead.name} tone={status === "new" ? "aqua" : "neutral"} />
       <span className="min-w-0">

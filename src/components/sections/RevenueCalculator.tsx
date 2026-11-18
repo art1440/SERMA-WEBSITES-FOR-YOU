@@ -114,7 +114,8 @@ export function RevenueCalculator() {
                         aria-pressed={active}
                         onClick={() => loadPreset(n.id)}
                         whileHover={active ? undefined : { y: -2 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={SPRING_SOFT}
                         className={`relative isolate min-h-[44px] rounded-full px-4 py-2 text-sm font-medium tracking-[-0.01em] ${
                           active ? "z-10" : `z-0 ${PRESET_IDLE}`
                         }`}
@@ -174,8 +175,8 @@ export function RevenueCalculator() {
 
           {/* Result — dark glass card. It lives inside TiltCard's preserve-3d chain, so it is
               glass-flat (backdrop blur would flatten the tilt) and never overflow-hidden. */}
-          <Reveal className="col-span-12 lg:col-span-6" delay={0.1}>
-            <TiltCard className="h-full" glare="rounded-glass-lg">
+          <div className="col-span-12 lg:col-span-6">
+            <TiltCard className="h-full" glare="rounded-glass-lg" delay={0.06}>
               <div data-theme="dark" className={RESULT_CARD}>
                 {/* Aqua inner light: sits above the glass body, below the content (isolated stack). */}
                 <span aria-hidden="true" className={RESULT_GLOW} />
@@ -232,7 +233,7 @@ export function RevenueCalculator() {
                 </MagneticButton>
               </div>
             </TiltCard>
-          </Reveal>
+          </div>
         </div>
 
         <SimulationDisclaimer variant="calculator" className="mt-6" />

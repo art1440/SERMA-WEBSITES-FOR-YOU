@@ -884,14 +884,14 @@ function EventBlock({
         onClick={onOpen}
         aria-controls={controls}
         aria-current={selected ? "true" : undefined}
-        className={`group relative flex h-full w-full flex-col overflow-hidden rounded-[7px] border text-left transition-transform duration-150 ease-editorial active:scale-[0.98] focus-visible:[outline-offset:1px] ${
+        className={`group relative flex h-full w-full flex-col overflow-hidden rounded-[7px] border text-left transition-transform duration-fast ease-editorial active:scale-[0.98] focus-visible:[outline-offset:1px] ${
           pending ? `${tone.soft} border-dashed border-signal/60` : `${tone.fill} border-transparent`
         } ${selected ? SELECTED_BLOCK : ""} ${centred ? "justify-center" : "pt-[3px]"} ${narrow ? "pl-[7px] pr-1" : "pl-[9px] pr-4"}`}
       >
         <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-[3px] ${tone.bar}`} />
         <span
           aria-hidden="true"
-          className={`pointer-events-none absolute inset-0 bg-aqua/[0.078] transition-opacity duration-150 ${selected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+          className={`pointer-events-none absolute inset-0 bg-aqua/[0.078] transition-opacity duration-fast ${selected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
         />
         {!narrow ? (
           <Icon
@@ -1192,7 +1192,7 @@ function EventDetail({
             type="button"
             onClick={onClose}
             aria-label={COPY.closeDetails[locale]}
-            className={`${PILL} ${PILL_OFF} -mr-1 pl-2.5 transition-transform duration-200 ease-editorial active:scale-[0.97]`}
+            className={`${PILL} ${PILL_OFF} -mr-1 pl-2.5 transition-[transform,background-color,color] duration-base ease-editorial active:scale-[0.97]`}
           >
             <X aria-hidden="true" size={14} strokeWidth={2} />
             {COPY.close[locale]}

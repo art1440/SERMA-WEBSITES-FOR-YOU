@@ -5,6 +5,7 @@ import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useState, type MouseEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { HeroFlowCard } from "@/components/ui/HeroFlowCard";
+import { HeroLight, ParallaxLayer, PointerParallaxProvider } from "@/components/ui/HeroLight";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
@@ -45,6 +46,7 @@ export function HeroChapter() {
   };
 
   return (
+    <PointerParallaxProvider enabled={!reduce}>
     <section
       ref={hero.ref}
       aria-labelledby="hero-title"
@@ -55,6 +57,8 @@ export function HeroChapter() {
       <AmbientField variant={0} className="hidden motion-reduce:block" />
 
       <div className="relative motion-safe:sticky motion-safe:top-0 motion-safe:h-[100svh] motion-safe:overflow-hidden">
+        {/* Tonal depth: key light behind the engine, calm plane behind the headline, vignette, bottom wash */}
+        <HeroLight />
         {/* Phones: soft ink fade behind the copy so the 3D engine and threads never fight the headline */}
         <motion.div
           aria-hidden="true"
@@ -63,6 +67,7 @@ export function HeroChapter() {
         />
         <div className="frame relative flex h-full flex-col pb-10 pt-8 motion-safe:justify-end motion-safe:lg:justify-center motion-safe:lg:pb-16">
           {/* Meta chips: what we do + live status */}
+          <ParallaxLayer depth={4}>
           <motion.div
             style={reduce ? undefined : { opacity: copyOpacity }}
             className="flex flex-wrap items-center gap-2.5"
@@ -76,8 +81,10 @@ export function HeroChapter() {
               {t.hero.status}
             </p>
           </motion.div>
+          </ParallaxLayer>
 
           {/* Headline — mounts with a masked reveal, then shears apart in 3D on scroll */}
+          <ParallaxLayer depth={8}>
           <div className="[perspective:900px]">
             <h1
               id="hero-title"
@@ -90,6 +97,7 @@ export function HeroChapter() {
               ))}
             </h1>
           </div>
+          </ParallaxLayer>
 
           <motion.div
             style={reduce ? undefined : { opacity: copyOpacity, y: copyY, pointerEvents: copyPointer }}
@@ -140,7 +148,9 @@ export function HeroChapter() {
           className="pointer-events-none absolute bottom-16 right-6 hidden w-[21rem] motion-reduce:hidden lg:block lg:right-10 xl:bottom-20 xl:w-[23rem]"
           inert={!reduce && copyHidden}
         >
-          <HeroFlowCard opacity={reduce ? undefined : copyOpacity} />
+          <ParallaxLayer depth={14}>
+            <HeroFlowCard opacity={reduce ? undefined : copyOpacity} />
+          </ParallaxLayer>
         </div>
 
         {/* Figure caption for the live engine (wide desktop) */}
@@ -177,6 +187,7 @@ export function HeroChapter() {
         </div>
       </div>
     </section>
+    </PointerParallaxProvider>
   );
 }
 
@@ -220,7 +231,7 @@ function HeadlineLine({
             {parts[0]}
             {/* Accent: serif italic with an aqua glow gradient (≥11:1 on ink). The padding stops the italic
                 overhang from being cut off by background-clip; the negative margin keeps punctuation spacing. */}
-            <em className="mr-[-0.12em] bg-gradient-to-r from-aqua-glow to-aqua bg-clip-text pr-[0.12em] font-serif font-normal italic tracking-[-0.01em] text-transparent [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
+            <em className="mr-[-0.12em] bg-gradient-to-r from-aqua-glow via-aqua to-aqua-deep bg-clip-text pr-[0.12em] font-serif font-normal italic tracking-[-0.01em] text-transparent [filter:drop-shadow(0_0_0.35em_theme(colors.aqua.glow/0.35))] [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
               {emphasis}
             </em>
             {parts.slice(1).join(emphasis)}

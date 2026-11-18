@@ -33,12 +33,17 @@ export const ROW_SELECTED =
 /** Small capsule actions inside the demo (44px tall touch target). */
 export const ACTION_PRIMARY =
   "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-4 text-sm font-medium text-ink " +
+<<<<<<< HEAD
   "bg-[linear-gradient(180deg,rgb(var(--aqua-hi))_0%,rgb(var(--aqua))_55%,rgb(var(--aqua-deep))_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_0_0_1px_rgba(42,107,191,0.35),0_8px_20px_-10px_rgba(42,107,191,0.6)] " +
   "transition-transform duration-200 ease-editorial hover:-translate-y-px active:scale-[0.97]";
+=======
+  "bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_55%,#1F58A3_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_0_0_1px_rgba(42,107,191,0.35),0_8px_20px_-10px_rgba(42,107,191,0.6)] " +
+  "transition-[transform,background-color,color] duration-base ease-editorial hover:-translate-y-px active:scale-[0.97]";
+>>>>>>> polish
 export const ACTION_SECONDARY =
   "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-4 text-sm font-medium text-bone " +
   "bg-aqua/[0.091] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_0_1px_rgba(255,255,255,0.1)] " +
-  "transition-transform duration-200 ease-editorial hover:-translate-y-px hover:bg-aqua/[0.13] active:scale-[0.97]";
+  "transition-[transform,background-color,color] duration-base ease-editorial hover:-translate-y-px hover:bg-aqua/[0.13] active:scale-[0.97]";
 /** Filter / segmented capsules. Pair with aria-pressed. */
 export const PILL =
   "inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-3 text-[0.8125rem] font-medium";

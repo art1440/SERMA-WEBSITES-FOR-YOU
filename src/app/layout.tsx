@@ -7,6 +7,7 @@ import { buildCsp } from "@/config/csp";
 import { asset } from "@/lib/asset";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
+import "./motion.css";
 
 const siteUrl = process.env.SITE_URL ?? "https://sermawebdesign.com";
 /** Only for static hosts that can't send headers (Netlify sends them via netlify.toml). */

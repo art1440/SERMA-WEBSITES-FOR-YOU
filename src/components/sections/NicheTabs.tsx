@@ -60,8 +60,9 @@ export function NicheTabs() {
             onClick={() => setNicheId(niche.id)}
             whileHover={selected ? undefined : { y: -2 }}
             whileTap={{ scale: 0.97 }}
+            transition={SPRING_SOFT}
             // Forced colors drop the aqua pill (a background), so the selected tab gets a system-colour outline.
-            className={`relative isolate flex min-h-[44px] items-center gap-2 rounded-[22px] px-3.5 py-2 text-left ${
+            className={`relative isolate flex min-h-[44px] items-center gap-2 rounded-[22px] transition-colors duration-base ease-editorial px-3.5 py-2 text-left ${
               selected
                 ? "z-10 forced-colors:outline forced-colors:outline-2 forced-colors:-outline-offset-2 forced-colors:outline-[Highlight]"
                 : "z-0 hover:bg-aqua/[0.078]"

@@ -60,7 +60,7 @@ export function IndustriesChapter() {
         <div className="flex flex-col">
           <div className="frame grid grid-cols-12 items-end gap-x-4 gap-y-6 lg:gap-x-8">
             <div className="col-span-12 lg:col-span-7">
-              <Reveal y={12}>
+              <Reveal>
                 <SectionChip index={t.industries.index} label={t.industries.eyebrow} />
               </Reveal>
               <RevealLines
@@ -70,13 +70,13 @@ export function IndustriesChapter() {
                 className="mt-5 font-display text-display-md"
               />
             </div>
-            <div className="col-span-12 lg:col-span-5">
+            <Reveal className="col-span-12 lg:col-span-5" delay={0.12}>
               <p className="max-w-md text-pretty leading-relaxed text-ash">{t.industries.body}</p>
               <p className="chip-dark glass-flat mt-4 text-ash">
                 <MoveHorizontal aria-hidden="true" size={15} strokeWidth={1.75} className="text-aqua" />
                 {t.industries.swipeHint}
               </p>
-            </div>
+            </Reveal>
           </div>
 
           <div className="mt-8 lg:mt-10">

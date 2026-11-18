@@ -273,7 +273,7 @@ function ReviewsBoard({ nicheId }: { nicheId: NicheId }) {
                     type="button"
                     aria-pressed={on}
                     onClick={() => changeFilter(f)}
-                    className={`${PILL} ${on ? PILL_ON : PILL_OFF} transition-transform duration-200 ease-editorial active:scale-[0.97]`}
+                    className={`${PILL} ${on ? PILL_ON : PILL_OFF} transition-[transform,background-color,color] duration-base ease-editorial active:scale-[0.97]`}
                   >
                     {f === "all" ? (
                       COPY.filterAll[locale]
