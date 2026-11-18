@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useMotionValueEvent, useSpring, useTransform } from "framer-motion";
 import { useRef, type PointerEvent, type ReactNode } from "react";
 import { MOTION } from "@/lib/motion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
@@ -39,8 +39,26 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
   const shineX = useTransform(ry, [-max, max], ["-22%", "22%"]);
   const shineY = useTransform(rx, [-max, max], ["14%", "-14%"]);
 
+  // Sharpness: preserve-3d makes the browser paint the card into a GPU texture and resample it,
+  // which softens text (worst at fractional DPRs like Windows 125%). The card is flat at rest and
+  // only becomes a 3D stack while the pointer tilts it; it flattens again once the spring has
+  // settled back to 0°, so the swap is pixel-identical.
+  const stage = useRef<HTMLDivElement>(null);
+  const hovering = useRef(false);
+  const settle = () => {
+    if (!hovering.current && Math.abs(rx.get()) < 0.01 && Math.abs(ry.get()) < 0.01) {
+      stage.current?.classList.add("stage-flat");
+    }
+  };
+  useMotionValueEvent(rx, "change", settle);
+  useMotionValueEvent(ry, "change", settle);
+
   const onEnter = (e: PointerEvent<HTMLDivElement>) => {
     rect.current = e.currentTarget.getBoundingClientRect();
+    if (!reduce && e.pointerType === "mouse") {
+      hovering.current = true;
+      stage.current?.classList.remove("stage-flat");
+    }
     if (!reduce && e.pointerType === "mouse") shine.set(1);
   };
   const onMove = (e: PointerEvent<HTMLDivElement>) => {
@@ -52,14 +70,16 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
     rx.set(-py * max * 2);
   };
   const onLeave = () => {
+    hovering.current = false;
     rx.set(0);
     ry.set(0);
     shine.set(0);
     rect.current = null;
+    settle();
   };
 
   return (
-    <div className="h-full [perspective:1400px]">
+    <div ref={stage} className="stage-flat h-full [perspective:1400px]">
       {/* Entrance: swings up into place once */}
       <motion.div
         className="h-full [transform-style:preserve-3d]"

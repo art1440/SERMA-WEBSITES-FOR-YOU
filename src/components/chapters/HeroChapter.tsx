@@ -2,7 +2,7 @@
 
 import { motion, useMotionValueEvent, useTransform, type MotionValue } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { HeroFlowCard } from "@/components/ui/HeroFlowCard";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -23,6 +23,15 @@ export function HeroChapter() {
   const { t } = useLanguage();
   const { hero, reduce } = useScene();
   const p = hero.progress;
+  // Sharp at rest: the headline is a 3D stack only once the scroll shear begins (0.05); before
+  // that every line's transform is `none`, so flattening it is pixel-identical but lets the
+  // browser paint the glyphs natively instead of resampling a GPU texture.
+  const headline = useRef<HTMLHeadingElement>(null);
+  const flatten = (v: number) => headline.current?.classList.toggle("stage-flat", reduce || v < 0.05);
+  useMotionValueEvent(p, "change", flatten);
+  useEffect(() => {
+    flatten(p.get());
+  });
 
   const copyOpacity = useTransform(p, [0.03, 0.18], [1, 0]);
   const copyY = useTransform(p, [0.03, 0.2], [0, -60]);
@@ -80,6 +89,7 @@ export function HeroChapter() {
           {/* Headline — mounts with a masked reveal, then shears apart in 3D on scroll */}
           <div className="[perspective:900px]">
             <h1
+              ref={headline}
               id="hero-title"
               className="mt-6 font-display text-display-xl text-bone [transform-style:preserve-3d] max-sm:text-[clamp(2.25rem,10.4vw,3rem)] lg:mt-9 lg:w-8/12 lg:text-[clamp(2.75rem,6.6vw,8rem)]"
             >
