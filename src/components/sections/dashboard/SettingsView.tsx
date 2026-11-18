@@ -1000,11 +1000,7 @@ function Toggle({ on, locale }: { on: boolean; locale: Locale }) {
       </span>
       <span className="relative block h-[26px] w-[44px] rounded-full bg-aqua/[0.13] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.16),inset_0_1px_2px_rgba(30,64,120,0.18)] forced-colors:border forced-colors:border-[CanvasText]">
         <span
-<<<<<<< HEAD
-          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,rgb(var(--aqua-hi))_0%,rgb(var(--aqua))_55%,rgb(var(--aqua-deep))_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(42,107,191,0.6)] transition-opacity duration-200 ease-editorial ${
-=======
-          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,#4A8BDA_0%,#2A6BBF_55%,#1F58A3_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(42,107,191,0.6)] transition-opacity duration-base ease-editorial ${
->>>>>>> polish
+          className={`absolute inset-0 rounded-full bg-[linear-gradient(180deg,rgb(var(--aqua-hi))_0%,rgb(var(--aqua))_55%,rgb(var(--aqua-deep))_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_0_14px_-3px_rgba(42,107,191,0.6)] transition-opacity duration-base ease-editorial ${
             on ? "opacity-100" : "opacity-0"
           }`}
         />
