@@ -97,7 +97,7 @@ allocations in a short scroll); not WebGL, worth tracing during T4.
 | T3 WebGL hygiene | [plan](plans/T3-webgl.md) | done (Sonnet) | PASS w/ nits (wording only) | SHIP | ✅ shipped |
 | T3b Sculpture time + threads context restore | [plan](plans/T3b-sculpture-time.md) | done (Sonnet) | PASS w/ nits (fixed) | skipped: ~40 lines, inspected twice | ✅ shipped |
 | T4 Hero | planning (Opus) | | | | |
-| T5 Tab swap | planning (Opus) | | | | |
-| T6 CTA feel | planning (Opus, with T5) | | | | |
+| T5 Tab swap | [plan](plans/T5-T6-tabs-ctas.md) | queued (after T2 deep review: shares Reveal) | | | |
+| T6 CTA feel | [plan](plans/T5-T6-tabs-ctas.md) | coding (Sonnet) | | | |
 | T7 Light films | | | | | |
 | T8 Docs | | | | | |
