@@ -114,6 +114,10 @@ export function MissedCallSimulator() {
   const pausedRef = useRef(globalPaused);
   pausedRef.current = globalPaused;
   const tabs = useTabs();
+  // Latest-render values for callbacks that outlive a render (announcements during a language switch).
+  const live$ = useRef({ t, sim, service, time, amountLabel });
+  live$.current = { t, sim, service, time, amountLabel };
+  const scrubbingRef = useRef(false);
 
   // Phase follows the clock; React re-renders only when a boundary is crossed.
   const sync = (ms: number) => {
@@ -122,9 +126,11 @@ export function MissedCallSimulator() {
     phaseRef.current = next;
     setPhase(next);
     if (!announceOn.current) return;
-    if (next === "ringing") setAnnouncement(fill(t.simulator.announceIncoming, { name: sim.caller }));
-    if (next === "missed") setAnnouncement(fill(t.simulator.announceMissed, { name: sim.caller }));
-    if (next === "logged") setAnnouncement(fill(t.simulator.announceBooked, { name: sim.caller, service, time, amount: amountLabel }));
+    const L = live$.current;
+    if (next === "ringing") setAnnouncement(fill(L.t.simulator.announceIncoming, { name: L.sim.caller }));
+    if (next === "missed") setAnnouncement(fill(L.t.simulator.announceMissed, { name: L.sim.caller }));
+    if (next === "logged")
+      setAnnouncement(fill(L.t.simulator.announceBooked, { name: L.sim.caller, service: L.service, time: L.time, amount: L.amountLabel }));
   };
   useMotionValueEvent(clock, "change", (v) => {
     if (statusRef.current !== "idle") sync(v);
@@ -160,6 +166,7 @@ export function MissedCallSimulator() {
   const seek = (ms: number, opts: { announce?: boolean } = {}) => {
     const v = Math.max(0, Math.min(BEAT.end, ms));
     const keepPlaying = statusRef.current === "playing" && v < BEAT.end && !pausedRef.current;
+    if (statusRef.current === "idle" && v === 0 && !opts.announce) return; // nothing started: stay idle
     halt();
     announceOn.current = !!opts.announce;
     statusRef.current = "paused"; // so sync() runs even when coming from idle
@@ -227,7 +234,7 @@ export function MissedCallSimulator() {
   const panelRotY = useTransform(depth, [0, 0.4], [0, -3]);
 
   const tempo: Tempo = reduce ? "instant" : scrubbing ? "scrub" : "play";
-  const live = status === "playing" && !reduce && !globalPaused;
+  const live = status === "playing" && !scrubbing && !reduce && !globalPaused;
 
   const nudgePhone = () => {
     if (!window.matchMedia("(max-width: 767px)").matches || !phoneRef.current || !railRef.current) return;
@@ -251,7 +258,12 @@ export function MissedCallSimulator() {
   };
 
   const endScrub = () => {
+    window.removeEventListener("pointerup", endScrub);
+    window.removeEventListener("pointercancel", endScrub);
+    if (!scrubbingRef.current) return;
+    scrubbingRef.current = false;
     setScrubbing(false);
+    if (statusRef.current === "idle") return; // tapped the start of an unstarted rail
     const v = clock.get();
     if (scrubFrom.current === "playing" && v < BEAT.end && !pausedRef.current) play(v);
     else {
@@ -264,13 +276,21 @@ export function MissedCallSimulator() {
     scrubFrom.current = statusRef.current;
     halt();
     announceOn.current = false;
+    scrubbingRef.current = true;
     setScrubbing(true);
-    if (statusRef.current === "idle") {
+    if (statusRef.current === "playing") {
       statusRef.current = "paused";
       setStatus("paused");
     }
-    window.addEventListener("pointerup", endScrub, { once: true });
-    window.addEventListener("pointercancel", endScrub, { once: true });
+    window.addEventListener("pointerup", endScrub);
+    window.addEventListener("pointercancel", endScrub);
+  };
+  const onRailInput = (v: number) => {
+    if (statusRef.current === "idle" && v > 0) {
+      statusRef.current = "paused";
+      setStatus("paused");
+    }
+    clock.set(v);
   };
   const onRailKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const v = clock.get();
@@ -313,7 +333,7 @@ export function MissedCallSimulator() {
           {announcement}
         </p>
 
-        <div className="mt-10 grid grid-cols-12 gap-x-4 gap-y-6 [perspective:1600px] md:mt-14 md:gap-y-12 lg:mt-12 lg:gap-x-10">
+        <div className="mt-10 grid grid-cols-12 gap-x-4 gap-y-6 [perspective:1600px] md:mt-14 md:gap-y-12 lg:mt-10 lg:gap-x-10">
           {/* ---------- Left: phone ---------- */}
           <Reveal className="col-span-12 md:col-span-6 lg:col-span-5">
             <motion.div ref={phoneRef} style={tilt ? { rotateY: phoneRotY, rotateX: phoneRotX } : undefined}>
@@ -369,7 +389,7 @@ export function MissedCallSimulator() {
                       aria-label={t.simulator.railLabel}
                       aria-valuetext={railText}
                       onPointerDown={onRailDown}
-                      onChange={(e) => clock.set(Number(e.currentTarget.value))}
+                      onChange={(e) => onRailInput(Number(e.currentTarget.value))}
                       onKeyDown={onRailKey}
                     />
                     {TICKS.map((ms) => (
@@ -469,7 +489,7 @@ export function MissedCallSimulator() {
                             key={`new-${niche.id}`}
                             layout
                             className="flex items-center justify-between gap-3 rounded-glass-sm bg-aqua/10 p-3 shadow-[0_14px_32px_-16px_rgba(42,107,191,0.6)] ring-1 ring-inset ring-aqua/45"
-                            initial={{ opacity: 0, y: -16, scale: 0.98 }}
+                            initial={tempo === "instant" ? false : { opacity: 0, y: -16, scale: 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: dur(tempo, 0.45), ease: EASE_EDITORIAL }}
@@ -638,7 +658,7 @@ function Phone({ phase, tempo, live }: { phase: Phase; tempo: Tempo; live: boole
                   <motion.p
                     key="idle"
                     className="mt-14 flex flex-col items-center gap-3 px-5 text-center text-[0.8125rem] leading-relaxed text-ash"
-                    initial={{ opacity: 0 }}
+                    initial={tempo === "instant" ? false : { opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: dur(tempo, 0.25), ease: EASE_EDITORIAL }}
@@ -683,7 +703,7 @@ function Phone({ phase, tempo, live }: { phase: Phase; tempo: Tempo; live: boole
                 <motion.div
                   key="call"
                   className="glass-dark glass-flat absolute inset-0 flex flex-col items-center justify-center rounded-[2.125rem] px-6 text-center"
-                  initial={{ opacity: 0, y: 24 }}
+                  initial={tempo === "instant" ? false : { opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -24 }}
                   transition={{ duration: dur(tempo, 0.45), ease: EASE_EDITORIAL }}
@@ -760,7 +780,7 @@ function Bubble({ side, children, meta, tempo }: { side: "in" | "out"; children:
     <motion.div
       layout
       className={`flex max-w-[86%] flex-col ${out ? "self-end items-end" : "self-start items-start"}`}
-      initial={{ opacity: 0, y: 14, scale: 0.96 }}
+      initial={tempo === "instant" ? false : { opacity: 0, y: 14, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, transition: { duration: dur(tempo, 0.15), ease: EASE_EDITORIAL } }}
       transition={{ duration: dur(tempo, 0.45), ease: EASE_EDITORIAL }}
@@ -786,7 +806,7 @@ function Typing({ side, label, tempo, live }: { side: "in" | "out"; label: strin
   return (
     <motion.div
       className={`flex items-center gap-1 rounded-full px-3.5 py-3 ${out ? `self-end ${AQUA_BUBBLE}` : "glass-dark glass-flat self-start"}`}
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={tempo === "instant" ? false : { opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9, transition: { duration: dur(tempo, 0.15), ease: EASE_EDITORIAL } }}
       transition={{ duration: dur(tempo, 0.25), ease: EASE_EDITORIAL }}
