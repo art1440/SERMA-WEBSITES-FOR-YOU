@@ -141,6 +141,13 @@ export function DashboardShowcase() {
   useEffect(() => {
     if (!live) { enter.jump(0); return; }
     // The hidden panel measured a stale track; the tab swap resets scroll to 0. Clear the spring so the explode never plays backwards during the entrance.
+    // Mid-track (e.g. a resize across the pin breakpoint): no replay, and re-sync the spring to the real scroll instead of zeroing it.
+    if (window.scrollY > 2) {
+      window.dispatchEvent(new Event("scroll"));
+      d.jump(scrollYProgress.get());
+      enter.jump(1);
+      return;
+    }
     d.jump(0);
     if (pausedRef.current) { enter.jump(1); return; }
     enter.jump(0);
@@ -148,12 +155,13 @@ export function DashboardShowcase() {
     // Two frames, the same as TabsContext's swap: start once the scroll reset has landed and the veil begins to lift.
     let raf = requestAnimationFrame(() => {
       raf = requestAnimationFrame(() => {
-        d.jump(0);
+        window.dispatchEvent(new Event("scroll"));
+        d.jump(scrollYProgress.get());
         controls = animate(enter, 1, { ...SPRING_SMOOTH, restDelta: 0.001 });
       });
     });
     return () => { cancelAnimationFrame(raf); controls?.stop(); };
-  }, [live, enter, d]);
+  }, [live, enter, d, scrollYProgress]);
 
   const zChrome = useTransform(explode, (e) => e * 180);
   const zSidebar = useTransform(explode, (e) => e * 60);
@@ -174,16 +182,22 @@ export function DashboardShowcase() {
     s.timer = window.setTimeout(() => {
       if (document.hidden) return schedule();
       if (userPicked.current) return;
+      // Never swap industries while the layers are exploded: look again shortly (not a step).
+      if (d.get() > EX_IN && d.get() < EX_OUT) { s.timer = window.setTimeout(schedule, 1000); return; }
       const i = Math.max(0, NICHES.findIndex((n) => n.id === nicheRef.current));
       s.steps += 1;
       startTransition(() => autoNiche(NICHES[(i + 1) % NICHES.length].id));
       schedule();
     }, TOUR_MS);
-  }, [autoNiche, userPicked]);
+  }, [autoNiche, userPicked, d]);
   useEffect(() => {
     scheduleTour();
     const s = tour.current;
-    return () => window.clearTimeout(s.timer);
+    return () => {
+      window.clearTimeout(s.timer);
+      // A hidden window never gets pointerleave/blur: drop stale holds when live turns false.
+      if (!liveRef.current) s.hover = s.focus = false;
+    };
   }, [live, motionPaused, scheduleTour]);
   const holdTour = (k: "hover" | "focus") => { tour.current[k] = true; window.clearTimeout(tour.current.timer); };
   const releaseTour = (k: "hover" | "focus") => { tour.current[k] = false; scheduleTour(); };
