@@ -88,7 +88,9 @@ export function HeroChapter() {
           {/* Meta chips: what we do + live status */}
           <ParallaxLayer depth={4}>
           <motion.div
-            style={reduce ? undefined : { opacity: copyOpacity }}
+            // Always pass a style: dropping it (undefined) leaves Framer's last inline values behind, and the
+            // reduce flag only turns true after mount, so the copy could stay stuck at opacity 0.
+            style={{ opacity: reduce ? 1 : copyOpacity }}
             className="flex flex-wrap items-center gap-2.5"
           >
             <p className="chip-dark glass-flat shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_1px_3px_rgb(var(--bone)/0.08),0_10px_22px_-10px_rgb(var(--bone)/0.22)] hidden text-ash sm:inline-flex">{t.hero.eyebrow}</p>
@@ -120,7 +122,7 @@ export function HeroChapter() {
           </ParallaxLayer>
 
           <motion.div
-            style={reduce ? undefined : { opacity: copyOpacity, y: copyY, pointerEvents: copyPointer }}
+            style={reduce ? { opacity: 1, y: 0, pointerEvents: "auto" } : { opacity: copyOpacity, y: copyY, pointerEvents: copyPointer }}
             inert={!reduce && copyHidden}
             className="mt-7 lg:mt-9 lg:w-5/12"
           >
@@ -258,7 +260,7 @@ function HeadlineLine({
   return (
     <motion.span
       className={`block overflow-hidden pb-[0.1em] ${indent}`}
-      style={reduce ? undefined : { x, z, rotateX, rotateY, opacity }}
+      style={reduce ? { x: "0%", z: 0, rotateX: 0, rotateY: 0, opacity: 1 } : { x, z, rotateX, rotateY, opacity }}
     >
       <motion.span
         className="block"
