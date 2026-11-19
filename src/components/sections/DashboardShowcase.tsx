@@ -13,7 +13,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { ArrowUpRight, CalendarDays, Check, Circle, Inbox, LayoutGrid, Pause, Play, Settings2, Star, Users, type LucideIcon } from "lucide-react";
-import { startTransition, useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { startTransition, useCallback, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { AmbientVideo } from "@/components/ui/AmbientVideo";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
@@ -69,10 +69,12 @@ const BAR_SPRING = SPRING_SMOOTH;
  * preview, pipeline strip | activity + modules in a right-hand rail. Phones
  * and tablets keep the stacked layout.
  *
- * It pins (200vh scroll track, sticky stage right under the header) only where it still renders near full size: ≥1280×840 with
- * motion allowed (`motion-safe:pin:` in CSS, `pin && !reduce` in JS). There the window
- * lands assembled with a time-based entrance on every tab open, scroll only explodes and
- * reassembles its layers, and the industries auto-tour on a timer. FitStage scales it by height only, so a wide, short window keeps the scale
+ * It pins (200vh scroll track, sticky stage right under the header) only where it
+ * still renders near full size: ≥1280×840 with motion allowed (`motion-safe:pin:`
+ * in CSS, `pin && !reduce` in JS). There the window lands assembled with a
+ * time-based entrance on every tab open, scroll only explodes and reassembles its
+ * layers, and the industries auto-tour on a timer. FitStage scales it by height
+ * only, so a wide, short window keeps the scale
  * (and the text size) high. Smaller laptops get the same lg window at 1:1 in
  * normal flow.
  * ------------------------------------------------------------------ */
@@ -117,9 +119,12 @@ export function DashboardShowcase() {
   const live = pinned && open;
   const { paused: motionPaused } = useMotionPause();
   const pausedRef = useRef(motionPaused);
-  pausedRef.current = motionPaused;
   const liveRef = useRef(live);
-  liveRef.current = live;
+  // Layout effect: runs before the entrance and tour effects of the same commit, so they read fresh values.
+  useLayoutEffect(() => {
+    pausedRef.current = motionPaused;
+    liveRef.current = live;
+  }, [motionPaused, live]);
 
   // Entrance (time) + extras (scroll): tilt and explode into layers, then reassemble.
   const enter = useMotionValue(0);

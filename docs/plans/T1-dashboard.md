@@ -160,8 +160,9 @@ track; industries change on a timer.
 ## Acceptance criteria (Playwright on the dev server; never `next build`)
 1. At 1440×900, 1280×840, 1920×1080, load `/#dashboard`, wait 700ms: WINDOW (`#dashboard [data-theme="dark"]`) has
    opacity 1 and transform none; it and the disclaimer are fully in the viewport; `stage-flat` present.
-2. Home → click Dashboard tab: at ≈600ms whole window + disclaimer visible; at ≈150ms mid-rise, not empty. Leave and
-   return: entrance replays.
+2. Home → click Dashboard tab: visible by ≈300ms after the click, full opacity by ≈400ms, whole window + disclaimer by
+   ≈600ms (the veil holds the panel hidden for the first 150ms + 2 rAFs; corrected after inspection). Leave and return:
+   entrance replays. Measure on a real-rate browser: this sandbox runs ≈5 rAF/s.
 3. h2 top at scroll 0 equals h2 top at scroll 400.
 4. `#dashboard` offsetHeight = 2× innerHeight; mid-track plates transformed and `stage-flat` absent; flat at both ends; footer scrolls in at the end.
 5. Tour: pointer on navbar → niche `02` selected after 6.3s, `03` after 12.3s; hover/focus in window holds it; clicking a niche tab stops it for good; Pause stops it; six steps end on Barbershops.
