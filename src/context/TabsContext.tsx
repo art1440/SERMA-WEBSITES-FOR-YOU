@@ -100,7 +100,8 @@ export function TabsProvider({ children }: { children: ReactNode }) {
         const url = id === "home" ? window.location.pathname + window.location.search : `#${id}`;
         if (window.location.hash.replace(/^#/, "") !== (id === "home" ? "" : id)) window.history.pushState(null, "", url);
       }
-      const fromBar = !!document.activeElement?.closest?.('[role="tablist"]');
+      // Back/forward (history "none") always moves focus into the panel: the visitor didn't pick from the bar.
+      const fromBar = history === "push" && !!document.activeElement?.closest?.('[role="tablist"]');
       const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
       if (id === activeRef.current) {
         if (visitRef.current?.id === id) {
@@ -156,7 +157,11 @@ export function TabsProvider({ children }: { children: ReactNode }) {
       leave();
       r1 = requestAnimationFrame(() => {
         resetScroll();
-        r2 = requestAnimationFrame(() => enter(initial));
+        r2 = requestAnimationFrame(() => {
+          enter(initial);
+          // Deep link: start keyboard navigation in the linked section, as a native anchor would.
+          focusPanel(initial);
+        });
       });
     }
     const onPop = () => swap(tabFromHash(window.location.hash) ?? "home", "none");

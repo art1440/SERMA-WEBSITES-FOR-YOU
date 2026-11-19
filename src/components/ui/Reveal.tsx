@@ -3,6 +3,7 @@
 import { inView, motion } from "framer-motion";
 import { Fragment, useEffect, useRef, useState, type ElementType, type ReactNode, type RefObject } from "react";
 import { usePanelRepeat, usePanelVisit } from "@/context/TabsContext";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { EASE_EDITORIAL } from "@/lib/motion";
 
 /** Bottom-only trigger band: an element at the very top of a tab can never be stranded above it. */
@@ -50,12 +51,14 @@ export function Reveal({ children, className, delay = 0, y = 16, trigger = "inVi
   const ref = useRef<HTMLDivElement>(null);
   const shown = useVisitReveal(ref, trigger);
   const repeat = usePanelRepeat();
-  const ry = repeat ? Math.min(y, REPEAT_Y) : y;
+  const reduce = useReducedMotionSafe();
+  // Reduced motion: opacity only, on first and repeat visits alike.
+  const ry = reduce ? 0 : repeat ? Math.min(y, REPEAT_Y) : y;
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={{ opacity: 0, y }}
+      initial={{ opacity: 0, y: reduce ? 0 : y }}
       animate={
         shown
           ? { opacity: 1, y: 0, transition: { duration: repeat ? REPEAT_S : REVEAL_S, ease: EASE_EDITORIAL, delay: repeat ? 0 : delay } }

@@ -98,11 +98,11 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
       <motion.div
         ref={entrance}
         className="pointer-events-none h-full [transform-style:preserve-3d]"
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: reduce ? 0 : 16 }}
         animate={
           shown
             ? { opacity: 1, y: 0, transition: { duration: repeat ? REPEAT_S : REVEAL_S, ease: EASE_EDITORIAL, delay: repeat ? 0 : delay } }
-            : { opacity: 0, y: repeat ? REPEAT_Y : 16, transition: { duration: 0 } }
+            : { opacity: 0, y: reduce ? 0 : repeat ? REPEAT_Y : 16, transition: { duration: 0 } }
         }
       >
         {/* Pointer tilt */}

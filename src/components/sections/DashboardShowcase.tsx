@@ -283,9 +283,10 @@ export function DashboardShowcase() {
                 {...(pinned
                   ? {}
                   : {
-                      // Reduced motion: fade only, no rise or tilt.
-                      initial: reduce ? { opacity: 0 } : { opacity: 0, rotateX: 28, y: 80 },
-                      whileInView: reduce ? { opacity: 1 } : { opacity: 1, rotateX: 0, y: 0 },
+                      // Reduced motion: fade only. The target always resets rotateX/y: the reduce flag turns true
+                      // after mount, so the full initial pose may already be applied (MotionConfig makes it instant).
+                      initial: reduce ? { opacity: 0, rotateX: 0, y: 0 } : { opacity: 0, rotateX: 28, y: 80 },
+                      whileInView: { opacity: 1, rotateX: 0, y: 0 },
                       viewport: { once: true, margin: "-10%" },
                       transition: { duration: 1.1, ease: EASE_EDITORIAL },
                     })}
