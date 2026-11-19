@@ -98,6 +98,6 @@ allocations in a short scroll); not WebGL, worth tracing during T4.
 | T3b Sculpture time + threads context restore | [plan](plans/T3b-sculpture-time.md) | done (Sonnet) | PASS w/ nits (fixed) | skipped: ~40 lines, inspected twice | ✅ shipped |
 | T4 Hero | [plan](plans/T4-hero.md) — owner chose: cut the hero film | done (Sonnet) | inspecting | | committed |
 | T5 Tab swap | [plan](plans/T5-T6-tabs-ctas.md) | done (coder agent); partial WIP rode along in commit d753dfc | inspecting | | committed |
-| T6 CTA feel | [plan](plans/T5-T6-tabs-ctas.md) | coding (Sonnet) | | | |
+| T6 CTA feel | [plan](plans/T5-T6-tabs-ctas.md) | done (Sonnet) | inspecting | | committed |
 | T7 Light films | | | | | |
 | T8 Docs | | | | | |
