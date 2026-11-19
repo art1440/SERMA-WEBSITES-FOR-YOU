@@ -1,52 +1,59 @@
 "use client";
 
-import { AnimatePresence, LayoutGroup, motion, useMotionValueEvent, useTransform } from "framer-motion";
-import { ArrowDown, Check, MessageSquareText, PhoneIncoming, PhoneMissed, RotateCcw, Zap } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  animate,
+  cubicBezier,
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useScroll,
+  useSpring,
+  useTransform,
+  type AnimationPlaybackControls,
+  type MotionValue,
+} from "framer-motion";
+import { Check, MessageSquareText, Pause, PhoneIncoming, PhoneMissed, Play, RotateCcw, SkipForward, Zap } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
-import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
-import { FitStage } from "@/components/ui/FitStage";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SimulationDisclaimer } from "@/components/ui/SimulationDisclaimer";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMotionPause } from "@/context/MotionPauseContext";
 import { useNiche } from "@/context/NicheContext";
-import { useScene, useTrackProgress } from "@/context/SceneContext";
+import { useScene } from "@/context/SceneContext";
+import { useTabs } from "@/context/TabsContext";
 import { fill } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
-import { EASE_EDITORIAL } from "@/lib/motion";
+import { EASE_EDITORIAL, MOTION } from "@/lib/motion";
 
 /** Ordered phases of the scripted timeline. */
 const PHASES = ["idle", "ringing", "missed", "typing1", "sms1", "reply", "typing2", "confirm", "logged"] as const;
 type Phase = (typeof PHASES)[number];
 
-/** ms offsets from "Simulate" click. */
-const TIMELINE: [Phase, number][] = [
-  ["ringing", 0],
-  ["missed", 1900],
-  ["typing1", 2900],
-  ["sms1", 4100],
-  ["reply", 5600],
-  ["typing2", 6500],
-  ["confirm", 7600],
-  ["logged", 8600],
-];
-
 const at = (phase: Phase, min: Phase) => PHASES.indexOf(phase) >= PHASES.indexOf(min);
 
-/** Scroll-scrubbed mode: where each phase begins along the pinned track (0 → 1). */
-const SCROLL_STARTS: [Phase, number][] = [
-  ["logged", 0.8],
-  ["confirm", 0.69],
-  ["typing2", 0.61],
-  ["reply", 0.53],
-  ["sms1", 0.4],
-  ["typing1", 0.32],
-  ["missed", 0.21],
-  ["ringing", 0.08],
-];
-const phaseAt = (v: number): Phase => SCROLL_STARTS.find(([, start]) => v >= start)?.[0] ?? "idle";
+/** Story beats, ms from "Simulate". One linear clock drives everything; the rail scrubs it. */
+const BEAT = { ringing: 0, missed: 1300, typing1: 2100, sms1: 2700, reply: 4200, typing2: 4800, confirm: 5400, logged: 6400, end: 7400 } as const;
+type Beat = Exclude<Phase, "idle">;
+const ORDER: Beat[] = ["ringing", "missed", "typing1", "sms1", "reply", "typing2", "confirm", "logged"];
+/** Clock → phase. The clock never maps to "idle": idle is a status (never started / reset). */
+const phaseAt = (ms: number): Beat => {
+  let p: Beat = "ringing";
+  for (const b of ORDER) if (ms >= BEAT[b]) p = b;
+  return p;
+};
+/** Where Arrow keys and "Next step" stop. */
+const STOPS = [0, BEAT.missed, BEAT.sms1, BEAT.reply, BEAT.confirm, BEAT.end];
+/** Rail tick dots = the four progress chips completing. */
+const TICKS = [BEAT.missed, BEAT.sms1, BEAT.confirm, BEAT.logged];
+const EASE_COUNT = cubicBezier(...EASE_EDITORIAL);
+type Status = "idle" | "playing" | "paused" | "done";
+type Tempo = "play" | "scrub" | "instant";
+const dur = (t: Tempo, s: number) => (t === "instant" ? 0 : t === "scrub" ? Math.min(s, 0.15) : s);
 
 /* ------------------------------------------------------------------ *
  * Liquid Glass finish — static decorative gradients only (no filters,
@@ -82,105 +89,235 @@ export function MissedCallSimulator() {
   const { t, locale, intlLocale } = useLanguage();
   const { niche } = useNiche();
   const sim = niche.simulator;
-  const [phase, setPhase] = useState<Phase>("idle");
-  const [announcement, setAnnouncement] = useState("");
-  const timers = useRef<number[]>([]);
   const { reduce, desktop } = useScene();
-  const track = useTrackProgress();
-  const scrubbed = desktop && !reduce; // desktop: scroll plays the story; phones: tap to play
-  const p = track.progress;
-
-  // 3D: the phone swings in, faces you for the call, then leans toward the dashboard.
-  const phoneRotateY = useTransform(p, [0, 0.1, 0.45, 0.8, 1], [42, 0, -8, 10, 0]);
-  const phoneRotateX = useTransform(p, [0, 0.1, 0.6, 1], [14, 0, 4, 0]);
-  const phoneZ = useTransform(p, [0, 0.1, 0.21, 0.3, 0.8, 1], [-300, 0, 60, 0, 0, -40]);
-  const panelRotateY = useTransform(p, [0, 0.12, 0.8, 0.9], [-30, -10, -10, 0]);
-  const panelZ = useTransform(p, [0, 0.12, 0.8, 0.9], [-240, -80, -80, 0]);
-  const panelX = useTransform(p, [0, 0.12], [120, 0]);
-  const phaseRef = useRef<Phase>("idle");
-  phaseRef.current = phase;
-
-  const clearTimers = useCallback(() => {
-    timers.current.forEach((id) => window.clearTimeout(id));
-    timers.current = [];
-  }, []);
-
-  // A new industry resets the scenario (or re-syncs it to the scroll position).
-  useEffect(() => {
-    clearTimers();
-    setPhase(scrubbed ? phaseAt(p.get()) : "idle");
-    setAnnouncement("");
-  }, [niche.id, clearTimers, scrubbed, p]);
-
-  // Scroll-scrubbed playback: state changes only when a phase boundary is crossed.
-  useMotionValueEvent(p, "change", (v) => {
-    if (!scrubbed) return;
-    const next = phaseAt(v);
-    if (next === phaseRef.current) return;
-    setPhase(next);
-    if (next === "ringing") setAnnouncement(fill(t.simulator.announceIncoming, { name: sim.caller }));
-    if (next === "logged")
-      setAnnouncement(fill(t.simulator.announceBooked, { name: sim.caller, service: sim.service[locale], time: sim.time[locale], amount: formatCurrency(sim.amount, intlLocale) }));
-  });
-
-  useEffect(() => clearTimers, [clearTimers]);
-
-  const running = phase !== "idle" && phase !== "logged";
   const service = sim.service[locale];
   const time = sim.time[locale];
   const amountLabel = formatCurrency(sim.amount, intlLocale);
 
-  const start = () => {
-    if (running) return;
-    clearTimers();
-    setPhase("idle");
-    TIMELINE.forEach(([p, ms]) => {
-      timers.current.push(
-        window.setTimeout(() => {
-          setPhase(p);
-          if (p === "ringing") setAnnouncement(fill(t.simulator.announceIncoming, { name: sim.caller }));
-          if (p === "missed") setAnnouncement(fill(t.simulator.announceMissed, { name: sim.caller }));
-          if (p === "logged")
-            setAnnouncement(fill(t.simulator.announceBooked, { name: sim.caller, service, time, amount: amountLabel }));
-        }, ms + 30),
-      );
+  const sectionRef = useRef<HTMLElement>(null);
+  const phoneRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLInputElement>(null);
+  const scrubFrom = useRef<Status>("idle");
+
+  const [announcement, setAnnouncement] = useState("");
+  const clock = useMotionValue(0);
+  const run = useRef<AnimationPlaybackControls | null>(null);
+  const [status, setStatus] = useState<Status>("idle");
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [scrubbing, setScrubbing] = useState(false);
+  const statusRef = useRef(status);
+  statusRef.current = status;
+  const phaseRef = useRef<Phase>("idle");
+  phaseRef.current = phase;
+  const announceOn = useRef(false); // true while playing or stepping; false while scrubbing / keyboard-seeking
+  const { paused: globalPaused } = useMotionPause();
+  const pausedRef = useRef(globalPaused);
+  pausedRef.current = globalPaused;
+  const tabs = useTabs();
+
+  // Phase follows the clock; React re-renders only when a boundary is crossed.
+  const sync = (ms: number) => {
+    const next = phaseAt(ms);
+    if (next === phaseRef.current) return;
+    phaseRef.current = next;
+    setPhase(next);
+    if (!announceOn.current) return;
+    if (next === "ringing") setAnnouncement(fill(t.simulator.announceIncoming, { name: sim.caller }));
+    if (next === "missed") setAnnouncement(fill(t.simulator.announceMissed, { name: sim.caller }));
+    if (next === "logged") setAnnouncement(fill(t.simulator.announceBooked, { name: sim.caller, service, time, amount: amountLabel }));
+  };
+  useMotionValueEvent(clock, "change", (v) => {
+    if (statusRef.current !== "idle") sync(v);
+  });
+
+  const halt = () => {
+    run.current?.stop();
+    run.current = null;
+  };
+  const play = (from: number) => {
+    halt();
+    announceOn.current = true;
+    clock.set(from);
+    statusRef.current = "playing";
+    sync(from); // REQUIRED: set() to the same value fires no "change"
+    setStatus("playing");
+    run.current = animate(clock, BEAT.end, {
+      duration: (BEAT.end - from) / 1000,
+      ease: "linear",
+      onComplete: () => {
+        run.current = null;
+        statusRef.current = "done";
+        setStatus("done");
+      },
     });
+  };
+  const pause = () => {
+    if (!run.current) return;
+    halt();
+    statusRef.current = "paused";
+    setStatus("paused");
+  };
+  const seek = (ms: number, opts: { announce?: boolean } = {}) => {
+    const v = Math.max(0, Math.min(BEAT.end, ms));
+    const keepPlaying = statusRef.current === "playing" && v < BEAT.end && !pausedRef.current;
+    halt();
+    announceOn.current = !!opts.announce;
+    statusRef.current = "paused"; // so sync() runs even when coming from idle
+    clock.set(v);
+    sync(v);
+    if (keepPlaying) play(v);
+    else {
+      const next = v >= BEAT.end ? "done" : "paused";
+      statusRef.current = next;
+      setStatus(next);
+    }
+  };
+  const reset = () => {
+    halt();
+    clock.set(0);
+    statusRef.current = "idle";
+    setStatus("idle");
+    phaseRef.current = "idle";
+    setPhase("idle");
+    setAnnouncement("");
+  };
+
+  // A new industry resets the scenario.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(reset, [niche.id]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => halt, []);
+  // Site-wide pause: stop at once, never auto-resume when it lifts.
+  useEffect(() => {
+    if (globalPaused) pause();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [globalPaused]);
+  // Leaving the tab / hiding the browser tab pauses.
+  useEffect(() => {
+    if (tabs && tabs.active !== "simulator") pause();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabs?.active]);
+  useEffect(() => {
+    const onHide = () => {
+      if (document.hidden) pause();
+    };
+    document.addEventListener("visibilitychange", onHide);
+    return () => document.removeEventListener("visibilitychange", onHide);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Rail thumb: written imperatively, never through React state.
+  useEffect(() => {
+    const w = (v: number) => {
+      const el = railRef.current;
+      if (!el) return;
+      el.value = String(Math.round(v));
+      el.style.setProperty("--fill", `${(v / BEAT.end) * 100}%`);
+    };
+    w(clock.get());
+    return clock.on("change", w);
+  }, [clock]);
+
+  // Scroll only adds a depth tilt (lg, motion allowed); the story never reads scroll.
+  const tilt = desktop && !reduce;
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  const depth = useSpring(scrollYProgress, MOTION.cinematic);
+  const phoneRotY = useTransform(depth, [0, 0.4], [0, 5]);
+  const phoneRotX = useTransform(depth, [0, 0.4], [0, 3]);
+  const panelRotY = useTransform(depth, [0, 0.4], [0, -3]);
+
+  const tempo: Tempo = reduce ? "instant" : scrubbing ? "scrub" : "play";
+  const live = status === "playing" && !reduce && !globalPaused;
+
+  const nudgePhone = () => {
+    if (!window.matchMedia("(max-width: 767px)").matches || !phoneRef.current || !railRef.current) return;
+    const r = phoneRef.current.getBoundingClientRect();
+    const rail = railRef.current.getBoundingClientRect();
+    const delta = Math.min(r.bottom + 16 - window.innerHeight, rail.top - 128); // keep the rail below navbar + tab strip
+    if (delta > 0) window.scrollBy({ top: delta, behavior: reduce ? "auto" : "smooth" });
+  };
+
+  const onMain = () => {
+    if (globalPaused) {
+      seek(status === "idle" || status === "done" ? 0 : (STOPS.find((s) => s > clock.get()) ?? BEAT.end), { announce: true });
+      return;
+    }
+    if (status === "playing") pause();
+    else if (status === "paused") play(clock.get());
+    else {
+      play(0);
+      nudgePhone();
+    }
+  };
+
+  const endScrub = () => {
+    setScrubbing(false);
+    const v = clock.get();
+    if (scrubFrom.current === "playing" && v < BEAT.end && !pausedRef.current) play(v);
+    else {
+      const next = v >= BEAT.end ? "done" : "paused";
+      statusRef.current = next;
+      setStatus(next);
+    }
+  };
+  const onRailDown = () => {
+    scrubFrom.current = statusRef.current;
+    halt();
+    announceOn.current = false;
+    setScrubbing(true);
+    if (statusRef.current === "idle") {
+      statusRef.current = "paused";
+      setStatus("paused");
+    }
+    window.addEventListener("pointerup", endScrub, { once: true });
+    window.addEventListener("pointercancel", endScrub, { once: true });
+  };
+  const onRailKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const v = clock.get();
+    let target: number | null = null;
+    if (e.key === "ArrowRight" || e.key === "ArrowUp" || e.key === "PageUp") target = STOPS.find((s) => s > v) ?? BEAT.end;
+    else if (e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "PageDown") target = [...STOPS].reverse().find((s) => s < v - 1) ?? 0;
+    else if (e.key === "Home") target = 0;
+    else if (e.key === "End") target = BEAT.end;
+    if (target === null) return;
+    e.preventDefault();
+    seek(target);
   };
 
   const stepDone = [at(phase, "missed"), at(phase, "sms1"), at(phase, "confirm"), at(phase, "logged")];
   const currentStep = phase === "idle" ? -1 : stepDone.findIndex((d) => !d);
+  const railN = currentStep === -1 ? 4 : currentStep + 1;
+  const railText =
+    status === "idle" ? t.simulator.railIdle : fill(t.simulator.railValue, { n: railN, total: 4, step: t.simulator.steps[railN - 1] });
 
-  // `overflow-clip` (not hidden): clips like overflow-hidden but is not a scroll
-  // container, so the pinned (sticky) stage inside keeps working.
   return (
     <section
       id="simulator"
-      ref={track.ref}
+      ref={sectionRef}
       aria-labelledby="simulator-title"
       data-theme="dark"
-      className="relative isolate z-10 overflow-clip py-24 text-bone lg:py-32 motion-safe:lg:h-[240vh] motion-safe:lg:py-0"
+      className="relative isolate z-10 overflow-clip py-24 text-bone lg:pb-24 lg:pt-16"
     >
       <AmbientField variant={0} />
-      <div className="motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-[100svh] motion-safe:lg:overflow-hidden motion-safe:lg:pb-4 motion-safe:lg:pt-20">
-      <FitStage enabled={scrubbed} className="frame">
+      <div className="frame">
         <SectionHeader
           tone="dark"
           headingId="simulator-title"
           index={t.simulator.index}
           eyebrow={t.simulator.eyebrow}
           title={t.simulator.title}
-          body={scrubbed ? undefined : t.simulator.body}
+          body={t.simulator.body}
         />
 
         <p aria-live="polite" className="sr-only">
           {announcement}
         </p>
 
-        <div className={`grid grid-cols-12 gap-x-4 gap-y-6 [perspective:1600px] md:gap-y-12 lg:gap-x-10 ${scrubbed ? "mt-6" : "mt-10 md:mt-14 lg:mt-20"}`}>
+        <div className="mt-10 grid grid-cols-12 gap-x-4 gap-y-6 [perspective:1600px] md:mt-14 md:gap-y-12 lg:mt-12 lg:gap-x-10">
           {/* ---------- Left: phone ---------- */}
           <Reveal className="col-span-12 md:col-span-6 lg:col-span-5">
-            <motion.div style={scrubbed ? { rotateY: phoneRotateY, rotateX: phoneRotateX, z: phoneZ } : undefined}>
-              <Phone phase={phase} />
+            <motion.div ref={phoneRef} style={tilt ? { rotateY: phoneRotY, rotateX: phoneRotX } : undefined}>
+              <Phone phase={phase} tempo={tempo} live={live} />
             </motion.div>
           </Reveal>
 
@@ -188,38 +325,73 @@ export function MissedCallSimulator() {
               Phones: the column dissolves (`contents`) so the controls can sit ABOVE the phone. */}
           <motion.div
             className="col-span-12 flex flex-col gap-6 max-md:contents md:col-span-6 lg:col-span-7"
-            style={scrubbed ? { rotateY: panelRotateY, z: panelZ, x: panelX, transformOrigin: "100% 50%" } : undefined}
+            style={tilt ? { rotateY: panelRotY, transformOrigin: "100% 50%" } : undefined}
           >
             <Reveal className="order-first col-span-12 md:order-none">
-              {scrubbed ? (
-                <p className="flex flex-wrap items-center gap-2">
-                  <span className="chip-dark glass-flat text-bone">
-                    <ArrowDown aria-hidden="true" size={14} strokeWidth={1.75} className="text-aqua" />
-                    {t.simulator.scrollHint}
-                  </span>
-                  <span className="chip-dark glass-flat text-ash">
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <MagneticButton onClick={onMain} className="btn-aqua whitespace-normal text-center sm:min-w-[19rem] sm:whitespace-nowrap">
+                    {globalPaused && status !== "done" ? (
+                      <SkipForward aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
+                    ) : status === "done" ? (
+                      <RotateCcw aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
+                    ) : status === "playing" ? (
+                      <Pause aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
+                    ) : status === "paused" ? (
+                      <Play aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
+                    ) : (
+                      <PhoneIncoming aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
+                    )}
+                    {globalPaused && status !== "done"
+                      ? t.simulator.nextStep
+                      : status === "done"
+                        ? t.simulator.replay
+                        : status === "playing"
+                          ? t.simulator.pause
+                          : status === "paused"
+                            ? t.simulator.resume
+                            : t.simulator.button}
+                  </MagneticButton>
+                  <p className="chip-dark glass-flat self-start text-ash sm:self-auto">
                     <span className="text-bone/85">{niche.label[locale]}</span> · {sim.business}
-                  </span>
-                </p>
-              ) : (
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <MagneticButton
-                  onClick={start}
-                  aria-disabled={running}
-                  className="btn-aqua whitespace-normal text-center aria-disabled:cursor-progress sm:whitespace-nowrap"
-                >
-                  {phase === "logged" ? (
-                    <RotateCcw aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
-                  ) : (
-                    <PhoneIncoming aria-hidden="true" size={17} strokeWidth={1.75} className="shrink-0" />
-                  )}
-                  {running ? t.simulator.running : phase === "logged" ? t.simulator.replay : t.simulator.button}
-                </MagneticButton>
-                <p className="chip-dark glass-flat self-start text-ash sm:self-auto">
-                  <span className="text-bone/85">{niche.label[locale]}</span> · {sim.business}
-                </p>
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="relative min-w-0 flex-1">
+                    <input
+                      ref={railRef}
+                      type="range"
+                      min={0}
+                      max={BEAT.end}
+                      step={10}
+                      defaultValue={0}
+                      className="range"
+                      aria-label={t.simulator.railLabel}
+                      aria-valuetext={railText}
+                      onPointerDown={onRailDown}
+                      onChange={(e) => clock.set(Number(e.currentTarget.value))}
+                      onKeyDown={onRailKey}
+                    />
+                    {TICKS.map((ms) => (
+                      <span
+                        key={ms}
+                        aria-hidden="true"
+                        className="pointer-events-none absolute top-[calc(50%+15px)] h-1 w-1 -translate-x-1/2 rounded-full bg-bone/35"
+                        style={{ left: `calc(13px + (100% - 26px) * ${ms / BEAT.end})` }}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => (globalPaused ? seek(0, { announce: true }) : play(0))}
+                    disabled={status === "idle"}
+                    aria-label={t.simulator.restart}
+                    className="btn-line-dark btn-sm h-11 w-11 shrink-0 !px-0 disabled:opacity-40"
+                  >
+                    <RotateCcw aria-hidden="true" size={16} strokeWidth={1.75} />
+                  </button>
+                </div>
               </div>
-              )}
             </Reveal>
 
             {/* Progress: four glass chips, each with a rounded fill line. */}
@@ -254,16 +426,6 @@ export function MissedCallSimulator() {
                       <span className={`mt-2.5 block text-sm leading-snug ${done || current ? "text-bone" : "text-ash"}`}>
                         {label}
                       </span>
-                      <span aria-hidden="true" className="mt-auto block pt-3">
-                        <span className="block h-[3px] overflow-hidden rounded-full bg-aqua/[0.13]">
-                          <motion.span
-                            className="block h-full origin-left rounded-full bg-gradient-to-r from-aqua-deep to-aqua"
-                            initial={false}
-                            animate={{ scaleX: done ? 1 : current ? 0.4 : 0 }}
-                            transition={{ duration: 0.6, ease: EASE_EDITORIAL }}
-                          />
-                        </span>
-                      </span>
                     </li>
                   );
                 })}
@@ -281,7 +443,7 @@ export function MissedCallSimulator() {
                   <div className={`min-w-0 rounded-glass-sm p-3.5 sm:p-4 ${INNER_SURFACE}`}>
                     <p className="eyebrow text-ash">{t.simulator.recovered}</p>
                     <p className="mt-3 font-display text-[clamp(1.6rem,8vw,2.25rem)] leading-none tracking-[-0.035em] text-bone tabular xl:text-5xl">
-                      <AnimatedNumber value={phase === "logged" ? sim.amount : 0} format="currency" />
+                      <RecoveredAmount clock={clock} amount={sim.amount} reduce={reduce} logged={phase === "logged"} />
                     </p>
                   </div>
                   <div className={`min-w-0 rounded-glass-sm p-3.5 sm:p-4 ${INNER_SURFACE}`}>
@@ -307,10 +469,10 @@ export function MissedCallSimulator() {
                             key={`new-${niche.id}`}
                             layout
                             className="flex items-center justify-between gap-3 rounded-glass-sm bg-aqua/10 p-3 shadow-[0_14px_32px_-16px_rgba(42,107,191,0.6)] ring-1 ring-inset ring-aqua/45"
-                            initial={{ opacity: 0, y: -24, scale: 0.97 }}
+                            initial={{ opacity: 0, y: -16, scale: 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.7, ease: EASE_EDITORIAL }}
+                            transition={{ duration: dur(tempo, 0.45), ease: EASE_EDITORIAL }}
                           >
                             <div className="flex min-w-0 items-center gap-3">
                               <span
@@ -339,7 +501,7 @@ export function MissedCallSimulator() {
                           <motion.li
                             key={`${niche.id}-${b.name}`}
                             layout
-                            transition={{ duration: 0.7, ease: EASE_EDITORIAL }}
+                            transition={{ duration: dur(tempo, 0.45), ease: EASE_EDITORIAL }}
                             className={`flex items-center justify-between gap-3 rounded-glass-sm p-3 ${INNER_SURFACE}`}
                           >
                             <div className="flex min-w-0 items-center gap-3">
@@ -368,14 +530,36 @@ export function MissedCallSimulator() {
           </motion.div>
         </div>
 
-        <SimulationDisclaimer variant="simulator" className={scrubbed ? "mt-4" : "mt-8"} />
-      </FitStage>
+        <SimulationDisclaimer variant="simulator" className="mt-8" />
       </div>
     </section>
   );
 }
 
 /* ------------------------------------------------------------------ */
+
+/** Revenue counter driven by the story clock (no spring): scrub-safe, never runs backwards or overshoots. */
+function RecoveredAmount({ clock, amount, reduce, logged }: { clock: MotionValue<number>; amount: number; reduce: boolean; logged: boolean }) {
+  const { intlLocale } = useLanguage();
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const valueAt = (ms: number) =>
+      reduce ? (ms >= BEAT.logged ? amount : 0) : amount * EASE_COUNT(Math.min(1, Math.max(0, (ms - BEAT.logged) / (BEAT.end - BEAT.logged))));
+    const render = (ms: number) => {
+      if (ref.current) ref.current.textContent = formatCurrency(valueAt(ms), intlLocale);
+    };
+    render(clock.get());
+    return clock.on("change", render);
+  }, [clock, amount, reduce, intlLocale]);
+  return (
+    <span className="tabular whitespace-nowrap">
+      <span ref={ref} aria-hidden="true">
+        {formatCurrency(0, intlLocale)}
+      </span>
+      <span className="sr-only">{formatCurrency(logged ? amount : 0, intlLocale)}</span>
+    </span>
+  );
+}
 
 /** Hardware buttons on the device edge (decorative). */
 const SIDE_KEYS = [
@@ -385,7 +569,7 @@ const SIDE_KEYS = [
   "-right-[2px] top-[25%] h-16 rounded-r-[2px]",
 ] as const;
 
-function Phone({ phase }: { phase: Phase }) {
+function Phone({ phase, tempo, live }: { phase: Phase; tempo: Tempo; live: boolean }) {
   const { t, locale } = useLanguage();
   const { niche } = useNiche();
   const sim = niche.simulator;
@@ -457,6 +641,7 @@ function Phone({ phase }: { phase: Phase }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
+                    transition={{ duration: dur(tempo, 0.25), ease: EASE_EDITORIAL }}
                   >
                     <span
                       aria-hidden="true"
@@ -468,24 +653,24 @@ function Phone({ phase }: { phase: Phase }) {
                   </motion.p>
                 ) : null}
 
-                {at(phase, "typing1") && !at(phase, "sms1") ? <Typing key="typing1" side="out" label={t.simulator.typing} /> : null}
+                {at(phase, "typing1") && !at(phase, "sms1") ? <Typing key="typing1" side="out" label={t.simulator.typing} tempo={tempo} live={live} /> : null}
 
                 {at(phase, "sms1") ? (
-                  <Bubble key="sms1" side="out" meta={`${t.simulator.autoTag} · ${t.simulator.responseValue}`}>
+                  <Bubble key="sms1" tempo={tempo} side="out" meta={`${t.simulator.autoTag} · ${t.simulator.responseValue}`}>
                     {fill(t.simulator.smsAuto, vars)}
                   </Bubble>
                 ) : null}
 
                 {at(phase, "reply") ? (
-                  <Bubble key="reply" side="in">
+                  <Bubble key="reply" tempo={tempo} side="in">
                     {t.simulator.smsReply}
                   </Bubble>
                 ) : null}
 
-                {at(phase, "typing2") && !at(phase, "confirm") ? <Typing key="typing2" side="out" label={t.simulator.typing} /> : null}
+                {at(phase, "typing2") && !at(phase, "confirm") ? <Typing key="typing2" side="out" label={t.simulator.typing} tempo={tempo} live={live} /> : null}
 
                 {at(phase, "confirm") ? (
-                  <Bubble key="confirm" side="out" meta={t.simulator.autoTag}>
+                  <Bubble key="confirm" tempo={tempo} side="out" meta={t.simulator.autoTag}>
                     {fill(t.simulator.smsConfirm, vars)}
                   </Bubble>
                 ) : null}
@@ -498,10 +683,10 @@ function Phone({ phase }: { phase: Phase }) {
                 <motion.div
                   key="call"
                   className="glass-dark glass-flat absolute inset-0 flex flex-col items-center justify-center rounded-[2.125rem] px-6 text-center"
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -30 }}
-                  transition={{ duration: 0.5, ease: EASE_EDITORIAL }}
+                  exit={{ opacity: 0, y: -24 }}
+                  transition={{ duration: dur(tempo, 0.45), ease: EASE_EDITORIAL }}
                 >
                   <span
                     aria-hidden="true"
@@ -514,7 +699,7 @@ function Phone({ phase }: { phase: Phase }) {
                     style={{ backgroundImage: CALL_GLOW_MISSED }}
                   />
                   <div className="relative grid h-20 w-20 place-items-center">
-                    {phase === "ringing"
+                    {phase === "ringing" && live
                       ? [0, 1].map((i) => (
                           <motion.span
                             key={i}
@@ -522,7 +707,7 @@ function Phone({ phase }: { phase: Phase }) {
                             className="absolute inset-0 rounded-full bg-aqua/10 ring-1 ring-inset ring-aqua/40"
                             initial={{ scale: 1, opacity: 0.6 }}
                             animate={{ scale: 1.9, opacity: 0 }}
-                            transition={{ duration: 1.2, repeat: 1, delay: i * 0.5, ease: "easeOut" }}
+                            transition={{ duration: 0.85, delay: 0.2 + i * 0.35, ease: "easeOut" }}
                           />
                         ))
                       : null}
@@ -569,7 +754,7 @@ function Phone({ phase }: { phase: Phase }) {
   );
 }
 
-function Bubble({ side, children, meta }: { side: "in" | "out"; children: string; meta?: string }) {
+function Bubble({ side, children, meta, tempo }: { side: "in" | "out"; children: string; meta?: string; tempo: Tempo }) {
   const out = side === "out";
   return (
     <motion.div
@@ -577,8 +762,8 @@ function Bubble({ side, children, meta }: { side: "in" | "out"; children: string
       className={`flex max-w-[86%] flex-col ${out ? "self-end items-end" : "self-start items-start"}`}
       initial={{ opacity: 0, y: 14, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.45, ease: EASE_EDITORIAL }}
+      exit={{ opacity: 0, transition: { duration: dur(tempo, 0.15), ease: EASE_EDITORIAL } }}
+      transition={{ duration: dur(tempo, 0.45), ease: EASE_EDITORIAL }}
       style={{ originX: out ? 1 : 0, originY: 1 }}
     >
       <p
@@ -595,26 +780,31 @@ function Bubble({ side, children, meta }: { side: "in" | "out"; children: string
   );
 }
 
-function Typing({ side, label }: { side: "in" | "out"; label: string }) {
+function Typing({ side, label, tempo, live }: { side: "in" | "out"; label: string; tempo: Tempo; live: boolean }) {
   const out = side === "out";
+  const dot = `h-1.5 w-1.5 rounded-full ${out ? "bg-ink/60" : "bg-bone/70"}`;
   return (
     <motion.div
       className={`flex items-center gap-1 rounded-full px-3.5 py-3 ${out ? `self-end ${AQUA_BUBBLE}` : "glass-dark glass-flat self-start"}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.25 }}
+      exit={{ opacity: 0, scale: 0.9, transition: { duration: dur(tempo, 0.15), ease: EASE_EDITORIAL } }}
+      transition={{ duration: dur(tempo, 0.25), ease: EASE_EDITORIAL }}
     >
       <span className="sr-only">{label}</span>
-      {[0, 1, 2].map((i) => (
-        <motion.span
-          key={i}
-          aria-hidden="true"
-          className={`h-1.5 w-1.5 rounded-full ${out ? "bg-ink/60" : "bg-bone/70"}`}
-          animate={{ y: [0, -3, 0], opacity: [0.4, 1, 0.4] }}
-          transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
-        />
-      ))}
+      {[0, 1, 2].map((i) =>
+        live ? (
+          <motion.span
+            key={i}
+            aria-hidden="true"
+            className={dot}
+            animate={{ y: [0, -3, 0], opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
+          />
+        ) : (
+          <span key={i} aria-hidden="true" className={dot} style={{ opacity: 0.7 }} />
+        ),
+      )}
     </motion.div>
   );
 }
