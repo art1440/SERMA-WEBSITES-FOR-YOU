@@ -65,8 +65,11 @@ function PriceNumber({ value, reduce, className }: { value: number; reduce: bool
   const { intlLocale } = useLanguage();
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
-  const mv = useMotionValue(reduce ? value : 0);
-  const text = useMotionValue(formatMetric(reduce ? value : 0, "currency", intlLocale));
+  // Fail-safe: the real price is the resting state. The count-up only borrows a 0 start once the
+  // card is on screen, and any interruption snaps back to the real price, so "$0" can never stick.
+  const mv = useMotionValue(value);
+  const text = useMotionValue(formatMetric(value, "currency", intlLocale));
+  const played = useRef(false);
 
   useEffect(() => {
     const render = (v: number) => text.set(formatMetric(v, "currency", intlLocale));
@@ -75,13 +78,16 @@ function PriceNumber({ value, reduce, className }: { value: number; reduce: bool
   }, [mv, text, intlLocale]);
 
   useEffect(() => {
-    if (reduce) {
+    if (reduce || !inView || played.current) {
       mv.jump(value);
       return;
     }
-    if (!inView) return;
-    const controls = animate(mv, value, { duration: 0.6, ease: EASE_EDITORIAL });
-    return () => controls.stop();
+    played.current = true;
+    const controls = animate(mv, [0, value], { duration: 0.6, ease: EASE_EDITORIAL });
+    return () => {
+      controls.stop();
+      mv.jump(value);
+    };
   }, [inView, value, reduce, mv]);
 
   return (
