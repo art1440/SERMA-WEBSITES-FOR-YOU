@@ -37,6 +37,15 @@ export const metadata: Metadata = {
     template: "%s — SermaWebDesign",
   },
   description: SITE_DESCRIPTION,
+  // Home page defaults; /es sets its own, and the legal pages override with their canonical only.
+  alternates: {
+    canonical: `${BASE_PATH}/`,
+    languages: {
+      en: `${BASE_PATH}/`,
+      es: `${BASE_PATH}/es/`,
+      "x-default": `${BASE_PATH}/`,
+    },
+  },
   openGraph: {
     type: "website",
     siteName: "SermaWebDesign",

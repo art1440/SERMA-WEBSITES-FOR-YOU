@@ -57,7 +57,7 @@ const TONES = {
  *   boundary and thumb.
  */
 export function LanguageToggle({ tone = "light" }: Props) {
-  const { locale, setLocale, t } = useLanguage();
+  const { locale, switchLocale, t } = useLanguage();
   const reduce = useReducedMotionSafe();
   const { paused } = useMotionPause();
   const id = useId();
@@ -99,7 +99,7 @@ export function LanguageToggle({ tone = "light" }: Props) {
           setAnnounce(true);
           window.dispatchEvent(new CustomEvent(TAP_EVENT, { detail: id }));
           setShown(next);
-          startTransition(() => setLocale(next));
+          startTransition(() => switchLocale(next));
         }}
         whileTap={reduce || paused ? undefined : { scale: 0.95 }}
         className={`group relative inline-flex h-[44px] w-[80px] shrink-0 select-none rounded-full ring-1 ring-inset forced-colors:border forced-colors:border-[ButtonText] ${c.track}`}
