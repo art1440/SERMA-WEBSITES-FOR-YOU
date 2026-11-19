@@ -84,7 +84,7 @@ export const restaurantViews: NicheViews = {
       received: { en: "Sat, 4:30 PM", es: "Sáb, 4:30 PM" },
       note: {
         en: "Saw the short rib reel; booked the private room and paid the deposit",
-        es: "Vio el reel de las costillas; reservó el salón privado y pagó el depósito",
+        es: "Vio el reel de las costillas; reservó el salón privado y pagó el anticipo",
       },
     },
     {
@@ -341,7 +341,7 @@ export const restaurantViews: NicheViews = {
           },
           {
             en: "The table and her $160 deposit are on hold until you confirm. Once you do, she gets a confirmation text and a reminder the afternoon before.",
-            es: "La mesa queda apartada y su depósito de $160 retenido hasta que usted confirme. Al hacerlo, ella recibe un texto de confirmación y un recordatorio la tarde anterior.",
+            es: "La mesa queda apartada y su anticipo de $160 retenido hasta que usted confirme. Al hacerlo, ella recibe un texto de confirmación y un recordatorio la tarde anterior.",
           },
         ],
         details: [
@@ -350,7 +350,7 @@ export const restaurantViews: NicheViews = {
           { label: { en: "When", es: "Cuándo" }, value: { en: "Sat, 5:00–7:00 PM", es: "Sáb, 5:00–7:00 PM" } },
           { label: { en: "Area", es: "Área" }, value: { en: "Patio", es: "Terraza" } },
           { label: { en: "Note", es: "Nota" }, value: { en: "Birthday · 1 gluten-free guest", es: "Cumpleaños · 1 persona sin gluten" } },
-          { label: { en: "Deposit", es: "Depósito" }, value: { en: "$160 on hold · $20 per guest, parties of 8+", es: "$160 retenidos · $20 por persona, grupos de 8 o más" } },
+          { label: { en: "Deposit", es: "Anticipo" }, value: { en: "$160 on hold · $20 per guest, parties of 8+", es: "$160 retenidos · $20 por persona, grupos de 8 o más" } },
         ],
         primary: {
           label: { en: "Confirm reservation", es: "Confirmar reservación" },
@@ -373,7 +373,7 @@ export const restaurantViews: NicheViews = {
       fromEmail: "alerts@example.com",
       subject: {
         en: "Kim T. replied to your text-back: “Patio for 12 on Saturday?”",
-        es: "Kim T. respondió a su texto automático: “¿Terraza para 12 el sábado?”",
+        es: "Kim T. respondió a su mensaje automático: “¿Terraza para 12 el sábado?”",
       },
       preview: {
         en: "“Can you fit 12 of us on the patio Saturday around 6? Can we bring a cake?”",
@@ -386,7 +386,7 @@ export const restaurantViews: NicheViews = {
         paragraphs: [
           {
             en: "Kim T. called Saturday at 7:48 PM during the dinner rush. Your automatic text went out 5 seconds later, and she wrote back this morning at 9:24:",
-            es: "Kim T. llamó el sábado a las 7:48 PM, en plena hora de la cena. Su texto automático salió 5 segundos después y ella respondió esta mañana a las 9:24:",
+            es: "Kim T. llamó el sábado a las 7:48 PM, en plena hora de la cena. Su mensaje automático salió 5 segundos después y ella respondió esta mañana a las 9:24:",
           },
           {
             en: "“Thanks for texting me back Saturday night! It's my sister's birthday and we're about 12 people. Can you fit us on the patio this Saturday around 6? Also, is it OK if we bring our own cake?”",
@@ -421,14 +421,14 @@ export const restaurantViews: NicheViews = {
           },
           {
             en: "Of course you can bring your cake — we'll plate and serve it for $2 per guest. A $20-per-guest deposit ($240) holds a table for 12.",
-            es: "Claro que puede traer su pastel; nosotros lo servimos por $2 por persona. Con un depósito de $20 por persona ($240) apartamos la mesa para 12.",
+            es: "Claro que puede traer su pastel; nosotros lo servimos por $2 por persona. Con un anticipo de $20 por persona ($240) apartamos la mesa para 12.",
           },
           {
             en: "Thanks for the text, Kim! I'm prepping for lunch right now — I'll call you before 3 PM to set everything up.",
             es: "¡Gracias por su mensaje, Kim! Estoy preparando el servicio del almuerzo; la llamo antes de las 3 PM para dejar todo listo.",
           },
         ],
-        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su mensaje automático de SermaWebDesign" },
       },
     },
     {
@@ -485,7 +485,7 @@ export const restaurantViews: NicheViews = {
       fromEmail: "alerts@example.com",
       subject: {
         en: "Deposit received: $500 from Ethan W. — holiday party",
-        es: "Depósito recibido: $500 de Ethan W. — fiesta de fin de año",
+        es: "Anticipo recibido: $500 de Ethan W. — fiesta de fin de año",
       },
       preview: {
         en: "Private room held for 25 guests. Balance due the night of the event.",
@@ -498,14 +498,14 @@ export const restaurantViews: NicheViews = {
         paragraphs: [
           {
             en: "Ethan paid the deposit for his company's holiday party, so the private room is now held for his group. The receipt is below for your records.",
-            es: "Ethan pagó el depósito de la fiesta de fin de año de su empresa, así que el salón privado ya está apartado para su grupo. Abajo tiene el recibo para sus registros.",
+            es: "Ethan pagó el anticipo de la fiesta de fin de año de su empresa, así que el salón privado ya está apartado para su grupo. Abajo tiene el recibo para sus registros.",
           },
         ],
         details: [
           { label: { en: "Receipt", es: "Recibo" }, value: { en: "#BK-2291", es: "#BK-2291" } },
           { label: { en: "Event", es: "Evento" }, value: { en: "Holiday party · Private room", es: "Fiesta de fin de año · Salón privado" } },
           { label: { en: "Guests", es: "Personas" }, value: { en: "25", es: "25" } },
-          { label: { en: "Deposit paid", es: "Depósito pagado" }, value: { en: "$500.00", es: "$500.00" } },
+          { label: { en: "Deposit paid", es: "Anticipo pagado" }, value: { en: "$500.00", es: "$500.00" } },
           { label: { en: "Paid with", es: "Forma de pago" }, value: { en: "Visa ending 4417", es: "Visa terminada en 4417" } },
           { label: { en: "Est. balance", es: "Saldo estimado" }, value: { en: "$1,600, due at the event", es: "$1,600, a pagar en el evento" } },
         ],

@@ -168,7 +168,7 @@ export const salonViews: NicheViews = {
       ...ALERTS,
       subject: {
         en: "Alexis R. replied to your text-back: “Can you fix orange hair?”",
-        es: "Alexis R. respondió a su texto automático: “¿Pueden arreglar un tono naranja?”",
+        es: "Alexis R. respondió a su mensaje automático: “¿Pueden arreglar un tono naranja?”",
       },
       preview: {
         en: "“I tried boxed dye and it went orange. Do you do color corrections? How much?”",
@@ -181,7 +181,7 @@ export const salonViews: NicheViews = {
         paragraphs: [
           {
             en: "Alexis R. called at 9:03 AM while the front desk was with a client. Your automatic text went out 5 seconds later, and she wrote back at 9:09:",
-            es: "Alexis R. llamó a las 9:03 AM mientras la recepción atendía a una clienta. Su texto automático salió 5 segundos después y ella respondió a las 9:09:",
+            es: "Alexis R. llamó a las 9:03 AM mientras la recepción atendía a una clienta. Su mensaje automático salió 5 segundos después y ella respondió a las 9:09:",
           },
           {
             en: "“Hi! I tried boxed dye and it went orange. Do you do color corrections? How much would that be?”",
@@ -217,7 +217,7 @@ export const salonViews: NicheViews = {
             es: "Sí, las hacemos. Las correcciones suelen costar entre $180 y $350, según el largo y el historial de color de su cabello. Use el enlace de nuestro mensaje anterior para agendar una consulta.",
           },
         ],
-        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su mensaje automático de SermaWebDesign" },
       },
     },
     {
@@ -230,7 +230,7 @@ export const salonViews: NicheViews = {
       },
       preview: {
         en: "Full highlights, 2½ hrs · New color client · $50 deposit on hold.",
-        es: "Mechas completas, 2½ h · Clienta nueva de color · Depósito de $50 retenido.",
+        es: "Mechas completas, 2½ h · Clienta nueva de color · Anticipo de $50 retenido.",
       },
       received: { en: "7:22 AM", es: "7:22 AM" },
       unread: true,
@@ -243,7 +243,7 @@ export const salonViews: NicheViews = {
           },
           {
             en: "Her $50 deposit is on hold and is charged when you confirm. Since she's a new color client, the confirmation text also asks her to stop by for a quick patch test 48 hours before.",
-            es: "Su depósito de $50 está retenido y se cobra cuando usted confirme. Como es clienta nueva de color, el texto de confirmación también le pide pasar a una breve prueba de alergia 48 horas antes.",
+            es: "Su anticipo de $50 está retenido y se cobra cuando usted confirme. Como es clienta nueva de color, el texto de confirmación también le pide pasar a una breve prueba de alergia 48 horas antes.",
           },
         ],
         details: [
@@ -251,7 +251,7 @@ export const salonViews: NicheViews = {
           { label: { en: "Service", es: "Servicio" }, value: SVC.highlights },
           { label: { en: "When", es: "Cuándo" }, value: { en: "Fri, 9:30 AM–12:00 PM", es: "Viernes, 9:30 AM–12:00 PM" } },
           { label: { en: "Stylist", es: "Estilista" }, value: { en: "Jenna", es: "Jenna" } },
-          { label: { en: "Deposit", es: "Depósito" }, value: { en: "$50 on hold · $160 due at checkout", es: "$50 retenidos · $160 al pagar" } },
+          { label: { en: "Deposit", es: "Anticipo" }, value: { en: "$50 on hold · $160 due at checkout", es: "$50 retenidos · $160 al pagar" } },
           { label: { en: "Patch test", es: "Prueba de alergia" }, value: { en: "By Wednesday", es: "A más tardar el miércoles" } },
         ],
         primary: {
@@ -342,7 +342,7 @@ export const salonViews: NicheViews = {
           { label: { en: "Booked online", es: "Agendadas en línea" }, value: { en: "33", es: "33" } },
           { label: { en: "Rebooked before leaving", es: "Reagendadas antes de salir" }, value: { en: "21", es: "21" } },
           { label: { en: "Missed calls answered by text", es: "Llamadas perdidas respondidas por texto" }, value: { en: "9", es: "9" } },
-          { label: { en: "No-shows", es: "Inasistencias" }, value: { en: "1 · deposit kept", es: "1 · depósito retenido" } },
+          { label: { en: "No-shows", es: "Inasistencias" }, value: { en: "1 · deposit kept", es: "1 · anticipo retenido" } },
         ],
         primary: {
           label: { en: "Mark as reviewed", es: "Marcar como revisado" },

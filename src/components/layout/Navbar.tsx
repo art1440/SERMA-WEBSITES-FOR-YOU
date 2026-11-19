@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Lock, Menu, X } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
+import { ArrowUpRight, Lock } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent } from "react";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -10,7 +10,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTabs } from "@/context/TabsContext";
-import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
+import { EASE_EDITORIAL, SPRING_SMOOTH, SPRING_SNAPPY } from "@/lib/motion";
 import { TAB_IDS, type TabId } from "@/lib/tabs";
 import { goToForm } from "@/lib/scroll";
 import { ClientLoginModal } from "./ClientLoginModal";
@@ -18,6 +18,21 @@ import { ClientLoginModal } from "./ClientLoginModal";
 /** Controls inside the glass bar: flat glass pebbles (no nested blur), 44px tall. */
 const BAR_ICON = "btn-line-dark btn-sm glass-flat h-11 w-11 shrink-0 p-0";
 const BAR_BUTTON = "btn-sm h-11 py-0";
+
+const INSTANT = { duration: 0 } as const;
+
+/** Menu button icon: three lines that rotate into an X (transform/opacity only). */
+function MenuIcon({ open, reduce }: { open: boolean; reduce: boolean }) {
+  const tr = reduce ? INSTANT : SPRING_SNAPPY;
+  const line = "absolute left-0 top-1/2 -mt-[0.875px] h-[1.75px] w-full rounded-full bg-current";
+  return (
+    <span aria-hidden="true" className="relative block h-[18px] w-[18px]">
+      <motion.span className={line} initial={false} animate={open ? { y: 0, rotate: 45 } : { y: -5, rotate: 0 }} transition={tr} />
+      <motion.span className={line} initial={false} animate={{ opacity: open ? 0 : 1, scaleX: open ? 0.4 : 1 }} transition={reduce ? INSTANT : { duration: 0.12 }} />
+      <motion.span className={line} initial={false} animate={open ? { y: 0, rotate: -45 } : { y: 5, rotate: 0 }} transition={tr} />
+    </span>
+  );
+}
 
 /**
  * Floating navigation: a sticky Liquid Glass capsule that hovers over the 3D
@@ -31,6 +46,18 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const tabs = useTabs();
+  const reduce = !!useReducedMotion();
+  // Open: panel springs in, then children cascade 35ms apart (bottom buttons last).
+  // Close: one quick fade/scale, children stay put (no reverse cascade).
+  const panelVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.96 },
+    show: { opacity: 1, scale: 1, transition: reduce ? INSTANT : { ...SPRING_SMOOTH, staggerChildren: 0.035, delayChildren: 0.04 } },
+    exit: { opacity: 0, scale: 0.98, transition: reduce ? INSTANT : { duration: 0.16, ease: EASE_EDITORIAL } },
+  };
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: reduce ? 0 : 12 },
+    show: { opacity: 1, y: 0, transition: reduce ? INSTANT : SPRING_SMOOTH },
+  };
   const tabItems = TAB_IDS.map((id) => ({ id, label: t.nav.tabs[id] }));
 
   const links = [
@@ -77,11 +104,11 @@ export function Navbar() {
               key="menu-scrim"
               aria-hidden="true"
               onClick={closeMenu}
-              className="pointer-events-auto fixed inset-0 -z-10 bg-ink/70 [@media(min-width:80em)]:hidden"
+              className="pointer-events-auto fixed inset-0 -z-10 bg-ink/40 [@media(min-width:80em)]:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: EASE_EDITORIAL }}
+              transition={reduce ? INSTANT : { duration: 0.25, ease: EASE_EDITORIAL }}
             />
           ) : null}
         </AnimatePresence>
@@ -164,7 +191,7 @@ export function Navbar() {
                 aria-label={menuOpen ? t.nav.closeMenu : t.nav.openMenu}
                 className={`${BAR_ICON} [@media(min-width:80em)]:hidden`}
               >
-                {menuOpen ? <X aria-hidden="true" size={18} strokeWidth={1.75} /> : <Menu aria-hidden="true" size={18} strokeWidth={1.75} />}
+                <MenuIcon open={menuOpen} reduce={reduce} />
               </button>
             </div>
           </div>
@@ -175,23 +202,19 @@ export function Navbar() {
                 id="mobile-menu"
                 key="mobile-menu"
                 className={`glass-dark glass-solid pointer-events-auto absolute inset-x-0 top-full rounded-glass-lg ${tabs ? "mt-2 max-lg:mt-[3.75rem]" : "mt-2"} [--glass-blur:18px] max-sm:glass-flat sm:left-auto sm:w-[23rem] [@media(min-width:80em)]:hidden`}
-                style={{ transformOrigin: "top right" }}
-                initial={{ opacity: 0, y: -12, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -8, scale: 0.985 }}
-                transition={{ duration: 0.35, ease: EASE_EDITORIAL }}
+                // Origin sits under the menu button (capsule padding + half the 44px button).
+                style={{ transformOrigin: "calc(100% - 1.75rem) 0" }}
+                variants={panelVariants}
+                initial="hidden"
+                animate="show"
+                exit="exit"
               >
                 {/* Inner scroller keeps the glass rim fixed while short (landscape) screens scroll. */}
                 <nav aria-label={t.nav.primaryLabel} className="max-h-[calc(100svh-6rem)] overflow-y-auto overscroll-contain p-2">
                   <ul className="space-y-0.5">
                     {tabs
                       ? tabItems.map((item, i) => (
-                          <motion.li
-                            key={item.id}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.03 * i, duration: 0.4, ease: EASE_EDITORIAL }}
-                          >
+                          <motion.li key={item.id} variants={itemVariants}>
                             <a
                               href={item.id === "home" ? "/" : `#${item.id}`}
                               aria-current={tabs.selected === item.id ? "page" : undefined}
@@ -200,7 +223,7 @@ export function Navbar() {
                                 closeMenu();
                                 tabs.go(item.id);
                               }}
-                              className={`flex min-h-[52px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.375rem] leading-tight tracking-[-0.03em] hover:bg-aqua/[0.078] ${
+                              className={`flex min-h-[52px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.375rem] leading-tight tracking-[-0.03em] transition-transform duration-100 hover:bg-aqua/[0.078] active:scale-[0.98] active:bg-aqua/[0.16] motion-reduce:transition-none ${
                                 tabs.selected === item.id ? "bg-aqua/[0.091] text-bone" : "text-bone/80"
                               }`}
                             >
@@ -212,16 +235,11 @@ export function Navbar() {
                           </motion.li>
                         ))
                       : links.map((link, i) => (
-                      <motion.li
-                        key={link.href}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.04 * i, duration: 0.4, ease: EASE_EDITORIAL }}
-                      >
+                      <motion.li key={link.href} variants={itemVariants}>
                         <Link
                           href={link.href}
                           onClick={closeMenu}
-                          className="flex min-h-[56px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.5rem] leading-tight tracking-[-0.03em] hover:bg-aqua/[0.078]"
+                          className="flex min-h-[56px] items-center justify-between rounded-glass-sm px-4 font-display text-[1.5rem] leading-tight tracking-[-0.03em] transition-transform duration-100 hover:bg-aqua/[0.078] active:scale-[0.98] active:bg-aqua/[0.16] motion-reduce:transition-none"
                         >
                           {link.label}
                           <span aria-hidden="true" className="tabular text-sm font-medium tracking-normal text-ash">
@@ -231,7 +249,7 @@ export function Navbar() {
                       </motion.li>
                     ))}
                   </ul>
-                  <div className="mx-2 mt-2 grid gap-2 border-t border-bone/[0.14] pb-2 pt-4">
+                  <motion.div variants={itemVariants} className="mx-2 mt-2 grid gap-2 border-t border-bone/[0.14] pb-2 pt-4">
                     <ThemeToggle variant="menu" className="sm:hidden" />
                     <button type="button" onClick={openLogin} className="btn-line-dark glass-flat w-full">
                       <Lock aria-hidden="true" size={13} strokeWidth={1.75} />
@@ -240,7 +258,7 @@ export function Navbar() {
                     <a href="#enquiry-form" onClick={onStartClick} className="btn-aqua w-full">
                       {t.common.getStarted}
                     </a>
-                  </div>
+                  </motion.div>
                 </nav>
               </motion.div>
             ) : null}

@@ -369,7 +369,7 @@ export const serviceViews: NicheViews = {
       fromEmail: "alerts@example.com",
       subject: {
         en: "Keisha M. replied to your text-back: “Can someone come today?”",
-        es: "Keisha M. respondió a su texto automático: “¿Puede venir alguien hoy?”",
+        es: "Keisha M. respondió a su mensaje automático: “¿Puede venir alguien hoy?”",
       },
       preview: {
         en: "“Our furnace clicks but won't light, and it's 58 degrees in here with a toddler.”",
@@ -382,7 +382,7 @@ export const serviceViews: NicheViews = {
         paragraphs: [
           {
             en: "Keisha M. called at 7:52 AM, before you opened. Your automatic text went out 6 seconds later, and she wrote back at 8:05:",
-            es: "Keisha M. llamó a las 7:52 AM, antes de que usted abriera. Su texto automático salió 6 segundos después y ella respondió a las 8:05:",
+            es: "Keisha M. llamó a las 7:52 AM, antes de que usted abriera. Su mensaje automático salió 6 segundos después y ella respondió a las 8:05:",
           },
           {
             en: "“Thanks for texting back so fast! Our furnace clicks but won't light, and it's 58 degrees in here with a toddler. Can someone come out today? And what do you charge for a service call?”",
@@ -413,7 +413,7 @@ export const serviceViews: NicheViews = {
         quickReplies: [
           {
             en: "Hi Keisha, it's Dana at Clearline. Mike can be there today between 2 and 4 PM. The service call is $89; a $50 deposit holds the visit and is credited to your final invoice.",
-            es: "Hola, Keisha, habla Dana de Clearline. Mike puede llegar hoy entre las 2 y las 4 PM. La visita de servicio cuesta $89; un depósito de $50 la aparta y se descuenta de su factura final.",
+            es: "Hola, Keisha, habla Dana de Clearline. Mike puede llegar hoy entre las 2 y las 4 PM. La visita de servicio cuesta $89; un anticipo de $50 la aparta y se descuenta de su factura final.",
           },
           {
             en: "Today is full, but I can hold our first slot tomorrow, 8–10 AM. In the meantime, check that the furnace switch is on and the filter isn't clogged.",
@@ -424,7 +424,7 @@ export const serviceViews: NicheViews = {
             es: "¡Lamento mucho el frío! La llamo en 5 minutos para guiarla en un reinicio rápido.",
           },
         ],
-        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su mensaje automático de SermaWebDesign" },
       },
     },
     {

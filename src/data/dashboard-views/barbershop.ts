@@ -165,7 +165,7 @@ export const barbershopViews: NicheViews = {
       ...ALERTS,
       subject: {
         en: "Jordan P. replied to your text-back: “Line-up before 1?”",
-        es: "Jordan P. respondió a su texto automático: “¿Perfilado antes de la 1?”",
+        es: "Jordan P. respondió a su mensaje automático: “¿Perfilado antes de la 1?”",
       },
       preview: {
         en: "“Any chance I can get a quick line-up before 1? Got a job interview today.”",
@@ -178,7 +178,7 @@ export const barbershopViews: NicheViews = {
         paragraphs: [
           {
             en: "Jordan P. called the shop at 8:41 AM while you were with a client. Your automatic text went out 4 seconds later, and he wrote back at 8:47:",
-            es: "Jordan P. llamó a la barbería a las 8:41 AM mientras usted atendía a un cliente. Su texto automático salió 4 segundos después y él respondió a las 8:47:",
+            es: "Jordan P. llamó a la barbería a las 8:41 AM mientras usted atendía a un cliente. Su mensaje automático salió 4 segundos después y él respondió a las 8:47:",
           },
           {
             en: "“Hey, any chance I can get a quick line-up before 1? Got a job interview today.”",
@@ -214,7 +214,7 @@ export const barbershopViews: NicheViews = {
             es: "Lo sentimos, hoy estamos llenos hasta la 1. Después de las 4 atendemos sin cita, por si le sirve otro día.",
           },
         ],
-        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su mensaje automático de SermaWebDesign" },
       },
     },
     {
@@ -227,7 +227,7 @@ export const barbershopViews: NicheViews = {
       },
       preview: {
         en: "The Works, 75 min · $20 deposit on hold until you confirm.",
-        es: "Servicio completo, 75 min · Depósito de $20 retenido hasta que usted confirme.",
+        es: "Servicio completo, 75 min · Anticipo de $20 retenido hasta que usted confirme.",
       },
       received: { en: "7:58 AM", es: "7:58 AM" },
       unread: true,
@@ -240,7 +240,7 @@ export const barbershopViews: NicheViews = {
           },
           {
             en: "His $20 no-show deposit is on hold and is charged when you confirm. He'll then get a text with the address, where to park and your 24-hour cancellation policy.",
-            es: "Su depósito de $20 contra inasistencias está retenido y se cobra cuando usted confirme. Después recibirá un texto con la dirección, dónde estacionarse y su política de cancelación de 24 horas.",
+            es: "Su anticipo de $20 contra inasistencias está retenido y se cobra cuando usted confirme. Después recibirá un texto con la dirección, dónde estacionarse y su política de cancelación de 24 horas.",
           },
         ],
         details: [
@@ -248,7 +248,7 @@ export const barbershopViews: NicheViews = {
           { label: { en: "Service", es: "Servicio" }, value: SVC.works },
           { label: { en: "When", es: "Cuándo" }, value: { en: "Thu, 5:15–6:30 PM", es: "Jueves, 5:15–6:30 PM" } },
           { label: { en: "Barber", es: "Barbero" }, value: { en: "Andre · Chair 1", es: "Andre · Silla 1" } },
-          { label: { en: "Deposit", es: "Depósito" }, value: { en: "$20 on hold · $55 due at the chair", es: "$20 retenidos · $55 al terminar" } },
+          { label: { en: "Deposit", es: "Anticipo" }, value: { en: "$20 on hold · $55 due at the chair", es: "$20 retenidos · $55 al terminar" } },
         ],
         primary: {
           label: { en: "Confirm booking", es: "Confirmar cita" },
@@ -354,7 +354,7 @@ export const barbershopViews: NicheViews = {
       ...ALERTS,
       subject: {
         en: "Deposit received: $20 from Keith B. for Fri 9:30 AM",
-        es: "Depósito recibido: $20 de Keith B. para el viernes a las 9:30 AM",
+        es: "Anticipo recibido: $20 de Keith B. para el viernes a las 9:30 AM",
       },
       preview: {
         en: "Cut + beard with Tony. $40 balance due at the chair.",
@@ -367,7 +367,7 @@ export const barbershopViews: NicheViews = {
         paragraphs: [
           {
             en: "Keith B. paid his no-show deposit for Friday, so his slot is held. If he cancels with less than 24 hours' notice, the deposit stays with the shop under your policy.",
-            es: "Keith B. pagó su depósito contra inasistencias para el viernes, así que su horario queda asegurado. Si cancela con menos de 24 horas de aviso, el depósito se queda en la barbería según su política.",
+            es: "Keith B. pagó su anticipo contra inasistencias para el viernes, así que su horario queda asegurado. Si cancela con menos de 24 horas de aviso, el anticipo se queda en la barbería según su política.",
           },
           {
             en: "The full receipt is below. Nothing else to do: the balance is collected at the chair.",
@@ -378,7 +378,7 @@ export const barbershopViews: NicheViews = {
           { label: { en: "Receipt", es: "Recibo" }, value: { en: "#NBC-20418", es: "#NBC-20418" } },
           { label: { en: "Service", es: "Servicio" }, value: { en: "Cut + beard · Tony", es: "Corte + barba · Tony" } },
           { label: { en: "Appointment", es: "Cita" }, value: { en: "Fri, 9:30 AM · Chair 2", es: "Viernes, 9:30 AM · Silla 2" } },
-          { label: { en: "Deposit paid", es: "Depósito pagado" }, value: { en: "$20.00", es: "$20.00" } },
+          { label: { en: "Deposit paid", es: "Anticipo pagado" }, value: { en: "$20.00", es: "$20.00" } },
           { label: { en: "Balance at the chair", es: "Saldo al terminar" }, value: { en: "$40.00", es: "$40.00" } },
           { label: { en: "Card", es: "Tarjeta" }, value: { en: "Visa ending 7731", es: "Visa terminada en 7731" } },
         ],
