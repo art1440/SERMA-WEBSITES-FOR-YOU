@@ -319,6 +319,8 @@ function EngineScene({ hero, system, finale, ink, desktop, onLowDpr }: Omit<Prop
   const morph = useRef(0);
   const { gl } = useThree();
   const perf = useRef({ frames: 0, time: 0, lowered: false });
+  // App-owned clock: R3F resets clock.elapsedTime to 0 whenever the frameloop flips never <-> always.
+  const clockT = useRef(0);
 
   const count = desktop ? 1400 : 500;
   const formations = useMemo(() => buildFormations(count), [count]);
@@ -401,8 +403,9 @@ function EngineScene({ hero, system, finale, ink, desktop, onLowDpr }: Omit<Prop
         pf.time = 0;
       }
     }
+    clockT.current += Math.min(delta, 0.1); // capped so a hitch or hidden tab never jumps the sculpture
     const dt = Math.min(delta, 1 / 20);
-    const time = state.clock.elapsedTime;
+    const time = clockT.current;
     const h = hero.get();
     const s = system.get();
     const f = finale.get();

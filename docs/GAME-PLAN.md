@@ -95,7 +95,7 @@ allocations in a short scroll); not WebGL, worth tracing during T4.
 | T1 Dashboard | [plan](plans/T1-dashboard.md) | done (Sonnet) | PASS w/ nits (fixed) | SHIP AFTER NITS (fixed) | ✅ shipped |
 | T2 Simulator | [plan](plans/T2-simulator.md) | done (Sonnet) | inspecting (Haiku) | | WIP commit |
 | T3 WebGL hygiene | [plan](plans/T3-webgl.md) | done (Sonnet) | PASS w/ nits (wording only) | SHIP | ✅ shipped |
-| T3b Sculpture time + threads context restore | [plan](plans/T3b-sculpture-time.md) | coding (Sonnet) | | | |
+| T3b Sculpture time + threads context restore | [plan](plans/T3b-sculpture-time.md) | done (Sonnet) | inspecting (Haiku) | | WIP commit |
 | T4 Hero | planning (Opus) | | | | |
 | T5 Tab swap | planning (Opus) | | | | |
 | T6 CTA feel | planning (Opus, with T5) | | | | |

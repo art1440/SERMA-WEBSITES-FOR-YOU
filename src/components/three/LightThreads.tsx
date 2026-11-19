@@ -114,40 +114,55 @@ export function LightThreads({ paused, desktop }: Props) {
     const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: "low-power" });
     if (!gl) return;
 
-    const vs = compile(gl, gl.VERTEX_SHADER, VERT);
-    const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
-    if (!vs || !fs) {
-      if (vs) gl.deleteShader(vs);
-      if (fs) gl.deleteShader(fs);
-      return;
-    }
-    const prog = gl.createProgram()!;
-    gl.attachShader(prog, vs);
-    gl.attachShader(prog, fs);
-    gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      gl.deleteProgram(prog);
+    let prog: WebGLProgram | null = null;
+    let buf: WebGLBuffer | null = null;
+    let uRes: WebGLUniformLocation | null = null;
+    let uTime: WebGLUniformLocation | null = null;
+    let uScroll: WebGLUniformLocation | null = null;
+    let uDark: WebGLUniformLocation | null = null;
+    let lastDark = -1;
+    let lost = false;
+    // (Re)creates the program, buffer and uniform locations; also used after a context restore.
+    const init = () => {
+      const vs = compile(gl, gl.VERTEX_SHADER, VERT);
+      const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
+      if (!vs || !fs) {
+        if (vs) gl.deleteShader(vs);
+        if (fs) gl.deleteShader(fs);
+        return false;
+      }
+      const pr = gl.createProgram()!;
+      gl.attachShader(pr, vs);
+      gl.attachShader(pr, fs);
+      gl.linkProgram(pr);
+      if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) {
+        gl.deleteProgram(pr);
+        gl.deleteShader(vs);
+        gl.deleteShader(fs);
+        return false;
+      }
+      // A linked program no longer needs its shader objects.
+      gl.detachShader(pr, vs);
+      gl.detachShader(pr, fs);
       gl.deleteShader(vs);
       gl.deleteShader(fs);
-      return;
-    }
-    // A linked program no longer needs its shader objects.
-    gl.detachShader(prog, vs);
-    gl.detachShader(prog, fs);
-    gl.deleteShader(vs);
-    gl.deleteShader(fs);
-    gl.useProgram(prog);
+      prog = pr;
+      gl.useProgram(pr);
 
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(prog, "p");
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const uRes = gl.getUniformLocation(prog, "uRes");
-    const uTime = gl.getUniformLocation(prog, "uTime");
-    const uScroll = gl.getUniformLocation(prog, "uScroll");
-    const uDark = gl.getUniformLocation(prog, "uDark");
+      buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(pr, "p");
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      uRes = gl.getUniformLocation(pr, "uRes");
+      uTime = gl.getUniformLocation(pr, "uTime");
+      uScroll = gl.getUniformLocation(pr, "uScroll");
+      uDark = gl.getUniformLocation(pr, "uDark");
+      lastDark = -1; // re-send uDark
+      return true;
+    };
+    if (!init()) return;
 
     // Soft glow → render at a fraction of CSS pixels and let the browser scale it up.
     // Sized from the canvas (the backdrop is lvh-tall), and the scroll unit only changes with
@@ -167,7 +182,7 @@ export function LightThreads({ paused, desktop }: Props) {
         canvas.height = h;
         gl.viewport(0, 0, w, h);
       }
-      gl.uniform2f(uRes, w, h);
+      if (!lost) gl.uniform2f(uRes, w, h);
     };
     resize();
     resizeRef.current = resize;
@@ -180,8 +195,8 @@ export function LightThreads({ paused, desktop }: Props) {
     let last = 0;
     let start = performance.now();
     let frozenAt = 0;
-    let lastDark = -1;
     const render = (now: number, ease: number) => {
+      if (lost) return;
       const target = window.scrollY / unit;
       scroll += (target - scroll) * ease;
       gl.uniform1f(uTime, (now - start) / 1000);
@@ -225,6 +240,20 @@ export function LightThreads({ paused, desktop }: Props) {
     };
     runRef.current = run;
     document.addEventListener("visibilitychange", run);
+    const onLost = (e: Event) => {
+      e.preventDefault(); // allows the browser to restore the context
+      cancelAnimationFrame(raf);
+      lost = true;
+    };
+    const onRestored = () => {
+      lost = false;
+      if (!init()) return;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      run();
+    };
+    canvas.addEventListener("webglcontextlost", onLost);
+    canvas.addEventListener("webglcontextrestored", onRestored);
     run();
 
     return () => {
@@ -232,10 +261,13 @@ export function LightThreads({ paused, desktop }: Props) {
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScrollPaused);
       document.removeEventListener("visibilitychange", run);
-      gl.deleteBuffer(buf);
-      gl.deleteProgram(prog);
+      canvas.removeEventListener("webglcontextlost", onLost);
+      canvas.removeEventListener("webglcontextrestored", onRestored);
+      if (!lost) {
+        gl.deleteBuffer(buf);
+        gl.deleteProgram(prog);
+      }
     };
-    // The canvas keeps one context for its whole life (a lost context can't be re-acquired).
   }, []);
 
   useEffect(() => {
