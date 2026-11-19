@@ -198,6 +198,13 @@ export function HeroChapter() {
 
         {/* Statement — emerges from depth as the headline leaves, then rests: it's the last beat */}
         <div className="pointer-events-none absolute inset-0 hidden items-center justify-center [perspective:900px] motion-safe:flex">
+          {/* Reading wash: the page ground (ink token: sky in light, navy in dark) pooled behind the statement, so the
+              sculpture's ring and beams never cut through the final line. Fades in with the statement; opacity only. */}
+          <motion.div
+            aria-hidden="true"
+            style={{ opacity: stOpacity }}
+            className="absolute left-1/2 top-1/2 h-[46%] w-[min(92vw,68rem)] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,rgb(var(--ink)/0.82),rgb(var(--ink)/0.5)_55%,transparent)]"
+          />
           <motion.p
             style={{ opacity: stOpacity, z: stZ, rotateX: stRotateX }}
             className="frame text-center font-display text-display-lg text-bone text-balance"
