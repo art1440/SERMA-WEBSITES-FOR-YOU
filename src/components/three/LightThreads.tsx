@@ -1,0 +1,238 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { useColorScheme } from "@/lib/useColorScheme";
+
+/**
+ * Light threads — a bundle of thin luminous strands that sweeps across the
+ * page and twists as you scroll (sky blue, with a single brighter cyan strand).
+ *
+ * One full-screen fragment shader on its own tiny WebGL context: no three.js,
+ * one draw call per frame. Rendered at reduced resolution (the glow is soft,
+ * so it scales up cleanly) and capped at 60 fps (30 fps on phones). Stops entirely
+ * while paused (WCAG 2.2.2 control), when the tab is hidden, or when WebGL is
+ * unavailable. Reduced motion never mounts it (the Stage is off).
+ */
+type Props = { paused: boolean; desktop: boolean };
+
+const VERT = `
+attribute vec2 p;
+void main() { gl_Position = vec4(p, 0.0, 1.0); }
+`;
+
+const FRAG = `
+precision mediump float;
+uniform vec2 uRes;
+uniform float uTime;
+uniform float uScroll;
+uniform float uDark;
+const int N = 18;
+
+// Per-pixel terms shared by every strand are computed once in main() (same picture, ~35% less ALU).
+float strand(vec2 q, float i, float c, float base, float wbase, float px) {
+  float fi = i / float(N - 1) - 0.5;            // -0.5 … 0.5 across the bundle
+  // Twist: the bundle pinches and fans out along its length (ribbon look).
+  float twist = 0.05 + 0.24 * abs(sin(base + fi * 0.6));
+  float wob = 0.012 * sin(wbase + i * 1.7);
+  float d = abs(q.y - (c + fi * twist + wob));
+  return px / (d + px) * smoothstep(0.0, 0.6, 1.0 - abs(fi) * 1.6);
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / uRes;
+  vec2 q = (uv - 0.5) * vec2(uRes.x / uRes.y, 1.0);
+  // The whole bundle rotates slowly with scroll: diagonal → steeper → back.
+  float a = -0.55 + 0.35 * sin(uScroll * 0.55);
+  q = mat2(cos(a), -sin(a), sin(a), cos(a)) * q;
+
+  float t = uTime, s = uScroll;
+  // Bundle centre: a long S-curve that drifts with time and swings with scroll.
+  float c = 0.18 * sin(q.x * 1.25 + s * 1.6 + t * 0.07)
+          + 0.07 * sin(q.x * 2.9 - s * 0.9 + t * 0.11);
+  float base = q.x * 1.05 + s * 1.2 + t * 0.05;
+  float wbase = q.x * 7.0 + t * 0.4;
+  float px = 1.6 / uRes.y;                       // ~constant on-screen width
+
+  // On a light page the strands are ink, not light: accumulate how much of each tint
+  // lands on the pixel, then draw that tint at that strength (no additive glow on white).
+  vec3 col = vec3(0.0);
+  float ink = 0.0;
+  for (int k = 0; k < N; k++) {
+    float i = float(k);
+    float g = strand(q, i, c, base, wbase, px);
+    float glow = pow(g, 2.2) * 1.4 + g * 0.06;
+    // Sky-blue core strands, a deeper blue at the edges, one bright cyan strand.
+    float edge = abs(i / float(N - 1) - 0.5) * 2.0;
+    vec3 tint = mix(vec3(0.42, 0.68, 0.95), vec3(0.16, 0.42, 0.75), edge);
+    // Dark scheme: the strands become light — brighter, cooler blues that glow on the navy ground.
+    vec3 tintDark = mix(vec3(0.55, 0.78, 1.0), vec3(0.30, 0.55, 0.95), edge);
+    tint = mix(tint, tintDark, uDark);
+    if (k == 6) tint = mix(vec3(0.30, 0.74, 0.96), vec3(0.45, 0.88, 1.0), uDark);
+    col += tint * glow;
+    ink += glow;
+  }
+  col /= max(ink, 1e-4);
+  // Soft overall falloff toward the edges so text columns stay calm.
+  float vign = smoothstep(1.25, 0.15, length((uv - vec2(0.62, 0.5)) * vec2(1.0, 1.25)));
+  ink *= vign;
+  // Keep the reading column calm: on wide screens copy sits on the left, on
+  // phones it sits in the lower half, so the threads dim to under 10% there.
+  float calm = uRes.x > uRes.y
+    ? mix(0.07, 1.0, smoothstep(0.36, 0.72, uv.x))
+    : mix(0.08, 1.0, smoothstep(0.5, 0.88, uv.y));
+  ink *= calm;
+  gl_FragColor = vec4(col, clamp(ink * mix(0.85, 0.7, uDark), 0.0, 0.9));
+}
+`;
+
+function compile(gl: WebGLRenderingContext, type: number, src: string) {
+  const sh = gl.createShader(type);
+  if (!sh) return null;
+  gl.shaderSource(sh, src);
+  gl.compileShader(sh);
+  if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+    gl.deleteShader(sh);
+    return null;
+  }
+  return sh;
+}
+
+export function LightThreads({ paused, desktop }: Props) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const pausedRef = useRef(paused);
+  const scheme = useColorScheme();
+  const darkRef = useRef(scheme === "dark" ? 1 : 0);
+  const runRef = useRef<() => void>(() => undefined);
+  const resizeRef = useRef<() => void>(() => undefined);
+  // Desktop-dependent settings live in a ref, so the GL context and shader are set up once
+  // (`desktop` flips false → true right after mount on wide screens).
+  const cfg = useRef({ scale: 0.45, minDelta: 1000 / 30 });
+
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    const gl = canvas.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: "low-power" });
+    if (!gl) return;
+
+    const vs = compile(gl, gl.VERTEX_SHADER, VERT);
+    const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return;
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const uRes = gl.getUniformLocation(prog, "uRes");
+    const uTime = gl.getUniformLocation(prog, "uTime");
+    const uScroll = gl.getUniformLocation(prog, "uScroll");
+    const uDark = gl.getUniformLocation(prog, "uDark");
+
+    // Soft glow → render at a fraction of CSS pixels and let the browser scale it up.
+    // Sized from the canvas (the backdrop is lvh-tall), and the scroll unit only changes with
+    // the width, so a phone's URL bar sliding in/out never resizes it or jolts the threads.
+    let unit = canvas.clientHeight || window.innerHeight;
+    let lastW = 0;
+    const resize = () => {
+      const cw = canvas.clientWidth || window.innerWidth;
+      if (cw !== lastW) {
+        unit = canvas.clientHeight || window.innerHeight;
+        lastW = cw;
+      }
+      const w = Math.max(1, Math.round(cw * cfg.current.scale));
+      const h = Math.max(1, Math.round((canvas.clientHeight || window.innerHeight) * cfg.current.scale));
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+        gl.viewport(0, 0, w, h);
+      }
+      gl.uniform2f(uRes, w, h);
+    };
+    resize();
+    resizeRef.current = resize;
+    window.addEventListener("resize", resize);
+
+    // Scroll is eased (time-based, ~0.2s) so trackpad jitter never shakes the threads,
+    // and the follow feels the same at 30, 60 or 120 fps.
+    let scroll = window.scrollY / unit;
+    let raf = 0;
+    let last = 0;
+    let start = performance.now();
+    let frozenAt = 0;
+    const render = (now: number, ease: number) => {
+      const target = window.scrollY / unit;
+      scroll += (target - scroll) * ease;
+      gl.uniform1f(uTime, (now - start) / 1000);
+      gl.uniform1f(uScroll, scroll);
+      gl.uniform1f(uDark, darkRef.current);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop);
+      const elapsed = now - last;
+      // Frame cap (60 fps desktop, 30 fps phones); the 4ms slack locks to an even vsync cadence.
+      if (elapsed < cfg.current.minDelta - 4) return;
+      last = now;
+      render(now, 1 - Math.exp(-Math.min(elapsed, 100) * 0.005));
+    };
+    // Paused: time freezes; the threads still follow scroll (visitor-driven), with no loop.
+    const onScrollPaused = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => render(frozenAt, 1));
+    };
+    const run = () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScrollPaused);
+      if (pausedRef.current || document.visibilityState !== "visible") {
+        frozenAt = frozenAt || performance.now();
+        render(frozenAt, 1); // one still frame so the backdrop never goes blank
+        if (pausedRef.current) window.addEventListener("scroll", onScrollPaused, { passive: true });
+      } else {
+        if (frozenAt) {
+          // Resume from the frozen moment instead of jumping ahead.
+          const gap = performance.now() - frozenAt;
+          start += gap;
+          frozenAt = 0;
+        }
+        last = performance.now(); // no catch-up step after a pause
+        raf = requestAnimationFrame(loop);
+      }
+    };
+    runRef.current = run;
+    document.addEventListener("visibilitychange", run);
+    run();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", onScrollPaused);
+      document.removeEventListener("visibilitychange", run);
+    };
+    // The canvas keeps one context for its whole life (a lost context can't be re-acquired).
+  }, []);
+
+  useEffect(() => {
+    cfg.current = desktop ? { scale: 0.6, minDelta: 1000 / 60 } : { scale: 0.45, minDelta: 1000 / 30 };
+    resizeRef.current();
+  }, [desktop]);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+    runRef.current();
+  }, [paused]);
+
+  // Colour scheme -> uniform only (no remount); runRef redraws the still frame when paused.
+  useEffect(() => {
+    darkRef.current = scheme === "dark" ? 1 : 0;
+    runRef.current();
+  }, [scheme]);
+
+  return <canvas ref={ref} aria-hidden="true" tabIndex={-1} className="absolute inset-0 h-full w-full" />;
+}
