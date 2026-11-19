@@ -213,7 +213,8 @@ export function HeroChapter() {
           className="absolute inset-x-0 bottom-[max(2rem,env(safe-area-inset-bottom))] hidden justify-center motion-safe:flex lg:bottom-10"
         >
           <a href="#included" className="group flex min-h-[44px] flex-col items-center gap-1.5 px-4 py-1 text-center">
-            <span className="eyebrow text-ash">
+            {/* Light sky: `muted` keeps the 13px eyebrow clear of AA (ash measured 4.53:1 at worst); dark keeps ash. */}
+            <span className="eyebrow text-muted dark:text-ash">
               {t.hero.next}
               <span className="sr-only">: </span>
             </span>
@@ -243,8 +244,8 @@ function HeadlineLine({
   emphasis: string;
 }) {
   const path = LINE_PATHS[index] ?? LINE_PATHS[0];
-  // the last line (index 2) ends at HERO_BEATS.divePeak (0.62)
-  const range = [HERO_BEATS.shearStart + index * 0.03, 0.56 + index * 0.03];
+  // Lines finish 0.03 apart; the last line (index 2) ends exactly at HERO_BEATS.divePeak.
+  const range = [HERO_BEATS.shearStart + index * 0.03, HERO_BEATS.divePeak - 0.06 + index * 0.03];
   const x = useTransform(progress, range, ["0%", path.x]);
   const z = useTransform(progress, range, [0, path.z]);
   const rotateX = useTransform(progress, range, [0, path.rx]);
