@@ -87,7 +87,7 @@ GPU before chasing fps.)
 | Ticket | Plan | Code | Inspect | Deep review | Commit |
 |---|---|---|---|---|---|
 | T0 merge main + agent team + crisp-text fix, live preview | — | done | — | — | merged |
-| T1 Dashboard | [plan](plans/T1-dashboard.md) | done (Sonnet) | PASS w/ nits (fixed) | reviewing (Sonnet) | committed |
+| T1 Dashboard | [plan](plans/T1-dashboard.md) | fixing review nits (Sonnet) | PASS w/ nits (fixed) | SHIP AFTER NITS | committed |
 | T2 Simulator | [plan](plans/T2-simulator.md) | done (Sonnet) | inspecting (Haiku) | | WIP commit |
 | T3 WebGL hygiene | [plan](plans/T3-webgl.md) | done (Sonnet) | PASS w/ nits (wording only) | reviewing (Sonnet) | committed |
 | T3b Sculpture time | | | | | |
