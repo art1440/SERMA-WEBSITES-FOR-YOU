@@ -55,6 +55,11 @@ GPU before chasing fps.)
 - **T3b · Sculpture keeps its time** — `src/components/three/Engine3D.tsx` (after T3 lands)
   R3F resets `clock.elapsedTime` to 0 whenever the frameloop toggles, so after Pause/Play or re-entering a 3D tab the
   sculpture's rotation, camera drift and heartbeat snap back to t=0. Use an app-owned time that accumulates `delta`.
+  Also (from T3's deep review): LightThreads never recovers from a WebGL context loss, so the backdrop stays blank
+  after a GPU reset. Handle `webglcontextlost`/`restored`.
+
+**Noted for later (T3 deep review):** hero scroll re-renders React every frame (≈0.7 MB of `createElement`
+allocations in a short scroll); not WebGL, worth tracing during T4.
 
 ### Wave 2 — one motion language
 
@@ -89,8 +94,8 @@ GPU before chasing fps.)
 | T0 merge main + agent team + crisp-text fix, live preview | — | done | — | — | merged |
 | T1 Dashboard | [plan](plans/T1-dashboard.md) | done (Sonnet) | PASS w/ nits (fixed) | SHIP AFTER NITS (fixed) | ✅ shipped |
 | T2 Simulator | [plan](plans/T2-simulator.md) | done (Sonnet) | inspecting (Haiku) | | WIP commit |
-| T3 WebGL hygiene | [plan](plans/T3-webgl.md) | done (Sonnet) | PASS w/ nits (wording only) | reviewing (Sonnet) | committed |
-| T3b Sculpture time | | | | | |
+| T3 WebGL hygiene | [plan](plans/T3-webgl.md) | done (Sonnet) | PASS w/ nits (wording only) | SHIP | ✅ shipped |
+| T3b Sculpture time + threads context restore | [plan](plans/T3b-sculpture-time.md) | coding (Sonnet) | | | |
 | T4 Hero | planning (Opus) | | | | |
 | T5 Tab swap | planning (Opus) | | | | |
 | T6 CTA feel | planning (Opus, with T5) | | | | |
