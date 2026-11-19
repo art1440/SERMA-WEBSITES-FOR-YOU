@@ -100,4 +100,16 @@ allocations in a short scroll); not WebGL, worth tracing during T4.
 | T5 Tab swap | [plan](plans/T5-T6-tabs-ctas.md) | done (coder agent); partial WIP rode along in commit d753dfc | FAIL: deep load smooth-scrolls rail; + focus after swap; + TiltCard pointer churn (found by T6 inspector) → fixed | REWORK: replace Tab-scroll workaround with CSS root-cause fix; Pricing buttons unclickable while card tilted (pre-existing, worse after fix 7); quick revisits → fixed; re-inspection PASS w/ nits (fixed) | ✅ shipped (rework is commit 79ab546, titled "in progress") |
 | T6 CTA feel | [plan](plans/T5-T6-tabs-ctas.md) | done (Sonnet) | PASS w/ nits | n/a (micro-interaction) | ✅ shipped |
 | T7 Light film (architecture only, hero film cut) | [plan](plans/T7-light-film.md) | done (coder agent) | orchestrator-verified (colour Δ≈2/255, pause/resume, theme swap) | n/a (no motion change) | ✅ shipped |
-| T8 Docs | | | | | |
+| T8 Docs | (orchestrator brief) | writing (coder agent) | | | |
+
+## Final verification (production build, after T1–T7)
+
+`STATIC_EXPORT=true next build`: clean (TypeScript passes, 9 static routes). Served `out/` and clicked through all 8 tabs
+at 1440×900 light, 1440×900 dark and 390×844 light (touch): **0 console errors, 0 page errors, 0 HTTP ≥ 400, no
+horizontal overflow.** Every tab is finished at scroll 0: the Dashboard lands assembled (was empty), the Missed Calls
+phone rests flat with Simulate + rail (was tilted, scroll-to-play). Under reduced motion no entrance leaves a stuck
+offset or opacity 0 on any tab (the remaining transforms are layout: the Industries carousel curve and the chart bars).
+
+Sandbox caveat: frame rates here are software-rendered (≈5–10 rAF/s), so timings were verified from code and virtual
+time. Two checks only a real browser can settle: tilted Pricing cards take clicks (measured 24/24 in headless Chromium),
+and the `:has()` scroll-padding rule on Safari.
