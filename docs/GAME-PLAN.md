@@ -100,7 +100,7 @@ allocations in a short scroll); not WebGL, worth tracing during T4.
 | T5 Tab swap | [plan](plans/T5-T6-tabs-ctas.md) | done (coder agent); partial WIP rode along in commit d753dfc | FAIL: deep load smooth-scrolls rail; + focus after swap; + TiltCard pointer churn (found by T6 inspector) → fixed | REWORK: replace Tab-scroll workaround with CSS root-cause fix; Pricing buttons unclickable while card tilted (pre-existing, worse after fix 7); quick revisits → fixed; re-inspection PASS w/ nits (fixed) | ✅ shipped (rework is commit 79ab546, titled "in progress") |
 | T6 CTA feel | [plan](plans/T5-T6-tabs-ctas.md) | done (Sonnet) | PASS w/ nits | n/a (micro-interaction) | ✅ shipped |
 | T7 Light film (architecture only, hero film cut) | [plan](plans/T7-light-film.md) | done (coder agent) | orchestrator-verified (colour Δ≈2/255, pause/resume, theme swap) | n/a (no motion change) | ✅ shipped |
-| T8 Docs | (orchestrator brief) | writing (coder agent) | | | |
+| T8 Docs | (orchestrator brief) | done (coder agent) | orchestrator spot-check vs source | n/a | ✅ shipped |
 
 ## Final verification (production build, after T1–T7)
 
@@ -113,3 +113,20 @@ offset or opacity 0 on any tab (the remaining transforms are layout: the Industr
 Sandbox caveat: frame rates here are software-rendered (≈5–10 rAF/s), so timings were verified from code and virtual
 time. Two checks only a real browser can settle: tilted Pricing cards take clicks (measured 24/24 in headless Chromium),
 and the `:has()` scroll-padding rule on Safari.
+
+## Follow-ups found along the way (not done; need an owner or a decision)
+
+- **Legal text vs the site** (needs a legal re-read): the Privacy Policy says "we … do not collect phone numbers here",
+  but the enquiry form collects a phone number; the Terms say "We do not publish pricing", but there is a Pricing tab.
+  Both in `src/i18n/legal.ts`, EN and ES.
+- **Netlify Forms**: register the `enquiries` form and set an email notification; nothing in the repo verifies it.
+- **Prices**: all three tiers are still `price: null` ("Price coming soon"); branch `claude/nice-wright-ilz6al` sets
+  $500 / $1,000 / $2,000 and is unmerged.
+- **How it works has no 3D**: nothing drives `system.progress` any more, so the sculpture and the architecture film's
+  second appearance never play after the hero. Decide whether the 3D should continue into How it works.
+- **HeroFlowCard step timer** re-renders React on a timer even when idle (found by the T4 deep review).
+- **Dead weight / stale comments**: `public/media/grain.png` is unused; comments in `AmbientField.tsx`,
+  `ComparisonMatrix.tsx` and the `.btn` rules in `globals.css` still describe the old dark/orange design;
+  `tailwind.config.ts` `hairline.light`/`hairline.dark` map to the same variable.
+- **Real-browser checks**: tilted Pricing cards take clicks (24/24 in headless Chromium); the `:has()` scroll-padding
+  rule on Safari.
