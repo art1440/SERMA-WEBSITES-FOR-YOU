@@ -274,6 +274,7 @@ function TabBar({
   className?: string;
 }) {
   const railRef = useRef<HTMLDivElement>(null);
+  const firstCentre = useRef(true);
 
   // Keep the picked tab in view: centre it in the rail (horizontal only, never the page).
   useEffect(() => {
@@ -282,7 +283,8 @@ function TabBar({
     if (!rail || !tab || rail.scrollWidth <= rail.clientWidth) return;
     const left = tab.offsetLeft - (rail.clientWidth - tab.offsetWidth) / 2;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    rail.scrollTo({ left, behavior: reduce ? "auto" : "smooth" });
+    rail.scrollTo({ left, behavior: reduce || firstCentre.current ? "auto" : "smooth" });
+    firstCentre.current = false;
   }, [selected]);
 
   const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
@@ -305,7 +307,7 @@ function TabBar({
         role="tablist"
         aria-label={label}
         onKeyDown={onKeyDown}
-        className="flex h-11 items-center gap-0.5 overflow-x-auto lg:gap-0 overscroll-x-contain px-1.5 [mask-image:linear-gradient(to_right,transparent,#000_14px,#000_calc(100%-14px),transparent)] [scrollbar-width:none] lg:[justify-content:safe_center] lg:px-2 [&::-webkit-scrollbar]:hidden"
+        className="relative flex h-11 items-center gap-0.5 overflow-x-auto lg:gap-0 overscroll-x-contain px-1.5 [mask-image:linear-gradient(to_right,transparent,#000_14px,#000_calc(100%-14px),transparent)] [scrollbar-width:none] lg:[justify-content:safe_center] lg:px-2 [&::-webkit-scrollbar]:hidden"
       >
         {items.map((item) => {
           const on = item.id === selected;
@@ -320,25 +322,35 @@ function TabBar({
               aria-controls={`panel-${item.id}`}
               tabIndex={on ? 0 : -1}
               onClick={() => onPick(item.id)}
-              className={`group relative isolate inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full px-3 text-[0.8125rem] font-medium tracking-[-0.005em] transition-colors duration-300 ease-editorial lg:px-2 [@media(min-width:85.5em)]:px-2.5 ${
+              className={`group relative isolate inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full px-3 text-[0.8125rem] font-medium tracking-[-0.005em] transition-colors duration-base ease-editorial lg:px-2 [@media(min-width:85.5em)]:px-2.5 ${
                 on ? "text-bone" : "text-bone/65 hover:text-bone"
               }`}
             >
               {/* Hover wash (inactive tabs only). */}
               <span
                 aria-hidden="true"
-                className="absolute inset-x-0 inset-y-1.5 -z-10 rounded-full bg-aqua/[0.078] opacity-0 transition-opacity duration-300 ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100"
+                className="absolute inset-x-0 inset-y-1.5 -z-10 rounded-full bg-aqua/[0.078] opacity-0 transition-opacity duration-base ease-editorial group-hover:opacity-100 group-focus-visible:opacity-100"
               />
               {on ? (
-                <motion.span
-                  layoutId="tab-pill"
-                  aria-hidden="true"
-                  transition={SPRING_SNAPPY}
-                  className="absolute inset-x-0 inset-y-1.5 -z-10 rounded-full bg-aqua/[0.143] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),inset_0_0_0_1px_rgba(255,255,255,0.1)]"
-                >
-                  {/* A short aqua filament under the label: the one coloured mark in the bar. */}
-                  <span className="absolute bottom-[3px] left-1/2 h-[2px] w-4 -translate-x-1/2 rounded-full bg-aqua" />
-                </motion.span>
+                <>
+                  <motion.span
+                    layoutId="tab-pill"
+                    layoutDependency={selected}
+                    aria-hidden="true"
+                    transition={SPRING_SNAPPY}
+                    className="absolute inset-x-0 inset-y-1.5 -z-10 rounded-full bg-aqua/[0.143] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),inset_0_0_0_1px_rgba(255,255,255,0.1)]"
+                  />
+                  {/* A short aqua filament under the label: the one coloured mark in the bar. Its own
+                      position-only layout node, so it glides in step with the pill without stretching. */}
+                  <motion.span
+                    layoutId="tab-filament"
+                    layout="position"
+                    layoutDependency={selected}
+                    transition={SPRING_SNAPPY}
+                    aria-hidden="true"
+                    className="absolute bottom-[9px] left-1/2 -z-10 -ml-2 h-[2px] w-4 rounded-full bg-aqua"
+                  />
+                </>
               ) : null}
               {item.label}
             </button>

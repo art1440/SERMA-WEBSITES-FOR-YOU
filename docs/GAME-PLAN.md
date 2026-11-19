@@ -93,7 +93,7 @@ allocations in a short scroll); not WebGL, worth tracing during T4.
 |---|---|---|---|---|---|
 | T0 merge main + agent team + crisp-text fix, live preview | — | done | — | — | merged |
 | T1 Dashboard | [plan](plans/T1-dashboard.md) | done (Sonnet) | PASS w/ nits (fixed) | SHIP AFTER NITS (fixed) | ✅ shipped |
-| T2 Simulator | [plan](plans/T2-simulator.md) | fixing review items (Sonnet) | FAIL → fixed (6 items) | SHIP AFTER NITS: touch-swipe seek, hidden-tab resume; SMS gets 2.7s to read; scroll tilt removed | committed |
+| T2 Simulator | [plan](plans/T2-simulator.md) | done (Sonnet) | FAIL → fixed (6 items) | SHIP AFTER NITS: touch-swipe seek, hidden-tab resume; SMS gets 2.7s to read; scroll tilt removed → fixed | ✅ shipped |
 | T3 WebGL hygiene | [plan](plans/T3-webgl.md) | done (Sonnet) | PASS w/ nits (wording only) | SHIP | ✅ shipped |
 | T3b Sculpture time + threads context restore | [plan](plans/T3b-sculpture-time.md) | done (Sonnet) | PASS w/ nits (fixed) | skipped: ~40 lines, inspected twice | ✅ shipped |
 | T4 Hero | [plan](plans/T4-hero.md) — owner chose: cut the hero film | coding (Sonnet) | | | |

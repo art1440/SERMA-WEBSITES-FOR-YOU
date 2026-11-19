@@ -1,8 +1,34 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Fragment, type ElementType, type ReactNode } from "react";
-import { EASE_EDITORIAL, VIEWPORT_ONCE } from "@/lib/motion";
+import { inView, motion } from "framer-motion";
+import { Fragment, useEffect, useRef, useState, type ElementType, type ReactNode, type RefObject } from "react";
+import { usePanelVisit } from "@/context/TabsContext";
+import { EASE_EDITORIAL } from "@/lib/motion";
+
+/** Bottom-only trigger band: an element at the very top of a tab can never be stranded above it. */
+const REVEAL_MARGIN = "0px 0px -10% 0px";
+export const REVEAL_S = 0.6;
+
+/** False while the panel is hidden; true once `ref` has entered the viewport during this visit. */
+export function useVisitReveal(ref: RefObject<Element | null>, trigger: "inView" | "mount" = "inView") {
+  const visit = usePanelVisit();
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    setShown(false);
+    if (visit === null) return;
+    if (trigger === "mount") {
+      setShown(true);
+      return;
+    }
+    const el = ref.current;
+    if (!el) return;
+    // A fresh observer per visit: its first reading is taken after the swap's scroll reset.
+    return inView(el, () => {
+      setShown(true);
+    }, { margin: REVEAL_MARGIN });
+  }, [visit, trigger, ref]);
+  return shown;
+}
 
 type RevealProps = {
   children: ReactNode;
@@ -18,13 +44,18 @@ export const staggerDelay = (i: number, base = 0) => base + Math.min(i, 8) * 0.0
 
 /** Fade-up section entrance (16px rise). Transform + opacity only. */
 export function Reveal({ children, className, delay = 0, y = 16, trigger = "inView" }: RevealProps) {
-  const target = { opacity: 1, y: 0 };
+  const ref = useRef<HTMLDivElement>(null);
+  const shown = useVisitReveal(ref, trigger);
   return (
     <motion.div
+      ref={ref}
       className={className}
       initial={{ opacity: 0, y }}
-      {...(trigger === "mount" ? { animate: target } : { whileInView: target, viewport: VIEWPORT_ONCE })}
-      transition={{ duration: 0.7, ease: EASE_EDITORIAL, delay }}
+      animate={
+        shown
+          ? { opacity: 1, y: 0, transition: { duration: REVEAL_S, ease: EASE_EDITORIAL, delay } }
+          : { opacity: 0, y, transition: { duration: 0 } }
+      }
     >
       {children}
     </motion.div>
@@ -71,25 +102,28 @@ export function RevealLines({
   lineClassName,
   emphasis,
   delay = 0,
-  stagger = 0.09,
+  stagger = 0.08,
   trigger = "inView",
   id,
 }: RevealLinesProps) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const shown = useVisitReveal(ref, trigger);
   const container = {
     hidden: {},
     show: { transition: { staggerChildren: stagger, delayChildren: delay } },
   };
   const line = {
-    hidden: { y: "108%", opacity: 0 },
-    show: { y: "0%", opacity: 1, transition: { duration: 1, ease: EASE_EDITORIAL } },
+    hidden: { y: "108%", opacity: 0, transition: { duration: 0 } },
+    show: { y: "0%", opacity: 1, transition: { duration: 0.8, ease: EASE_EDITORIAL } },
   };
   return (
     <Tag className={className} id={id}>
       <motion.span
+        ref={ref}
         className="block"
         variants={container}
         initial="hidden"
-        {...(trigger === "mount" ? { animate: "show" } : { whileInView: "show", viewport: VIEWPORT_ONCE })}
+        animate={shown ? "show" : "hidden"}
       >
         {lines.map((text, i) => (
           <span key={i} className={`block overflow-hidden pb-[0.1em] ${lineClassName ?? ""}`}>

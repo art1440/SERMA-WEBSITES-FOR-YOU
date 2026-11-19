@@ -2,8 +2,9 @@
 
 import { motion, useMotionValue, useMotionValueEvent, useSpring, useTransform } from "framer-motion";
 import { useRef, type PointerEvent, type ReactNode } from "react";
-import { EASE_EDITORIAL, MOTION, VIEWPORT_ONCE } from "@/lib/motion";
+import { EASE_EDITORIAL, MOTION } from "@/lib/motion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
+import { REVEAL_S, useVisitReveal } from "./Reveal";
 
 const SPRING = MOTION.smooth;
 
@@ -23,7 +24,7 @@ type Props = {
 
 /**
  * A card that tilts toward the pointer in 3D and settles back with a spring,
- * and swings up into place when it first scrolls into view. Transform-only.
+ * and swings up into place every time its tab opens. Transform-only.
  *
  * The tilt layer stays `preserve-3d` with NO overflow/filters (either would
  * flatten the 3D). The glare is a separate leaf layer that clips itself, so
@@ -44,6 +45,8 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
   // only becomes a 3D stack while the pointer tilts it; it flattens again once the spring has
   // settled back to 0°, so the swap is pixel-identical.
   const stage = useRef<HTMLDivElement>(null);
+  const entrance = useRef<HTMLDivElement>(null);
+  const shown = useVisitReveal(entrance);
   const hovering = useRef(false);
   const settle = () => {
     if (!hovering.current && Math.abs(rx.get()) < 0.01 && Math.abs(ry.get()) < 0.01) {
@@ -80,13 +83,16 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
 
   return (
     <div ref={stage} className="stage-flat h-full [perspective:1400px]">
-      {/* Entrance: swings up into place once */}
+      {/* Entrance: swings up into place on every open */}
       <motion.div
+        ref={entrance}
         className="h-full [transform-style:preserve-3d]"
         initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={VIEWPORT_ONCE}
-        transition={{ duration: 0.7, ease: EASE_EDITORIAL, delay }}
+        animate={
+          shown
+            ? { opacity: 1, y: 0, transition: { duration: REVEAL_S, ease: EASE_EDITORIAL, delay } }
+            : { opacity: 0, y: 16, transition: { duration: 0 } }
+        }
       >
         {/* Pointer tilt */}
         <motion.div
