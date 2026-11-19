@@ -126,10 +126,10 @@ const CAM_FINALE_Z = [[0, 11.5], [0.6, 9]] as const;
 const CAM_FINALE_Y = [[0, 0.9], [0.6, 0.15]] as const;
 const CAM_FINALE_FOV = [[0, 40], [0.6, 35]] as const;
 const CAM_FINALE_ORBIT = [[0, -0.5], [0.7, 0.15]] as const;
-const CAM_HERO_Z = [[0, 9], [HERO_BEATS.divePeak, 6.4], [HERO_BEATS.settled, 8.2]] as const;
-const CAM_HERO_Y = [[0, 0], [HERO_BEATS.divePeak, 0.35], [HERO_BEATS.settled, 0]] as const;
+const CAM_HERO_Z = [[0, 9], [HERO_BEATS.sculpturePeak, 6.4], [HERO_BEATS.settled, 8.2]] as const;
+const CAM_HERO_Y = [[0, 0], [HERO_BEATS.sculpturePeak, 0.35], [HERO_BEATS.settled, 0]] as const;
 const CAM_HERO_ROLL = [[0.1, 0], [0.5, 0.07], [HERO_BEATS.statementSet, 0]] as const;
-const CAM_HERO_FOV = [[0, 35], [HERO_BEATS.divePeak, 30], [HERO_BEATS.settled, 35]] as const;
+const CAM_HERO_FOV = [[0, 35], [HERO_BEATS.sculpturePeak, 30], [HERO_BEATS.settled, 35]] as const;
 const CAM_SYSTEM_Z = [[0, 8.2], [0.25, 7.6], [0.55, 7.2], [0.75, 7.6], [1, 8.6]] as const;
 const CAM_SYSTEM_Y = [[0, 0], [0.25, 0.25], [0.55, 0], [1, 0.3]] as const;
 const CAM_SYSTEM_ROLL = [[0, 0], [0.3, -0.03], [0.55, 0], [0.9, 0.025]] as const;
@@ -427,8 +427,8 @@ function EngineScene({ hero, system, finale, ink, desktop, onLowDpr }: Omit<Prop
       targetOpacity = desktop ? 0.9 : 0.55;
     } else if (h < 0.999) {
       // Hero: idle → dive toward the camera → settle into the system pose.
-      const dive = mixInto(poseA, P.hero, P.dive, ss(h, HERO_BEATS.diveStart, HERO_BEATS.divePeak));
-      target = mixInto(poseB, dive, P.system, ss(h, HERO_BEATS.divePeak, HERO_BEATS.settled));
+      const dive = mixInto(poseA, P.hero, P.dive, ss(h, HERO_BEATS.diveStart, HERO_BEATS.sculpturePeak));
+      target = mixInto(poseB, dive, P.system, ss(h, HERO_BEATS.sculpturePeak, HERO_BEATS.settled));
       targetMorph = ss(h, HERO_BEATS.statementSet, 1) * 0.15;
       targetOpacity = lerp(0.85, 1, ss(h, 0.5, HERO_BEATS.statementSet));
     } else {

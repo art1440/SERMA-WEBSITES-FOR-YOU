@@ -58,6 +58,7 @@ export function Stage() {
     const controls = animate(archIntro, 1, { delay: 0.6, duration: 1.4, ease: "easeOut" });
     return () => controls.stop();
   }, [archIntro]);
+  // Reads hero.raw (not the spring) so a mid-page load never flashes the film.
   const archHeroBase = useTransform(hero.raw, [0, 0.37, HERO_BEATS.statementIn], [0.24, 0.24, 0]);
   const archHero = useTransform([archHeroBase, archIntro], ([h, k]: number[]) => h * k);
   const archSystem = useTransform(system.progress, [0, 0.1, 0.9, 1], [0, 0.32, 0.32, 0]);

@@ -51,11 +51,11 @@ export function HeroChapter() {
   const stZ = useTransform(p, [HERO_BEATS.statementIn, HERO_BEATS.statementSet], [-520, 0]);
   const stRotateX = useTransform(p, [HERO_BEATS.statementIn, HERO_BEATS.statementSet], [24, 0]);
   // Hand-off: "Next: How it works" settles in where the scroll cue sat at rest.
-  const nextOpacity = useTransform(p, [HERO_BEATS.statementSet, 0.96], [0, 1]);
-  const nextY = useTransform(p, [HERO_BEATS.statementSet, 0.96], [12, 0]);
+  const nextOpacity = useTransform(p, [0.78, 0.9], [0, 1]);
+  const nextY = useTransform(p, [0.78, 0.9], [12, 0]);
   const [nextReady, setNextReady] = useState(false);
   useMotionValueEvent(p, "change", (v) => {
-    const ready = v >= 0.9;
+    const ready = v >= 0.84;
     if (ready !== nextReady) setNextReady(ready);
   });
 
@@ -212,9 +212,13 @@ export function HeroChapter() {
         <motion.div
           style={{ opacity: nextOpacity, y: nextY }}
           inert={!nextReady}
-          className="absolute inset-x-0 bottom-[max(2rem,env(safe-area-inset-bottom))] hidden justify-center motion-safe:flex lg:bottom-10"
+          className="absolute inset-x-0 bottom-[max(2rem,env(safe-area-inset-bottom))] pointer-events-none hidden flex-col items-center justify-center gap-3 motion-safe:flex sm:flex-row sm:gap-8 lg:bottom-10"
         >
-          <a href="#included" className="group flex min-h-[44px] flex-col items-center gap-1.5 px-4 py-1 text-center">
+          <MagneticButton href="#pricing" onClick={onPricingClick} className="btn-aqua pointer-events-auto shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_1px_3px_rgb(var(--bone)/0.08),0_12px_24px_-10px_rgb(var(--bone)/0.28)]">
+            {t.common.seePricing}
+            <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} />
+          </MagneticButton>
+          <a href="#included" className="group pointer-events-auto flex min-h-[44px] flex-col items-center gap-1.5 px-4 py-1 text-center">
             {/* Light sky: `muted` keeps the 13px eyebrow clear of AA (ash measured 4.53:1 at worst); dark keeps ash. */}
             <span className="eyebrow text-muted dark:text-ash">
               {t.hero.next}

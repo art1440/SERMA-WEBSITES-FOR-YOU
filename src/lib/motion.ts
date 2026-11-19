@@ -38,7 +38,8 @@ export const HERO_BEATS = {
   shearStart: 0.04, // headline leaves its flat, native-text state and starts to shear
   diveStart: 0.06, // sculpture starts toward the camera
   statementIn: 0.56, // statement starts to emerge from depth; the architecture film is gone by now
-  divePeak: 0.62, // last headline line gone; sculpture closest, camera pushed in furthest
-  statementSet: 0.86, // statement at rest (holds to the end); the Next hand-off starts to appear
+  divePeak: 0.62, // last headline line gone (the headline's own end)
+  sculpturePeak: 0.5, // sculpture closest, camera pushed in furthest; it recedes from here while the statement emerges (0.56 to 0.8)
+  statementSet: 0.86, // statement at rest (holds to the end)
   settled: 0.98, // sculpture in its system pose (must stay < 0.999, Engine3D's branch switch)
 } as const;
