@@ -29,10 +29,10 @@ export const PROMISE_ITEMS: PromiseItem[] = [
   },
   {
     icon: "price",
-    title: { en: "One fixed price", es: "Un precio fijo" },
+    title: { en: "Clear, fixed pricing", es: "Precios claros y fijos" },
     detail: {
-      en: "No hourly billing, so the number you agree to is the number you pay.",
-      es: "Sin cobro por hora: el precio que acuerda es el que paga.",
+      en: "A fixed build price plus one flat monthly fee. No hourly billing, no surprises.",
+      es: "Un precio fijo por el sitio más una cuota mensual fija. Sin cobro por hora, sin sorpresas.",
     },
   },
   {
