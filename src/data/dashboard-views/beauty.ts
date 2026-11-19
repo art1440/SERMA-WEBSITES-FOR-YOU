@@ -115,7 +115,7 @@ export const beautyViews: NicheViews = {
       received: { en: "Sat, 4:12 PM", es: "Sáb, 4:12 PM" },
       note: {
         en: "Missed call → text-back → booked this Sat 10:15 AM with Mia",
-        es: "Llamada perdida → texto automático → agendó para este sábado a las 10:15 AM con Mia",
+        es: "Llamada perdida → mensaje automático → agendó para este sábado a las 10:15 AM con Mia",
       },
     },
     {
@@ -170,7 +170,7 @@ export const beautyViews: NicheViews = {
       ...ALERTS,
       subject: {
         en: "Alyssa R. replied to your text-back: “Can you fill another studio's lashes?”",
-        es: "Alyssa R. respondió a su texto automático: “¿Rellenan pestañas de otro estudio?”",
+        es: "Alyssa R. respondió a su mensaje automático: “¿Rellenan pestañas de otro estudio?”",
       },
       preview: {
         en: "“My lashes are from another place. Can you fill them or do I need a new set?”",
@@ -183,7 +183,7 @@ export const beautyViews: NicheViews = {
         paragraphs: [
           {
             en: "Alyssa R. called at 9:12 AM while you were setting up for your 10:00 client. Your automatic text went out 3 seconds later, and she wrote back at 9:17:",
-            es: "Alyssa R. llamó a las 9:12 AM mientras usted se preparaba para su clienta de las 10:00. Su texto automático salió 3 segundos después y ella respondió a las 9:17:",
+            es: "Alyssa R. llamó a las 9:12 AM mientras usted se preparaba para su clienta de las 10:00. Su mensaje automático salió 3 segundos después y ella respondió a las 9:17:",
           },
           {
             en: "“Hi! My lashes are from another place and I'm due for a fill. Can you fill them, or do I need a whole new set?”",
@@ -219,7 +219,7 @@ export const beautyViews: NicheViews = {
             es: "Cuando las pestañas son de otro estudio, empezamos con un juego completo nuevo para saber exactamente qué tiene puesto. El juego clásico cuesta $150. ¿Le buscamos un horario esta semana?",
           },
         ],
-        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su mensaje automático de SermaWebDesign" },
       },
     },
     {
@@ -232,7 +232,7 @@ export const beautyViews: NicheViews = {
       },
       preview: {
         en: "Hybrid lash full set, 2½ hrs · First lash set ever · $40 deposit on hold.",
-        es: "Juego híbrido de pestañas, 2½ h · Su primer juego · Depósito de $40 retenido.",
+        es: "Juego híbrido de pestañas, 2½ h · Su primer juego · Anticipo de $40 retenido.",
       },
       received: { en: "6:55 AM", es: "6:55 AM" },
       unread: true,
@@ -245,7 +245,7 @@ export const beautyViews: NicheViews = {
           },
           {
             en: "Her $40 deposit is on hold and is charged when you confirm. The confirmation text asks her to arrive with clean lashes and no mascara.",
-            es: "Su depósito de $40 está retenido y se cobra cuando usted confirme. El texto de confirmación le pide llegar con las pestañas limpias y sin rímel.",
+            es: "Su anticipo de $40 está retenido y se cobra cuando usted confirme. El texto de confirmación le pide llegar con las pestañas limpias y sin rímel.",
           },
         ],
         details: [
@@ -253,7 +253,7 @@ export const beautyViews: NicheViews = {
           { label: { en: "Service", es: "Servicio" }, value: SVC.hybridSet },
           { label: { en: "When", es: "Cuándo" }, value: { en: "Tue, 11:00 AM–1:30 PM", es: "Martes, 11:00 AM–1:30 PM" } },
           { label: { en: "Artist", es: "Artista" }, value: { en: "Vanessa (you)", es: "Vanessa (usted)" } },
-          { label: { en: "Deposit", es: "Depósito" }, value: { en: "$40 on hold · $140 due at checkout", es: "$40 retenidos · $140 al pagar" } },
+          { label: { en: "Deposit", es: "Anticipo" }, value: { en: "$40 on hold · $140 due at checkout", es: "$40 retenidos · $140 al pagar" } },
           { label: { en: "Fill reminder", es: "Recordatorio de relleno" }, value: { en: "Set for 2 weeks after", es: "Programado 2 semanas después" } },
         ],
         primary: {
@@ -317,7 +317,7 @@ export const beautyViews: NicheViews = {
       ...ALERTS,
       subject: {
         en: "Deposit received: $40 from Nicole A. for Fri 10:00 AM",
-        es: "Depósito recibido: $40 de Nicole A. para el viernes a las 10:00 AM",
+        es: "Anticipo recibido: $40 de Nicole A. para el viernes a las 10:00 AM",
       },
       preview: {
         en: "Volume lash full set with you. $170 balance due at checkout.",
@@ -330,7 +330,7 @@ export const beautyViews: NicheViews = {
         paragraphs: [
           {
             en: "Nicole A. paid her deposit for a volume full set, so Friday morning is locked in. Under your policy, the deposit isn't refunded for cancellations with less than 24 hours' notice.",
-            es: "Nicole A. pagó su depósito para un juego de volumen, así que el viernes por la mañana queda asegurado. Según su política, el depósito no se reembolsa si cancela con menos de 24 horas de aviso.",
+            es: "Nicole A. pagó su anticipo para un juego de volumen, así que el viernes por la mañana queda asegurado. Según su política, el anticipo no se reembolsa si cancela con menos de 24 horas de aviso.",
           },
           {
             en: "Here's the receipt. The balance is collected at checkout, and her 2-week fill reminder is already scheduled.",
@@ -341,7 +341,7 @@ export const beautyViews: NicheViews = {
           { label: { en: "Receipt", es: "Recibo" }, value: { en: "#LQS-3062", es: "#LQS-3062" } },
           { label: { en: "Service", es: "Servicio" }, value: { en: "Volume lash full set · Vanessa", es: "Juego de pestañas de volumen · Vanessa" } },
           { label: { en: "Appointment", es: "Cita" }, value: { en: "Fri, 10:00 AM–12:30 PM", es: "Viernes, 10:00 AM–12:30 PM" } },
-          { label: { en: "Deposit paid", es: "Depósito pagado" }, value: { en: "$40.00", es: "$40.00" } },
+          { label: { en: "Deposit paid", es: "Anticipo pagado" }, value: { en: "$40.00", es: "$40.00" } },
           { label: { en: "Balance at checkout", es: "Saldo al pagar" }, value: { en: "$170.00", es: "$170.00" } },
           { label: { en: "Card", es: "Tarjeta" }, value: { en: "Visa ending 2209", es: "Visa terminada en 2209" } },
         ],
