@@ -223,6 +223,7 @@ export function LightThreads({ paused, desktop }: Props) {
     const run = () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScrollPaused);
+      if (lost) return; // no loop while the context is gone; onRestored calls run() again
       if (pausedRef.current || document.visibilityState !== "visible") {
         frozenAt = frozenAt || performance.now();
         render(frozenAt, 1); // one still frame so the backdrop never goes blank
@@ -246,8 +247,9 @@ export function LightThreads({ paused, desktop }: Props) {
       lost = true;
     };
     const onRestored = () => {
-      lost = false;
+      // A failed re-init stays "lost": render and run keep doing nothing instead of using the dead context's objects.
       if (!init()) return;
+      lost = false;
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uRes, canvas.width, canvas.height);
       run();
