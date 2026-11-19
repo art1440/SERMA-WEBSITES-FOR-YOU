@@ -33,7 +33,7 @@ Set in your host (Netlify → Site configuration → Environment variables). See
 ## Before launch — required edits
 
 1. **`src/config/site.ts`** — `contactEmail` (`serma.support@gmail.com`; the Pricing tab's email link and the form's error fallback use it), `contactPhone` (`(512) 774-0374`; shows a "Call" button, set to `null` to hide), `governingLaw` (Texas) and `legalLastUpdated` are filled in: confirm they are the real, final values. `legalEntity` is still the bare `SermaWebDesign`: set the registered legal name (e.g. with "LLC").
-2. **Prices** (`src/data/pricing.ts`) — all three packages still have `price: null` and `monthly: null`, so the cards show "Price coming soon". Publish numbers (US dollars) before launch, or leave as is on purpose. Note the Terms say "We do not publish pricing": change one or the other.
+2. **Prices** (`src/data/pricing.ts`) — published: Starter $500, Business $1,000, Growth $2,000 (one-time; `monthly` is still `null`). **The Terms still say "We do not publish pricing"** (`src/i18n/legal.ts`, EN and ES): update them before launch.
 3. **Netlify Forms** — after the first deploy, check Forms → `enquiries` is registered, and add an email notification (Forms → Settings & usage → Form notifications) to the inbox. The Privacy Policy says submissions "reach our email inbox"; that is a Netlify dashboard setting, not code. Without it submissions only sit in the Netlify form list.
 4. **Legal pages** (`src/i18n/legal.ts`) — the text is a structured draft. Have an attorney review it, or paste in static text exported from Termageddon / iubenda. Do **not** embed their JavaScript widget: the site's CSP would block it and it would break the zero-third-party promise.
 

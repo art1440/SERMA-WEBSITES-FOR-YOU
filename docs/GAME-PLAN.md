@@ -120,8 +120,8 @@ and the `:has()` scroll-padding rule on Safari.
   but the enquiry form collects a phone number; the Terms say "We do not publish pricing", but there is a Pricing tab.
   Both in `src/i18n/legal.ts`, EN and ES.
 - **Netlify Forms**: register the `enquiries` form and set an email notification; nothing in the repo verifies it.
-- **Prices**: all three tiers are still `price: null` ("Price coming soon"); branch `claude/nice-wright-ilz6al` sets
-  $500 / $1,000 / $2,000 and is unmerged.
+- **Prices**: done — branch `claude/nice-wright-ilz6al` merged (Starter $500, Business $1,000, Growth $2,000). This makes
+  the Terms line "We do not publish pricing" (above) actively wrong: fix it before launch.
 - **How it works has no 3D**: nothing drives `system.progress` any more, so the sculpture and the architecture film's
   second appearance never play after the hero. Decide whether the 3D should continue into How it works.
 - **HeroFlowCard step timer** re-renders React on a timer even when idle (found by the T4 deep review).
