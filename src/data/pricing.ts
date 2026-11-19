@@ -20,12 +20,30 @@ export type Tier = {
   price: number | null;
   /** Optional monthly fee in USD, or null to hide it. */
   monthly: number | null;
+  /**
+   * The real regular price after the launch offer ends (shown struck through next to `price`
+   * while LAUNCH.active is true). Only use a price you will actually charge afterwards:
+   * a "was" price that is never charged is a deceptive comparison (FTC, 16 CFR 233.1).
+   */
+  regular?: number;
   /** The middle card: lifted and marked "Most popular". */
   featured?: boolean;
   /** "Everything in X, plus:" line above the list (tiers 2 and 3). */
   inherits?: L10n;
   features: Feature[];
 };
+
+/**
+ * Launch offer. Today's prices are the launch prices for the first `spots` clients; after that
+ * the packages go to their `regular` price. Keep this TRUE: once the spots are taken, set
+ * `active: false` and move each `price` up to its `regular` value.
+ */
+export const LAUNCH = {
+  active: true,
+  spots: 10,
+  label: { en: "Launch price · first {n} clients", es: "Precio de lanzamiento · primeros {n} clientes" },
+  regular: { en: "Regular price", es: "Precio regular" },
+} as const;
 
 export const TIERS: Tier[] = [
   {
@@ -36,6 +54,7 @@ export const TIERS: Tier[] = [
       es: "Una página sólida que hace sonar el teléfono.",
     },
     price: 299,
+    regular: 599,
     monthly: 99.99,
     features: [
       { en: "One-page website (services, hours, location, contact)", es: "Sitio de una página (servicios, horario, ubicación, contacto)" },
@@ -57,6 +76,7 @@ export const TIERS: Tier[] = [
       es: "Un sitio completo para un negocio listo para crecer.",
     },
     price: 599,
+    regular: 1199,
     monthly: 99.99,
     featured: true,
     inherits: { en: "Everything in Starter, plus:", es: "Todo lo de Inicial, y además:" },
@@ -79,6 +99,7 @@ export const TIERS: Tier[] = [
       es: "El sitio, más el sistema que contesta por usted.",
     },
     price: 999,
+    regular: 1999,
     monthly: 99.99,
     inherits: { en: "Everything in Business, plus:", es: "Todo lo de Negocio, y además:" },
     features: [

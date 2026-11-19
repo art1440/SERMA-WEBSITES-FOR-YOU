@@ -30,6 +30,17 @@ export const FAQ_ITEMS: FaqItem[] = [
     },
   },
   {
+    id: "launch-price",
+    q: {
+      en: "Why are two prices shown?",
+      es: "¿Por qué aparecen dos precios?",
+    },
+    a: {
+      en: "The crossed-out number is our regular price. Our first 10 clients get the lower launch price; once those spots are taken, packages go to the regular price. The $99.99 a month is the same either way.",
+      es: "El número tachado es nuestro precio regular. Nuestros primeros 10 clientes reciben el precio de lanzamiento, más bajo; cuando se ocupen esos lugares, los paquetes pasan al precio regular. La cuota de $99.99 al mes es igual en ambos casos.",
+    },
+  },
+  {
     id: "see-first",
     q: {
       en: "Can I see my site before I pay?",
