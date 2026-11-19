@@ -331,7 +331,7 @@ export const contractorViews: NicheViews = {
           },
           {
             en: "Her $150 site-visit deposit is on hold and is charged when you confirm. It's credited to the job when she signs the estimate.",
-            es: "Su depósito de $150 por la visita queda retenido y se cobra cuando usted confirme; se acredita al trabajo cuando ella firme el presupuesto.",
+            es: "Su anticipo de $150 por la visita queda retenido y se cobra cuando usted confirme; se acredita al trabajo cuando ella firme el presupuesto.",
           },
         ],
         details: [
@@ -340,7 +340,7 @@ export const contractorViews: NicheViews = {
           { label: { en: "Budget", es: "Presupuesto" }, value: { en: "$15,000–$20,000", es: "$15,000–$20,000" } },
           { label: { en: "Visit", es: "Visita" }, value: { en: "Wed, 8:30–10:00 AM", es: "Mié, 8:30–10:00 AM" } },
           { label: { en: "Referred by", es: "Recomendada por" }, value: { en: "Linda N.", es: "Linda N." } },
-          { label: { en: "Deposit", es: "Depósito" }, value: { en: "$150 on hold · credited to the job", es: "$150 retenidos · se acredita al trabajo" } },
+          { label: { en: "Deposit", es: "Anticipo" }, value: { en: "$150 on hold · credited to the job", es: "$150 retenidos · se acredita al trabajo" } },
         ],
         primary: {
           label: { en: "Confirm site visit", es: "Confirmar visita" },
@@ -363,7 +363,7 @@ export const contractorViews: NicheViews = {
       fromEmail: "alerts@example.com",
       subject: {
         en: "Monica D. replied to your text-back: “How soon could you start?”",
-        es: "Monica D. respondió a su texto automático: “¿Qué tan pronto podrían empezar?”",
+        es: "Monica D. respondió a su mensaje automático: “¿Qué tan pronto podrían empezar?”",
       },
       preview: {
         en: "“How soon could you start, and do you pull the permit?”",
@@ -376,7 +376,7 @@ export const contractorViews: NicheViews = {
         paragraphs: [
           {
             en: "Monica D. called Friday at 12:10 PM while you were on a roof. Your automatic text went out 7 seconds later, and she wrote back this morning at 9:05:",
-            es: "Monica D. llamó el viernes a las 12:10 PM mientras usted trabajaba en un techo. Su texto automático salió 7 segundos después y ella respondió esta mañana a las 9:05:",
+            es: "Monica D. llamó el viernes a las 12:10 PM mientras usted trabajaba en un techo. Su mensaje automático salió 7 segundos después y ella respondió esta mañana a las 9:05:",
           },
           {
             en: "“Thanks for the text on Friday! We'd like to turn our hall bathtub into a curbless walk-in shower, mostly so my dad can use it safely. How soon could you start, and do you pull the permit or do we?”",
@@ -418,7 +418,7 @@ export const contractorViews: NicheViews = {
             es: "¡Gracias, Monica! Estoy en una obra en este momento; la llamo hoy después de las 3 PM.",
           },
         ],
-        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su texto automático de SermaWebDesign" },
+        signoff: { en: "— Your SermaWebDesign text-back", es: "— Su mensaje automático de SermaWebDesign" },
       },
     },
     {
@@ -475,11 +475,11 @@ export const contractorViews: NicheViews = {
       fromEmail: "alerts@example.com",
       subject: {
         en: "Deposit paid: $3,600 from Paula G. — covered patio",
-        es: "Depósito pagado: $3,600 de Paula G. — patio techado",
+        es: "Anticipo pagado: $3,600 de Paula G. — patio techado",
       },
       preview: {
         en: "30% deposit on the 12×20 ft patio cover. Crew B starts Wednesday.",
-        es: "Depósito del 30% para el patio techado de 12×20 pies. La Cuadrilla B empieza el miércoles.",
+        es: "Anticipo del 30% para el patio techado de 12×20 pies. La Cuadrilla B empieza el miércoles.",
       },
       received: { en: "Yesterday, 6:12 PM", es: "Ayer, 6:12 PM" },
       unread: false,
@@ -488,14 +488,14 @@ export const contractorViews: NicheViews = {
         paragraphs: [
           {
             en: "Paula paid the 30% deposit on her covered patio, so the job is locked in for Crew B starting Wednesday. The receipt is below for your records.",
-            es: "Paula pagó el depósito del 30% de su patio techado, así que el trabajo queda asegurado para la Cuadrilla B a partir del miércoles. Abajo tiene el recibo para sus registros.",
+            es: "Paula pagó el anticipo del 30% de su patio techado, así que el trabajo queda asegurado para la Cuadrilla B a partir del miércoles. Abajo tiene el recibo para sus registros.",
           },
         ],
         details: [
           { label: { en: "Invoice", es: "Factura" }, value: { en: "#1047", es: "#1047" } },
           { label: { en: "Project", es: "Proyecto" }, value: { en: "Covered patio, 12×20 ft, insulated roof", es: "Patio techado, 12×20 pies, techo aislado" } },
           { label: { en: "Contract total", es: "Total del contrato" }, value: { en: "$12,000.00", es: "$12,000.00" } },
-          { label: { en: "Deposit (30%)", es: "Depósito (30%)" }, value: { en: "$3,600.00", es: "$3,600.00" } },
+          { label: { en: "Deposit (30%)", es: "Anticipo (30%)" }, value: { en: "$3,600.00", es: "$3,600.00" } },
           { label: { en: "Paid with", es: "Forma de pago" }, value: { en: "Bank transfer (ACH)", es: "Transferencia bancaria (ACH)" } },
           { label: { en: "Balance at completion", es: "Saldo al terminar" }, value: { en: "$8,400.00", es: "$8,400.00" } },
         ],
