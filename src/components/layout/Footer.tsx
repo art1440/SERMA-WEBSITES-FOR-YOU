@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ArrowUp, ArrowUpRight, Mail, Pause, Phone, Play, ShieldCheck } from "lucide-react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
@@ -11,21 +12,65 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { fill } from "@/i18n/types";
 
-/** Footer link: calm sans, with a small arrow that glides in on hover (transform + opacity). */
+const linkBase =
+  "group inline-flex min-h-[44px] items-center gap-1.5 tracking-[-0.01em] text-bone/85 hover:text-bone focus-visible:text-bone";
+
+/** Underline that grows from the left on hover/focus (transform only). Reduced motion: appears instantly. */
+function GrowUnderline() {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-aqua transition-transform duration-base ease-editorial group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:transition-none"
+    />
+  );
+}
+
+/** Small arrow that glides in on hover (transform + opacity). Reduced motion: fades only, no movement. */
+function GlideArrow() {
+  return (
+    <ArrowUpRight
+      aria-hidden="true"
+      size={14}
+      strokeWidth={1.75}
+      className="shrink-0 -translate-x-1 text-aqua opacity-0 transition-[transform,opacity] duration-base ease-editorial group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 motion-reduce:translate-x-0 motion-reduce:transition-opacity"
+    />
+  );
+}
+
+/** Footer nav link: calm sans, left-growing underline and a gliding arrow. */
 function FooterLink({ href, label }: { href: string; label: string }) {
   return (
-    <Link
-      href={href}
-      className="group inline-flex min-h-[44px] items-center gap-1.5 text-[1.0625rem] tracking-[-0.01em] text-bone/85 hover:text-bone"
-    >
-      {label}
-      <ArrowUpRight
-        aria-hidden="true"
-        size={14}
-        strokeWidth={1.75}
-        className="-translate-x-1 text-aqua opacity-0 transition-[transform,opacity] duration-base ease-editorial group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
-      />
+    <Link href={href} className={`${linkBase} text-[1.0625rem]`}>
+      <span className="relative">
+        {label}
+        <GrowUnderline />
+      </span>
+      <GlideArrow />
     </Link>
+  );
+}
+
+/** Contact route (mailto / tel) with a leading icon; same hover treatment as FooterLink. */
+function FooterContact({
+  href,
+  icon,
+  label,
+  breakAll = false,
+}: {
+  href: string;
+  icon: ReactNode;
+  label: string;
+  breakAll?: boolean;
+}) {
+  return (
+    <a href={href} className={`${linkBase} text-[0.9375rem]`}>
+      {icon}
+      <span className={`relative ${breakAll ? "break-all" : ""}`}>
+        {label}
+        <GrowUnderline />
+      </span>
+      <GlideArrow />
+    </a>
   );
 }
 
@@ -56,16 +101,19 @@ export function Footer() {
               {t.footer.tagline}
             </p>
             {/* Direct routes, for people who would rather ring than fill in a form. */}
-            <div className="mt-7 flex flex-col gap-2.5 text-[0.9375rem] leading-relaxed">
-              <a href={`mailto:${siteConfig.contactEmail}`} className="link-quiet break-all">
-                <Mail aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0" />
-                {siteConfig.contactEmail}
-              </a>
+            <div className="mt-6 flex flex-col items-start">
+              <FooterContact
+                href={`mailto:${siteConfig.contactEmail}`}
+                icon={<Mail aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0 text-ash" />}
+                label={siteConfig.contactEmail}
+                breakAll
+              />
               {siteConfig.contactPhone ? (
-                <a href={`tel:${siteConfig.contactPhone.e164}`} className="link-quiet">
-                  <Phone aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0" />
-                  {siteConfig.contactPhone.display}
-                </a>
+                <FooterContact
+                  href={`tel:${siteConfig.contactPhone.e164}`}
+                  icon={<Phone aria-hidden="true" size={15} strokeWidth={1.75} className="shrink-0 text-ash" />}
+                  label={siteConfig.contactPhone.display}
+                />
               ) : null}
             </div>
 
