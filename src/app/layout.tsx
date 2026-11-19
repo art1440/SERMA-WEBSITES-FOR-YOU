@@ -4,7 +4,8 @@ import { Providers } from "@/components/layout/Providers";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { displaySerif, geistMono, workSans } from "./fonts";
 import { buildCsp } from "@/config/csp";
-import { asset } from "@/lib/asset";
+import { siteConfig } from "@/config/site";
+import { BASE_PATH } from "@/lib/asset";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 import "./motion.css";
@@ -13,24 +14,43 @@ const siteUrl = process.env.SITE_URL ?? "https://sermawebdesign.com";
 /** Only for static hosts that can't send headers (Netlify sends them via netlify.toml). */
 const cspMeta = process.env.CSP_META === "true";
 
+const SITE_DESCRIPTION =
+  "Bilingual websites for barbershops, salons, restaurants and contractors. Missed calls get a text back and clients book 24/7, with deposits and reminders.";
+
+/** Structured data for search engines. Only facts we hold: no ratings, reviews, addresses or prices. */
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: siteConfig.name,
+  url: `${siteUrl}${BASE_PATH}/`,
+  description: SITE_DESCRIPTION,
+  ...(siteConfig.contactEmail ? { email: siteConfig.contactEmail } : {}),
+  ...(siteConfig.contactPhone ? { telephone: siteConfig.contactPhone.e164 } : {}),
+  areaServed: { "@type": "Country", name: "US" },
+  availableLanguage: ["en", "es"],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "SermaWebDesign — Websites That Bring In Customers",
+    default: "SermaWebDesign — Websites That Bring In More Customers",
     template: "%s — SermaWebDesign",
   },
-  description:
-    "Bilingual websites for barbershops, salons, restaurants and contractors, with missed-call text-back, 24/7 booking, deposits and reminders. Get your time back.",
+  description: SITE_DESCRIPTION,
   openGraph: {
     type: "website",
     siteName: "SermaWebDesign",
     title: "Websites that bring in customers",
     description:
       "Missed calls get a text back. Clients book themselves, day or night, with deposits and reminders. You stay with the work you opened the doors for.",
-    // Its own file (not the hero poster): the standard 1200x630 size, and a new URL so social sites drop cached previews.
-    images: [{ url: asset("/media/og-render-pass-v2.jpg"), width: 1200, height: 630, alt: "SermaWebDesign" }],
+    // The image comes from src/app/opengraph-image.tsx (built at export time, 1200x630).
     locale: "en_US",
     alternateLocale: ["es_US"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Websites that bring in customers",
+    description: "Missed calls get a text back. Clients book themselves, day or night, with deposits and reminders.",
   },
   robots: { index: true, follow: true },
   referrer: "strict-origin-when-cross-origin",
@@ -57,6 +77,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {cspMeta ? <meta httpEquiv="Content-Security-Policy" content={buildCsp({ meta: true })} /> : null}
         {/* Sets html.dark before first paint (no flash of the wrong theme). Inline scripts are allowed by the CSP. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+        />
       </head>
       <body>
         <Providers>
