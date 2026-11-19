@@ -21,7 +21,7 @@ What I measured (Playwright, 1440×900 and 390×844, on a production build of `m
 | Every tab swap | Panel rises 14px, then each block inside rises another 16px | `TabPanels` veil and `Reveal` both translate Y, so the entrance plays twice |
 | Primary CTAs | Colour hover snaps instead of easing | `MagneticButton` adds `transition-none` to kill the transform transition, and that also kills the colour transition |
 | Light theme films | Full-screen videos run through `invert + hue-rotate + saturate + brightness` every frame | A runtime negative of a dark grade: costs GPU time under 3D transforms and looks like a negative |
-| Console | `GPU stall due to ReadPixels`, `THREE.Clock deprecated` | A sync pixel read on the GL context, plus a deprecated API |
+| Console | `GPU stall due to ReadPixels`, `THREE.Clock deprecated` | **Corrected by the T3 planner:** both are harmless. ReadPixels comes from this container's software compositing (a blank WebGL page triggers it); Clock is inside R3F 9.8.2, already the latest release. The real 3D bugs are below (T3). |
 | Docs | `design-system.md` says dark-first aqua; README says "no forms" and "pinned chapters" | Both describe the old site, and the next agent will build to the wrong spec |
 
 (Frame-rate numbers from this container are meaningless because it renders WebGL in software. Re-measure on a real
@@ -49,7 +49,12 @@ GPU before chasing fps.)
   with a progress rail you can scrub or drag and a replay. Scroll may tilt the stage slightly for depth, never
   advance the story. Steps stay interruptible (replay mid-run resets cleanly).
 - **T3 · WebGL hygiene** — `src/components/three/Engine3D.tsx`, `src/components/three/LightThreads.tsx`
-  Find and remove the synchronous `readPixels` stall; replace `THREE.Clock` with `THREE.Timer`; no visual change.
+  Adaptive DPR is silently undone by the next re-render (e.g. pressing Pause); `uPixelRatio` goes stale so points draw
+  1.75× too big after a DPR drop; 20–30 throwaway objects per frame in `useFrame`; LightThreads leaks its GL program
+  and buffer (StrictMode double mount); RoomEnvironment never disposed. No visual change. Plan: [T3](plans/T3-webgl.md).
+- **T3b · Sculpture keeps its time** — `src/components/three/Engine3D.tsx` (after T3 lands)
+  R3F resets `clock.elapsedTime` to 0 whenever the frameloop toggles, so after Pause/Play or re-entering a 3D tab the
+  sculpture's rotation, camera drift and heartbeat snap back to t=0. Use an app-owned time that accumulates `delta`.
 
 ### Wave 2 — one motion language
 
@@ -82,9 +87,10 @@ GPU before chasing fps.)
 | Ticket | Plan | Code | Inspect | Deep review | Commit |
 |---|---|---|---|---|---|
 | T0 merge main + agent team + crisp-text fix, live preview | — | done | — | — | merged |
-| T1 Dashboard | done → [plan](plans/T1-dashboard.md) | done (Sonnet) | inspecting (Haiku) | | WIP commit |
-| T2 Simulator | done (Opus) | queued | | | |
-| T3 WebGL hygiene | planning (Opus) | | | | |
+| T1 Dashboard | [plan](plans/T1-dashboard.md) | done (Sonnet) | inspecting (Haiku) | | WIP commit |
+| T2 Simulator | [plan](plans/T2-simulator.md) | coding (Sonnet) | | | |
+| T3 WebGL hygiene | [plan](plans/T3-webgl.md) | coding (Sonnet) | | | |
+| T3b Sculpture time | | | | | |
 | T4 Hero | | | | | |
 | T5 Tab swap | | | | | |
 | T6 CTA feel | | | | | |
