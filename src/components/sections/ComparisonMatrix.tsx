@@ -1,15 +1,18 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { animate, motion, useInView, useMotionValue, useTransform } from "framer-motion";
 import { Check, Rotate3d, X } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
-import { EASE_EDITORIAL } from "@/lib/motion";
+import { EASE_EDITORIAL, SPRING_SMOOTH } from "@/lib/motion";
 
 type Row = { capability: string; brochure: string; engine: string };
+
+/** One-time interactivity hint: set once the wiggle played or any card was flipped by hand. */
+const hint = { done: false };
 
 /* ------------------------------------------------------------------ *
  * Flip-card faces (Liquid Glass, see docs/design-system.md).
@@ -73,7 +76,7 @@ export function ComparisonMatrix() {
 
         <ul className="mt-10 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 sm:gap-y-8 lg:mt-14 lg:grid-cols-4">
           {t.compare.rows.map((row, i) => (
-            <FlipCard key={i} index={i} row={row} reduce={reduce} brochureLabel={t.compare.colBrochure} engineLabel={t.compare.colEngine} notIncluded={t.compare.notIncluded} included={t.compare.included} />
+            <FlipCard key={i} index={i} row={row} reduce={reduce} brochureLabel={t.compare.colBrochure} engineLabel={t.compare.colEngine} notIncluded={t.compare.notIncluded} included={t.compare.included} flipHint={t.compare.flipHint} />
           ))}
         </ul>
       </div>
@@ -89,6 +92,7 @@ function FlipCard({
   engineLabel,
   notIncluded,
   included,
+  flipHint,
 }: {
   index: number;
   row: Row;
@@ -97,11 +101,56 @@ function FlipCard({
   engineLabel: string;
   notIncluded: string;
   included: string;
+  flipHint: string;
 }) {
   const ref = useRef<HTMLLIElement>(null);
   const col = index % 4;
   // Flip once the card is mostly on screen; the row flips left to right.
   const shown = useInView(ref, { amount: 0.6, once: true });
+
+  // `flipped` is React state (changes per tap, never per frame); the rotation itself is a
+  // MotionValue, so the lift (scale / translateZ) is derived without any re-render.
+  const [flipped, setFlipped] = useState(false);
+  const flippedRef = useRef(false);
+  const touched = useRef(false); // the visitor flipped this card: stop auto-flipping it
+  const rotateY = useMotionValue(0);
+  const scale = useTransform(rotateY, [0, 90, 180], [1, 1.02, 1]);
+  const z = useTransform(rotateY, [0, 90, 180], [0, 40, 0]);
+
+  const setSide = (next: boolean) => {
+    flippedRef.current = next;
+    setFlipped(next);
+    if (!reduce) animate(rotateY, next ? 180 : 0, SPRING_SMOOTH);
+  };
+
+  // Auto-flip to the engine side, then (first card only, once ever) a half-flip wiggle
+  // hints that the cards are interactive.
+  useEffect(() => {
+    if (!shown) return;
+    const timers: number[] = [];
+    timers.push(
+      window.setTimeout(() => {
+        if (!touched.current) setSide(true);
+      }, (0.25 + col * 0.12) * 1000),
+    );
+    if (index === 0 && !reduce) {
+      timers.push(
+        window.setTimeout(() => {
+          if (touched.current || hint.done) return;
+          hint.done = true;
+          animate(rotateY, [180, 140, 180], { duration: 0.9, ease: EASE_EDITORIAL });
+        }, 2400),
+      );
+    }
+    return () => timers.forEach(window.clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shown, reduce]);
+
+  const toggle = () => {
+    touched.current = true;
+    hint.done = true;
+    setSide(!flippedRef.current);
+  };
 
   const front = (
     <div className={FRONT_FACE}>
@@ -148,29 +197,42 @@ function FlipCard({
     </div>
   );
 
+  // One real button over the card: tap, click and Enter/Space all land here (the faces
+  // stay in the DOM for screen readers).
+  const trigger = (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-pressed={flipped}
+      aria-label={`${row.capability}. ${flipHint}`}
+      className="absolute inset-0 z-10 cursor-pointer rounded-glass-lg [-webkit-tap-highlight-color:transparent]"
+    />
+  );
+
   if (reduce) {
+    // Reduced motion: no flip; the faces cross-fade in place.
     return (
-      <li ref={ref} className="grid gap-3">
-        {front}
-        {back}
+      <li ref={ref} className="relative grid">
+        <div className={`[grid-area:1/1] transition-opacity duration-base ${flipped ? "opacity-0" : "opacity-100"}`}>{front}</div>
+        <div className={`[grid-area:1/1] transition-opacity duration-base ${flipped ? "opacity-100" : "opacity-0"}`}>{back}</div>
+        {trigger}
       </li>
     );
   }
 
   return (
-    <li ref={ref} className="[perspective:1200px]">
+    <li ref={ref} className="relative [perspective:1000px]">
       {/* Both faces share one grid cell: the card is as tall as its taller face. */}
       <motion.div
         className="relative grid h-full w-full [transform-style:preserve-3d]"
-        initial={false}
-        animate={{ rotateY: shown ? 180 : 0 }}
-        transition={{ duration: 0.9, delay: shown ? 0.25 + col * 0.12 : 0, ease: EASE_EDITORIAL }}
+        style={{ rotateY, scale, z }}
       >
         <div className="[grid-area:1/1] [-webkit-backface-visibility:hidden] [backface-visibility:hidden]">{front}</div>
         <div className="[grid-area:1/1] [-webkit-backface-visibility:hidden] [backface-visibility:hidden] [transform:rotateY(180deg)]">
           {back}
         </div>
       </motion.div>
+      {trigger}
     </li>
   );
 }

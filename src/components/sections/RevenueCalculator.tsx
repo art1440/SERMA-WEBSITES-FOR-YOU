@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { animate, motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { useId, useState, type MouseEvent } from "react";
+import { useEffect, useId, useRef, useState, type MouseEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -15,10 +15,13 @@ import { useNiche } from "@/context/NicheContext";
 import { NICHE_BY_ID, NICHES, type NicheId } from "@/data/niches";
 import { fill } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
-import { SPRING_SOFT } from "@/lib/motion";
+import { SPRING_SMOOTH, SPRING_SOFT } from "@/lib/motion";
 import { goToPricing } from "@/lib/scroll";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 const WEEKS_PER_MONTH = 4.33;
+const MILESTONE = 5000; // the annual figure pulses every $5,000
+const CHIP_WINDOW_MS = 900; // deltas inside this window accumulate into one chip
 
 /* Average ticket uses a logarithmic slider so $20 haircuts and $10k remodels both feel precise. */
 const TICKET_MIN = 20;
@@ -79,6 +82,44 @@ export function RevenueCalculator() {
   const bookingsPerMonth = callsPerMonth * (bookingRate / 100);
   const monthly = bookingsPerMonth * avgTicket;
   const annual = monthly * 12;
+
+  // Delta chip + milestone pulse: written straight to the DOM (transform/opacity only),
+  // so nothing re-renders per animation frame.
+  const reduce = useReducedMotionSafe();
+  const chipRef = useRef<HTMLSpanElement>(null);
+  const pulseRef = useRef<HTMLSpanElement>(null);
+  const annualRef = useRef<HTMLElement>(null);
+  const prev = useRef<{ monthly: number; annual: number } | null>(null);
+  const chipAcc = useRef({ sum: 0, at: 0 });
+
+  useEffect(() => {
+    const before = prev.current;
+    prev.current = { monthly, annual };
+    if (!before || reduce) return;
+
+    const diff = Math.round(monthly) - Math.round(before.monthly);
+    const chip = chipRef.current;
+    if (chip && diff !== 0) {
+      const now = performance.now();
+      const acc = chipAcc.current;
+      acc.sum = now - acc.at < CHIP_WINDOW_MS ? acc.sum + diff : diff;
+      acc.at = now;
+      if (acc.sum === 0) {
+        chip.style.opacity = "0";
+      } else {
+        const up = acc.sum > 0;
+        chip.textContent = `${up ? "+" : "−"}${formatCurrency(Math.abs(acc.sum), intlLocale)}`;
+        chip.classList.toggle("text-live", up);
+        chip.classList.toggle("text-signal", !up);
+        animate(chip, { opacity: [1, 1, 0], y: [up ? 4 : -4, 0, up ? -6 : 6] }, { duration: 1.4, times: [0, 0.15, 1], ease: "easeOut" });
+      }
+    }
+
+    if (Math.floor(annual / MILESTONE) !== Math.floor(before.annual / MILESTONE)) {
+      if (pulseRef.current) animate(pulseRef.current, { opacity: [0, 1, 0] }, { duration: 0.9, ease: "easeOut" });
+      if (annualRef.current) animate(annualRef.current, { scale: [1, 1.06, 1] }, { duration: 0.6, ease: "easeOut" });
+    }
+  }, [monthly, annual, reduce, intlLocale]);
 
   const onCta = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -149,6 +190,7 @@ export function RevenueCalculator() {
                   step={1}
                   onChange={setMissedCalls}
                   display={fill(t.calculator.perWeek, { n: missedCalls })}
+                  format={(v) => fill(t.calculator.perWeek, { n: v })}
                 />
                 <Slider
                   label={t.calculator.avgTicket}
@@ -158,6 +200,7 @@ export function RevenueCalculator() {
                   step={1}
                   onChange={setTicketPos}
                   display={formatCurrency(avgTicket, intlLocale)}
+                  format={(v) => formatCurrency(ticketFromPos(v), intlLocale)}
                 />
                 <Slider
                   label={t.calculator.bookingRate}
@@ -168,6 +211,7 @@ export function RevenueCalculator() {
                   step={1}
                   onChange={setBookingRate}
                   display={`${bookingRate}%`}
+                  format={(v) => `${v}%`}
                 />
               </div>
             </div>
@@ -185,9 +229,17 @@ export function RevenueCalculator() {
                   <p className="eyebrow text-bone/70" id="calc-result-label">
                     {t.calculator.monthlyLabel}
                   </p>
-                  <p className="mt-3 font-display text-[clamp(2.75rem,11vw,4.5rem)] leading-[0.95] tracking-[-0.05em] md:text-[5.5rem] lg:text-[clamp(3.5rem,6vw,6rem)]">
-                    <AnimatedNumber value={monthly} format="currency" />
-                  </p>
+                  <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <p className="font-display text-[clamp(2.75rem,11vw,4.5rem)] leading-[0.95] tracking-[-0.05em] md:text-[5.5rem] lg:text-[clamp(3.5rem,6vw,6rem)]">
+                      <AnimatedNumber value={monthly} format="currency" />
+                    </p>
+                    {/* Delta chip: filled and faded imperatively; decorative (the number itself is announced). */}
+                    <span
+                      ref={chipRef}
+                      aria-hidden="true"
+                      className="tabular whitespace-nowrap font-mono text-sm font-medium opacity-0"
+                    />
+                  </div>
 
                   {/* Three soft inner tiles. Rows on phones and on the half-width lg card;
                       columns where the card is wide enough for large figures. */}
@@ -204,10 +256,15 @@ export function RevenueCalculator() {
                         <AnimatedNumber value={bookingsPerMonth} />
                       </dd>
                     </div>
-                    <div className={TILE_ACCENT}>
+                    <div className={`${TILE_ACCENT} relative`}>
+                      <span
+                        ref={pulseRef}
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-0 rounded-[inherit] bg-aqua/25 opacity-0"
+                      />
                       <dt className={TILE_LABEL}>{t.calculator.annualLabel}</dt>
                       {/* Aqua on the tinted tile is >= 6:1 (and every size here is large text). */}
-                      <dd className={`${TILE_VALUE} text-aqua`}>
+                      <dd ref={annualRef} className={`${TILE_VALUE} origin-left text-aqua`}>
                         <AnimatedNumber value={annual} format="currency" />
                       </dd>
                     </div>
@@ -250,13 +307,44 @@ type SliderProps = {
   max: number;
   step: number;
   display: string;
+  /** Formats an in-between value while the thumb glides to a preset. */
+  format: (v: number) => string;
   onChange: (v: number) => void;
 };
 
-function Slider({ label, hint, value, min, max, step, display, onChange }: SliderProps) {
+/**
+ * Uncontrolled range: the thumb, the track fill (--fill) and the readout are written
+ * straight to the DOM, so a preset can glide the slider with a spring and dragging
+ * keeps the fill locked 1:1 to the thumb. React only renders on committed changes.
+ */
+function Slider({ label, hint, value, min, max, step, display, format, onChange }: SliderProps) {
   const id = useId();
   const hintId = `${id}-hint`;
-  const fillPct = ((value - min) / (max - min)) * 100;
+  const inputRef = useRef<HTMLInputElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const reduce = useReducedMotionSafe();
+  const pct = (v: number) => ((v - min) / (max - min)) * 100;
+
+  useEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+    const from = Number(input.value);
+    if (from === value) return;
+    const paint = (v: number) => {
+      input.value = String(v);
+      input.style.setProperty("--fill", `${pct(v)}%`);
+      const node = textRef.current?.firstChild;
+      if (node) node.nodeValue = format(Math.round(v));
+    };
+    if (reduce) {
+      paint(value);
+      return;
+    }
+    const controls = animate(from, value, { ...SPRING_SMOOTH, onUpdate: paint, onComplete: () => paint(value) });
+    return () => controls.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, reduce]);
+
   return (
     <div>
       <div className="flex items-baseline justify-between gap-4">
@@ -265,21 +353,26 @@ function Slider({ label, hint, value, min, max, step, display, onChange }: Slide
         </label>
         {/* aria-hidden: the slider's aria-valuetext already announces this value. */}
         <output htmlFor={id} aria-hidden="true" className="tabular shrink-0 font-display text-[1.75rem] leading-none tracking-[-0.035em] text-bone sm:text-[2rem]">
-          {display}
+          <span ref={textRef}>{display}</span>
         </output>
       </div>
       <input
+        ref={inputRef}
         id={id}
         type="range"
-        className="range mt-1.5"
+        className="range mt-1.5 [&:active::-moz-range-thumb]:scale-[1.25] [&:active::-webkit-slider-thumb]:scale-[1.25]"
         min={min}
         max={max}
         step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
+        defaultValue={value}
+        onChange={(e) => {
+          const v = Number(e.target.value);
+          e.target.style.setProperty("--fill", `${pct(v)}%`);
+          onChange(v);
+        }}
         aria-valuetext={display}
         aria-describedby={hint ? hintId : undefined}
-        style={{ ["--fill" as string]: `${fillPct}%` }}
+        style={{ ["--fill" as string]: `${pct(value)}%` }}
       />
       {hint ? (
         <p id={hintId} className="mt-1 text-sm leading-relaxed text-ash">
