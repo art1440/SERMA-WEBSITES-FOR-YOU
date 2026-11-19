@@ -1,19 +1,20 @@
 "use client";
 
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { AnimatePresence, animate, motion, useInView, useMotionValue, type Variants } from "framer-motion";
 import { ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
-import { useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
-import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { TiltCard } from "@/components/ui/TiltCard";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
 import { TIERS, type Tier } from "@/data/pricing";
 import { fill } from "@/i18n/types";
+import { formatMetric } from "@/lib/format";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
 import { goToForm } from "@/lib/scroll";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
@@ -55,14 +56,75 @@ function Tick({ soon }: { soon?: boolean }) {
   );
 }
 
+/**
+ * Price that counts up once (~600ms) when the card scrolls in. Digits are written
+ * straight to the DOM; tabular-nums keeps the width steady. Reduced motion shows
+ * the final value immediately, and screen readers always get the final value.
+ */
+function PriceNumber({ value, reduce, className }: { value: number; reduce: boolean; className?: string }) {
+  const { intlLocale } = useLanguage();
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-10%" });
+  const mv = useMotionValue(reduce ? value : 0);
+  const text = useMotionValue(formatMetric(reduce ? value : 0, "currency", intlLocale));
+
+  useEffect(() => {
+    const render = (v: number) => text.set(formatMetric(v, "currency", intlLocale));
+    render(mv.get());
+    return mv.on("change", render);
+  }, [mv, text, intlLocale]);
+
+  useEffect(() => {
+    if (reduce) {
+      mv.jump(value);
+      return;
+    }
+    if (!inView) return;
+    const controls = animate(mv, value, { duration: 0.6, ease: EASE_EDITORIAL });
+    return () => controls.stop();
+  }, [inView, value, reduce, mv]);
+
+  return (
+    <span ref={ref} className={`tabular whitespace-nowrap [font-variant-numeric:tabular-nums] ${className ?? ""}`}>
+      <motion.span aria-hidden="true">{text}</motion.span>
+      <span className="sr-only">{formatMetric(value, "currency", intlLocale)}</span>
+    </span>
+  );
+}
+
 function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void }) {
   const { t, locale } = useLanguage();
+  const { reduce } = useScene();
+  const { paused } = useMotionPause();
   const p = t.pricing;
   const delay = CARD_DELAY[tier.id];
   const name = tier.name[locale];
+  const still = reduce || paused;
 
   return (
     <li className={`relative ${tier.featured ? "lg:-translate-y-5" : ""}`}>
+      {/* Hover lift (fine pointers only): transform on this wrapper; the deeper shadow fades in via opacity. */}
+      <div
+        className={`group/card relative h-full ${
+          reduce ? "" : "transition-transform duration-base ease-editorial [@media(hover:hover)_and_(pointer:fine)]:hover:-translate-y-1.5"
+        }`}
+      >
+        {reduce ? null : (
+          <span
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-0 rounded-glass-lg opacity-0 shadow-[0_30px_60px_-24px] shadow-ink/80 transition-opacity duration-base ease-editorial [@media(hover:hover)_and_(pointer:fine)]:group-hover/card:opacity-100`}
+          />
+        )}
+        {tier.featured ? (
+          /* Slow aqua rim light: opacity-only breathing, held still when paused or reduced. */
+          <motion.span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 rounded-glass-lg shadow-[0_0_64px_-10px] shadow-aqua/30"
+            initial={false}
+            animate={still ? { opacity: 0.8 } : { opacity: [0.55, 1, 0.55] }}
+            transition={still ? { duration: 0 } : { duration: 8, ease: "easeInOut", repeat: Infinity }}
+          />
+        ) : null}
       <TiltCard max={5} delay={delay} glare="rounded-glass-lg" className="h-full">
         <div
           className={`glass-dark glass-solid relative flex h-full flex-col rounded-glass-lg p-6 text-bone [-webkit-backdrop-filter:none] [backdrop-filter:none] sm:p-7 ${
@@ -91,7 +153,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
               {tier.price === null ? (
                 <span className="font-display text-[3rem] leading-none tracking-[-0.04em] text-bone/40">$&thinsp;—</span>
               ) : (
-                <AnimatedNumber value={tier.price} format="currency" className="font-display text-[3rem] leading-none tracking-[-0.04em]" />
+                <PriceNumber value={tier.price} reduce={reduce} className="font-display text-[3rem] leading-none tracking-[-0.04em]" />
               )}
               <span className="text-sm text-ash">{p.oneTime}</span>
             </p>
@@ -142,6 +204,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
           </motion.ul>
         </div>
       </TiltCard>
+      </div>
     </li>
   );
 }
