@@ -8,9 +8,6 @@ import {
   motion,
   useMotionValue,
   useMotionValueEvent,
-  useScroll,
-  useSpring,
-  useTransform,
   type AnimationPlaybackControls,
   type MotionValue,
 } from "framer-motion";
@@ -28,7 +25,7 @@ import { useScene } from "@/context/SceneContext";
 import { useTabs } from "@/context/TabsContext";
 import { fill } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
-import { EASE_EDITORIAL, MOTION } from "@/lib/motion";
+import { EASE_EDITORIAL } from "@/lib/motion";
 
 /** Ordered phases of the scripted timeline. */
 const PHASES = ["idle", "ringing", "missed", "typing1", "sms1", "reply", "typing2", "confirm", "logged"] as const;
@@ -37,7 +34,7 @@ type Phase = (typeof PHASES)[number];
 const at = (phase: Phase, min: Phase) => PHASES.indexOf(phase) >= PHASES.indexOf(min);
 
 /** Story beats, ms from "Simulate". One linear clock drives everything; the rail scrubs it. */
-const BEAT = { ringing: 0, missed: 1300, typing1: 2100, sms1: 2700, reply: 4200, typing2: 4800, confirm: 5400, logged: 6400, end: 7400 } as const;
+const BEAT = { ringing: 0, missed: 1300, typing1: 2100, sms1: 2700, reply: 5400, typing2: 6000, confirm: 6600, logged: 7600, end: 8600 } as const;
 type Beat = Exclude<Phase, "idle">;
 const ORDER: Beat[] = ["ringing", "missed", "typing1", "sms1", "reply", "typing2", "confirm", "logged"];
 /** Clock → phase. The clock never maps to "idle": idle is a status (never started / reset). */
@@ -89,7 +86,7 @@ export function MissedCallSimulator() {
   const { t, locale, intlLocale } = useLanguage();
   const { niche } = useNiche();
   const sim = niche.simulator;
-  const { reduce, desktop } = useScene();
+  const { reduce } = useScene();
   const service = sim.service[locale];
   const time = sim.time[locale];
   const amountLabel = formatCurrency(sim.amount, intlLocale);
@@ -118,6 +115,9 @@ export function MissedCallSimulator() {
   const live$ = useRef({ t, sim, service, time, amountLabel });
   live$.current = { t, sim, service, time, amountLabel };
   const scrubbingRef = useRef(false);
+  const scrubSnap = useRef<{ value: number; status: Status } | null>(null);
+  const tabActiveRef = useRef(true);
+  tabActiveRef.current = !tabs || tabs.active === "simulator";
 
   // Phase follows the clock; React re-renders only when a boundary is crossed.
   const sync = (ms: number) => {
@@ -201,12 +201,18 @@ export function MissedCallSimulator() {
   }, [globalPaused]);
   // Leaving the tab / hiding the browser tab pauses.
   useEffect(() => {
-    if (tabs && tabs.active !== "simulator") pause();
+    if (tabs && tabs.active !== "simulator") {
+      if (scrubbingRef.current) scrubFrom.current = "paused";
+      pause();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabs?.active]);
   useEffect(() => {
     const onHide = () => {
-      if (document.hidden) pause();
+      if (document.hidden) {
+        if (scrubbingRef.current) scrubFrom.current = "paused";
+        pause();
+      }
     };
     document.addEventListener("visibilitychange", onHide);
     return () => document.removeEventListener("visibilitychange", onHide);
@@ -225,14 +231,6 @@ export function MissedCallSimulator() {
     return clock.on("change", w);
   }, [clock]);
 
-  // Scroll only adds a depth tilt (lg, motion allowed); the story never reads scroll.
-  const tilt = desktop && !reduce;
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
-  const depth = useSpring(scrollYProgress, MOTION.cinematic);
-  const phoneRotY = useTransform(depth, [0, 0.4], [0, 5]);
-  const phoneRotX = useTransform(depth, [0, 0.4], [0, 3]);
-  const panelRotY = useTransform(depth, [0, 0.4], [0, -3]);
-
   const tempo: Tempo = reduce ? "instant" : scrubbing ? "scrub" : "play";
   const live = status === "playing" && !scrubbing && !reduce && !globalPaused;
 
@@ -245,6 +243,7 @@ export function MissedCallSimulator() {
   };
 
   const onMain = () => {
+    if (scrubbingRef.current) return;
     if (globalPaused) {
       seek(status === "idle" || status === "done" ? 0 : (STOPS.find((s) => s > clock.get()) ?? BEAT.end), { announce: true });
       return;
@@ -257,23 +256,44 @@ export function MissedCallSimulator() {
     }
   };
 
-  const endScrub = () => {
+  const endScrub = (e?: Event) => {
     window.removeEventListener("pointerup", endScrub);
     window.removeEventListener("pointercancel", endScrub);
     if (!scrubbingRef.current) return;
     scrubbingRef.current = false;
     setScrubbing(false);
+    const snap = scrubSnap.current;
+    scrubSnap.current = null;
+    const canPlay = () => !pausedRef.current && !document.hidden && tabActiveRef.current;
+    if (e?.type === "pointercancel" && snap) {
+      // A touch that became a page scroll: put everything back as it was.
+      if (snap.status === "idle") {
+        reset();
+        return;
+      }
+      clock.set(snap.value);
+      sync(snap.value);
+      if (snap.status === "playing" && snap.value < BEAT.end && canPlay()) play(snap.value);
+      else {
+        const next = snap.status === "playing" ? "paused" : snap.status;
+        statusRef.current = next;
+        setStatus(next);
+      }
+      return;
+    }
     if (statusRef.current === "idle") return; // tapped the start of an unstarted rail
     const v = clock.get();
-    if (scrubFrom.current === "playing" && v < BEAT.end && !pausedRef.current) play(v);
+    if (scrubFrom.current === "playing" && v < BEAT.end && canPlay()) play(v);
     else {
       const next = v >= BEAT.end ? "done" : "paused";
       statusRef.current = next;
       setStatus(next);
     }
   };
-  const onRailDown = () => {
+  const onRailDown = (e: React.PointerEvent<HTMLInputElement>) => {
+    if (e.button !== 0) return;
     scrubFrom.current = statusRef.current;
+    scrubSnap.current = e.pointerType === "touch" ? { value: clock.get(), status: statusRef.current } : null;
     halt();
     announceOn.current = false;
     scrubbingRef.current = true;
@@ -333,20 +353,17 @@ export function MissedCallSimulator() {
           {announcement}
         </p>
 
-        <div className="mt-10 grid grid-cols-12 gap-x-4 gap-y-6 [perspective:1600px] md:mt-14 md:gap-y-12 lg:mt-10 lg:gap-x-10">
+        <div className="mt-10 grid grid-cols-12 gap-x-4 gap-y-6 md:mt-14 md:gap-y-12 lg:mt-10 lg:gap-x-10">
           {/* ---------- Left: phone ---------- */}
           <Reveal className="col-span-12 md:col-span-6 lg:col-span-5">
-            <motion.div ref={phoneRef} style={tilt ? { rotateY: phoneRotY, rotateX: phoneRotX } : undefined}>
+            <div ref={phoneRef}>
               <Phone phase={phase} tempo={tempo} live={live} />
-            </motion.div>
+            </div>
           </Reveal>
 
           {/* ---------- Right: controls, progress, dashboard ----------
               Phones: the column dissolves (`contents`) so the controls can sit ABOVE the phone. */}
-          <motion.div
-            className="col-span-12 flex flex-col gap-6 max-md:contents md:col-span-6 lg:col-span-7"
-            style={tilt ? { rotateY: panelRotY, transformOrigin: "100% 50%" } : undefined}
-          >
+          <div className="col-span-12 flex flex-col gap-6 max-md:contents md:col-span-6 lg:col-span-7">
             <Reveal className="order-first col-span-12 md:order-none">
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -547,7 +564,7 @@ export function MissedCallSimulator() {
                 </div>
               </div>
             </Reveal>
-          </motion.div>
+          </div>
         </div>
 
         <SimulationDisclaimer variant="simulator" className="mt-8" />

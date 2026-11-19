@@ -1,26 +1,26 @@
 "use client";
 
-import { motion, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { useTabs } from "@/context/TabsContext";
+import { PanelVisitContext, useTabs, useTabVisit } from "@/context/TabsContext";
 import type { TabId } from "@/lib/tabs";
 
 /**
  * Holds every section, shows one. Hidden panels stay mounted (`hidden`), so a
  * section keeps its state — calculator inputs, dashboard view, simulator step —
- * when the visitor comes back to it. The swap itself is opacity plus a 14px
- * rise, read off the provider's `veil`; at rest the transform is `none`, so the
- * sections' sticky stages and 3D contexts behave exactly as before.
+ * when the visitor comes back to it. The swap is opacity only. At rest the wrapper
+ * carries no transform, so the sections' sticky stages and 3D contexts behave exactly
+ * as before. Each panel gets the visit number so its reveals replay on every open.
  */
 export function TabPanels({ panels }: { panels: { id: TabId; node: ReactNode }[] }) {
   const tabs = useTabs();
   const veil = tabs!.veil;
-  const y = useTransform(veil, [0, 1], [14, 0]);
+  const visit = useTabVisit();
   return (
-    <motion.div style={{ opacity: veil, y }}>
+    <motion.div style={{ opacity: veil }}>
       {panels.map(({ id, node }) => (
         <div key={id} id={`panel-${id}`} role="tabpanel" aria-labelledby={`tab-${id}`} hidden={tabs!.active !== id}>
-          {node}
+          <PanelVisitContext.Provider value={visit?.id === id ? visit.n : null}>{node}</PanelVisitContext.Provider>
         </div>
       ))}
     </motion.div>
