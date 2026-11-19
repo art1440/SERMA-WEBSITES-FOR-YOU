@@ -137,9 +137,9 @@ const privacyEs: LegalDoc = {
       id: "collect",
       heading: "2. Información que recopilamos",
       paragraphs: [
-        "El formulario de contacto pide cuatro datos: su nombre, el nombre de su negocio, su teléfono y qué necesita. Es la única información personal que recopila este sitio. Se guarda en los envíos de formularios de nuestro proveedor de alojamiento (Netlify) con la fecha y la hora en que lo envió, y llega a nuestra bandeja de correo. La usamos para responderle y para preparar una cotización. No lo agregamos a ninguna lista de correo y no la vendemos ni la compartimos.",
+        "El formulario de contacto pide cuatro datos: su nombre, el nombre de su negocio, su teléfono y qué necesita. Es la única información personal que recopila este sitio. Se guarda en los envíos de formularios de nuestro proveedor de alojamiento web (Netlify) con la fecha y la hora en que lo envió, y llega a nuestra bandeja de entrada de correo. La usamos para responderle y para preparar una cotización. No lo agregamos a ninguna lista de correo y no vendemos ni compartimos esa información.",
         "Conservamos el envío el tiempo necesario para responderle y llevar un registro del trabajo, y no más. Si nos pide eliminarlo en {email}, lo eliminamos, salvo que la ley nos obligue a conservarlo.",
-        "No hay registros, cuentas, ventanas de chat ni analítica. El panel interactivo, el simulador y la calculadora funcionan completamente en su navegador; nada de lo que haga con ellos se nos envía.",
+        "No hay inscripciones, cuentas, ventanas de chat ni analítica. El panel interactivo, el simulador y la calculadora funcionan completamente en su navegador; nada de lo que haga con ellos se nos envía.",
         "Como en cualquier sitio web, nuestro proveedor de alojamiento procesa automáticamente datos técnicos básicos necesarios para entregar y proteger el sitio (como dirección IP, tipo de navegador y hora de la solicitud en los registros del servidor). No usamos estos datos para identificar, rastrear ni perfilar a los visitantes.",
       ],
     },
@@ -190,7 +190,7 @@ const privacyEs: LegalDoc = {
       heading: "9. Sus derechos de privacidad",
       paragraphs: [
         "Según el lugar donde viva (incluidos California, Colorado, Connecticut, Texas, Virginia y otros estados de EE. UU.), puede tener derecho a saber qué información personal tenemos sobre usted, a acceder a ella o recibir una copia, a corregirla, a eliminarla y a oponerse a su venta, a que se comparta o a su uso para publicidad dirigida (lo cual no hacemos). Respetamos las señales de Global Privacy Control del navegador.",
-        "Para ejercer un derecho, escriba a {email}. Verificaremos su solicitud y responderemos dentro del plazo que exige la ley. Puede actuar mediante un agente autorizado. No le discriminaremos por ejercer ningún derecho de privacidad.",
+        "Para ejercer un derecho, escriba a {email}. Verificaremos su solicitud y responderemos dentro del plazo que exige la ley. Puede actuar mediante un agente autorizado. No lo discriminaremos por ejercer ningún derecho de privacidad.",
       ],
     },
     {
@@ -325,21 +325,21 @@ const termsEs: LegalDoc = {
       id: "services",
       heading: "1. Sobre nuestros servicios",
       paragraphs: [
-        "Este sitio web describe los sitios web, el Panel de Control de Clientes y los sistemas de automatización que creamos para negocios locales. Su contenido es informativo. Los servicios que prestamos se rigen por un acuerdo escrito independiente (como un Acuerdo Maestro de Servicios y una declaración de trabajo), que prevalecerá en caso de conflicto con estos Términos. No publicamos precios; el alcance y las tarifas se acuerdan por escrito.",
+        "Este sitio web describe los sitios web, el Panel de Clientes y los sistemas de automatización que creamos para negocios locales. Su contenido es informativo. Los servicios que prestamos se rigen por un acuerdo escrito independiente (como un Acuerdo Maestro de Servicios y una declaración de trabajo), que prevalecerá en caso de conflicto con estos Términos. No publicamos precios; el alcance y las tarifas se acuerdan por escrito.",
       ],
     },
     {
       id: "simulations",
       heading: "2. Simulaciones interactivas",
       paragraphs: [
-        "La muestra del Panel de Control de Clientes, el simulador de llamadas perdidas y la calculadora de ingresos son simulaciones interactivas ilustrativas que usan datos de ejemplo. No constituyen una promesa, proyección ni garantía de ningún resultado. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Consulte nuestro Aviso Legal para más detalles.",
+        "La demostración del Panel de Clientes, el simulador de llamadas perdidas y la calculadora de ingresos son simulaciones interactivas ilustrativas que usan datos de ejemplo. No constituyen una promesa, proyección ni garantía de ningún resultado. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Consulte nuestro Aviso legal para más detalles.",
       ],
     },
     {
       id: "communications",
       heading: "3. Cómo contactarnos",
       paragraphs: [
-        "El sitio web solo tiene el formulario de contacto. Si nos escribe o llama para solicitar una demostración, proporcione información veraz y no envíe datos personales sensibles ni de pago por correo electrónico. Contactarnos no crea una relación de cliente ni obligación alguna de compra.",
+        "El sitio web solo tiene el formulario de contacto. Si nos escribe o llama para solicitar una demostración, proporcione información veraz y no envíe datos personales sensibles ni de pago por correo electrónico. Comunicarse con nosotros no crea una relación de cliente ni obligación alguna de compra.",
       ],
     },
     {
@@ -350,14 +350,14 @@ const termsEs: LegalDoc = {
         "Hacerse pasar por otra persona o negocio al contactarnos.",
         "Intentar sondear, escanear, interrumpir u obtener acceso no autorizado al sitio, sus servidores o el Portal de Clientes.",
         "Extraer, copiar o republicar a gran escala el contenido, los diseños o los medios del sitio sin permiso por escrito.",
-        "Usar el sitio para enviar spam o transmitir código malicioso.",
+        "Usar el sitio para enviar correo no deseado o transmitir código malicioso.",
       ],
     },
     {
       id: "portal",
       heading: "5. Acceso al Portal de Clientes",
       paragraphs: [
-        "El acceso al Panel de Control de Clientes de SermaWebDesign se otorga únicamente a clientes incorporados conforme a su acuerdo de servicios. Las credenciales son personales del cliente y deben mantenerse confidenciales.",
+        "El acceso al Panel de Clientes de SermaWebDesign se otorga únicamente a clientes incorporados conforme a su acuerdo de servicios. Las credenciales son de uso personal del cliente y deben mantenerse confidenciales.",
       ],
     },
     {
@@ -466,14 +466,14 @@ const disclaimerEn: LegalDoc = {
 };
 
 const disclaimerEs: LegalDoc = {
-  title: "Aviso Legal",
+  title: "Aviso legal",
   intro: "Lea este aviso con atención. Explica cómo interpretar las demostraciones interactivas y las cifras de este sitio web.",
   sections: [
     {
       id: "simulations",
       heading: "1. Simulaciones ilustrativas",
       paragraphs: [
-        "La muestra del Panel de Control de Clientes es una simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign, y el simulador de llamadas perdidas es una simulación ilustrativa del texto automático por llamada perdida de SermaWebDesign. Todos los nombres, números de teléfono, negocios, mensajes, reseñas, métricas y montos que muestran son datos de ejemplo ficticios creados para la demostración. Los números de teléfono usan el rango reservado 555-01XX. La calculadora de ingresos perdidos es solo una estimación basada en los valores que usted ajusta y la fórmula que se muestra; no es una garantía ni un resultado típico.",
+        "La demostración del Panel de Clientes es una simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign, y el simulador de llamadas perdidas es una simulación ilustrativa del mensaje de texto automático tras una llamada perdida de SermaWebDesign. Todos los nombres, números de teléfono, negocios, mensajes, reseñas, métricas y montos que muestran son datos de ejemplo ficticios creados para la demostración. Los números de teléfono usan el rango reservado 555-01XX. La calculadora de ingresos perdidos es solo una estimación basada en los valores que usted ajusta y la fórmula que se muestra; no es una garantía ni un resultado típico.",
         "El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
       ],
     },
