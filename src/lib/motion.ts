@@ -28,3 +28,17 @@ export const SPRING_SMOOTH = { type: "spring", ...MOTION.smooth } as const;
 /** Back-compat aliases used across components. */
 export const SPRING_SOFT = SPRING_SNAPPY;
 export const SPRING_NUMBER = { stiffness: 70, damping: 20, mass: 0.9 } as const; // counters: deliberately slow tick-up
+
+/**
+ * Home hero beats, as hero.progress (0 → 1 over the 150vh track = 50vh of scroll).
+ * HeroChapter (copy), Stage (architecture film) and Engine3D (sculpture + camera) all read these,
+ * so the 3D never drifts from the words. Change them here only.
+ */
+export const HERO_BEATS = {
+  shearStart: 0.04, // headline leaves its flat, native-text state and starts to shear
+  diveStart: 0.06, // sculpture starts toward the camera
+  statementIn: 0.56, // statement starts to emerge from depth; the architecture film is gone by now
+  divePeak: 0.62, // last headline line gone; sculpture closest, camera pushed in furthest
+  statementSet: 0.86, // statement at rest (holds to the end); the Next hand-off starts to appear
+  settled: 0.98, // sculpture in its system pose (must stay < 0.999, Engine3D's branch switch)
+} as const;

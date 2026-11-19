@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useMotionValueEvent, useTransform, type MotionValue } from "framer-motion";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { HeroFlowCard } from "@/components/ui/HeroFlowCard";
@@ -9,7 +9,7 @@ import { HeroLight, ParallaxLayer, PointerParallaxProvider } from "@/components/
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
 import { useScene } from "@/context/SceneContext";
-import { EASE_EDITORIAL } from "@/lib/motion";
+import { EASE_EDITORIAL, HERO_BEATS } from "@/lib/motion";
 import { goToPricing } from "@/lib/scroll";
 import { asset } from "@/lib/asset";
 
@@ -24,30 +24,40 @@ export function HeroChapter() {
   const { t } = useLanguage();
   const { hero, reduce } = useScene();
   const p = hero.progress;
-  // Sharp at rest: the headline is a 3D stack only once the scroll shear begins (0.05); before
+  // Sharp at rest: the headline is a 3D stack only once the scroll shear begins (HERO_BEATS.shearStart); before
   // that every line's transform is `none`, so flattening it is pixel-identical but lets the
   // browser paint the glyphs natively instead of resampling a GPU texture.
   const headline = useRef<HTMLHeadingElement>(null);
-  const flatten = (v: number) => headline.current?.classList.toggle("stage-flat", reduce || v < 0.05);
+  const flatten = (v: number) => headline.current?.classList.toggle("stage-flat", reduce || v < HERO_BEATS.shearStart);
   useMotionValueEvent(p, "change", flatten);
   useEffect(() => {
     flatten(p.get());
   });
 
-  const copyOpacity = useTransform(p, [0.03, 0.18], [1, 0]);
-  const copyY = useTransform(p, [0.03, 0.2], [0, -60]);
-  const copyPointer = useTransform(p, (v) => (v > 0.12 ? "none" : "auto"));
+  const copyOpacity = useTransform(p, [0.04, 0.3], [1, 0]);
+  const copyY = useTransform(p, [0.04, 0.33], [0, -60]);
+  const copyPointer = useTransform(p, (v) => (v > 0.2 ? "none" : "auto"));
   // Once the copy has faded away, take its buttons out of the Tab order (state flips only at the threshold).
   const [copyHidden, setCopyHidden] = useState(false);
   useMotionValueEvent(p, "change", (v) => {
-    const hidden = v > 0.12;
+    const hidden = v > 0.2;
     if (hidden !== copyHidden) setCopyHidden(hidden);
   });
-  const hintOpacity = useTransform(p, [0, 0.05], [1, 0]);
+  const hintOpacity = useTransform(p, [0, 0.06], [1, 0]);
 
-  const stOpacity = useTransform(p, [0.5, 0.6, 0.84, 0.95], [0, 1, 1, 0]);
-  const stZ = useTransform(p, [0.5, 0.62, 0.84, 0.97], [-520, 0, 0, 420]);
-  const stRotateX = useTransform(p, [0.5, 0.62], [24, 0]);
+  // Statement: the last beat. It emerges from depth as the headline's last line leaves, then rests to the end of
+  // the track, so the sticky release carries it off like any other content (no exit, no empty screen).
+  const stOpacity = useTransform(p, [HERO_BEATS.statementIn, 0.8], [0, 1]);
+  const stZ = useTransform(p, [HERO_BEATS.statementIn, HERO_BEATS.statementSet], [-520, 0]);
+  const stRotateX = useTransform(p, [HERO_BEATS.statementIn, HERO_BEATS.statementSet], [24, 0]);
+  // Hand-off: "Next: How it works" settles in where the scroll cue sat at rest.
+  const nextOpacity = useTransform(p, [HERO_BEATS.statementSet, 0.96], [0, 1]);
+  const nextY = useTransform(p, [HERO_BEATS.statementSet, 0.96], [12, 0]);
+  const [nextReady, setNextReady] = useState(false);
+  useMotionValueEvent(p, "change", (v) => {
+    const ready = v >= 0.9;
+    if (ready !== nextReady) setNextReady(ready);
+  });
 
   const onPricingClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -60,7 +70,7 @@ export function HeroChapter() {
       ref={hero.ref}
       aria-labelledby="hero-title"
       data-theme="dark"
-      className="relative motion-safe:h-[180vh] motion-reduce:isolate motion-reduce:overflow-hidden"
+      className="relative motion-safe:h-[150vh] motion-reduce:isolate motion-reduce:overflow-hidden"
     >
       {/* Reduced motion: the 3D stage is off, so the glass sits in a warm light field instead. */}
       <AmbientField variant={0} className="hidden motion-reduce:block" />
@@ -184,7 +194,7 @@ export function HeroChapter() {
           </span>
         </motion.div>
 
-        {/* Statement — emerges from depth over the film, then flies past the camera */}
+        {/* Statement — emerges from depth as the headline leaves, then rests: it's the last beat */}
         <div className="pointer-events-none absolute inset-0 hidden items-center justify-center [perspective:900px] motion-safe:flex">
           <motion.p
             style={{ opacity: stOpacity, z: stZ, rotateX: stRotateX }}
@@ -195,6 +205,24 @@ export function HeroChapter() {
             <em className="font-serif font-normal italic tracking-[-0.01em] text-aqua">{t.hero.statement[1]}</em>
           </motion.p>
         </div>
+
+        {/* Hand-off: where the scroll cue sat at rest, the next chapter waits. TabsContext turns #included into a tab swap. */}
+        <motion.div
+          style={{ opacity: nextOpacity, y: nextY }}
+          inert={!nextReady}
+          className="absolute inset-x-0 bottom-[max(2rem,env(safe-area-inset-bottom))] hidden justify-center motion-safe:flex lg:bottom-10"
+        >
+          <a href="#included" className="group flex min-h-[44px] flex-col items-center gap-1.5 px-4 py-1 text-center">
+            <span className="eyebrow text-ash">
+              {t.hero.next}
+              <span className="sr-only">: </span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 font-medium text-bone underline decoration-bone/40 decoration-1 underline-offset-[4px] transition-[text-decoration-color] duration-base ease-editorial group-hover:decoration-aqua/90 group-focus-visible:decoration-aqua/90">
+              {t.included.eyebrow}
+              <ArrowRight aria-hidden="true" size={16} strokeWidth={1.75} className="transition-transform duration-base ease-editorial group-hover:translate-x-0.5" />
+            </span>
+          </a>
+        </motion.div>
       </div>
     </section>
     </PointerParallaxProvider>
@@ -215,12 +243,13 @@ function HeadlineLine({
   emphasis: string;
 }) {
   const path = LINE_PATHS[index] ?? LINE_PATHS[0];
-  const range = [0.05 + index * 0.02, 0.38 + index * 0.02];
+  // the last line (index 2) ends at HERO_BEATS.divePeak (0.62)
+  const range = [HERO_BEATS.shearStart + index * 0.03, 0.56 + index * 0.03];
   const x = useTransform(progress, range, ["0%", path.x]);
   const z = useTransform(progress, range, [0, path.z]);
   const rotateX = useTransform(progress, range, [0, path.rx]);
   const rotateY = useTransform(progress, range, [0, path.ry]);
-  const opacity = useTransform(progress, [range[0] + 0.1, range[1] - 0.02], [1, 0]);
+  const opacity = useTransform(progress, [range[0] + 0.16, range[1] - 0.03], [1, 0]);
 
   const indent = ["", "pl-[8%] lg:pl-[14%]", "pl-[2%] lg:pl-[5%]"][index] ?? "";
   const parts = children.includes(emphasis) ? children.split(emphasis) : null;

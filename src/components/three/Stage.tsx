@@ -7,20 +7,20 @@ import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
 import { useTabs } from "@/context/TabsContext";
 import { asset } from "@/lib/asset";
+import { HERO_BEATS } from "@/lib/motion";
 import { LightThreads } from "./LightThreads";
 
 const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
 
-/** Develops the dark films into light ones: invert the tones, rotate the hue back, soften. */
-/** The films were shot dark: inverted for the light scheme, shown as shot in dark mode. */
+/** The film was shot dark: inverted for the light scheme, shown as shot in dark mode. */
 const FILM_LIGHT = "[filter:invert(1)_hue-rotate(180deg)_saturate(0.85)_brightness(1.04)] dark:[filter:none]";
 
 /**
  * Fixed, full-screen backdrop shared by the transparent chapters (hero, system, finale).
  * Light (white + sky blue). Layer order (back → front):
- *   sky base → light threads (whole page) → hero film (3D dive) → architecture film → WebGL engine
- * The films were shot dark; they are shown "developed" (inverted, hue kept) so they read as
- * pale blue-and-white pages instead of navy ones.
+ *   sky base → light threads (whole page) → architecture film → WebGL engine
+ * The film was shot dark; it is shown "developed" (inverted, hue kept) so it reads as
+ * a pale blue-and-white page instead of a navy one.
  * The architecture film is the ambient "site being built" layer: faint behind the hero's first
  * screen, then behind How it works.
  * Opaque chapters (dashboard, simulator, …) simply cover it; the engine's render loop
@@ -49,12 +49,8 @@ export function Stage() {
 
   // The site is light (white + sky blue): the engine reads 0 = light backdrop.
   const ink = useMotionValue(0);
-  const filmOpacity = useTransform(hero.progress, [0.36, 0.48, 0.86, 0.97], [0, 1, 1, 0]);
-  const filmScale = useTransform(hero.progress, [0.36, 0.8], [0.22, 1.08]);
-  const filmRotateX = useTransform(hero.progress, [0.36, 0.8], [32, 0]);
-  const filmRotateZ = useTransform(hero.progress, [0.36, 0.8], [-6, 0]);
   // The ambient "site being built" film: dimly behind the hero's first screen (gone before the
-  // hero film flies in), then again behind How it works while its steps play.
+  // statement emerges), then again behind How it works while its steps play.
   // It eases in just after the headline (never in the server-rendered first paint, and its decode waits
   // until the page has settled). Raw scroll, not the spring, so a mid-page load never flashes it.
   const archIntro = useMotionValue(0);
@@ -62,7 +58,7 @@ export function Stage() {
     const controls = animate(archIntro, 1, { delay: 0.6, duration: 1.4, ease: "easeOut" });
     return () => controls.stop();
   }, [archIntro]);
-  const archHeroBase = useTransform(hero.raw, [0, 0.26, 0.38], [0.24, 0.24, 0]);
+  const archHeroBase = useTransform(hero.raw, [0, 0.37, HERO_BEATS.statementIn], [0.24, 0.24, 0]);
   const archHero = useTransform([archHeroBase, archIntro], ([h, k]: number[]) => h * k);
   const archSystem = useTransform(system.progress, [0, 0.1, 0.9, 1], [0, 0.32, 0.32, 0]);
   const archOpacity = useTransform([archHero, archSystem], ([h, s]: number[]) => Math.max(h, s));
@@ -71,7 +67,8 @@ export function Stage() {
   // film is invisible between its two uses.
   const [archInHero, setArchInHero] = useState(true);
   useMotionValueEvent(hero.raw, "change", (v) => {
-    const inHero = v < 0.5;
+    // flips while the film is invisible: on Home it is 0 from raw ≥ HERO_BEATS.statementIn
+    const inHero = v < 0.8;
     if (inHero !== archInHero) setArchInHero(inHero);
   });
 
@@ -133,24 +130,6 @@ export function Stage() {
 
       {/* Light threads run behind every section; translucent sections let them glow through. */}
       <LightThreads paused={paused} desktop={desktop} />
-
-      {/* Hero film: flies up out of depth and fills the screen — the camera "dives" into it. */}
-      <div className="absolute inset-0 [perspective:1100px]">
-        <motion.div
-          className="absolute inset-0 overflow-hidden"
-          style={{ opacity: filmOpacity, scale: filmScale, rotateX: filmRotateX, rotateZ: filmRotateZ }}
-        >
-          {/* Poster = the film's own first frame, so nothing jumps when playback takes over. */}
-          <LayerVideo
-            src={asset("/media/hero-v2")}
-            poster={asset("/media/hero-v2-film-poster.jpg")}
-            visibility={filmOpacity}
-            paused={paused}
-            className={FILM_LIGHT}
-          />
-          <div className="absolute inset-0 bg-ink/40" />
-        </motion.div>
-      </div>
 
       <motion.div
         className={`absolute inset-0 ${
