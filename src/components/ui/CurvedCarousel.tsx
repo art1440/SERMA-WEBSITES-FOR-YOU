@@ -10,7 +10,7 @@ import {
   type PanInfo,
 } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { SPRING_SMOOTH } from "@/lib/motion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
@@ -39,6 +39,52 @@ const COPIES = 3; // the ring holds the items three times so it always looks ful
 const GAP = 18;
 
 const mod = (n: number, m: number) => ((n % m) + m) % m;
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+
+/** Neighbour scale / dim / tilt, driven continuously by the ring rotation. */
+const SIDE_SCALE = 0.94;
+const SIDE_OPACITY = 0.6;
+const TILT_DEG = 7;
+/** iOS-style deceleration projection: seconds of travel a release velocity is worth. */
+const PROJECT_S = 0.36;
+
+/** iOS-style rubber band: the further past the edge, the less the content follows. */
+const rubber = (over: number, dim: number) =>
+  over === 0 ? 0 : Math.sign(over) * (1 - 1 / ((Math.abs(over) * 0.55) / dim + 1)) * dim;
+
+/**
+ * Per-card focus state. Everything derives from the ring's rotation MotionValue,
+ * so scale / dim / tilt track the finger every frame, not just on snap.
+ */
+function FocusCard({
+  rotation,
+  slot,
+  step,
+  slots,
+  reduce,
+  children,
+}: {
+  rotation: MotionValue<number>;
+  slot: number;
+  step: number;
+  slots: number;
+  reduce: boolean;
+  children: ReactNode;
+}) {
+  // Signed distance from the front, in cards (wrapped around the ring).
+  const d = useTransform(rotation, (v) => mod(slot - v / step + slots / 2, slots) - slots / 2);
+  const scale = useTransform(d, (x) => 1 - (1 - SIDE_SCALE) * Math.min(Math.abs(x), 1));
+  const opacity = useTransform(d, (x) => {
+    const a = Math.abs(x);
+    return a <= 1 ? 1 - (1 - SIDE_OPACITY) * a : Math.max(0.25, SIDE_OPACITY - (a - 1) * 0.2);
+  });
+  const rotateY = useTransform(d, (x) => (reduce ? 0 : -clamp(x, -2, 2) * TILT_DEG));
+  return (
+    <motion.div className="h-full w-full" style={{ scale, opacity, rotateY }}>
+      {children}
+    </motion.div>
+  );
+}
 
 /**
  * Curved 3D carousel: cards sit on the inside of a cylinder, so the outer
@@ -82,7 +128,7 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
   const activeRef = useRef(0);
   const [announce, setAnnounce] = useState("");
   useMotionValueEvent(rotation, "change", (v) => {
-    const idx = mod(Math.round(v / step), n);
+    const idx = clamp(Math.round(v / step), 0, n - 1);
     if (idx !== activeRef.current) {
       activeRef.current = idx;
       setActive(idx);
@@ -90,50 +136,63 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
     }
   });
 
+  const maxRot = (n - 1) * step;
+
   const settle = useCallback(
     (targetRotation: number, velocity = 0) => {
-      const target = targetRotation - scrollRot.get();
+      const target = clamp(targetRotation, 0, maxRot) - scrollRot.get();
       animate(offset, target, reduce ? { duration: 0 } : { ...SPRING_SMOOTH, velocity });
     },
-    [offset, scrollRot, reduce],
+    [offset, scrollRot, reduce, maxRot],
   );
 
   const goTo = useCallback(
     (index: number, speak = false) => {
-      const cur = rotation.get();
-      // Nearest ring angle that shows `index` (each item appears every n·step degrees).
-      const lap = n * step;
-      let delta = mod(index * step - cur, lap);
-      if (delta > lap / 2) delta -= lap;
-      settle(cur + delta);
+      settle(index * step);
       if (speak) setAnnounce(items[index]?.label ?? "");
     },
-    [rotation, n, step, settle, items],
+    [step, settle, items],
   );
 
   const nudge = (dir: 1 | -1) => {
-    const snapped = Math.round(rotation.get() / step) * step;
-    settle(snapped + dir * step);
-    setAnnounce(items[mod(Math.round(snapped / step) + dir, n)]?.label ?? "");
+    const cur = clamp(Math.round(rotation.get() / step), 0, n - 1);
+    const next = clamp(cur + dir, 0, n - 1);
+    settle(next * step);
+    setAnnounce(items[next]?.label ?? "");
   };
 
   // ---- Drag / swipe ------------------------------------------------------
+  // The card follows the finger 1:1 (offset is set directly, no spring while held).
   const dragStart = useRef(0);
   const dragged = useRef(false);
+  const axis = useRef<"x" | "y" | null>(null);
   const degPerPx = step / (dims.w + GAP);
 
   const onPanStart = () => {
     offset.stop();
     dragStart.current = offset.get();
     dragged.current = false;
+    axis.current = null;
   };
   const onPan = (_: PointerEvent, info: PanInfo) => {
+    if (!axis.current) {
+      if (Math.hypot(info.offset.x, info.offset.y) < 5) return;
+      axis.current = Math.abs(info.offset.x) >= Math.abs(info.offset.y) ? "x" : "y";
+    }
+    // Mostly-vertical gesture: leave it to the page scroll.
+    if (axis.current === "y") return;
     if (Math.abs(info.offset.x) > 6) dragged.current = true;
-    offset.set(dragStart.current - info.offset.x * degPerPx);
+    const raw = dragStart.current - info.offset.x * degPerPx;
+    const lo = -scrollRot.get();
+    const hi = maxRot - scrollRot.get();
+    // Past either end, resistance grows (rubber band).
+    const over = raw < lo ? raw - lo : raw > hi ? raw - hi : 0;
+    offset.set(over === 0 ? raw : (over < 0 ? lo : hi) + rubber(over, step * 1.5));
   };
   const onPanEnd = (_: PointerEvent, info: PanInfo) => {
-    const v = -info.velocity.x * degPerPx;
-    const projected = rotation.get() + v * 0.22;
+    const v = axis.current === "x" ? -info.velocity.x * degPerPx : 0; // deg/s
+    // Project where the flick would coast to (as iOS does), then snap to the nearest card.
+    const projected = rotation.get() + v * PROJECT_S;
     settle(Math.round(projected / step) * step, v);
   };
 
@@ -187,6 +246,7 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
                   transform: `rotateY(${-slot * step}deg) translateZ(${-dims.r}px)`,
                 }}
               >
+                <FocusCard rotation={rotation} slot={slot} step={step} slots={slots} reduce={reduce}>
                 <button
                   type="button"
                   tabIndex={original ? 0 : -1}
@@ -247,6 +307,7 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
                     </span>
                   </span>
                 </button>
+                </FocusCard>
               </div>
             );
           })}
@@ -265,6 +326,7 @@ export function CurvedCarousel({ items, scrollProgress, onActiveChange, regionLa
               {i === active ? (
                 <motion.span
                   layoutId="carousel-dot"
+                  transition={reduce ? { duration: 0 } : SPRING_SMOOTH}
                   className="absolute -inset-x-1.5 inset-y-0 rounded-full bg-aqua shadow-[0_0_10px_rgba(42,107,191,0.55)]"
                 />
               ) : null}
