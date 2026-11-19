@@ -8,7 +8,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { ArrowUpRight, CalendarDays, Check, Circle, Inbox, LayoutGrid, Pause, Play, Settings2, Star, Users, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, CalendarDays, Check, ChevronDown, Circle, Inbox, LayoutGrid, Pause, Play, Settings2, Star, Users, type LucideIcon } from "lucide-react";
 import { startTransition, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { AmbientVideo } from "@/components/ui/AmbientVideo";
@@ -17,6 +17,7 @@ import { FitStage } from "@/components/ui/FitStage";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SimulationDisclaimer } from "@/components/ui/SimulationDisclaimer";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMotionPause } from "@/context/MotionPauseContext";
 import { useNiche } from "@/context/NicheContext";
 import { useScene, useTrackProgress } from "@/context/SceneContext";
 import { NICHES } from "@/data/niches";
@@ -88,16 +89,20 @@ export function DashboardShowcase() {
   const { nicheId, autoNiche, pickNiche, userPicked } = useNiche();
   const { reduce, desktop, pin } = useScene();
   const track = useTrackProgress();
+  const { paused } = useMotionPause();
   // Must match the `motion-safe:pin:` classes below (same media query as SceneContext's `pin`).
   const pinned = pin && !reduce;
   const d = track.progress;
 
   // 1 · Rise off the table → 2 · explode into layers → 3 · reassemble → 4 · cycle industries
-  const rotateX = useTransform(d, [0, 0.14, 0.19, 0.29, 0.38], [64, 0, 0, 10, 0]);
+  // It starts as a product shot: tilted back, with only its top ~30% peeking in below the headline.
+  const rotateX = useTransform(d, [0, 0.14, 0.19, 0.29, 0.38], [40, 0, 0, 10, 0]);
   const rotateY = useTransform(d, [0.19, 0.29, 0.38], [0, -24, 0]);
-  const y = useTransform(d, [0, 0.14], ["36%", "0%"]);
-  const z = useTransform(d, [0, 0.14], [-460, 0]);
-  const opacity = useTransform(d, [0, 0.07], [0, 1]);
+  const y = useTransform(d, [0, 0.14], ["62%", "0%"]);
+  const z = useTransform(d, [0, 0.14], [-240, 0]);
+  const opacity = 1;
+  // The scroll cue fades out as soon as scrolling starts.
+  const cueOpacity = useTransform(d, [0, 0.03], [1, 0]);
   // The disclaimer fades in as the window lands (at rest from 0.14), so it never prints across the rising plates.
   const noteOpacity = useTransform(d, [0.125, 0.15], [0, 1]);
   const explode = useTransform(d, [0.19, 0.28, 0.33, 0.4], [0, 1, 1, 0]);
@@ -141,7 +146,7 @@ export function DashboardShowcase() {
       aria-labelledby="dashboard-title"
       // overflow-clip (not -hidden): clips like hidden but creates no scroll container,
       // so the pinned `sticky` stage below keeps sticking.
-      className="relative isolate z-10 overflow-clip py-24 motion-safe:pin:h-[300vh] motion-safe:pin:py-0"
+      className="relative isolate z-10 overflow-clip py-16 sm:py-24 motion-safe:pin:h-[300vh] motion-safe:pin:py-0"
     >
       <AmbientField variant={1} />
       <div className="motion-safe:pin:sticky motion-safe:pin:top-0 motion-safe:pin:h-[100svh] motion-safe:pin:overflow-hidden motion-safe:pin:pb-4 motion-safe:pin:pt-20">
@@ -160,13 +165,13 @@ export function DashboardShowcase() {
             />
             {pinned ? (
               // Sits on the chip row (top-right), so it costs the pinned stage no height.
-              <p className="eyebrow absolute right-0 top-0 flex min-h-[2.125rem] items-center gap-2.5 text-ash">
-                {/* Static scroll capsule (no looping animation: the Pause control doesn't reach CSS keyframes). */}
-                <span aria-hidden="true" className="relative block h-4 w-[3px] shrink-0 overflow-hidden rounded-full bg-bone/[0.21]">
-                  <span className="absolute inset-x-0 top-0 block h-1/2 rounded-full bg-aqua" />
-                </span>
+              <motion.p
+                style={{ opacity: cueOpacity }}
+                className="eyebrow absolute right-0 top-0 flex min-h-[2.125rem] items-center gap-2.5 text-ash"
+              >
+                <ScrollCue paused={paused} />
                 {t.dashboard.scrollHint}
-              </p>
+              </motion.p>
             ) : null}
           </div>
 
@@ -182,12 +187,16 @@ export function DashboardShowcase() {
                 style={pinned ? { rotateX, rotateY, y, z, opacity, transformOrigin: "50% 100%" } : undefined}
                 {...(pinned
                   ? {}
-                  : {
-                      initial: { opacity: 0, rotateX: 28, y: 80 },
-                      whileInView: { opacity: 1, rotateX: 0, y: 0 },
-                      viewport: { once: true, margin: "-10%" },
-                      transition: { duration: 1.1, ease: EASE_EDITORIAL },
-                    })}
+                  : reduce
+                    ? {}
+                    : {
+                        // Not pinned: Reveal-style rise. Starts inside the first viewport (small trigger margin),
+                        // so the window is never waiting off-screen for a scroll.
+                        initial: { opacity: 0, rotateX: 18, y: 48 },
+                        whileInView: { opacity: 1, rotateX: 0, y: 0 },
+                        viewport: { once: true, margin: "0px 0px -4% 0px" },
+                        transition: { duration: 0.9, ease: EASE_EDITORIAL },
+                      })}
               >
                 <motion.div className={`${PLATE} px-1.5 pb-1.5 sm:px-2 sm:pb-2`} style={layerZ(zChrome)}>
                   <WindowChrome />
@@ -223,6 +232,20 @@ export function DashboardShowcase() {
         </div>
       </div>
     </section>
+  );
+}
+
+/** Chevron that nudges down every few seconds (transform only); still while motion is paused. */
+function ScrollCue({ paused }: { paused: boolean }) {
+  return (
+    <motion.span
+      aria-hidden="true"
+      className="block shrink-0 text-aqua"
+      animate={paused ? { y: 0 } : { y: [0, 5, 0] }}
+      transition={paused ? { duration: 0.2 } : { duration: 0.9, ease: EASE_EDITORIAL, repeat: Infinity, repeatDelay: 2.6 }}
+    >
+      <ChevronDown size={16} strokeWidth={2} />
+    </motion.span>
   );
 }
 
