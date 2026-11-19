@@ -565,6 +565,14 @@ html.dark {
 /* ------------------------------------------------------------------ *
  * Utilities
  * ------------------------------------------------------------------ */
+/* A 3D stage at rest: flatten every preserve-3d descendant so the browser paints text
+ * natively instead of resampling a GPU texture (soft text under scale / fractional DPR).
+ * Toggled from JS only while nothing in the stack carries a 3D transform. */
+.stage-flat,
+.stage-flat * {
+  transform-style: flat !important;
+}
+
 @layer utilities {
   /* Promote to its own compositor layer — use sparingly (videos, animated bars). */
   .gpu {

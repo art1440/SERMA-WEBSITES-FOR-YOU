@@ -124,6 +124,20 @@ export function DashboardShowcase() {
     if (next !== nicheRef.current) startTransition(() => autoNiche(next));
   });
 
+  // Sharpness: a preserve-3d stack is rasterized as GPU textures and resampled, so under FitStage's
+  // scale (and any fractional DPR, e.g. Windows at 125%) its text goes soft. 3D is only needed while
+  // the window is actually moving (rise 0–0.14, explode/reassemble 0.19–0.4); at rest the stack is
+  // flattened so the browser paints text natively at its final size. Toggled on the DOM, so crossing
+  // the threshold never re-renders the dashboard. At rest every layer's transform is `none`, so the
+  // swap is pixel-identical — no jump.
+  const stage = useRef<HTMLDivElement>(null);
+  const setFlat = (v: number) => {
+    const flat = !pinned || (v >= 0.14 && v < 0.19) || v >= 0.4;
+    stage.current?.classList.toggle("stage-flat", flat);
+  };
+  useMotionValueEvent(d, "change", setFlat);
+  useEffect(() => setFlat(d.get()));
+
   const layerZ = (mv: MotionValue<number>) => (pinned ? { z: mv } : undefined);
   // Opening an inner section counts as the visitor's own choice: stop auto-cycling industries under them.
   const lockNiche = () => {
@@ -175,7 +189,7 @@ export function DashboardShowcase() {
           {/* Pinned: always laid out at the full 1240px window width, so every screen gets the same
               layout (and the same per-language height, see OVERVIEW_MIN_H); only the scale differs. */}
           <FitStage enabled={pinned} hug onScale={onScale} width={pinned ? WINDOW_W : undefined} className={pinned ? "mt-4" : "mt-6"}>
-            <div className="mx-auto max-w-[1240px] [perspective-origin:50%_70%] [perspective:1800px]">
+            <div ref={stage} className="mx-auto max-w-[1240px] [perspective-origin:50%_70%] [perspective:1800px]">
               <motion.div
                 data-theme="dark"
                 className={`${WINDOW} [transform-style:preserve-3d]`}
