@@ -2,7 +2,7 @@
 
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useRef, type MouseEvent, type PointerEvent, type ReactNode } from "react";
-import { MOTION } from "@/lib/motion";
+import { MOTION, SPRING_SNAPPY } from "@/lib/motion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 type Props = {
@@ -12,6 +12,7 @@ type Props = {
   href?: string;
   type?: "button" | "submit";
   disabled?: boolean;
+  /** 0–1 multiplier of the max pull (default 1). */
   strength?: number;
   "aria-label"?: string;
   /** Keeps the button focusable while signalling it is unavailable (unlike `disabled`). */
@@ -21,12 +22,20 @@ type Props = {
 };
 
 const SPRING = MOTION.snappy;
+/** Max travel toward the cursor, reached at the button's edge. Size-independent (px). */
+const PULL_X = 5;
+const PULL_Y = 3;
+/** The label leads the capsule by this share of its travel (≤1.75px): depth without decentring. */
+const LABEL_LEAD = 0.35;
+/** Colour, border and shadow ease like every other control; transform belongs to the springs. */
+const EASE_CLASSES = "transition-[color,background-color,border-color,box-shadow] duration-base ease-editorial";
 
 /**
- * A button that leans toward the cursor (mouse only) and settles back with a
- * spring. Pure transform via MotionValues — no React re-renders while moving.
+ * A button that leans a few pixels toward a mouse cursor (its label leads it slightly)
+ * and settles back with a spring. It presses to 0.97 on `snappy`; colours ease at 250ms.
+ * Pure transform via MotionValues — no React re-renders while moving.
  */
-export function MagneticButton({ children, className, onClick, href, type = "button", disabled, strength = 0.28, ...aria }: Props) {
+export function MagneticButton({ children, className, onClick, href, type = "button", disabled, strength = 1, ...aria }: Props) {
   const reduce = useReducedMotionSafe();
   const rect = useRef<DOMRect | null>(null);
   const x = useMotionValue(0);
@@ -42,12 +51,14 @@ export function MagneticButton({ children, className, onClick, href, type = "but
   const onMove = (e: PointerEvent<HTMLElement>) => {
     if (reduce || e.pointerType !== "mouse" || !rect.current) return;
     const r = rect.current;
-    const dx = e.clientX - (r.left + r.width / 2);
-    const dy = e.clientY - (r.top + r.height / 2);
-    x.set(dx * strength);
-    y.set(dy * strength);
-    ix.set(dx * strength * 0.35);
-    iy.set(dy * strength * 0.35);
+    const nx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+    const ny = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
+    const px = nx * PULL_X * strength;
+    const py = ny * PULL_Y * strength;
+    x.set(px);
+    y.set(py);
+    ix.set(px * LABEL_LEAD);
+    iy.set(py * LABEL_LEAD);
   };
   const onLeave = () => {
     x.set(0);
@@ -58,13 +69,14 @@ export function MagneticButton({ children, className, onClick, href, type = "but
   };
 
   const shared = {
-    // The spring drives `transform` every frame; a CSS transform transition (.btn) would smooth it twice and lag.
-    className: `${className ?? ""} transition-none`,
+    // The springs own `transform` (a CSS transform transition would smooth it twice). Colour, border and shadow keep a 250ms editorial ease.
+    className: `${className ?? ""} ${EASE_CLASSES}`,
     style: { x: sx, y: sy },
     onPointerEnter: onEnter,
     onPointerMove: onMove,
     onPointerLeave: onLeave,
-    whileTap: reduce ? undefined : { scale: 0.96 },
+    whileTap: { scale: 0.97 },
+    transition: { scale: SPRING_SNAPPY },
     ...aria,
   };
   const inner = (
