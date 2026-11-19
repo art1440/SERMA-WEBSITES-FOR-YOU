@@ -155,8 +155,10 @@ export function DashboardShowcase() {
     // Two frames, the same as TabsContext's swap: start once the scroll reset has landed and the veil begins to lift.
     let raf = requestAnimationFrame(() => {
       raf = requestAnimationFrame(() => {
+        // At the top (the tab-swap case) progress is 0 by definition: scrollYProgress may still hold the hidden
+        // panel's stale measurement, since Framer re-measures on its next frame, not on the dispatched event.
         window.dispatchEvent(new Event("scroll"));
-        d.jump(scrollYProgress.get());
+        d.jump(window.scrollY <= 2 ? 0 : scrollYProgress.get());
         controls = animate(enter, 1, { ...SPRING_SMOOTH, restDelta: 0.001 });
       });
     });
