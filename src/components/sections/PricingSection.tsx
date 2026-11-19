@@ -19,6 +19,7 @@ import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
 import { goToForm } from "@/lib/scroll";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { EnquiryForm } from "./EnquiryForm";
+import { PricingFaq } from "./PricingFaq";
 
 /**
  * Entrance order: the featured (middle) card lands first, then its neighbours
@@ -327,6 +328,8 @@ export function PricingSection() {
             </div>
           </Reveal>
         </div>
+
+        <PricingFaq />
       </div>
     </section>
   );
