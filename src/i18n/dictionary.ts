@@ -365,6 +365,20 @@ export type Dictionary = Widen<typeof en>;
  * missed call = "llamada perdida" · text message/SMS = "mensaje de texto" (short: "mensaje") ·
  * dashboard = "panel" (Client Portal = "Portal de Clientes") · reviews = "reseñas" ·
  * lead = "prospecto" · deposit = "anticipo". UI labels use sentence case.
+ *
+ * Phrasing decisions (second pass):
+ * - Headlines are rewritten as ad copy, not translated word for word
+ *   ("Lo que recibe, paso por paso", "Muchos sitios web solo ocupan espacio").
+ * - "scroll" cues use "Baje / suba" (plain) instead of "Desplácese".
+ * - "onboarding" is never "incorporación": it becomes "puesta en marcha" / "empezar el servicio".
+ * - Gerunds and passives become active verbs ("Agendando…" -> "Citas mientras trabaja",
+ *   "enviado automáticamente" -> "automático", "Respondemos las llamadas…").
+ * - Subjunctive after "el que" ("el que le sirva"); "Hecho para" replaces "Diseñado para".
+ * - Titles of documents use sentence case ("Política de privacidad", "Términos de servicio",
+ *   "Acceso de clientes"); "Portal de Clientes" stays as the product name.
+ * - Dashboard tab names are short: "Mensajes" (Inbox), "Función" (Capability), "Sin cubrir / Cubierto".
+ * - "Retorno" stays for ROI (tab width); the customer-facing text message is written in
+ *   first-person plural, in usted ("Disculpe que no contestáramos su llamada…").
  */
 const es: Dictionary = {
   meta: {
@@ -580,33 +594,33 @@ const es: Dictionary = {
   },
   calculator: {
     index: "(05)",
-    eyebrow: "Las llamadas que no puede tomar",
+    eyebrow: "Las llamadas que no alcanza a contestar",
     title: "¿Cuánto le cuestan las llamadas que no puede contestar?",
     body: "Mueva los controles según una semana normal. El cálculo está a la vista, sin promesas infladas.",
     presetLabel: "Comenzar con valores de una industria",
     missedCalls: "Llamadas perdidas por semana",
     avgTicket: "Valor promedio por cliente",
     bookingRate: "Tasa de citas por mensaje",
-    bookingRateHint: "Porcentaje de personas contactadas por mensaje que agendan. Varía por industria; los valores iniciales son conservadores.",
+    bookingRateHint: "Porcentaje de quienes reciben el mensaje y agendan. Varía por industria; los valores iniciales son conservadores.",
     perWeek: "{n} / semana",
-    monthlyLabel: "Ingresos mensuales estimados recuperados",
+    monthlyLabel: "Ingresos que recupera al mes (estimado)",
     annualLabel: "Al año",
     bookingsLabel: "Citas recuperadas / mes",
     callsLabel: "Llamadas perdidas / mes",
     formula: "{calls} llamadas/sem × 4.33 sem × {rate}% agendan × {ticket}",
-    assumption: "Supone 4.33 semanas por mes y que cada llamada perdida recibe un mensaje de texto automático.",
-    cta: "Solicite una auditoría gratuita de su semana",
+    assumption: "Se basa en 4.33 semanas por mes y en que cada llamada perdida recibe un mensaje de texto automático.",
+    cta: "Pida una auditoría gratis de su semana",
   },
   compare: {
     index: "(06)",
     eyebrow: "La diferencia",
-    title: ["La mayoría de los sitios web solo están ahí.", "El suyo debería traerle clientes."],
-    body: "La mayoría de los sitios web de negocios locales son lentos, difíciles de usar en el teléfono y esconden el número. Esto es lo que cambia cuando el sitio está hecho para convertir visitas en llamadas.",
-    capability: "Capacidad",
-    colBrochure: "Un sitio web que espera",
+    title: ["Muchos sitios web solo ocupan espacio.", "El suyo debe traerle clientes."],
+    body: "Casi todos los sitios de negocios locales son lentos, incómodos en el teléfono y esconden el número. Así cambia todo cuando el sitio está hecho para convertir visitas en llamadas.",
+    capability: "Función",
+    colBrochure: "Un sitio que solo espera",
     colEngine: "Un sitio web de SermaWebDesign",
-    notIncluded: "No resuelto",
-    included: "Resuelto",
+    notIncluded: "Sin cubrir",
+    included: "Cubierto",
     flipHint: "Cada tarjeta gira para mostrar la diferencia.",
     rows: [
       {
@@ -616,8 +630,8 @@ const es: Dictionary = {
       },
       {
         capability: "Citas",
-        brochure: "“Llámenos”, y esperar que lo hagan.",
-        engine: "Citas 24/7 con anticipos y recordatorios.",
+        brochure: "“Llámenos” y ojalá lo hagan.",
+        engine: "Citas en línea 24/7, con anticipo y recordatorios.",
       },
       {
         capability: "Seguimiento de prospectos",
@@ -627,12 +641,12 @@ const es: Dictionary = {
       {
         capability: "Clientes recurrentes",
         brochure: "Sin seguimiento después de la primera visita.",
-        engine: "Recordatorios automáticos para volver a reservar y para clientes VIP.",
+        engine: "Recordatorios automáticos para que vuelvan a agendar y avisos para clientes VIP.",
       },
       {
         capability: "Reseñas",
         brochure: "Dependen de la suerte.",
-        engine: "Solicitudes automáticas de reseñas de 5 estrellas después de cada servicio.",
+        engine: "Solicitud automática de reseñas de 5 estrellas tras cada servicio.",
       },
       {
         capability: "Idioma",
@@ -642,12 +656,12 @@ const es: Dictionary = {
       {
         capability: "Reportes",
         brochure: "Un contador de visitas, en el mejor de los casos.",
-        engine: "Ingresos, citas y recuperación medidos en vivo.",
+        engine: "Ingresos, citas y recuperación, en vivo.",
       },
       {
         capability: "Privacidad",
         brochure: "Rastreadores de terceros y avisos de cookies.",
-        engine: "Sin cookies por defecto. Sin venta de datos.",
+        engine: "Sin cookies desde el inicio. No vendemos sus datos.",
       },
     ],
   },
@@ -655,18 +669,18 @@ const es: Dictionary = {
     index: "(07)",
     eyebrow: "Precios",
     title: "Tres paquetes. Sin cobro por hora.",
-    body: "Elija el que le sirve hoy y suba de nivel cuando quiera. Cada paquete tiene precio fijo, y usted ve el sitio terminado antes de pagar.",
-    popular: "El más elegido",
-    includes: "Qué incluye:",
+    body: "Elija el que le sirva hoy y pase a uno mayor cuando quiera. Cada paquete tiene precio fijo, y usted ve el sitio terminado antes de pagar.",
+    popular: "El más popular",
+    includes: "Incluye:",
     oneTime: "pago único",
-    priceSoon: "Precio próximamente",
-    monthly: "luego {amount}/mes de alojamiento y mantenimiento",
+    priceSoon: "Precio muy pronto",
+    monthly: "luego {amount}/mes por alojamiento y mantenimiento",
     noMonthly: "Sin cuota mensual",
     choose: "Elegir {plan}",
-    soon: "Cuando se lance",
-    footnote: "¿No sabe cuál le conviene? Escríbanos abajo y le decimos con honestidad, aunque sea el más pequeño.",
-    nextTitle: "Qué pasa después de elegir",
-    next: ["Nos envía sus datos abajo", "Una llamada de presentación de 15 minutos", "Usted ve el borrador terminado antes de pagar", "Su sitio se publica en su dominio"],
+    soon: "Próximamente",
+    footnote: "¿No sabe cuál le conviene? Escríbanos aquí abajo y le diremos con franqueza, aunque sea el más pequeño.",
+    nextTitle: "Qué sigue después de elegir",
+    next: ["Usted nos envía sus datos aquí abajo", "Llamada de presentación de 15 minutos", "Usted ve el borrador terminado antes de pagar", "Su sitio sale en línea con su dominio"],
     selected: "Paquete: {plan}",
     prefill: "Me interesa el paquete {plan}.",
     phoneCta: "Llamar al {phone}",
@@ -681,23 +695,23 @@ const es: Dictionary = {
     submit: "Enviar",
     sending: "Enviando…",
     thanksTitle: "Gracias, ya lo tenemos.",
-    thanksBody: "Le contestamos dentro de un día hábil.",
+    thanksBody: "Le respondemos en un día hábil.",
     errorBody: "No se pudo enviar. Intente otra vez o escríbanos a:",
     consentPrefix: "Acepto la",
-    consentPrivacy: "Política de Privacidad",
+    consentPrivacy: "Política de privacidad",
     consentAnd: "y los",
-    consentTerms: "Términos de Servicio",
+    consentTerms: "Términos de servicio",
     consentSuffix: ", y que me contacten sobre mi solicitud.",
     phoneHint: "Basta con los dígitos, p. ej. 512 555 0134.",
-    formNote: "Solo cuatro campos. Sus datos llegan a nuestro correo y a ningún otro lado.",
+    formNote: "Solo cuatro campos. Sus datos llegan a nuestro correo y a ningún otro lugar.",
     noFormNote: "Sin rastreadores, sin cookies y sin lista de correo. Sus datos se usan para contestarle, nada más.",
   },
   footer: {
-    tagline: "Nosotros nos encargamos del sitio web. Usted dirige su negocio.",
+    tagline: "Nosotros nos encargamos del sitio. Usted, de su negocio.",
     explore: "Explorar",
     legal: "Legal",
-    terms: "Términos de Servicio",
-    privacy: "Política de Privacidad",
+    terms: "Términos de servicio",
+    privacy: "Política de privacidad",
     disclaimer: "Aviso legal",
     privacyBadge: "Sin cookies. Sin rastreadores. Sin venta de datos.",
     rights: "© {year} {entity}. Todos los derechos reservados.",
