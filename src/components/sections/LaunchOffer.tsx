@@ -70,10 +70,10 @@ export function LaunchMeta({ now }: { now: number | null }) {
       >
         <motion.div
           className="h-full origin-left rounded-full bg-[linear-gradient(90deg,rgb(var(--aqua-glow)),rgb(var(--aqua)))]"
+          // Animates on mount, not on view: a whileInView trigger left one card's bar empty in testing.
           initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: pct / 100 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay: 0.2 }}
+          animate={{ scaleX: pct / 100 }}
+          transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay: 0.4 }}
         />
       </div>
       {ms !== null ? (
