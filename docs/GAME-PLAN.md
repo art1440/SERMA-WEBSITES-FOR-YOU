@@ -82,8 +82,8 @@ GPU before chasing fps.)
 | Ticket | Plan | Code | Inspect | Deep review | Commit |
 |---|---|---|---|---|---|
 | T0 merge main + agent team + crisp-text fix, live preview | — | done | — | — | merged |
-| T1 Dashboard | done → [plan](plans/T1-dashboard.md) | coding (Sonnet) | | | |
-| T2 Simulator | planning (Opus) | | | | |
+| T1 Dashboard | done → [plan](plans/T1-dashboard.md) | done (Sonnet) | inspecting (Haiku) | | WIP commit |
+| T2 Simulator | done (Opus) | queued | | | |
 | T3 WebGL hygiene | planning (Opus) | | | | |
 | T4 Hero | | | | | |
 | T5 Tab swap | | | | | |

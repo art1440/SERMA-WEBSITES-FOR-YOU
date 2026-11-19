@@ -2,14 +2,18 @@
 
 import {
   AnimatePresence,
+  animate,
   motion,
   useInView,
+  useMotionValue,
   useMotionValueEvent,
+  useScroll,
+  useSpring,
   useTransform,
   type MotionValue,
 } from "framer-motion";
 import { ArrowUpRight, CalendarDays, Check, Circle, Inbox, LayoutGrid, Pause, Play, Settings2, Star, Users, type LucideIcon } from "lucide-react";
-import { startTransition, useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { startTransition, useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { AmbientVideo } from "@/components/ui/AmbientVideo";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
@@ -18,11 +22,13 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SimulationDisclaimer } from "@/components/ui/SimulationDisclaimer";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
-import { useScene, useTrackProgress } from "@/context/SceneContext";
+import { useScene } from "@/context/SceneContext";
+import { useTabs } from "@/context/TabsContext";
+import { useMotionPause } from "@/context/MotionPauseContext";
 import { NICHES } from "@/data/niches";
 import { NICHE_VIEWS } from "@/data/dashboard-views";
 import { formatCurrency, formatMetric } from "@/lib/format";
-import { EASE_EDITORIAL, SPRING_SMOOTH } from "@/lib/motion";
+import { EASE_EDITORIAL, MOTION, SPRING_SMOOTH } from "@/lib/motion";
 import { fill } from "@/i18n/types";
 import { DASHBOARD_PANEL_ID, NicheTabs, tabId } from "./NicheTabs";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
@@ -63,10 +69,10 @@ const BAR_SPRING = SPRING_SMOOTH;
  * preview, pipeline strip | activity + modules in a right-hand rail. Phones
  * and tablets keep the stacked layout.
  *
- * It pins (300vh scroll track, sticky stage, 3D explode, scroll-cycled
- * industries) only where it still renders near full size: ≥1280×840 with
- * motion allowed (`motion-safe:pin:` in CSS, `pin && !reduce` in JS). There
- * FitStage scales it by height only, so a wide, short window keeps the scale
+ * It pins (200vh scroll track, sticky stage right under the header) only where it still renders near full size: ≥1280×840 with
+ * motion allowed (`motion-safe:pin:` in CSS, `pin && !reduce` in JS). There the window
+ * lands assembled with a time-based entrance on every tab open, scroll only explodes and
+ * reassembles its layers, and the industries auto-tour on a timer. FitStage scales it by height only, so a wide, short window keeps the scale
  * (and the text size) high. Smaller laptops get the same lg window at 1:1 in
  * normal flow.
  * ------------------------------------------------------------------ */
@@ -83,24 +89,67 @@ const CARD =
 const LABEL = "eyebrow text-ash";
 const TRAFFIC_DOT = "h-3 w-3 rounded-full bg-aqua/[0.208] shadow-[inset_0_0_0_0.5px_rgba(30,64,120,0.158),inset_0_1px_1px_rgba(255,255,255,0.25)]";
 
+/** Sticky site header at the pin breakpoint (Navbar: pt-3 + h-14). The pinned stage sticks right under it. */
+const HEADER_H = 68;
+/** Scroll extras on the 200vh track (progress 0→1): layers explode, hold, reassemble. Outside [EX_IN, EX_OUT] every layer is at z 0 and untilted. */
+const EX_IN = 0.1;
+const EX_FULL = 0.4;
+const EX_HOLD = 0.6;
+const EX_OUT = 0.9;
+const EX_TILT_PEAK = 0.45;
+/** Time-based entrance (`smooth` spring, replays on every tab open): the window settles onto the stage from just below. */
+const ENTER = { rotateX: 12, y: 40, z: -100 } as const;
+/** Industry auto-tour: one step per TOUR_MS, at most one lap (NICHES.length steps) per page visit. */
+const TOUR_MS = 6000;
+
 export function DashboardShowcase() {
   const { t } = useLanguage();
   const { nicheId, autoNiche, pickNiche, userPicked } = useNiche();
   const { reduce, desktop, pin } = useScene();
-  const track = useTrackProgress();
+  const trackRef = useRef<HTMLElement | null>(null);
+  // "start 68px": progress 0 at page scroll 0 (the section starts under the in-flow sticky header).
+  const { scrollYProgress } = useScroll({ target: trackRef, offset: [`start ${HEADER_H}px`, "end end"] });
+  const d = useSpring(scrollYProgress, MOTION.cinematic);
   // Must match the `motion-safe:pin:` classes below (same media query as SceneContext's `pin`).
   const pinned = pin && !reduce;
-  const d = track.progress;
+  const tabs = useTabs();
+  const open = tabs ? tabs.active === "dashboard" : true;
+  const live = pinned && open;
+  const { paused: motionPaused } = useMotionPause();
+  const pausedRef = useRef(motionPaused);
+  pausedRef.current = motionPaused;
+  const liveRef = useRef(live);
+  liveRef.current = live;
 
-  // 1 · Rise off the table → 2 · explode into layers → 3 · reassemble → 4 · cycle industries
-  const rotateX = useTransform(d, [0, 0.14, 0.19, 0.29, 0.38], [64, 0, 0, 10, 0]);
-  const rotateY = useTransform(d, [0.19, 0.29, 0.38], [0, -24, 0]);
-  const y = useTransform(d, [0, 0.14], ["36%", "0%"]);
-  const z = useTransform(d, [0, 0.14], [-460, 0]);
-  const opacity = useTransform(d, [0, 0.07], [0, 1]);
-  // The disclaimer fades in as the window lands (at rest from 0.14), so it never prints across the rising plates.
-  const noteOpacity = useTransform(d, [0.125, 0.15], [0, 1]);
-  const explode = useTransform(d, [0.19, 0.28, 0.33, 0.4], [0, 1, 1, 0]);
+  // Entrance (time) + extras (scroll): tilt and explode into layers, then reassemble.
+  const enter = useMotionValue(0);
+  const explode = useTransform(d, [EX_IN, EX_FULL, EX_HOLD, EX_OUT], [0, 1, 1, 0]);
+  const tiltX = useTransform(d, [EX_IN, EX_TILT_PEAK, EX_OUT], [0, 10, 0]);
+  const rotateY = useTransform(d, [EX_IN, EX_TILT_PEAK, EX_OUT], [0, -24, 0]);
+  const rotateX = useTransform([enter, tiltX], ([e, t]: number[]) => (1 - e) * ENTER.rotateX + t);
+  const y = useTransform(enter, [0, 1], [ENTER.y, 0]);
+  const z = useTransform(enter, [0, 1], [ENTER.z, 0]);
+  const opacity = useTransform(enter, [0, 0.7], [0, 1]);
+  // The disclaimer fades in once the window has nearly landed, so it never prints under the rising window.
+  const noteOpacity = useTransform(enter, [0.6, 0.95], [0, 1]);
+
+  useEffect(() => {
+    if (!live) { enter.jump(0); return; }
+    // The hidden panel measured a stale track; the tab swap resets scroll to 0. Clear the spring so the explode never plays backwards during the entrance.
+    d.jump(0);
+    if (pausedRef.current) { enter.jump(1); return; }
+    enter.jump(0);
+    let controls: ReturnType<typeof animate> | undefined;
+    // Two frames, the same as TabsContext's swap: start once the scroll reset has landed and the veil begins to lift.
+    let raf = requestAnimationFrame(() => {
+      raf = requestAnimationFrame(() => {
+        d.jump(0);
+        controls = animate(enter, 1, { ...SPRING_SMOOTH, restDelta: 0.001 });
+      });
+    });
+    return () => { cancelAnimationFrame(raf); controls?.stop(); };
+  }, [live, enter, d]);
+
   const zChrome = useTransform(explode, (e) => e * 180);
   const zSidebar = useTransform(explode, (e) => e * 60);
   const zKpi = useTransform(explode, (e) => e * 260);
@@ -109,30 +158,41 @@ export function DashboardShowcase() {
   // The right rail spans the full window height: kept shallow so it never swings over the heading.
   const zRail = useTransform(explode, (e) => e * 200);
 
-  // Scroll cycles all six industries — but only until the visitor picks one themselves.
   const nicheRef = useRef(nicheId);
   nicheRef.current = nicheId;
-  const baseRef = useRef(0);
-  useMotionValueEvent(d, "change", (v) => {
-    if (!pinned || userPicked.current) return;
-    if (v < 0.42) {
-      baseRef.current = Math.max(0, NICHES.findIndex((n) => n.id === nicheRef.current));
-      return;
-    }
-    const k = Math.min(NICHES.length - 1, Math.floor(((v - 0.42) / 0.56) * NICHES.length));
-    const next = NICHES[(baseRef.current + k) % NICHES.length].id;
-    if (next !== nicheRef.current) startTransition(() => autoNiche(next));
-  });
+  // Industry tour: replaces scroll-cycling. Ends for good once the visitor picks (userPicked).
+  const tour = useRef({ timer: 0, steps: 0, hover: false, focus: false });
+  const scheduleTour = useCallback(function schedule() {
+    const s = tour.current;
+    window.clearTimeout(s.timer);
+    if (!liveRef.current || pausedRef.current || s.hover || s.focus || userPicked.current || s.steps >= NICHES.length) return;
+    s.timer = window.setTimeout(() => {
+      if (document.hidden) return schedule();
+      if (userPicked.current) return;
+      const i = Math.max(0, NICHES.findIndex((n) => n.id === nicheRef.current));
+      s.steps += 1;
+      startTransition(() => autoNiche(NICHES[(i + 1) % NICHES.length].id));
+      schedule();
+    }, TOUR_MS);
+  }, [autoNiche, userPicked]);
+  useEffect(() => {
+    scheduleTour();
+    const s = tour.current;
+    return () => window.clearTimeout(s.timer);
+  }, [live, motionPaused, scheduleTour]);
+  const holdTour = (k: "hover" | "focus") => { tour.current[k] = true; window.clearTimeout(tour.current.timer); };
+  const releaseTour = (k: "hover" | "focus") => { tour.current[k] = false; scheduleTour(); };
 
   // Sharpness: a preserve-3d stack is rasterized as GPU textures and resampled, so under FitStage's
   // scale (and any fractional DPR, e.g. Windows at 125%) its text goes soft. 3D is only needed while
-  // the window is actually moving (rise 0–0.14, explode/reassemble 0.19–0.4); at rest the stack is
-  // flattened so the browser paints text natively at its final size. Toggled on the DOM, so crossing
-  // the threshold never re-renders the dashboard. At rest every layer's transform is `none`, so the
-  // swap is pixel-identical — no jump.
+  // the layers are actually exploding (EX_IN–EX_OUT of the scroll track); at rest the stack is
+  // flattened so the browser paints text natively at its final size. The time-based entrance moves
+  // only the WINDOW (a direct child of the perspective div), so it runs flat too. Toggled on the DOM,
+  // so crossing the threshold never re-renders the dashboard. At rest every layer's transform is
+  // `none`, so the swap is pixel-identical — no jump.
   const stage = useRef<HTMLDivElement>(null);
   const setFlat = (v: number) => {
-    const flat = !pinned || (v >= 0.14 && v < 0.19) || v >= 0.4;
+    const flat = !pinned || v <= EX_IN || v >= EX_OUT;
     stage.current?.classList.toggle("stage-flat", flat);
   };
   useMotionValueEvent(d, "change", setFlat);
@@ -151,14 +211,15 @@ export function DashboardShowcase() {
   return (
     <section
       id="dashboard"
-      ref={track.ref}
+      ref={trackRef}
       aria-labelledby="dashboard-title"
       // overflow-clip (not -hidden): clips like hidden but creates no scroll container,
       // so the pinned `sticky` stage below keeps sticking.
-      className="relative isolate z-10 overflow-clip py-24 motion-safe:pin:h-[300vh] motion-safe:pin:py-0"
+      className="relative isolate z-10 overflow-clip py-24 motion-safe:pin:h-[200vh] motion-safe:pin:py-0"
     >
       <AmbientField variant={1} />
-      <div className="motion-safe:pin:sticky motion-safe:pin:top-0 motion-safe:pin:h-[100svh] motion-safe:pin:overflow-hidden motion-safe:pin:pb-4 motion-safe:pin:pt-20">
+      {/* top-[68px] / calc(100svh-68px) = HEADER_H (Tailwind needs the literal): the stage sticks right under the header. */}
+      <div className="motion-safe:pin:sticky motion-safe:pin:top-[68px] motion-safe:pin:h-[calc(100svh-68px)] motion-safe:pin:overflow-hidden motion-safe:pin:pb-4 motion-safe:pin:pt-3">
         <div ref={column} className="frame flex h-full flex-col">
           {/* z-10: the heading always paints above the exploding 3D stage. */}
           <div className="relative z-10">
@@ -194,6 +255,10 @@ export function DashboardShowcase() {
                 data-theme="dark"
                 className={`${WINDOW} [transform-style:preserve-3d]`}
                 style={pinned ? { rotateX, rotateY, y, z, opacity, transformOrigin: "50% 100%" } : undefined}
+                onPointerEnter={() => holdTour("hover")}
+                onPointerLeave={() => releaseTour("hover")}
+                onFocus={() => holdTour("focus")}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) releaseTour("focus"); }}
                 {...(pinned
                   ? {}
                   : {

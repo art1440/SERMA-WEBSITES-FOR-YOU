@@ -183,7 +183,7 @@ const en = {
     previewLabel: "Industry preview",
     minutesAgo: "{n} min ago",
     vsPrevious: "vs. previous period",
-    scrollHint: "Keep scrolling — see the dashboard for each kind of business.",
+    scrollHint: "Scroll to see it in layers.",
     newItems: "new",
     /** Singular of `newItems` (screen-reader suffix of a sidebar badge showing 1). */
     newItemsOne: "new",
@@ -531,7 +531,7 @@ const es: Dictionary = {
     previewLabel: "Vista previa de la industria",
     minutesAgo: "hace {n} min",
     vsPrevious: "vs. periodo anterior",
-    scrollHint: "Siga desplazándose: vea el panel de cada tipo de negocio.",
+    scrollHint: "Desplácese para verlo por capas.",
     newItems: "nuevos",
     newItemsOne: "nuevo",
   },
