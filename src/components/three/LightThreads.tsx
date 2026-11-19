@@ -116,12 +116,26 @@ export function LightThreads({ paused, desktop }: Props) {
 
     const vs = compile(gl, gl.VERTEX_SHADER, VERT);
     const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
-    if (!vs || !fs) return;
+    if (!vs || !fs) {
+      if (vs) gl.deleteShader(vs);
+      if (fs) gl.deleteShader(fs);
+      return;
+    }
     const prog = gl.createProgram()!;
     gl.attachShader(prog, vs);
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      gl.deleteProgram(prog);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      return;
+    }
+    // A linked program no longer needs its shader objects.
+    gl.detachShader(prog, vs);
+    gl.detachShader(prog, fs);
+    gl.deleteShader(vs);
+    gl.deleteShader(fs);
     gl.useProgram(prog);
 
     const buf = gl.createBuffer();
@@ -166,12 +180,16 @@ export function LightThreads({ paused, desktop }: Props) {
     let last = 0;
     let start = performance.now();
     let frozenAt = 0;
+    let lastDark = -1;
     const render = (now: number, ease: number) => {
       const target = window.scrollY / unit;
       scroll += (target - scroll) * ease;
       gl.uniform1f(uTime, (now - start) / 1000);
       gl.uniform1f(uScroll, scroll);
-      gl.uniform1f(uDark, darkRef.current);
+      if (darkRef.current !== lastDark) {
+        lastDark = darkRef.current;
+        gl.uniform1f(uDark, lastDark);
+      }
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
     const loop = (now: number) => {
@@ -214,6 +232,8 @@ export function LightThreads({ paused, desktop }: Props) {
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScrollPaused);
       document.removeEventListener("visibilitychange", run);
+      gl.deleteBuffer(buf);
+      gl.deleteProgram(prog);
     };
     // The canvas keeps one context for its whole life (a lost context can't be re-acquired).
   }, []);

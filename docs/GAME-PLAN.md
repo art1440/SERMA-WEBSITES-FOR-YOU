@@ -89,7 +89,7 @@ GPU before chasing fps.)
 | T0 merge main + agent team + crisp-text fix, live preview | — | done | — | — | merged |
 | T1 Dashboard | [plan](plans/T1-dashboard.md) | done (Sonnet) | inspecting (Haiku) | | WIP commit |
 | T2 Simulator | [plan](plans/T2-simulator.md) | coding (Sonnet) | | | |
-| T3 WebGL hygiene | [plan](plans/T3-webgl.md) | coding (Sonnet) | | | |
+| T3 WebGL hygiene | [plan](plans/T3-webgl.md) | done (Sonnet) | inspecting (Haiku) | | WIP commit |
 | T3b Sculpture time | | | | | |
 | T4 Hero | | | | | |
 | T5 Tab swap | | | | | |

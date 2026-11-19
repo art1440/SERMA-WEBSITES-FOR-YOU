@@ -59,7 +59,7 @@ const ss = (x: number, a: number, b: number) => {
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 /** Piecewise-linear keyframes: kf([[0, a], [0.5, b], [1, c]], x). */
-const kf = (frames: [number, number][], x: number) => {
+const kf = (frames: readonly (readonly [number, number])[], x: number) => {
   if (x <= frames[0][0]) return frames[0][1];
   for (let i = 1; i < frames.length; i++) {
     const [x1, y1] = frames[i];
@@ -89,28 +89,50 @@ function makeGlowTexture() {
 }
 
 type Pose = { x: number; y: number; z: number; s: number };
-const mix = (a: Pose, b: Pose, t: number): Pose => ({
-  x: lerp(a.x, b.x, t),
-  y: lerp(a.y, b.y, t),
-  z: lerp(a.z, b.z, t),
-  s: lerp(a.s, b.s, t),
-});
+const mixInto = (out: Pose, a: Readonly<Pose>, b: Readonly<Pose>, t: number): Pose => {
+  out.x = lerp(a.x, b.x, t);
+  out.y = lerp(a.y, b.y, t);
+  out.z = lerp(a.z, b.z, t);
+  out.s = lerp(a.s, b.s, t);
+  return out;
+};
 
-function posesFor(desktop: boolean) {
-  return desktop
-    ? {
-        hero: { x: 2.35, y: -0.05, z: 0, s: 1 },
-        dive: { x: 0, y: 0, z: 2.2, s: 1.35 },
-        system: { x: 1.75, y: 0, z: 0, s: 1 },
-        finale: { x: 2.2, y: 0.05, z: 0, s: 1.05 },
-      }
-    : {
-        hero: { x: 0, y: 2.05, z: -1.8, s: 0.52 },
-        dive: { x: 0, y: 0.4, z: 1.2, s: 1.05 },
-        system: { x: 0, y: 1.3, z: -1.4, s: 0.8 },
-        finale: { x: 0, y: 1.6, z: -1.6, s: 0.72 },
-      };
-}
+const finaleFrom = (f: Readonly<Pose>): Pose => ({ ...f, s: f.s * 0.6, z: f.z - 2 });
+const DESKTOP_FINALE: Pose = { x: 2.2, y: 0.05, z: 0, s: 1.05 };
+const MOBILE_FINALE: Pose = { x: 0, y: 1.6, z: -1.6, s: 0.72 };
+const POSES = {
+  desktop: {
+    hero: { x: 2.35, y: -0.05, z: 0, s: 1 },
+    dive: { x: 0, y: 0, z: 2.2, s: 1.35 },
+    system: { x: 1.75, y: 0, z: 0, s: 1 },
+    finale: DESKTOP_FINALE,
+    finaleFrom: finaleFrom(DESKTOP_FINALE),
+  },
+  mobile: {
+    hero: { x: 0, y: 2.05, z: -1.8, s: 0.52 },
+    dive: { x: 0, y: 0.4, z: 1.2, s: 1.05 },
+    system: { x: 0, y: 1.3, z: -1.4, s: 0.8 },
+    finale: MOBILE_FINALE,
+    finaleFrom: finaleFrom(MOBILE_FINALE),
+  },
+} as const;
+/** Scratch poses for the per-frame blends (never aliased with POSES). */
+const poseA: Pose = { x: 0, y: 0, z: 0, s: 1 };
+const poseB: Pose = { x: 0, y: 0, z: 0, s: 1 };
+
+/** Camera keyframe tables (hoisted: no per-frame allocation). */
+const CAM_FINALE_Z = [[0, 11.5], [0.6, 9]] as const;
+const CAM_FINALE_Y = [[0, 0.9], [0.6, 0.15]] as const;
+const CAM_FINALE_FOV = [[0, 40], [0.6, 35]] as const;
+const CAM_FINALE_ORBIT = [[0, -0.5], [0.7, 0.15]] as const;
+const CAM_HERO_Z = [[0, 9], [0.45, 6.4], [0.98, 8.2]] as const;
+const CAM_HERO_Y = [[0, 0], [0.45, 0.35], [0.98, 0]] as const;
+const CAM_HERO_ROLL = [[0.1, 0], [0.4, 0.07], [0.7, 0]] as const;
+const CAM_HERO_FOV = [[0, 35], [0.45, 30], [0.98, 35]] as const;
+const CAM_SYSTEM_Z = [[0, 8.2], [0.25, 7.6], [0.55, 7.2], [0.75, 7.6], [1, 8.6]] as const;
+const CAM_SYSTEM_Y = [[0, 0], [0.25, 0.25], [0.55, 0], [1, 0.3]] as const;
+const CAM_SYSTEM_ROLL = [[0, 0], [0.3, -0.03], [0.55, 0], [0.9, 0.025]] as const;
+const CAM_SYSTEM_ORBIT = [[0, 0], [0.22, 0.55], [0.45, -0.4], [0.55, 0], [0.72, 0], [1, 0.7]] as const;
 
 /* ------------------------------------------------------------------ */
 /* Particle formations                                                 */
@@ -260,7 +282,9 @@ function Environment() {
   const { gl, scene } = useThree();
   useEffect(() => {
     const pmrem = new THREE.PMREMGenerator(gl);
-    const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    const room = new RoomEnvironment();
+    const env = pmrem.fromScene(room, 0.04).texture;
+    room.dispose();
     scene.environment = env;
     return () => {
       scene.environment = null;
@@ -271,7 +295,7 @@ function Environment() {
   return null;
 }
 
-function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active">) {
+function EngineScene({ hero, system, finale, ink, desktop, onLowDpr }: Omit<Props, "active"> & { onLowDpr: () => void }) {
   const root = useRef<THREE.Group>(null);
   const core = useRef<THREE.Mesh>(null);
   const cage = useRef<THREE.LineSegments>(null);
@@ -290,11 +314,10 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
   const darkMix = useRef<number | null>(null);
   const cam = useRef({ z: 9, y: 0, x: 0, roll: 0, fov: 35, orbit: 0 });
   const glowTexture = useMemo(() => makeGlowTexture(), []);
-  const pose = useRef<Pose>({ ...posesFor(desktop).hero });
+  const pose = useRef<Pose>({ ...(desktop ? POSES.desktop : POSES.mobile).hero });
   const pointer = useRef({ x: 0, y: 0, sx: 0, sy: 0 });
   const morph = useRef(0);
   const { gl } = useThree();
-  const setDpr = useThree((s) => s.setDpr);
   const perf = useRef({ frames: 0, time: 0, lowered: false });
 
   const count = desktop ? 1400 : 500;
@@ -371,7 +394,7 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
       pf.time += delta;
       if (pf.frames >= 90) {
         if (pf.time / pf.frames > 1 / 40) {
-          setDpr(1);
+          onLowDpr();
           pf.lowered = true;
         }
         pf.frames = 0;
@@ -384,10 +407,10 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
     const s = system.get();
     const f = finale.get();
     const darkness = ink.get();
-    const P = posesFor(desktop);
+    const P = desktop ? POSES.desktop : POSES.mobile;
 
     // ---- Where should the engine be? ------------------------------------
-    let target: Pose;
+    let target: Readonly<Pose>;
     let targetMorph: number;
     let targetOpacity: number;
     let coreScale = 1;
@@ -395,13 +418,13 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
 
     if (f > 0.001) {
       // Finale: re-enter as the closing scene.
-      target = mix({ ...P.finale, s: P.finale.s * 0.6, z: P.finale.z - 2 }, P.finale, ss(f, 0, 0.55));
+      target = mixInto(poseA, P.finaleFrom, P.finale, ss(f, 0, 0.55));
       targetMorph = 4;
       targetOpacity = desktop ? 0.9 : 0.55;
     } else if (h < 0.999) {
       // Hero: idle → dive toward the camera → settle into the system pose.
-      const dive = mix(P.hero, P.dive, ss(h, 0.08, 0.45));
-      target = mix(dive, P.system, ss(h, 0.6, 0.98));
+      const dive = mixInto(poseA, P.hero, P.dive, ss(h, 0.08, 0.45));
+      target = mixInto(poseB, dive, P.system, ss(h, 0.6, 0.98));
       targetMorph = ss(h, 0.7, 1) * 0.15;
       targetOpacity = lerp(0.85, 1, ss(h, 0.4, 0.7));
     } else {
@@ -420,24 +443,24 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
     // the calendar grid faces you on "Book". Finale: pull back, then settle. Plus a handheld drift.
     let camZ: number, camY: number, roll: number, fov: number, orbit: number;
     if (f > 0.001) {
-      camZ = kf([[0, 11.5], [0.6, 9]], f);
-      camY = kf([[0, 0.9], [0.6, 0.15]], f);
+      camZ = kf(CAM_FINALE_Z, f);
+      camY = kf(CAM_FINALE_Y, f);
       roll = 0;
-      fov = kf([[0, 40], [0.6, 35]], f);
-      orbit = kf([[0, -0.5], [0.7, 0.15]], f);
+      fov = kf(CAM_FINALE_FOV, f);
+      orbit = kf(CAM_FINALE_ORBIT, f);
     } else if (h < 0.999) {
-      camZ = kf([[0, 9], [0.45, 6.4], [0.98, 8.2]], h);
-      camY = kf([[0, 0], [0.45, 0.35], [0.98, 0]], h);
-      roll = kf([[0.1, 0], [0.4, 0.07], [0.7, 0]], h);
-      fov = kf([[0, 35], [0.45, 30], [0.98, 35]], h);
+      camZ = kf(CAM_HERO_Z, h);
+      camY = kf(CAM_HERO_Y, h);
+      roll = kf(CAM_HERO_ROLL, h);
+      fov = kf(CAM_HERO_FOV, h);
       orbit = 0;
     } else {
-      camZ = kf([[0, 8.2], [0.25, 7.6], [0.55, 7.2], [0.75, 7.6], [1, 8.6]], s);
-      camY = kf([[0, 0], [0.25, 0.25], [0.55, 0], [1, 0.3]], s);
-      roll = kf([[0, 0], [0.3, -0.03], [0.55, 0], [0.9, 0.025]], s);
+      camZ = kf(CAM_SYSTEM_Z, s);
+      camY = kf(CAM_SYSTEM_Y, s);
+      roll = kf(CAM_SYSTEM_ROLL, s);
       fov = 35;
       // Orbit: swing round on Capture/Respond, square up for Book (grid faces camera), circle on Return.
-      orbit = kf([[0, 0], [0.22, 0.55], [0.45, -0.4], [0.55, 0], [0.72, 0], [1, 0.7]], s);
+      orbit = kf(CAM_SYSTEM_ORBIT, s);
     }
     // Camera / pose follows on top of the sprung progress: quick enough to stay in step with the page.
     const ck = 1 - Math.exp(-dt * 6);
@@ -511,6 +534,8 @@ function EngineScene({ hero, system, finale, ink, desktop }: Omit<Props, "active
     // ---- Theme: blue lines on the light backdrop (pale lines if it is ever dark) ----
     const u = pointsMaterial.uniforms;
     u.uTime.value = time;
+    const pr = Math.min(state.gl.getPixelRatio(), 2);
+    if (u.uPixelRatio.value !== pr) u.uPixelRatio.value = pr;
     u.uMorph.value = morph.current;
     u.uOpacity.value += (targetOpacity - u.uOpacity.value) * k;
     // Blend light -> dark scheme (eased, so a mid-view switch cross-fades the sculpture).
@@ -628,11 +653,13 @@ function Precompile({ onReady }: { onReady: () => void }) {
 
 export default function Engine3D({ active, ...inputs }: Props) {
   const [ready, setReady] = useState(false);
+  const [lowDpr, setLowDpr] = useState(false);
+  const onLowDpr = useCallback(() => setLowDpr(true), []);
   const onReady = useCallback(() => setReady(true), []);
   return (
     <Canvas
       // Phones: cap sharpness at 1.25× (big battery/GPU saving, visually near-identical).
-      dpr={inputs.desktop ? [1, 1.75] : [1, 1.25]}
+      dpr={lowDpr ? 1 : inputs.desktop ? [1, 1.75] : [1, 1.25]}
       frameloop={active && ready ? "always" : "never"}
       // The glass core's refraction pass at half resolution: a quarter of the per-frame
       // MSAA resolve + mipmap work, and the refraction is seen through dark tinted glass.
@@ -646,7 +673,7 @@ export default function Engine3D({ active, ...inputs }: Props) {
       tabIndex={-1}
     >
       <Environment />
-      <EngineScene {...inputs} />
+      <EngineScene {...inputs} onLowDpr={onLowDpr} />
       <Precompile onReady={onReady} />
     </Canvas>
   );
