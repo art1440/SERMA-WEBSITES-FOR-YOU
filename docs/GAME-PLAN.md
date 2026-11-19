@@ -84,7 +84,8 @@ allocations in a short scroll); not WebGL, worth tracing during T4.
 ## Needs your call (agents won't touch these)
 
 1. ~~**Prices.**~~ Decided: merged `claude/nice-wright-ilz6al` (Starter $500 / Business $1,000 / Growth $2,000).
-2. **Business card** (`claude/upbeat-sagan-nlbl56`) is unmerged. Merge it into the repo as brand assets, or keep it separate?
+2. ~~**Business card.**~~ Decided: merged `claude/upbeat-sagan-nlbl56` into `brand/business-cards/`. Note its palette is
+   navy + cream/gold (made before the site went light sky-blue), so card and site no longer share an accent.
 
 ## Status
 
