@@ -35,7 +35,7 @@ export const TIERS: Tier[] = [
       en: "One strong page that gets the phone ringing.",
       es: "Una página sólida que hace sonar el teléfono.",
     },
-    price: null,
+    price: 299,
     monthly: null,
     features: [
       { en: "One-page website (services, hours, location, contact)", es: "Sitio de una página (servicios, horario, ubicación, contacto)" },
@@ -56,7 +56,7 @@ export const TIERS: Tier[] = [
       en: "A full site for a business that's ready to grow.",
       es: "Un sitio completo para un negocio listo para crecer.",
     },
-    price: null,
+    price: 599,
     monthly: null,
     featured: true,
     inherits: { en: "Everything in Starter, plus:", es: "Todo lo de Inicial, y además:" },
@@ -78,7 +78,7 @@ export const TIERS: Tier[] = [
       en: "The site, plus the system that answers for you.",
       es: "El sitio, más el sistema que contesta por usted.",
     },
-    price: null,
+    price: 999,
     monthly: null,
     inherits: { en: "Everything in Business, plus:", es: "Todo lo de Negocio, y además:" },
     features: [
