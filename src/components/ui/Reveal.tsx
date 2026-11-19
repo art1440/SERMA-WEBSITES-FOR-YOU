@@ -6,7 +6,7 @@ import { usePanelVisit } from "@/context/TabsContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
 
 /** Bottom-only trigger band: an element at the very top of a tab can never be stranded above it. */
-const REVEAL_MARGIN = "0px 0px -10% 0px";
+const REVEAL_MARGIN = "0px 0px -5% 0px";
 export const REVEAL_S = 0.6;
 
 /** False while the panel is hidden; true once `ref` has entered the viewport during this visit. */

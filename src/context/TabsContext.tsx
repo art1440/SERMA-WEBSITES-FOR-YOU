@@ -42,6 +42,11 @@ function prefersReduced() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+/** After a swap not started from the tab bar, keyboard focus follows the visitor into the new panel. */
+function focusPanel(id: TabId) {
+  document.getElementById(`panel-${id}`)?.focus({ preventScroll: true });
+}
+
 /** Jump to the top without the page-wide smooth scroll, then let scroll-linked scenes re-measure. */
 function resetScroll() {
   window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
@@ -84,6 +89,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
         const url = id === "home" ? window.location.pathname + window.location.search : `#${id}`;
         if (window.location.hash.replace(/^#/, "") !== (id === "home" ? "" : id)) window.history.pushState(null, "", url);
       }
+      const fromBar = !!document.activeElement?.closest?.('[role="tablist"]');
       const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
       if (id === activeRef.current) {
         if (visitRef.current?.id === id) {
@@ -100,6 +106,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
           resetScroll();
           enter(id);
           veil.jump(1);
+          if (!fromBar) requestAnimationFrame(() => focusPanel(id));
           return;
         }
         await animate(veil, 0, { duration: OUT_S, ease: "easeIn" });
@@ -113,10 +120,12 @@ export function TabsProvider({ children }: { children: ReactNode }) {
       // re-measure at the top. Only then fade in: the new panel never shows at the old offset.
       // DashboardShowcase's entrance is synced to these two frames: keep them.
       await frame();
+      if (mine !== token.current) return;
       resetScroll();
       await frame();
       if (mine !== token.current) return;
-      enter(id); // the new panel's reveals start observing NOW (scroll is 0)
+      enter(id);
+      if (!fromBar) focusPanel(id); // the new panel's reveals start observing NOW (scroll is 0)
       animate(veil, 1, { duration: IN_S, ease: EASE_EDITORIAL });
     },
     [veil, enter, leave],

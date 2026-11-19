@@ -81,8 +81,16 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
     settle();
   };
 
+  // Pointer handlers live on the never-transformed wrapper: a tilted layer's hit area moves out from
+  // under the cursor, which made pointerleave/enter fire in a loop (shiver).
   return (
-    <div ref={stage} className="stage-flat h-full [perspective:1400px]">
+    <div
+      ref={stage}
+      className="stage-flat h-full [perspective:1400px]"
+      onPointerEnter={onEnter}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+    >
       {/* Entrance: swings up into place on every open */}
       <motion.div
         ref={entrance}
@@ -98,9 +106,6 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
         <motion.div
           className={`relative ${className ?? ""}`}
           style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
-          onPointerEnter={onEnter}
-          onPointerMove={onMove}
-          onPointerLeave={onLeave}
         >
           {children}
           {glare && !reduce ? (

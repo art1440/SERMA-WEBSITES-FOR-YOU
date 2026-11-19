@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTabs } from "@/context/TabsContext";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
 import { TAB_IDS, type TabId } from "@/lib/tabs";
 import { goToForm } from "@/lib/scroll";
@@ -42,6 +43,45 @@ export function Navbar() {
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const closeLogin = useCallback(() => setLoginOpen(false), []);
+
+  // Chrome scrolls a sticky element into view by its layout position, so Tab landing on a navbar
+  // control yanked the page toward the top. Remember where the page was when Tab was pressed and
+  // put it back if focus moved into the header.
+  useEffect(() => {
+    let saved: number | null = null;
+    let armed = false;
+    let timer = 0;
+    const restore = () => {
+      if (saved !== null && armed && Math.abs(window.scrollY - saved) > 0.5) {
+        window.scrollTo({ top: saved, left: 0, behavior: "instant" as ScrollBehavior });
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return;
+      saved = window.scrollY;
+      armed = false;
+      window.clearTimeout(timer);
+      // The native focus scroll can land a few frames late, so keep watching for a moment.
+      timer = window.setTimeout(() => {
+        saved = null;
+        armed = false;
+      }, 1200);
+    };
+    const onFocusIn = (e: FocusEvent) => {
+      if (saved === null || !(e.target as Element | null)?.closest?.("header")) return;
+      armed = true;
+      restore();
+    };
+    window.addEventListener("keydown", onKey, true);
+    window.addEventListener("focusin", onFocusIn, true);
+    window.addEventListener("scroll", restore, { passive: true });
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("focusin", onFocusIn, true);
+      window.removeEventListener("scroll", restore);
+    };
+  }, []);
 
   // Esc closes the mobile menu and returns focus to its toggle.
   useEffect(() => {
@@ -275,17 +315,34 @@ function TabBar({
 }) {
   const railRef = useRef<HTMLDivElement>(null);
   const firstCentre = useRef(true);
+  const reduceMotion = useReducedMotionSafe();
 
   // Keep the picked tab in view: centre it in the rail (horizontal only, never the page).
   useEffect(() => {
     const rail = railRef.current;
     const tab = rail?.querySelector<HTMLElement>(`[data-tab="${selected}"]`);
-    if (!rail || !tab || rail.scrollWidth <= rail.clientWidth) return;
-    const left = tab.offsetLeft - (rail.clientWidth - tab.offsetWidth) / 2;
+    if (!rail || !tab) return;
+    // Before the first interaction (mount, then a deep link's `selected`) the rail is placed instantly.
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    rail.scrollTo({ left, behavior: reduce || firstCentre.current ? "auto" : "smooth" });
-    firstCentre.current = false;
+    const instant = reduce || firstCentre.current;
+    if (rail.scrollWidth > rail.clientWidth) {
+      const left = tab.offsetLeft - (rail.clientWidth - tab.offsetWidth) / 2;
+      rail.scrollTo({ left, behavior: instant ? "auto" : "smooth" });
+    }
   }, [selected]);
+
+  // Until the visitor first interacts, the rail is only ever placed, never animated (deep link on load).
+  useEffect(() => {
+    const done = () => {
+      firstCentre.current = false;
+    };
+    window.addEventListener("pointerdown", done, { once: true, capture: true });
+    window.addEventListener("keydown", done, { once: true, capture: true });
+    return () => {
+      window.removeEventListener("pointerdown", done, true);
+      window.removeEventListener("keydown", done, true);
+    };
+  }, []);
 
   const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     const i = items.findIndex((it) => it.id === selected);
@@ -337,7 +394,7 @@ function TabBar({
                     layoutId="tab-pill"
                     layoutDependency={selected}
                     aria-hidden="true"
-                    transition={SPRING_SNAPPY}
+                    transition={reduceMotion ? { duration: 0 } : SPRING_SNAPPY}
                     className="absolute inset-x-0 inset-y-1.5 -z-10 rounded-full bg-aqua/[0.143] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),inset_0_0_0_1px_rgba(255,255,255,0.1)]"
                   />
                   {/* A short aqua filament under the label: the one coloured mark in the bar. Its own
@@ -346,7 +403,7 @@ function TabBar({
                     layoutId="tab-filament"
                     layout="position"
                     layoutDependency={selected}
-                    transition={SPRING_SNAPPY}
+                    transition={reduceMotion ? { duration: 0 } : SPRING_SNAPPY}
                     aria-hidden="true"
                     className="absolute bottom-[9px] left-1/2 -z-10 -ml-2 h-[2px] w-4 rounded-full bg-aqua"
                   />

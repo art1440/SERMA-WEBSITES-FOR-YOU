@@ -19,7 +19,7 @@ export function TabPanels({ panels }: { panels: { id: TabId; node: ReactNode }[]
   return (
     <motion.div style={{ opacity: veil }}>
       {panels.map(({ id, node }) => (
-        <div key={id} id={`panel-${id}`} role="tabpanel" aria-labelledby={`tab-${id}`} hidden={tabs!.active !== id}>
+        <div key={id} id={`panel-${id}`} role="tabpanel" tabIndex={-1} className="outline-none" aria-labelledby={`tab-${id}`} hidden={tabs!.active !== id}>
           <PanelVisitContext.Provider value={visit?.id === id ? visit.n : null}>{node}</PanelVisitContext.Provider>
         </div>
       ))}
