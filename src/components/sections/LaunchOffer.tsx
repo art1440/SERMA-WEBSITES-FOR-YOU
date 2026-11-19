@@ -16,7 +16,6 @@ import { EASE_EDITORIAL } from "@/lib/motion";
  */
 
 const END = LAUNCH.endsAt ? Date.parse(LAUNCH.endsAt) : null;
-const left = Math.max(0, LAUNCH.spots - LAUNCH.taken);
 
 /** Current time, ticking once a second only while a countdown is configured (null before mount). */
 function useNow(): number | null {
@@ -30,12 +29,14 @@ function useNow(): number | null {
   return now;
 }
 
-export function useLaunch() {
+/** Launch state for one package: `left` = its real unsold launch spots. */
+export function useLaunch(taken = 0) {
+  const left = Math.max(0, LAUNCH.spots - taken);
   const now = useNow();
   // Before mount (static HTML) the date check is skipped; the client corrects it on first paint.
   const beforeEnd = END === null || now === null || now < END;
   const live = LAUNCH.active && left > 0 && beforeEnd;
-  return { live, ended: LAUNCH.active && !live, now };
+  return { live, ended: LAUNCH.active && !live, now, left };
 }
 
 function pad(n: number) {
@@ -43,7 +44,7 @@ function pad(n: number) {
 }
 
 /** Badge + spots meter + optional countdown, shown above the price while the launch offer is live. */
-export function LaunchMeta({ now }: { now: number | null }) {
+export function LaunchMeta({ now, left }: { now: number | null; left: number }) {
   const { locale } = useLanguage();
   const pct = (left / LAUNCH.spots) * 100;
   const ms = END !== null && now !== null ? Math.max(0, END - now) : null;

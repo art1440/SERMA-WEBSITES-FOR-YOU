@@ -36,8 +36,8 @@ export const FAQ_ITEMS: FaqItem[] = [
       es: "¿Por qué aparecen dos precios?",
     },
     a: {
-      en: "The crossed-out number is our regular price. Our first 10 clients get the lower launch price; once those spots are taken, packages go to the regular price. The $99.99 a month is the same either way.",
-      es: "El número tachado es nuestro precio regular. Nuestros primeros 10 clientes reciben el precio de lanzamiento, más bajo; cuando se ocupen esos lugares, los paquetes pasan al precio regular. La cuota de $99.99 al mes es igual en ambos casos.",
+      en: "The crossed-out number is our regular price. The first 10 clients on each package get the lower launch price; once a package’s spots are taken, it goes to the regular price. The $99.99 a month is the same either way.",
+      es: "El número tachado es nuestro precio regular. Los primeros 10 clientes de cada paquete reciben el precio de lanzamiento, más bajo; cuando se ocupan los lugares de un paquete, ese paquete pasa al precio regular. La cuota de $99.99 al mes es igual en ambos casos.",
     },
   },
   {

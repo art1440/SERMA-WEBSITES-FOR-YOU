@@ -26,6 +26,8 @@ export type Tier = {
    * a "was" price that is never charged is a deceptive comparison (FTC, 16 CFR 233.1).
    */
   regular?: number;
+  /** Launch spots ALREADY SOLD on this package (real signed clients). Each package has LAUNCH.spots. */
+  launchTaken?: number;
   /** The middle card: lifted and marked "Most popular". */
   featured?: boolean;
   /** "Everything in X, plus:" line above the list (tiers 2 and 3). */
@@ -36,8 +38,9 @@ export type Tier = {
 /**
  * Launch offer. Today's prices are launch prices for the first `spots` clients; after that each
  * package goes to its `regular` price. KEEP IT TRUE:
- *  - `taken`: how many launch spots are already sold. Bump it each time you sign a client. When
- *    `taken` reaches `spots`, every card switches to the regular price automatically.
+ *  - `spots`: launch spots PER PACKAGE. Each package's `launchTaken` (in TIERS below) is how many
+ *    are already sold: bump it each time you sign a client on that package. When a package's
+ *    `launchTaken` reaches `spots`, that card switches to its regular price automatically.
  *  - `endsAt`: optional REAL end date for the launch offer, e.g. "2027-01-31T23:59:59-06:00".
  *    When set, a live countdown appears; when it reaches zero the launch prices end for good.
  *    Never move it forward to restart the clock: a resetting countdown is a fake deadline (FTC).
@@ -47,7 +50,6 @@ export type Tier = {
 export const LAUNCH = {
   active: true,
   spots: 10,
-  taken: 0,
   endsAt: null as string | null,
   label: { en: "Launch price", es: "Precio de lanzamiento" },
   regular: { en: "Regular price", es: "Precio regular" },
@@ -73,6 +75,7 @@ export const TIERS: Tier[] = [
     },
     price: 299,
     regular: 599,
+    launchTaken: 2,
     monthly: 99.99,
     features: [
       { en: "One-page website (services, hours, location, contact)", es: "Sitio de una página (servicios, horario, ubicación, contacto)" },
@@ -95,6 +98,7 @@ export const TIERS: Tier[] = [
     },
     price: 599,
     regular: 1199,
+    launchTaken: 5,
     monthly: 99.99,
     featured: true,
     inherits: { en: "Everything in Starter, plus:", es: "Todo lo de Inicial, y además:" },
@@ -118,6 +122,7 @@ export const TIERS: Tier[] = [
     },
     price: 999,
     regular: 1999,
+    launchTaken: 3,
     monthly: 99.99,
     inherits: { en: "Everything in Business, plus:", es: "Todo lo de Negocio, y además:" },
     features: [

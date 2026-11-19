@@ -107,7 +107,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
   const p = t.pricing;
   // Launch offer (LAUNCH in pricing.ts): while live, the regular price is struck through beside today's
   // launch price; once the spots are gone or the real end date passes, the card shows the regular price.
-  const { live, ended, now } = useLaunch();
+  const { live, ended, now, left } = useLaunch(tier.launchTaken);
   const launch = live && tier.price !== null && tier.regular !== undefined && tier.regular > tier.price;
   const price = ended && tier.regular !== undefined ? tier.regular : tier.price;
   const delay = CARD_DELAY[tier.id];
@@ -162,7 +162,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
 
           {/* Price: a template slot until a number is set in src/data/pricing.ts. */}
           <div className="mt-6 border-t border-bone/[0.14] pt-6">
-            {launch ? <LaunchMeta now={now} /> : null}
+            {launch ? <LaunchMeta now={now} left={left} /> : null}
             <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
               {launch ? (
                 <del className="font-display text-[1.375rem] leading-none tracking-[-0.02em] text-ash decoration-ash/70 decoration-[1.5px]">
