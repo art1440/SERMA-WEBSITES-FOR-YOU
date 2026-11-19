@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { ArrowUp, ArrowUpRight, Mail, Pause, Phone, Play, ShieldCheck } from "lucide-react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
-import { Reveal } from "@/components/ui/Reveal";
+import { Reveal, staggerDelay } from "@/components/ui/Reveal";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
@@ -74,6 +74,14 @@ function FooterContact({
   );
 }
 
+/** Smooth scroll to the top; instant under reduced motion. Keeps the #top href as the no-JS fallback. */
+function scrollToTop(e: MouseEvent<HTMLAnchorElement>) {
+  e.preventDefault();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  window.history.replaceState(null, "", "#top");
+}
+
 export function Footer() {
   const { t } = useLanguage();
   const year = new Date().getFullYear();
@@ -96,7 +104,7 @@ export function Footer() {
       <AmbientField tone="dark" variant={2} />
       <div className="frame pb-8 pt-24 lg:pt-28">
         <div className="grid grid-cols-12 gap-x-4 gap-y-14 lg:gap-x-8">
-          <div className="col-span-12 lg:col-span-5">
+          <Reveal className="col-span-12 lg:col-span-5">
             <p className="max-w-md text-pretty font-display text-[1.625rem] leading-[1.18] tracking-[-0.03em] text-bone sm:text-[1.875rem]">
               {t.footer.tagline}
             </p>
@@ -117,7 +125,7 @@ export function Footer() {
               ) : null}
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-3">
               {/* Switch first: the badge beside it changes width with the language, so anything after
                   it would jump away from the pointer after a tap. */}
               <LanguageToggle tone="dark" />
@@ -130,33 +138,38 @@ export function Footer() {
                   footer (outside the tab panels), so it is reachable from every tab. */}
               <PauseMotionButton />
             </div>
-          </div>
+          </Reveal>
 
-          <nav aria-labelledby="footer-explore" className="col-span-6 lg:col-span-3 lg:col-start-7">
-            <h2 id="footer-explore" className="eyebrow text-ash">
-              {t.footer.explore}
-            </h2>
-            <ul className="mt-3">
-              {explore.map((l) => (
-                <li key={l.href}>
-                  <FooterLink href={l.href} label={l.label} />
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {/* Same top edge and same heading-to-list gap in both columns; 60ms stagger after the lead column. */}
+          <Reveal className="col-span-6 lg:col-span-3 lg:col-start-7" delay={staggerDelay(1)}>
+            <nav aria-labelledby="footer-explore">
+              <h2 id="footer-explore" className="eyebrow text-ash">
+                {t.footer.explore}
+              </h2>
+              <ul className="mt-2">
+                {explore.map((l) => (
+                  <li key={l.href}>
+                    <FooterLink href={l.href} label={l.label} />
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </Reveal>
 
-          <nav aria-labelledby="footer-legal" className="col-span-6 lg:col-span-3">
-            <h2 id="footer-legal" className="eyebrow text-ash">
-              {t.footer.legal}
-            </h2>
-            <ul className="mt-3">
-              {legal.map((l) => (
-                <li key={l.href}>
-                  <FooterLink href={l.href} label={l.label} />
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <Reveal className="col-span-6 lg:col-span-3" delay={staggerDelay(2)}>
+            <nav aria-labelledby="footer-legal">
+              <h2 id="footer-legal" className="eyebrow text-ash">
+                {t.footer.legal}
+              </h2>
+              <ul className="mt-2">
+                {legal.map((l) => (
+                  <li key={l.href}>
+                    <FooterLink href={l.href} label={l.label} />
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </Reveal>
         </div>
 
         <Reveal className="mt-20 overflow-hidden lg:mt-28" y={60}>
@@ -165,9 +178,18 @@ export function Footer() {
 
         <div className="mt-8 flex flex-col gap-4 border-t border-bone/[0.14] pt-6 text-[0.8125rem] text-ash sm:flex-row sm:items-center sm:justify-between">
           <p>{fill(t.footer.rights, { year, entity: siteConfig.legalEntity })}</p>
-          <a href="#top" className="btn-line-dark btn-sm glass-flat self-start sm:self-auto">
+          <a
+            href="#top"
+            onClick={scrollToTop}
+            className="group btn-line-dark btn-sm glass-flat self-start hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 sm:self-auto"
+          >
             {t.footer.backToTop}
-            <ArrowUp aria-hidden="true" size={14} strokeWidth={1.75} />
+            <ArrowUp
+              aria-hidden="true"
+              size={14}
+              strokeWidth={1.75}
+              className="transition-transform duration-base ease-editorial group-hover:-translate-y-0.5 motion-reduce:group-hover:translate-y-0"
+            />
           </a>
         </div>
       </div>
@@ -183,7 +205,7 @@ function PauseMotionButton() {
       type="button"
       onClick={toggle}
       aria-pressed={paused}
-      className="chip-dark glass-flat min-h-[44px] text-bone transition-transform duration-200 ease-editorial hover:text-bone active:scale-[0.97]"
+      className="chip-dark glass-flat min-h-[44px] text-bone transition-transform duration-base ease-editorial hover:-translate-y-0.5 hover:text-bone active:scale-[0.97] motion-reduce:hover:translate-y-0"
     >
       {paused ? (
         <Play aria-hidden="true" size={14} strokeWidth={1.75} className="shrink-0 text-aqua" />
