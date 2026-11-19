@@ -2,7 +2,7 @@
 
 import { AnimatePresence, LayoutGroup, motion, useMotionValueEvent, useTransform } from "framer-motion";
 import { ArrowDown, Check, MessageSquareText, PhoneIncoming, PhoneMissed, RotateCcw, Zap } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { FitStage } from "@/components/ui/FitStage";
@@ -15,7 +15,9 @@ import { useNiche } from "@/context/NicheContext";
 import { useScene, useTrackProgress } from "@/context/SceneContext";
 import { fill } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
-import { EASE_EDITORIAL } from "@/lib/motion";
+import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
+import { ConfirmCheck } from "@/components/ui/ConfirmCheck";
+import { useMotionPause } from "@/context/MotionPauseContext";
 
 /** Ordered phases of the scripted timeline. */
 const PHASES = ["idle", "ringing", "missed", "typing1", "sms1", "reply", "typing2", "confirm", "logged"] as const;
@@ -306,7 +308,7 @@ export function MissedCallSimulator() {
                           <motion.li
                             key={`new-${niche.id}`}
                             layout
-                            className="flex items-center justify-between gap-3 rounded-glass-sm bg-aqua/10 p-3 shadow-[0_14px_32px_-16px_rgba(42,107,191,0.6)] ring-1 ring-inset ring-aqua/45"
+                            className="relative flex items-center justify-between gap-3 rounded-glass-sm bg-aqua/10 p-3 shadow-[0_14px_32px_-16px_rgba(42,107,191,0.6)] ring-1 ring-inset ring-aqua/45"
                             initial={{ opacity: 0, y: -24, scale: 0.97 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0 }}
@@ -332,6 +334,15 @@ export function MissedCallSimulator() {
                                 </p>
                               </div>
                             </div>
+                            {reduce ? null : (
+                              <motion.span
+                                aria-hidden="true"
+                                className="pointer-events-none absolute inset-0 rounded-glass-sm ring-1 ring-inset ring-live/60"
+                                initial={{ opacity: 0.7, scale: 1 }}
+                                animate={{ opacity: 0, scale: 1.04 }}
+                                transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+                              />
+                            )}
                             <span className="shrink-0 text-sm font-semibold tabular text-live">+{amountLabel}</span>
                           </motion.li>
                         ) : null}
@@ -387,13 +398,28 @@ const SIDE_KEYS = [
 
 function Phone({ phase }: { phase: Phase }) {
   const { t, locale } = useLanguage();
+  const { reduce } = useScene();
+  const { paused } = useMotionPause();
+  const still = reduce; // reduced motion: end states only
+  const loops = !reduce && !paused; // looping motion (ring pulse, typing dots) stops when paused
   const { niche } = useNiche();
   const sim = niche.simulator;
   const vars = { name: sim.caller, business: sim.business, time: sim.time[locale], service: sim.service[locale] };
   const callScreen = phase === "ringing" || phase === "missed";
 
   return (
-    <div role="region" aria-label={t.simulator.phoneRegionLabel} className="relative isolate mx-auto w-full max-w-[330px]">
+    <motion.div
+      role="region"
+      aria-label={t.simulator.phoneRegionLabel}
+      className="relative isolate mx-auto w-full max-w-[330px]"
+      // Ring shake: 3 quick wiggles while calling; settles to 0 the moment the phase changes (or scroll rewinds).
+      animate={{ rotate: phase === "ringing" && loops ? [0, -2.5, 2.5, -2, 2, -1, 0] : 0 }}
+      transition={
+        phase === "ringing" && loops
+          ? { duration: 0.55, repeat: 2, repeatDelay: 0.35, ease: "easeInOut" }
+          : { type: "spring", stiffness: 300, damping: 14 }
+      }
+    >
       {/* Depth: warm halo behind the device and a soft contact shadow under it. */}
       <div
         aria-hidden="true"
@@ -468,24 +494,28 @@ function Phone({ phase }: { phase: Phase }) {
                   </motion.p>
                 ) : null}
 
-                {at(phase, "typing1") && !at(phase, "sms1") ? <Typing key="typing1" side="out" label={t.simulator.typing} /> : null}
+                {!still && at(phase, "typing1") && !at(phase, "sms1") ? (
+                  <Typing key="typing1" side="out" label={t.simulator.typing} animateDots={loops} />
+                ) : null}
 
                 {at(phase, "sms1") ? (
-                  <Bubble key="sms1" side="out" meta={`${t.simulator.autoTag} · ${t.simulator.responseValue}`}>
+                  <Bubble key="sms1" side="out" still={still} meta={`${t.simulator.autoTag} · ${t.simulator.responseValue}`}>
                     {fill(t.simulator.smsAuto, vars)}
                   </Bubble>
                 ) : null}
 
                 {at(phase, "reply") ? (
-                  <Bubble key="reply" side="in">
+                  <Bubble key="reply" side="in" still={still}>
                     {t.simulator.smsReply}
                   </Bubble>
                 ) : null}
 
-                {at(phase, "typing2") && !at(phase, "confirm") ? <Typing key="typing2" side="out" label={t.simulator.typing} /> : null}
+                {!still && at(phase, "typing2") && !at(phase, "confirm") ? (
+                  <Typing key="typing2" side="out" label={t.simulator.typing} animateDots={loops} />
+                ) : null}
 
                 {at(phase, "confirm") ? (
-                  <Bubble key="confirm" side="out" meta={t.simulator.autoTag}>
+                  <Bubble key="confirm" side="out" still={still} meta={t.simulator.autoTag} badge={<ConfirmCheck still={still} size={16} />}>
                     {fill(t.simulator.smsConfirm, vars)}
                   </Bubble>
                 ) : null}
@@ -514,18 +544,21 @@ function Phone({ phase }: { phase: Phase }) {
                     style={{ backgroundImage: CALL_GLOW_MISSED }}
                   />
                   <div className="relative grid h-20 w-20 place-items-center">
-                    {phase === "ringing"
-                      ? [0, 1].map((i) => (
-                          <motion.span
-                            key={i}
-                            aria-hidden="true"
-                            className="absolute inset-0 rounded-full bg-aqua/10 ring-1 ring-inset ring-aqua/40"
-                            initial={{ scale: 1, opacity: 0.6 }}
-                            animate={{ scale: 1.9, opacity: 0 }}
-                            transition={{ duration: 1.2, repeat: 1, delay: i * 0.5, ease: "easeOut" }}
-                          />
-                        ))
-                      : null}
+                    <AnimatePresence>
+                      {phase === "ringing" && loops
+                        ? [0, 1].map((i) => (
+                            <motion.span
+                              key={i}
+                              aria-hidden="true"
+                              className="absolute inset-0 rounded-full bg-aqua/10 ring-1 ring-inset ring-aqua/40"
+                              initial={{ scale: 1, opacity: 0.6 }}
+                              animate={{ scale: 1.9, opacity: 0 }}
+                              exit={{ opacity: 0, transition: { duration: 0.25 } }}
+                              transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.6, ease: "easeOut" }}
+                            />
+                          ))
+                        : null}
+                    </AnimatePresence>
                     <span
                       className={`relative grid h-16 w-16 place-items-center rounded-full text-ink ${
                         phase === "missed"
@@ -540,9 +573,15 @@ function Phone({ phase }: { phase: Phase }) {
                       )}
                     </span>
                   </div>
-                  <p className="mt-6 text-[0.8125rem] font-medium text-ash">
+                  <motion.p
+                    key={phase === "missed" ? "missed" : "incoming"}
+                    className="mt-6 text-[0.8125rem] font-medium text-ash"
+                    initial={phase === "missed" && !still ? { scale: 0.7, opacity: 0 } : false}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={SPRING_SNAPPY}
+                  >
                     {phase === "missed" ? t.simulator.missed : t.simulator.incoming}
-                  </p>
+                  </motion.p>
                   <p className="mt-1.5 font-display text-4xl tracking-[-0.035em] text-bone">{sim.caller}</p>
                   <p className="mt-1 font-mono text-xs tabular text-ash">{sim.callerNumber}</p>
                   <p className="mt-7 flex items-center gap-2 rounded-full bg-aqua/[0.091] px-3.5 py-2 text-xs font-medium text-bone/80 ring-1 ring-inset ring-bone/[0.14]">
@@ -565,20 +604,21 @@ function Phone({ phase }: { phase: Phase }) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-function Bubble({ side, children, meta }: { side: "in" | "out"; children: string; meta?: string }) {
+function Bubble({ side, children, meta, badge, still }: { side: "in" | "out"; children: string; meta?: string; badge?: ReactNode; still?: boolean }) {
   const out = side === "out";
   return (
     <motion.div
-      layout
+      layout={!still}
       className={`flex max-w-[86%] flex-col ${out ? "self-end items-end" : "self-start items-start"}`}
-      initial={{ opacity: 0, y: 14, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.45, ease: EASE_EDITORIAL }}
+      // Enters like a real message: scale from 0.9 at the sender's corner + fade (~250ms).
+      initial={still ? false : { opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={still ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.25, ease: EASE_EDITORIAL }}
       style={{ originX: out ? 1 : 0, originY: 1 }}
     >
       <p
@@ -590,12 +630,17 @@ function Bubble({ side, children, meta }: { side: "in" | "out"; children: string
       >
         {children}
       </p>
-      {meta ? <span className="mt-1 px-1.5 text-[0.625rem] font-medium leading-4 text-ash">{meta}</span> : null}
+      {meta || badge ? (
+        <span className="mt-1 flex items-center gap-1.5 px-1.5 text-[0.625rem] font-medium leading-4 text-ash">
+          {badge}
+          {meta}
+        </span>
+      ) : null}
     </motion.div>
   );
 }
 
-function Typing({ side, label }: { side: "in" | "out"; label: string }) {
+function Typing({ side, label, animateDots }: { side: "in" | "out"; label: string; animateDots: boolean }) {
   const out = side === "out";
   return (
     <motion.div
@@ -611,8 +656,8 @@ function Typing({ side, label }: { side: "in" | "out"; label: string }) {
           key={i}
           aria-hidden="true"
           className={`h-1.5 w-1.5 rounded-full ${out ? "bg-ink/60" : "bg-bone/70"}`}
-          animate={{ y: [0, -3, 0], opacity: [0.4, 1, 0.4] }}
-          transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
+          animate={animateDots ? { y: [0, -3, 0], opacity: [0.4, 1, 0.4] } : { y: 0, opacity: 0.7 }}
+          transition={animateDots ? { duration: 0.8, repeat: Infinity, delay: i * 0.15 } : { duration: 0.2 }}
         />
       ))}
     </motion.div>
