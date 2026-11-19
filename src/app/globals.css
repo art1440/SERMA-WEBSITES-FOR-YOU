@@ -148,6 +148,15 @@ html.dark {
     scroll-margin-top: 5rem;
   }
 
+  /* The header's own controls sit inside the reserved band: without this, focusing one (Tab, or
+     programmatically) scrolls the page toward the top to "clear" a header that is already on screen. */
+  html:has(header:focus-within) {
+    scroll-padding-top: 0;
+  }
+  header [id] {
+    scroll-margin-top: 0;
+  }
+
   ::selection {
     background: rgb(var(--sel-bg));
     color: rgb(var(--bone));

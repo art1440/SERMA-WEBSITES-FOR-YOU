@@ -15,7 +15,8 @@ type TabsValue = {
   veil: MotionValue<number>;
 };
 
-export type TabVisit = { id: TabId; n: number } | null;
+/** `repeat`: this tab has been opened before, so its sections play the quick entrance. */
+export type TabVisit = { id: TabId; n: number; repeat: boolean } | null;
 
 const TabsContext = createContext<TabsValue | null>(null);
 /** The tab being visited and a counter that bumps on every open. Separate so a bump re-renders no `useTabs()` consumer. */
@@ -32,6 +33,12 @@ export function useTabVisit() {
 export const PanelVisitContext = createContext<number | null>(0);
 export function usePanelVisit() {
   return useContext(PanelVisitContext);
+}
+
+/** True when the panel being opened has been visited before (quick entrance). Default false. */
+export const PanelRepeatContext = createContext<boolean>(false);
+export function usePanelRepeat() {
+  return useContext(PanelRepeatContext);
 }
 
 // Same scale as the CSS duration tokens (motion.css): fast out, slow in.
@@ -66,13 +73,17 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   const activeRef = useRef<TabId>("home");
   const veil = useMotionValue(1);
   const token = useRef(0);
-  const [visit, setVisit] = useState<TabVisit>({ id: "home", n: 0 });
-  const visitRef = useRef<TabVisit>({ id: "home", n: 0 });
+  const [visit, setVisit] = useState<TabVisit>({ id: "home", n: 0, repeat: false });
+  const visitRef = useRef<TabVisit>({ id: "home", n: 0, repeat: false });
   const visitN = useRef(0);
+
+  // In memory only: first open of a tab plays the full choreography, later opens a quick one.
+  const visited = useRef<Set<TabId>>(new Set(["home"]));
 
   const enter = useCallback((id: TabId) => {
     visitN.current += 1;
-    const v = { id, n: visitN.current };
+    const v = { id, n: visitN.current, repeat: visited.current.has(id) };
+    visited.current.add(id);
     visitRef.current = v;
     setVisit(v);
   }, []);

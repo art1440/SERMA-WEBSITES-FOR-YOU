@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
-import { PanelVisitContext, useTabs, useTabVisit } from "@/context/TabsContext";
+import { PanelRepeatContext, PanelVisitContext, useTabs, useTabVisit } from "@/context/TabsContext";
 import type { TabId } from "@/lib/tabs";
 
 /**
@@ -20,7 +20,9 @@ export function TabPanels({ panels }: { panels: { id: TabId; node: ReactNode }[]
     <motion.div style={{ opacity: veil }}>
       {panels.map(({ id, node }) => (
         <div key={id} id={`panel-${id}`} role="tabpanel" tabIndex={-1} className="outline-none" aria-labelledby={`tab-${id}`} hidden={tabs!.active !== id}>
-          <PanelVisitContext.Provider value={visit?.id === id ? visit.n : null}>{node}</PanelVisitContext.Provider>
+          <PanelVisitContext.Provider value={visit?.id === id ? visit.n : null}>
+            <PanelRepeatContext.Provider value={visit?.id === id ? visit.repeat : false}>{node}</PanelRepeatContext.Provider>
+          </PanelVisitContext.Provider>
         </div>
       ))}
     </motion.div>

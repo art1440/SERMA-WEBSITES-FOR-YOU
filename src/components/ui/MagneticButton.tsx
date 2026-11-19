@@ -50,7 +50,10 @@ export function MagneticButton({ children, className, onClick, href, type = "but
   };
   const onMove = (e: PointerEvent<HTMLElement>) => {
     if (reduce || e.pointerType !== "mouse" || !rect.current) return;
-    const r = rect.current;
+    // Re-read every move (cheap) so scrolling under the cursor can't skew the pull; subtract our own
+    // current offset so the centre is the button's resting centre.
+    const b = e.currentTarget.getBoundingClientRect();
+    const r = (rect.current = new DOMRect(b.left - sx.get(), b.top - sy.get(), b.width, b.height));
     const nx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
     const ny = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
     const px = nx * PULL_X * strength;

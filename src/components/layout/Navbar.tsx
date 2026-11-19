@@ -44,45 +44,6 @@ export function Navbar() {
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const closeLogin = useCallback(() => setLoginOpen(false), []);
 
-  // Chrome scrolls a sticky element into view by its layout position, so Tab landing on a navbar
-  // control yanked the page toward the top. Remember where the page was when Tab was pressed and
-  // put it back if focus moved into the header.
-  useEffect(() => {
-    let saved: number | null = null;
-    let armed = false;
-    let timer = 0;
-    const restore = () => {
-      if (saved !== null && armed && Math.abs(window.scrollY - saved) > 0.5) {
-        window.scrollTo({ top: saved, left: 0, behavior: "instant" as ScrollBehavior });
-      }
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
-      saved = window.scrollY;
-      armed = false;
-      window.clearTimeout(timer);
-      // The native focus scroll can land a few frames late, so keep watching for a moment.
-      timer = window.setTimeout(() => {
-        saved = null;
-        armed = false;
-      }, 1200);
-    };
-    const onFocusIn = (e: FocusEvent) => {
-      if (saved === null || !(e.target as Element | null)?.closest?.("header")) return;
-      armed = true;
-      restore();
-    };
-    window.addEventListener("keydown", onKey, true);
-    window.addEventListener("focusin", onFocusIn, true);
-    window.addEventListener("scroll", restore, { passive: true });
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener("keydown", onKey, true);
-      window.removeEventListener("focusin", onFocusIn, true);
-      window.removeEventListener("scroll", restore);
-    };
-  }, []);
-
   // Esc closes the mobile menu and returns focus to its toggle.
   useEffect(() => {
     if (!menuOpen) return;

@@ -2,12 +2,15 @@
 
 import { inView, motion } from "framer-motion";
 import { Fragment, useEffect, useRef, useState, type ElementType, type ReactNode, type RefObject } from "react";
-import { usePanelVisit } from "@/context/TabsContext";
+import { usePanelRepeat, usePanelVisit } from "@/context/TabsContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
 
 /** Bottom-only trigger band: an element at the very top of a tab can never be stranded above it. */
 const REVEAL_MARGIN = "0px 0px -5% 0px";
 export const REVEAL_S = 0.6;
+/** Later visits to a tab: a short fade with at most this much rise, no delay or stagger. */
+export const REPEAT_S = 0.3;
+export const REPEAT_Y = 8;
 
 /** False while the panel is hidden; true once `ref` has entered the viewport during this visit. */
 export function useVisitReveal(ref: RefObject<Element | null>, trigger: "inView" | "mount" = "inView") {
@@ -46,6 +49,8 @@ export const staggerDelay = (i: number, base = 0) => base + Math.min(i, 8) * 0.0
 export function Reveal({ children, className, delay = 0, y = 16, trigger = "inView" }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const shown = useVisitReveal(ref, trigger);
+  const repeat = usePanelRepeat();
+  const ry = repeat ? Math.min(y, REPEAT_Y) : y;
   return (
     <motion.div
       ref={ref}
@@ -53,8 +58,8 @@ export function Reveal({ children, className, delay = 0, y = 16, trigger = "inVi
       initial={{ opacity: 0, y }}
       animate={
         shown
-          ? { opacity: 1, y: 0, transition: { duration: REVEAL_S, ease: EASE_EDITORIAL, delay } }
-          : { opacity: 0, y, transition: { duration: 0 } }
+          ? { opacity: 1, y: 0, transition: { duration: repeat ? REPEAT_S : REVEAL_S, ease: EASE_EDITORIAL, delay: repeat ? 0 : delay } }
+          : { opacity: 0, y: ry, transition: { duration: 0 } }
       }
     >
       {children}
@@ -108,14 +113,21 @@ export function RevealLines({
 }: RevealLinesProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const shown = useVisitReveal(ref, trigger);
+  const repeat = usePanelRepeat();
+  // Later visits: the headline fades in as one block (no mask slide, no stagger).
   const container = {
     hidden: {},
-    show: { transition: { staggerChildren: stagger, delayChildren: delay } },
+    show: { transition: repeat ? {} : { staggerChildren: stagger, delayChildren: delay } },
   };
-  const line = {
-    hidden: { y: "108%", opacity: 0, transition: { duration: 0 } },
-    show: { y: "0%", opacity: 1, transition: { duration: 0.8, ease: EASE_EDITORIAL } },
-  };
+  const line = repeat
+    ? {
+        hidden: { y: "0%", opacity: 0, transition: { duration: 0 } },
+        show: { y: "0%", opacity: 1, transition: { duration: REPEAT_S, ease: EASE_EDITORIAL } },
+      }
+    : {
+        hidden: { y: "108%", opacity: 0, transition: { duration: 0 } },
+        show: { y: "0%", opacity: 1, transition: { duration: 0.8, ease: EASE_EDITORIAL } },
+      };
   return (
     <Tag className={className} id={id}>
       <motion.span

@@ -4,7 +4,8 @@ import { motion, useMotionValue, useMotionValueEvent, useSpring, useTransform } 
 import { useRef, type PointerEvent, type ReactNode } from "react";
 import { EASE_EDITORIAL, MOTION } from "@/lib/motion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
-import { REVEAL_S, useVisitReveal } from "./Reveal";
+import { usePanelRepeat } from "@/context/TabsContext";
+import { REPEAT_S, REPEAT_Y, REVEAL_S, useVisitReveal } from "./Reveal";
 
 const SPRING = MOTION.smooth;
 
@@ -47,6 +48,7 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
   const stage = useRef<HTMLDivElement>(null);
   const entrance = useRef<HTMLDivElement>(null);
   const shown = useVisitReveal(entrance);
+  const repeat = usePanelRepeat();
   const hovering = useRef(false);
   const settle = () => {
     if (!hovering.current && Math.abs(rx.get()) < 0.01 && Math.abs(ry.get()) < 0.01) {
@@ -66,7 +68,8 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
   };
   const onMove = (e: PointerEvent<HTMLDivElement>) => {
     if (reduce || e.pointerType !== "mouse" || !rect.current) return;
-    const r = rect.current;
+    // Re-read every move (cheap): the page may scroll under a stationary pointer. The wrapper never tilts.
+    const r = (rect.current = e.currentTarget.getBoundingClientRect());
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
     ry.set(px * max * 2);
@@ -94,17 +97,17 @@ export function TiltCard({ children, className, max = 9, glare, delay = 0 }: Pro
       {/* Entrance: swings up into place on every open */}
       <motion.div
         ref={entrance}
-        className="h-full [transform-style:preserve-3d]"
+        className="pointer-events-none h-full [transform-style:preserve-3d]"
         initial={{ opacity: 0, y: 16 }}
         animate={
           shown
-            ? { opacity: 1, y: 0, transition: { duration: REVEAL_S, ease: EASE_EDITORIAL, delay } }
-            : { opacity: 0, y: 16, transition: { duration: 0 } }
+            ? { opacity: 1, y: 0, transition: { duration: repeat ? REPEAT_S : REVEAL_S, ease: EASE_EDITORIAL, delay: repeat ? 0 : delay } }
+            : { opacity: 0, y: repeat ? REPEAT_Y : 16, transition: { duration: 0 } }
         }
       >
         {/* Pointer tilt */}
         <motion.div
-          className={`relative ${className ?? ""}`}
+          className={`pointer-events-auto relative ${className ?? ""}`}
           style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
         >
           {children}
