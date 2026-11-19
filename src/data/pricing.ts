@@ -34,15 +34,33 @@ export type Tier = {
 };
 
 /**
- * Launch offer. Today's prices are the launch prices for the first `spots` clients; after that
- * the packages go to their `regular` price. Keep this TRUE: once the spots are taken, set
- * `active: false` and move each `price` up to its `regular` value.
+ * Launch offer. Today's prices are launch prices for the first `spots` clients; after that each
+ * package goes to its `regular` price. KEEP IT TRUE:
+ *  - `taken`: how many launch spots are already sold. Bump it each time you sign a client. When
+ *    `taken` reaches `spots`, every card switches to the regular price automatically.
+ *  - `endsAt`: optional REAL end date for the launch offer, e.g. "2027-01-31T23:59:59-06:00".
+ *    When set, a live countdown appears; when it reaches zero the launch prices end for good.
+ *    Never move it forward to restart the clock: a resetting countdown is a fake deadline (FTC).
+ *  - `perks`: true lines shown under the price, one per card, in a different order on each visit.
+ *    Only claims that apply to EVERY package belong here.
  */
 export const LAUNCH = {
   active: true,
   spots: 10,
-  label: { en: "Launch price · first {n} clients", es: "Precio de lanzamiento · primeros {n} clientes" },
+  taken: 0,
+  endsAt: null as string | null,
+  label: { en: "Launch price", es: "Precio de lanzamiento" },
   regular: { en: "Regular price", es: "Precio regular" },
+  spotsLeft: { en: "{left} of {spots} launch spots left", es: "Quedan {left} de {spots} lugares de lanzamiento" },
+  endsIn: { en: "Ends in", es: "Termina en" },
+  perks: [
+    { en: "See the finished draft before you pay", es: "Vea el borrador terminado antes de pagar" },
+    { en: "Copy written for you, approved by you", es: "Textos escritos para usted, aprobados por usted" },
+    { en: "Live on your own domain", es: "Publicado en su propio dominio" },
+    { en: "Tap-to-call button on every screen", es: "Botón para llamar en cada pantalla" },
+    { en: "Fixed price, no hourly billing", es: "Precio fijo, sin cobro por hora" },
+    { en: "Fast on any phone", es: "Rápido en cualquier teléfono" },
+  ],
 } as const;
 
 export const TIERS: Tier[] = [

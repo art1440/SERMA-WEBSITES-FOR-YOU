@@ -13,6 +13,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
 import { LAUNCH, TIERS, type Tier } from "@/data/pricing";
+import { LaunchMeta, RotatingPerk, useLaunch } from "./LaunchOffer";
 import { fill } from "@/i18n/types";
 import { formatMetric } from "@/lib/format";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
@@ -104,8 +105,11 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
   const { reduce } = useScene();
   const { paused } = useMotionPause();
   const p = t.pricing;
-  // Launch offer: the regular price struck through beside today's launch price (see LAUNCH in pricing.ts).
-  const launch = LAUNCH.active && tier.price !== null && tier.regular !== undefined && tier.regular > tier.price;
+  // Launch offer (LAUNCH in pricing.ts): while live, the regular price is struck through beside today's
+  // launch price; once the spots are gone or the real end date passes, the card shows the regular price.
+  const { live, ended, now } = useLaunch();
+  const launch = live && tier.price !== null && tier.regular !== undefined && tier.regular > tier.price;
+  const price = ended && tier.regular !== undefined ? tier.regular : tier.price;
   const delay = CARD_DELAY[tier.id];
   const name = tier.name[locale];
   const still = reduce || paused;
@@ -158,15 +162,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
 
           {/* Price: a template slot until a number is set in src/data/pricing.ts. */}
           <div className="mt-6 border-t border-bone/[0.14] pt-6">
-            {launch ? (
-              <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-aqua/[0.1] px-3 py-1 text-[0.75rem] font-medium text-aqua ring-1 ring-inset ring-aqua/25">
-                <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
-                  <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-aqua" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-aqua" />
-                </span>
-                {fill(LAUNCH.label[locale], { n: String(LAUNCH.spots) })}
-              </p>
-            ) : null}
+            {launch ? <LaunchMeta now={now} /> : null}
             <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
               {launch ? (
                 <del className="font-display text-[1.375rem] leading-none tracking-[-0.02em] text-ash decoration-ash/70 decoration-[1.5px]">
@@ -174,10 +170,10 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
                   {formatMetric(tier.regular!, "currency", intlLocale)}
                 </del>
               ) : null}
-              {tier.price === null ? (
+              {price === null ? (
                 <span className="font-display text-[3rem] leading-none tracking-[-0.04em] text-bone/40">$&thinsp;—</span>
               ) : (
-                <PriceNumber value={tier.price} reduce={reduce} className="font-display text-[3rem] leading-none tracking-[-0.04em]" />
+                <PriceNumber key={price} value={price} reduce={reduce} className="font-display text-[3rem] leading-none tracking-[-0.04em]" />
               )}
               <span className="text-sm text-ash">{p.oneTime}</span>
             </p>
@@ -188,6 +184,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
                   ? fill(p.monthly, { amount: `$${tier.monthly}` })
                   : p.noMonthly}
             </p>
+            {price === null ? null : <RotatingPerk index={TIERS.indexOf(tier)} />}
           </div>
 
           <MagneticButton
