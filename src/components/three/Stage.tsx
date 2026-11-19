@@ -8,19 +8,17 @@ import { useScene } from "@/context/SceneContext";
 import { useTabs } from "@/context/TabsContext";
 import { asset } from "@/lib/asset";
 import { HERO_BEATS } from "@/lib/motion";
+import { useColorScheme } from "@/lib/useColorScheme";
 import { LightThreads } from "./LightThreads";
 
 const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
-
-/** The film was shot dark: inverted for the light scheme, shown as shot in dark mode. */
-const FILM_LIGHT = "[filter:invert(1)_hue-rotate(180deg)_saturate(0.85)_brightness(1.04)] dark:[filter:none]";
 
 /**
  * Fixed, full-screen backdrop shared by the transparent chapters (hero, system, finale).
  * Light (white + sky blue). Layer order (back → front):
  *   sky base → light threads (whole page) → architecture film → WebGL engine
- * The film was shot dark; it is shown "developed" (inverted, hue kept) so it reads as
- * a pale blue-and-white page instead of a navy one.
+ * The film was shot dark; a pre-rendered "developed" copy (architecture-v2-light) is used in the
+ * light scheme so it reads as a pale blue-and-white page, with no per-frame CSS filter.
  * The architecture film is the ambient "site being built" layer: faint behind the hero's first
  * screen, then behind How it works.
  * Opaque chapters (dashboard, simulator, …) simply cover it; the engine's render loop
@@ -30,6 +28,7 @@ export function Stage() {
   const scene = useScene();
   const { system, reduce, desktop } = scene;
   const { paused } = useMotionPause();
+  const scheme = useColorScheme();
   const tabs = useTabs();
   const activeTab = tabs?.active ?? "home";
 
@@ -141,12 +140,23 @@ export function Stage() {
         style={{ opacity: archOpacity }}
       >
         {/* Phones show a narrow strip of the frame: aim it at the lit pages on the right. */}
+        {/* Both films stay mounted and cross-fade on theme change; only the visible one plays, the other
+            is paused with preload="none" (one decode at a time). Cheaper than re-seeking a swapped src. */}
+        <LayerVideo
+          src={asset("/media/architecture-v2-light")}
+          poster={asset("/media/architecture-v2-light-poster.jpg")}
+          visibility={archOpacity}
+          paused={paused}
+          on={scheme === "light"}
+          className="max-lg:object-[72%_50%]"
+        />
         <LayerVideo
           src={asset("/media/architecture-v2")}
           poster={asset("/media/architecture-v2-poster.jpg")}
           visibility={archOpacity}
           paused={paused}
-          className={`max-lg:object-[72%_50%] ${FILM_LIGHT}`}
+          on={scheme === "dark"}
+          className="max-lg:object-[72%_50%]"
         />
       </motion.div>
 
@@ -179,12 +189,15 @@ function LayerVideo({
   poster,
   visibility,
   paused,
+  on,
   className = "",
 }: {
   src: string;
   poster: string;
   visibility: MotionValue<number>;
   paused: boolean;
+  /** Whether this is the film for the current colour scheme. */
+  on: boolean;
   className?: string;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -192,10 +205,10 @@ function LayerVideo({
   const sync = useCallback(() => {
     const v = ref.current;
     if (!v) return;
-    const show = visibility.get() > 0.02 && !paused && document.visibilityState === "visible";
+    const show = on && visibility.get() > 0.02 && !paused && document.visibilityState === "visible";
     if (show && v.paused) v.play().catch(() => undefined);
     else if (!show && !v.paused) v.pause();
-  }, [visibility, paused]);
+  }, [visibility, paused, on]);
 
   useMotionValueEvent(visibility, "change", sync);
 
@@ -209,12 +222,12 @@ function LayerVideo({
   return (
     <video
       ref={ref}
-      className={`absolute inset-0 h-full w-full object-cover ${className}`}
+      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out ${on ? "opacity-100" : "opacity-0"} ${className}`}
       poster={poster}
       muted
       loop
       playsInline
-      preload="metadata"
+      preload={on ? "metadata" : "none"}
       disablePictureInPicture
       tabIndex={-1}
     >

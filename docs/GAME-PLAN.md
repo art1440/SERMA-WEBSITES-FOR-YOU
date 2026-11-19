@@ -99,5 +99,5 @@ allocations in a short scroll); not WebGL, worth tracing during T4.
 | T4 Hero | [plan](plans/T4-hero.md) — owner chose: cut the hero film | done (Sonnet) | PASS w/ nits (fixed) | SHIP AFTER NITS: sculpture recedes before the statement is legible; Next earlier + See Pricing on the last beat → fixed, + reading wash | ✅ shipped |
 | T5 Tab swap | [plan](plans/T5-T6-tabs-ctas.md) | fixed (coder agent); partial WIP rode along in commit d753dfc | FAIL: deep load smooth-scrolls rail; + focus after swap; + TiltCard pointer churn (found by T6 inspector) → fixed | re-check + deep review | committed |
 | T6 CTA feel | [plan](plans/T5-T6-tabs-ctas.md) | done (Sonnet) | PASS w/ nits | n/a (micro-interaction) | ✅ shipped |
-| T7 Light film (architecture only, hero film cut) | [plan](plans/T7-light-film.md) | coding (coder agent) | | | |
+| T7 Light film (architecture only, hero film cut) | [plan](plans/T7-light-film.md) | done (coder agent) | orchestrator-verified (colour Δ≈2/255, pause/resume, theme swap) | n/a (no motion change) | ✅ shipped |
 | T8 Docs | | | | | |
