@@ -1,6 +1,7 @@
 "use client";
 
 import { Reveal, staggerDelay } from "@/components/ui/Reveal";
+import { PromiseBand } from "@/components/sections/PromiseBand";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -44,6 +45,7 @@ export function InclusionsList() {
           ))}
         </ol>
 
+        <PromiseBand />
       </div>
     </section>
   );
