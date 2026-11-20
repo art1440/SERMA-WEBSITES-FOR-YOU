@@ -420,6 +420,7 @@ const disclaimerEn: LegalDoc = {
       paragraphs: [
         "The Client Dashboard showcase is an illustrative interactive simulation of the SermaWebDesign Client Portal, and the missed-call simulator is an illustrative simulation of the SermaWebDesign missed-call text-back. All names, phone numbers, businesses, messages, reviews, metrics, and amounts they show are fictional sample data created for demonstration. Phone numbers use the reserved 555-01XX range. The missed-revenue calculator is an estimate based only on the values you set and the formula shown; it is not a guarantee or a typical result.",
         "Actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
+        "The demo websites under /work (Ironside Barber Co., Maison Lumière, Velvet Room, Ember & Oak, Trueframe Builders and Brightline Home) are examples of our design work for fictional businesses. Their names, addresses, phone numbers, prices and reviews are invented, and their photos are AI-generated.",
       ],
     },
     {
@@ -475,6 +476,7 @@ const disclaimerEs: LegalDoc = {
       paragraphs: [
         "La demostración del Panel de Clientes es una simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign, y el simulador de llamadas perdidas es una simulación ilustrativa del mensaje de texto automático tras una llamada perdida de SermaWebDesign. Todos los nombres, números de teléfono, negocios, mensajes, reseñas, métricas y montos que muestran son datos de ejemplo ficticios creados para la demostración. Los números de teléfono usan el rango reservado 555-01XX. La calculadora de ingresos perdidos es solo una estimación basada en los valores que usted ajusta y la fórmula que se muestra; no es una garantía ni un resultado típico.",
         "El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
+        "Los sitios web de demostración bajo /work (Ironside Barber Co., Maison Lumière, Velvet Room, Ember & Oak, Trueframe Builders y Brightline Home) son ejemplos de nuestro trabajo de diseño para negocios ficticios. Sus nombres, direcciones, números de teléfono, precios y reseñas son inventados, y sus fotografías fueron generadas con IA.",
       ],
     },
     {

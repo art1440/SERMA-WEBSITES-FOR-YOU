@@ -48,3 +48,5 @@ Set in your host (Vercel → Project → Settings → Environment Variables). Se
 ## Media provenance
 
 All video loops in `public/media/` were generated with Higgsfield (Kling 3.0 Pro, silent, 1080p source) for this project, then re-encoded as seamless WebM + MP4 loops with posters (~7 MB total). They are illustrative renderings; they do not depict real client businesses (also stated on `/disclaimer`).
+
+The demo-site photos in `public/media/work/` are AI-generated (Higgsfield, GPT Image 2.6) for this project and depict no real businesses or clients.
