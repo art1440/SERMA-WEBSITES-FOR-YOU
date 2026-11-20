@@ -62,6 +62,7 @@ export function Navbar() {
   const tabItems = TAB_IDS.map((id) => ({ id, label: t.nav.tabs[id] }));
 
   const links = [
+    { href: "/#work", label: t.nav.links.work },
     { href: "/#dashboard", label: t.nav.links.dashboard },
     { href: "/#calculator", label: t.nav.links.calculator },
     { href: "/#compare", label: t.nav.links.compare },
@@ -139,7 +140,7 @@ export function Navbar() {
                 selected={tabs.selected}
                 onPick={tabs.go}
                 label={t.nav.tabsLabel}
-                className="max-lg:absolute max-lg:inset-x-0 max-lg:top-full max-lg:mt-2 max-lg:glass-dark max-lg:glass-solid max-lg:glass-flat max-lg:rounded-full lg:mx-1 lg:min-w-0 lg:flex-1"
+                className="max-xl:absolute max-xl:inset-x-0 max-xl:top-full max-xl:mt-2 max-xl:glass-dark max-xl:glass-solid max-xl:glass-flat max-xl:rounded-full xl:mx-1 xl:min-w-0 xl:flex-1"
               />
             ) : (
             <nav aria-label={t.nav.primaryLabel} className="hidden [@media(min-width:80em)]:block">
@@ -164,7 +165,7 @@ export function Navbar() {
 
             <div className="flex shrink-0 items-center gap-1.5">
               <ThemeToggle className="hidden sm:inline-flex" />
-              {/* With the tab bar in the capsule (lg and up) the login folds to its lock icon. */}
+              {/* Wide screens (lg and up) fold the login to its lock icon; from xl the tab bar shares the capsule. */}
               <button
                 type="button"
                 onClick={openLogin}
@@ -201,7 +202,7 @@ export function Navbar() {
               <motion.div
                 id="mobile-menu"
                 key="mobile-menu"
-                className={`glass-dark glass-solid pointer-events-auto absolute inset-x-0 top-full rounded-glass-lg ${tabs ? "mt-2 max-lg:mt-[3.75rem]" : "mt-2"} [--glass-blur:18px] max-sm:glass-flat sm:left-auto sm:w-[23rem] [@media(min-width:80em)]:hidden`}
+                className={`glass-dark glass-solid pointer-events-auto absolute inset-x-0 top-full rounded-glass-lg ${tabs ? "mt-2 max-xl:mt-[3.75rem]" : "mt-2"} [--glass-blur:18px] max-sm:glass-flat sm:left-auto sm:w-[23rem] [@media(min-width:80em)]:hidden`}
                 // Origin sits under the menu button (capsule padding + half the 44px button).
                 style={{ transformOrigin: "calc(100% - 1.75rem) 0" }}
                 variants={panelVariants}
@@ -272,8 +273,8 @@ export function Navbar() {
 }
 
 /**
- * The section nav. Inside the capsule on desktop; a slim rail just below it on
- * smaller screens. A glass pill marks the section in view and slides between
+ * The section nav. Inside the capsule from 1280px (xl); a slim rail just below it on
+ * smaller screens (eight tabs, and the longer Spanish labels, don't fit the capsule at 1024). A glass pill marks the section in view and slides between
  * items (shared layout, snappy spring). Overflowing items scroll sideways under
  * soft edge fades, and the current item glides to the middle of the rail.
  */
@@ -306,7 +307,7 @@ function TabBar({
     <nav aria-label={label} data-nav-rail className={`pointer-events-auto ${className}`}>
       <div
         ref={railRef}
-        className="flex h-11 items-center gap-0.5 overflow-x-auto lg:gap-0 overscroll-x-contain px-1.5 [mask-image:linear-gradient(to_right,transparent,#000_14px,#000_calc(100%-14px),transparent)] [scrollbar-width:none] lg:[justify-content:safe_center] lg:px-2 [&::-webkit-scrollbar]:hidden"
+        className="flex h-11 items-center gap-0.5 overflow-x-auto xl:gap-0 overscroll-x-contain px-1.5 [mask-image:linear-gradient(to_right,transparent,#000_14px,#000_calc(100%-14px),transparent)] [scrollbar-width:none] lg:[justify-content:safe_center] xl:px-2 [&::-webkit-scrollbar]:hidden"
       >
         {items.map((item) => {
           const on = item.id === selected;
@@ -317,7 +318,7 @@ function TabBar({
               type="button"
               aria-current={on ? "location" : undefined}
               onClick={() => onPick(item.id)}
-              className={`group relative isolate inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full px-3 text-[0.8125rem] font-medium tracking-[-0.005em] transition-colors duration-300 ease-editorial lg:px-2 [@media(min-width:85.5em)]:px-2.5 ${
+              className={`group relative isolate inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full px-3 text-[0.8125rem] font-medium tracking-[-0.005em] transition-colors duration-300 ease-editorial xl:px-2 [@media(min-width:85.5em)]:px-2.5 ${
                 on ? "text-bone" : "text-bone/65 hover:text-bone"
               }`}
             >

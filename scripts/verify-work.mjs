@@ -411,6 +411,79 @@ const CHECKS = {
     const { page } = await openPage(browser, `${base}/`);
     await runAxe(page);
   },
+  // ---- Home page wiring (Task 14) ----
+  "home-wiring": async ({ browser, base }) => {
+    const { page, errors } = await openPage(browser, `${base}/`);
+    // The tab bar holds buttons; the plain links list (pages without the tab bar) and the
+    // mobile menu hold the anchors. Any of them counts as "a nav link to #work".
+    const navWork = await page.evaluate(() => {
+      const nav = [...document.querySelectorAll("header nav")];
+      const anchor = nav.some((n) => [...n.querySelectorAll("a[href]")].some((a) => /^\/?#work$/.test(a.getAttribute("href"))));
+      const tab = nav.some((n) => n.querySelector('[data-tab="work"]'));
+      return { anchor, tab };
+    });
+    if (!navWork.tab) throw new Error("home: no work tab in the nav tab bar");
+    const order = await page.evaluate(() => {
+      const ids = ["included", "work", "industries"].map((id) => document.getElementById(id));
+      if (ids.some((el) => !el)) return "missing";
+      const before = (a, b) => !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+      return before(ids[0], ids[1]) && before(ids[1], ids[2]) ? "ok" : "wrong";
+    });
+    if (order !== "ok") throw new Error(`home: #included < #work < #industries DOM order is ${order}`);
+    // Mobile menu (narrow viewport) lists the section as an anchor to #work.
+    const { page: m } = await openPage(browser, `${base}/`, { width: 390, height: 844 });
+    await m.getByRole("button", { name: "Open menu" }).click();
+    const menuLink = m.locator('#mobile-menu a[href="#work"]');
+    await menuLink.waitFor({ state: "visible", timeout: 3000 });
+    if ((await menuLink.innerText()).trim().split("\n")[0] !== "Our work") throw new Error("mobile menu: #work link label is not \"Our work\"");
+    // Clicking the tab scrolls to the section and the scroll spy settles on it.
+    await page.locator('[data-tab="work"]').click();
+    await page.waitForFunction(() => document.querySelector('[data-tab="work"]')?.getAttribute("aria-current") === "location", null, { timeout: 4000 });
+    await page.waitForTimeout(1600);
+    const cur = await page.locator('[data-tab][aria-current="location"]').getAttribute("data-tab");
+    if (cur !== "work") throw new Error(`scroll spy: after picking work the current tab is ${cur}`);
+    // Spanish.
+    const { page: es } = await openPage(browser, `${base}/es/`);
+    const label = (await es.locator('[data-tab="work"]').innerText()).trim();
+    if (label !== "Nuestro trabajo") throw new Error(`es: work tab label is ${JSON.stringify(label)}`);
+    const srcs = await es.evaluate(() =>
+      [...document.querySelectorAll("#work img")].map((i) => i.getAttribute("src") || "").filter((s) => s.includes("/media/work/")),
+    );
+    if (!srcs.length) throw new Error("es: no gallery images under #work");
+    const wrong = srcs.filter((s) => /shot-/.test(s) && !/shot-es-v1/.test(decodeURIComponent(s)));
+    if (wrong.length) throw new Error(`es: gallery shots not Spanish: ${wrong.slice(0, 3).join(", ")}`);
+    if (!srcs.some((s) => /shot-es-v1/.test(decodeURIComponent(s)))) throw new Error(`es: no shot-es-v1 image in #work (${srcs.slice(0, 3).join(", ")})`);
+    assertNoErrors(errors);
+  },
+  "sitemap-clean": async ({ base }) => {
+    const r = await fetch(`${base}/sitemap.xml`);
+    if (r.status !== 200) throw new Error(`/sitemap.xml returned ${r.status}`);
+    const xml = await r.text();
+    if (!xml.includes("<urlset")) throw new Error("/sitemap.xml is not a urlset");
+    if (xml.includes("/work/")) throw new Error("/sitemap.xml lists a /work/ URL");
+  },
+  // The whole home page, scrolled through so reveal-on-scroll content is visible, in both schemes,
+  // with no axe rule disabled (home-smoke never scrolls).
+  "home-axe-full": async ({ browser, base }) => {
+    for (const lang of ["", "es/"]) {
+      for (const colorScheme of ["light", "dark"]) {
+        const where = `/${lang} ${colorScheme}`;
+        const { page } = await openPage(browser, `${base}/${lang}`, { width: 1280, height: 800, colorScheme });
+        const total = await page.evaluate(() => document.documentElement.scrollHeight);
+        for (let y = 0; y <= total; y += 400) {
+          await page.evaluate((v) => window.scrollTo(0, v), y);
+          await page.waitForTimeout(120);
+        }
+        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+        await page.waitForTimeout(1200);
+        try {
+          await runAxe(page);
+        } catch (e) {
+          throw new Error(`${where}: ${e.message}`);
+        }
+      }
+    }
+  },
   // ---- "Our work" gallery on the home page (Task 12) ----
   "gallery-desktop": async ({ browser, base }) => {
     const { page, errors, cards } = await openGallery(browser, base);

@@ -33,6 +33,7 @@ const en = {
   nav: {
     primaryLabel: "Primary",
     links: {
+      work: "Our work",
       dashboard: "Dashboard",
       calculator: "ROI",
       compare: "Compare",
@@ -42,6 +43,7 @@ const en = {
     tabs: {
       home: "Home",
       included: "How It Works",
+      work: "Our work",
       industries: "Industries",
       dashboard: "Dashboard",
       calculator: "ROI",
@@ -124,7 +126,7 @@ const en = {
     roadmapNote: "Ask us where it stands and we will tell you straight. Websites come first.",
   },
   industries: {
-    index: "(02)",
+    index: "(03)",
     eyebrow: "Built for",
     title: ["A website built around your business"],
     titleEmphasis: "your business",
@@ -137,7 +139,7 @@ const en = {
     swipeHint: "Swipe · Drag · Arrows",
   },
   dashboard: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Your dashboard",
     title: "Know how the week went in ten seconds.",
     body: "No spreadsheets, no guessing. One screen shows who booked, who's coming back and what came in while you were busy. Pick an industry to see yours.",
@@ -167,7 +169,7 @@ const en = {
     newItemsOne: "new",
   },
   calculator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "The calls you can't take",
     title: "How much are missed calls costing you?",
     body: "Move the sliders to match a normal week. Real math, on the page, no hype. Most owners are surprised by the number.",
@@ -186,7 +188,7 @@ const en = {
     cta: "Get your free mockup",
   },
   compare: {
-    index: "(05)",
+    index: "(06)",
     eyebrow: "Why Serma",
     title: ["Don’t settle for cheap or good.", "Get both."],
     titleMark: "Get both.",
@@ -218,7 +220,7 @@ const en = {
     ctaNote: "Free · No card needed · Takes 1 minute",
   },
   pricing: {
-    index: "(06)",
+    index: "(07)",
     eyebrow: "Pricing",
     title: "Pick your package. Pay only when you love it.",
     body: "Fixed prices, no hourly billing, no surprise add-ons. And you see your finished site before you pay anything.",
@@ -354,6 +356,7 @@ const es: Dictionary = {
   nav: {
     primaryLabel: "Principal",
     links: {
+      work: "Nuestro trabajo",
       dashboard: "Panel",
       calculator: "Retorno",
       compare: "Comparar",
@@ -362,6 +365,7 @@ const es: Dictionary = {
     tabs: {
       home: "Inicio",
       included: "Cómo funciona",
+      work: "Nuestro trabajo",
       industries: "Industrias",
       dashboard: "Panel",
       calculator: "Retorno",
@@ -444,7 +448,7 @@ const es: Dictionary = {
     roadmapNote: "Pregúntenos cómo va y le diremos la verdad. Primero van los sitios web.",
   },
   industries: {
-    index: "(02)",
+    index: "(03)",
     eyebrow: "Hecho para",
     title: ["Un sitio web hecho a la medida de su negocio"],
     titleEmphasis: "su negocio",
@@ -457,7 +461,7 @@ const es: Dictionary = {
     swipeHint: "Deslice · Arrastre · Flechas",
   },
   dashboard: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Su panel",
     title: "Sepa cómo fue la semana en diez segundos.",
     body: "Sin hojas de cálculo ni suposiciones. Una sola pantalla muestra quién agendó, quién regresa y cuánto entró mientras usted estaba ocupado. Elija una industria para ver la suya.",
@@ -484,7 +488,7 @@ const es: Dictionary = {
     newItemsOne: "nuevo",
   },
   calculator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "Las llamadas que no alcanza a contestar",
     title: "¿Cuánto le están costando las llamadas perdidas?",
     body: "Mueva los controles según una semana normal. Cálculo real, a la vista, sin exagerar. A la mayoría de los dueños les sorprende el número.",
@@ -503,7 +507,7 @@ const es: Dictionary = {
     cta: "Su maqueta gratis",
   },
   compare: {
-    index: "(05)",
+    index: "(06)",
     eyebrow: "Por qué Serma",
     title: ["No elija entre barato o bueno.", "Tenga ambos."],
     titleMark: "Tenga ambos.",
@@ -535,7 +539,7 @@ const es: Dictionary = {
     ctaNote: "Gratis · Sin tarjeta · Toma 1 minuto",
   },
   pricing: {
-    index: "(06)",
+    index: "(07)",
     eyebrow: "Precios",
     title: "Elija su paquete. Pague solo si le encanta.",
     body: "Precios fijos, sin cobro por hora y sin extras sorpresa. Y usted ve su sitio terminado antes de pagar nada.",

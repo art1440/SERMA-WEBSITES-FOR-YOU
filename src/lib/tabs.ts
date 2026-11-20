@@ -5,6 +5,7 @@
 export const TAB_IDS = [
   "home",
   "included",
+  "work",
   "industries",
   "dashboard",
   "calculator",
