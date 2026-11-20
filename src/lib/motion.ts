@@ -12,9 +12,6 @@
  */
 export const EASE_EDITORIAL = [0.22, 1, 0.36, 1] as const;
 
-/** Tab swap: exit fast on ease-in, enter slower on EASE_EDITORIAL; drift in px, enter scale. */
-export const TAB_SWAP = { outS: 0.15, inS: 0.35, drift: 20, scaleFrom: 0.985 } as const;
-
 export const VIEWPORT_ONCE = { once: true, margin: "-10%" } as const;
 
 export const MOTION = {

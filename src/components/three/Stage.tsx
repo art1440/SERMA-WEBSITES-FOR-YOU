@@ -1,11 +1,10 @@
 "use client";
 
-import { useMotionValue, useTransform } from "framer-motion";
+import { useMotionValue } from "framer-motion";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
-import { useTabs } from "@/context/TabsContext";
 import { LightThreads } from "./LightThreads";
 
 const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
@@ -14,23 +13,15 @@ const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
  * Fixed, full-screen backdrop behind the transparent chapters.
  * Light (white + sky blue). Layer order (back → front): sky base → light threads (whole page) → WebGL engine.
  * The hero is static and does not run the engine; the finale (pricing) does.
- * Opaque chapters (dashboard, simulator, …) simply cover it; the engine's render loop
+ * Opaque chapters (dashboard, calculator, …) simply cover it; the engine's render loop
  * stops whenever none of the transparent chapters is on screen.
  */
 export function Stage() {
   const scene = useScene();
   const { system, reduce, desktop } = scene;
   const { paused } = useMotionPause();
-  const tabs = useTabs();
-  const activeTab = tabs?.active ?? "home";
 
-  // Tabs: a hidden chapter's scroll track can't be measured, so off-tab the finale reads as not yet reached (0).
-  const onFinale = useMotionValue(activeTab === "pricing" ? 1 : 0);
-  useEffect(() => {
-    onFinale.set(activeTab === "pricing" ? 1 : 0);
-  }, [activeTab, onFinale]);
-  const finaleProgress = useTransform([scene.finale.progress, onFinale], ([p, on]: number[]) => (on ? p : 0));
-  const finale = { ref: scene.finale.ref, progress: finaleProgress };
+  const finale = { ref: scene.finale.ref, progress: scene.finale.progress };
 
   // The hero is static now: the engine always sees it as finished.
   const heroDone = useMotionValue(1);

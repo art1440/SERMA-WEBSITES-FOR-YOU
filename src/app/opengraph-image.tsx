@@ -88,7 +88,7 @@ export default function Image() {
             Websites that bring in customers.
           </div>
           <div style={{ marginTop: 28, fontSize: 30, color: BRAND.textSoft }}>
-            Bilingual sites with missed-call text-back and 24/7 booking.
+            Built for you. See it finished before you pay.
           </div>
         </div>
       </div>

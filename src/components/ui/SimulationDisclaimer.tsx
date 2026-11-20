@@ -4,7 +4,7 @@ import { Info } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 /** Which surface the disclaimer sits under; each gets copy that matches what it shows. */
-export type DisclaimerVariant = "dashboard" | "simulator" | "calculator";
+export type DisclaimerVariant = "dashboard" | "calculator";
 
 /**
  * FTC micro-copy rendered directly under every interactive simulation.

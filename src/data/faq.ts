@@ -1,10 +1,11 @@
 import type { L10n } from "@/i18n/types";
 
 /**
- * Pricing tab FAQ. Every answer restates only what the site already says
- * (pricing.ts, promise.ts and the dictionary). No timelines, guarantees,
- * contract terms, refunds or cancellation policies: if the site does not
- * state a fact, the question does not belong here.
+ * Pricing FAQ. The first three answer the doubts that stop an owner from
+ * reaching out (do I need a site, is it hard, what if I don't like it).
+ * Every answer restates only what the site already says (pricing.ts and the
+ * dictionary). No timelines, guarantees, contract terms, refunds or
+ * cancellation policies: if the site does not state a fact, it is not here.
  */
 export type FaqItem = {
   id: string;
@@ -13,11 +14,44 @@ export type FaqItem = {
 };
 
 export const FAQ_HEADING: L10n = {
-  en: "Questions before you buy",
-  es: "Preguntas antes de comprar",
+  en: "Questions? Here are straight answers.",
+  es: "¿Preguntas? Aquí van respuestas claras.",
 };
 
 export const FAQ_ITEMS: FaqItem[] = [
+  {
+    id: "need-a-site",
+    q: {
+      en: "I already have Instagram or Facebook. Do I really need a website?",
+      es: "Ya tengo Instagram o Facebook. ¿De verdad necesito un sitio web?",
+    },
+    a: {
+      en: "Social pages are great for showing your work, but you don’t own them and customers can’t easily find your hours, prices or a way to book. A website is yours: it shows up when people search for you, puts your number one tap away, and doesn’t change when an app changes its rules.",
+      es: "Las redes son buenas para mostrar su trabajo, pero no son suyas y ahí al cliente le cuesta encontrar su horario, sus precios o cómo agendar. Un sitio web es suyo: aparece cuando lo buscan, deja su número a un toque y no cambia cuando una aplicación cambia sus reglas.",
+    },
+  },
+  {
+    id: "not-techy",
+    q: {
+      en: "I’m not good with tech. Is that a problem?",
+      es: "No soy bueno con la tecnología. ¿Es un problema?",
+    },
+    a: {
+      en: "Not at all. Your part is a 15-minute call and a few photos from your phone. We write, design and set up everything, and you approve it before you pay.",
+      es: "Para nada. Su parte es una llamada de 15 minutos y unas fotos de su teléfono. Nosotros escribimos, diseñamos y dejamos todo listo, y usted lo aprueba antes de pagar.",
+    },
+  },
+  {
+    id: "dont-like-it",
+    q: {
+      en: "What if I don’t like it?",
+      es: "¿Y si no me gusta?",
+    },
+    a: {
+      en: "Then you tell us what to change. You see the finished draft before you pay anything, so you never pay for a site you haven’t seen and approved.",
+      es: "Entonces nos dice qué cambiar. Usted ve el borrador terminado antes de pagar nada, así que nunca paga por un sitio que no ha visto y aprobado.",
+    },
+  },
   {
     id: "price-covers",
     q: {

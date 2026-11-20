@@ -15,7 +15,7 @@ const siteUrl = process.env.SITE_URL ?? "https://sermawebdesign.com";
 const cspMeta = process.env.CSP_META === "true";
 
 const SITE_DESCRIPTION =
-  "Bilingual websites for barbershops, salons, restaurants and contractors. Missed calls get a text back and clients book 24/7, with deposits and reminders.";
+  "Websites for barbershops, salons, restaurants and contractors that turn searches into calls. We write and build it for you, and you only pay once you’ve seen it and said yes. Get your free mockup.";
 
 /** Structured data for search engines. Only facts we hold: no ratings, reviews, addresses or prices. */
 const jsonLd = {
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     siteName: "SermaWebDesign",
     title: "Websites that bring in customers",
     description:
-      "Missed calls get a text back. Clients book themselves, day or night, with deposits and reminders. You stay with the work you opened the doors for.",
+      "Your next customer is searching for you right now. We build the website that makes them call you, and you don’t pay until you’ve seen it and said yes.",
     // The image comes from src/app/opengraph-image.tsx (built at export time, 1200x630).
     locale: "en_US",
     alternateLocale: ["es_US"],
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Websites that bring in customers",
-    description: "Missed calls get a text back. Clients book themselves, day or night, with deposits and reminders.",
+    description: "Your next customer is searching for you. We build the website that makes them call you. Pay only when you love it.",
   },
   robots: { index: true, follow: true },
   referrer: "strict-origin-when-cross-origin",

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
 import { ArrowUpRight, Lock } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -12,7 +12,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useTabs } from "@/context/TabsContext";
 import { EASE_EDITORIAL, SPRING_SMOOTH, SPRING_SNAPPY } from "@/lib/motion";
 import { TAB_IDS, type TabId } from "@/lib/tabs";
-import { goToForm } from "@/lib/scroll";
+import { useMockup } from "@/context/MockupContext";
 import { ClientLoginModal } from "./ClientLoginModal";
 
 /** Controls inside the glass bar: flat glass pebbles (no nested blur), 44px tall. */
@@ -46,6 +46,7 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const tabs = useTabs();
+  const { openMockup } = useMockup();
   const reduce = !!useReducedMotion();
   // Open: panel springs in, then children cascade 35ms apart (bottom buttons last).
   // Close: one quick fade/scale, children stay put (no reverse cascade).
@@ -62,7 +63,6 @@ export function Navbar() {
 
   const links = [
     { href: "/#dashboard", label: t.nav.links.dashboard },
-    { href: "/#simulator", label: t.nav.links.simulator },
     { href: "/#calculator", label: t.nav.links.calculator },
     { href: "/#compare", label: t.nav.links.compare },
   ];
@@ -86,7 +86,7 @@ export function Navbar() {
   const onStartClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setMenuOpen(false);
-    goToForm();
+    openMockup();
   };
 
   const openLogin = () => {
@@ -175,7 +175,7 @@ export function Navbar() {
                 <Lock aria-hidden="true" size={13} strokeWidth={1.75} className="hidden lg:block" />
                 <span className={tabs ? "lg:sr-only" : undefined}>{t.nav.clientLogin}</span>
               </button>
-              <MagneticButton href="#enquiry-form" onClick={onStartClick} className={`btn-aqua ${BAR_BUTTON} hidden md:inline-flex`}>
+              <MagneticButton href="#enquiry-form" onClick={onStartClick} aria-haspopup="dialog" className={`btn-aqua ${BAR_BUTTON} hidden md:inline-flex`}>
                 {t.common.getStarted}
                 <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.75} className="hidden lg:block" />
               </MagneticButton>
@@ -255,7 +255,7 @@ export function Navbar() {
                       <Lock aria-hidden="true" size={13} strokeWidth={1.75} />
                       {t.nav.clientLogin}
                     </button>
-                    <a href="#enquiry-form" onClick={onStartClick} className="btn-aqua w-full">
+                    <a href="#enquiry-form" onClick={onStartClick} aria-haspopup="dialog" className="btn-aqua w-full">
                       {t.common.getStarted}
                     </a>
                   </motion.div>
@@ -272,11 +272,10 @@ export function Navbar() {
 }
 
 /**
- * The section tabs. Inside the capsule on desktop; a slim rail just below it on
- * smaller screens. One glass pill slides between tabs (shared layout, snappy
- * spring) the instant a tab is picked — the panels swap underneath on their own
- * curve. Overflowing tabs scroll sideways under soft edge fades, and the picked
- * tab glides to the middle of the rail. Arrow keys / Home / End move between tabs.
+ * The section nav. Inside the capsule on desktop; a slim rail just below it on
+ * smaller screens. A glass pill marks the section in view and slides between
+ * items (shared layout, snappy spring). Overflowing items scroll sideways under
+ * soft edge fades, and the current item glides to the middle of the rail.
  */
 function TabBar({
   items,
@@ -303,26 +302,10 @@ function TabBar({
     rail.scrollTo({ left, behavior: reduce ? "auto" : "smooth" });
   }, [selected]);
 
-  const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
-    const i = items.findIndex((it) => it.id === selected);
-    let next = -1;
-    if (e.key === "ArrowRight") next = (i + 1) % items.length;
-    else if (e.key === "ArrowLeft") next = (i - 1 + items.length) % items.length;
-    else if (e.key === "Home") next = 0;
-    else if (e.key === "End") next = items.length - 1;
-    if (next < 0) return;
-    e.preventDefault();
-    onPick(items[next].id);
-    railRef.current?.querySelector<HTMLElement>(`[data-tab="${items[next].id}"]`)?.focus();
-  };
-
   return (
-    <div className={`pointer-events-auto ${className}`}>
+    <nav aria-label={label} data-nav-rail className={`pointer-events-auto ${className}`}>
       <div
         ref={railRef}
-        role="tablist"
-        aria-label={label}
-        onKeyDown={onKeyDown}
         className="flex h-11 items-center gap-0.5 overflow-x-auto lg:gap-0 overscroll-x-contain px-1.5 [mask-image:linear-gradient(to_right,transparent,#000_14px,#000_calc(100%-14px),transparent)] [scrollbar-width:none] lg:[justify-content:safe_center] lg:px-2 [&::-webkit-scrollbar]:hidden"
       >
         {items.map((item) => {
@@ -330,13 +313,9 @@ function TabBar({
           return (
             <button
               key={item.id}
-              id={`tab-${item.id}`}
               data-tab={item.id}
               type="button"
-              role="tab"
-              aria-selected={on}
-              aria-controls={`panel-${item.id}`}
-              tabIndex={on ? 0 : -1}
+              aria-current={on ? "location" : undefined}
               onClick={() => onPick(item.id)}
               className={`group relative isolate inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full px-3 text-[0.8125rem] font-medium tracking-[-0.005em] transition-colors duration-300 ease-editorial lg:px-2 [@media(min-width:85.5em)]:px-2.5 ${
                 on ? "text-bone" : "text-bone/65 hover:text-bone"
@@ -363,6 +342,6 @@ function TabBar({
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }

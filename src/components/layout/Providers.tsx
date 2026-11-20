@@ -3,6 +3,7 @@
 import { MotionConfig } from "framer-motion";
 import type { ReactNode } from "react";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { MockupProvider } from "@/context/MockupContext";
 import { MotionPauseProvider } from "@/context/MotionPauseContext";
 import { GlassSheen } from "@/components/ui/GlassSheen";
 
@@ -16,7 +17,7 @@ export function Providers({ children }: { children: ReactNode }) {
       <MotionPauseProvider>
         <MotionConfig reducedMotion="user">
           <GlassSheen />
-          {children}
+          <MockupProvider>{children}</MockupProvider>
         </MotionConfig>
       </MotionPauseProvider>
     </LanguageProvider>

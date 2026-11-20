@@ -17,16 +17,16 @@ type Field = "name" | "business" | "phone" | "need" | "consent";
 const ORDER: Field[] = ["name", "business", "phone", "need", "consent"];
 
 /** Field limits (also enforced in the browser with maxLength). */
-const MAX = { name: 80, business: 120, phone: 25, need: 1000 } as const;
+export const MAX = { name: 80, business: 120, phone: 25, need: 1000 } as const;
 /** A real person takes longer than this to fill the boxes; faster submissions are bots. */
-const MIN_FILL_MS = 3000;
+export const MIN_FILL_MS = 3000;
 
 /**
  * Plain text only: strips control characters, angle brackets (no HTML or script can
  * ride along into the inbox or the Netlify dashboard), collapses runs of spaces and
  * caps the length. Line breaks are kept only where asked (the "what do you need" box).
  */
-function clean(value: FormDataEntryValue | null, max: number, keepLines = false) {
+export function clean(value: FormDataEntryValue | null, max: number, keepLines = false) {
   let v = String(value ?? "")
     .normalize("NFKC")
     .replace(keepLines ? /[\u0000-\u0009\u000B-\u001F\u007F]/g : /[\u0000-\u001F\u007F]/g, " ")

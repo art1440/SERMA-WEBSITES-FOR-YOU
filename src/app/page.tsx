@@ -8,7 +8,6 @@ import { TabPanels } from "@/components/layout/TabPanels";
 import { ComparisonMatrix } from "@/components/sections/ComparisonMatrix";
 import { DashboardShowcase } from "@/components/sections/DashboardShowcase";
 import { InclusionsList } from "@/components/sections/InclusionsList";
-import { MissedCallSimulator } from "@/components/sections/MissedCallSimulator";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { RevenueCalculator } from "@/components/sections/RevenueCalculator";
 import { Stage } from "@/components/three/Stage";
@@ -19,9 +18,9 @@ import { SceneProvider } from "@/context/SceneContext";
 import { TabsProvider } from "@/context/TabsContext";
 
 /**
- * The page is a set of tabbed "chapters", one on screen at a time (picked from
- * the navbar). Transparent chapters (hero, finale) reveal the fixed 3D
- * <Stage>; opaque chapters cover it. Each keeps its own scroll choreography.
+ * One page: every section stacked in order; the navbar scrolls between them.
+ * Transparent sections (the pricing finale) reveal the fixed 3D <Stage>;
+ * opaque sections cover it. Each keeps its own scroll choreography.
  */
 export default function HomePage() {
   const { t } = useLanguage();
@@ -40,7 +39,6 @@ export default function HomePage() {
                 { id: "included", node: <InclusionsList /> },
                 { id: "industries", node: <IndustriesChapter /> },
                 { id: "dashboard", node: <DashboardShowcase /> },
-                { id: "simulator", node: <MissedCallSimulator /> },
                 { id: "calculator", node: <RevenueCalculator /> },
                 { id: "compare", node: <ComparisonMatrix /> },
                 { id: "pricing", node: <PricingSection /> },
