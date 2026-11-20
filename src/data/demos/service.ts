@@ -160,7 +160,7 @@ export const service: ServiceContent = {
       value: { en: "42 min", es: "42 min" },
       note: {
         en: "The arrival estimate you get by text when you book. This one is an example.",
-        es: "La hora estimada de llegada que recibe por mensaje al reservar. Esta es un ejemplo.",
+        es: "La hora estimada de llegada que recibe por mensaje al reservar. Esta hora es solo un ejemplo.",
       },
     },
     route: {
