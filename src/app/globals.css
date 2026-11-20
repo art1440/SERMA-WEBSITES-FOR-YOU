@@ -111,8 +111,10 @@ html.dark {
     /* Keep focused controls and anchor targets clear of the sticky header (64–68px), WCAG 2.4.11. */
     scroll-padding-top: 5.5rem;
   }
-  /* Home page under 1280px: the section rail sits below the capsule (header + rail ≈ 112–120px).
-     Mirrors navBottom() in src/lib/tabs.ts, which the JS reveal helpers use. */
+  /* Only where the section rail is displayed below the capsule: the home page (the only page
+     with [data-nav-rail]) under 1280px, phones included (Navbar's TabBar is `max-xl:` below
+     the capsule). Header + rail end at ≈116–121px there. From 1280px the rail is inside the
+     capsule and the 5.5rem above applies. JS twin: navBottom() in src/lib/tabs.ts. */
   @media (max-width: 79.99em) {
     html:has([data-nav-rail]) {
       scroll-padding-top: 8rem;

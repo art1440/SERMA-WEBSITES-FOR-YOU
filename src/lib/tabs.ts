@@ -46,6 +46,23 @@ export function navBottom() {
   return el ? Math.max(0, el.getBoundingClientRect().bottom) : 0;
 }
 
+/**
+ * Whether a focus nudge may scroll the page for `el`. Shared by the dashboard's
+ * revealInPage and the home page's keyboard-focus nudge (TabsContext):
+ * - never while chapters are pinned (`chaptersPinned()`): scrolling would scrub the scene;
+ * - never while a modal dialog is open, or for anything inside a dialog or a fixed layer:
+ *   the page behind an overlay must not move (body overflow:hidden doesn't stop scrollBy).
+ */
+export function canNudgePage(el: Element, pinned: boolean) {
+  if (pinned) return false;
+  if (document.querySelector('[aria-modal="true"]')) return false;
+  if (el.closest('[role="dialog"],[aria-modal="true"],header')) return false;
+  for (let node: Element | null = el; node && node !== document.body; node = node.parentElement) {
+    if (getComputedStyle(node).position === "fixed") return false;
+  }
+  return true;
+}
+
 type Navigator = (id: TabId) => Promise<void>;
 let navigator: Navigator | null = null;
 

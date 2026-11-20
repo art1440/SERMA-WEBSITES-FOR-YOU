@@ -7,7 +7,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import type { CalendarEvent } from "@/data/dashboard-views";
 import type { Locale } from "@/i18n/types";
 import { EASE_EDITORIAL } from "@/lib/motion";
-import { navBottom } from "@/lib/tabs";
+import { canNudgePage, navBottom } from "@/lib/tabs";
 
 /* ------------------------------------------------------------------ *
  * Shared building blocks for the dashboard's inner sections.
@@ -178,7 +178,7 @@ const headerClearance = () => navBottom() + 20;
  * header or the bottom edge.
  */
 export function revealInPage(el: Element | null | undefined, pinned: boolean) {
-  if (!el || pinned) return;
+  if (!el || !canNudgePage(el, pinned)) return;
   const r = el.getBoundingClientRect();
   const top = headerClearance();
   const bottomLimit = window.innerHeight - 16;

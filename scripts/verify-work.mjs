@@ -490,6 +490,47 @@ const CHECKS = {
     const parked = await focusState();
     if (!parked.inDash) throw new Error(`1100px: parked Tab landed outside the dashboard ("${parked.label}")`);
     if (parked.top < parked.rail) throw new Error(`1100px: parked "${parked.label}" top ${Math.round(parked.top)} is under the nav rail (bottom ${Math.round(parked.rail)})`);
+    // Dialogs opened from the keyboard never move the page behind them (1100px, rail under the capsule).
+    const keepsScroll = async (what, opener) => {
+      const { page: dp } = await openPage(browser, `${base}/`, { width: 1100, height: 800 });
+      // Late layout (lazy chapters, media) can still shift scrollY after a jump: wait until it has
+      // held still for ~1 s before taking the baseline.
+      const settleDp = () =>
+        dp.evaluate(async () => {
+          let last = scrollY;
+          let still = 0;
+          for (let i = 0; i < 60 && still < 7; i++) {
+            await new Promise((r) => setTimeout(r, 150));
+            still = scrollY === last ? still + 1 : 0;
+            last = scrollY;
+          }
+        });
+      const trigger = await opener(dp);
+      await trigger.focus();
+      await settleDp();
+      const before = await dp.evaluate(() => scrollY);
+      await dp.keyboard.press("Enter");
+      const dialog = dp.locator('[role="dialog"][aria-modal="true"]');
+      await dialog.first().waitFor({ state: "visible", timeout: 5000 });
+      await dp.waitForTimeout(700);
+      for (let n = 0; n < 10; n++) {
+        await dp.keyboard.press("Tab");
+        await dp.waitForTimeout(120);
+      }
+      await dp.keyboard.press("Escape");
+      await dialog.first().waitFor({ state: "detached", timeout: 5000 }).catch(() => {});
+      await dp.waitForTimeout(800);
+      await settleDp();
+      const after = await dp.evaluate(() => scrollY);
+      if (Math.abs(after - before) > 1) throw new Error(`1100px ${what}: page scrolled behind the dialog (${before} -> ${after})`);
+      if (await dialog.count()) throw new Error(`1100px ${what}: dialog still open after Esc`);
+    };
+    await keepsScroll("mockup modal", async (dp) => {
+      await dp.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight / 2, behavior: "instant" }));
+      await dp.waitForTimeout(500);
+      return dp.locator('header a[aria-haspopup="dialog"], header button[aria-haspopup="dialog"]').first();
+    });
+    await keepsScroll("gallery preview", async (dp) => dp.locator("[data-work-card]").nth(1));
     // Spanish.
     const { page: es } = await openPage(browser, `${base}/es/`);
     const label = (await es.locator('[data-tab="work"]').innerText()).trim();

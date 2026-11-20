@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { navBottom, registerTabNavigator, tabFromHash, TAB_IDS, type TabId } from "@/lib/tabs";
+import { chaptersPinned, useScene } from "@/context/SceneContext";
+import { canNudgePage, navBottom, registerTabNavigator, tabFromHash, TAB_IDS, type TabId } from "@/lib/tabs";
 
 type TabsValue = {
   /** The section currently in view (scroll spy). */
@@ -39,6 +40,9 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   const [active, setActive] = useState<TabId>("home");
   const [selected, setSelected] = useState<TabId>("home");
   const holdUntil = useRef(0);
+  const scene = useScene();
+  const pinnedRef = useRef(false);
+  pinnedRef.current = chaptersPinned(scene);
 
   const spy = useCallback(() => {
     const line = navBottom() + window.innerHeight * 0.3;
@@ -138,14 +142,17 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   // Keyboard focus never hides under the sticky navbar (WCAG 2.4.11). Browsers only scroll a
   // focused element that is outside the viewport; one already on screen but under the header
   // (or the section rail below it, under 1280px) is nudged down just enough to clear it.
+  // Same guard as the dashboard's revealInPage: no nudge while chapters are pinned, inside
+  // dialogs or fixed layers, or while a modal is open.
   useEffect(() => {
     const onFocus = (e: FocusEvent) => {
-      const el = e.target as Element | null;
-      if (!el || !(el instanceof HTMLElement) || el.closest("header")) return;
-      if (!el.matches(":focus-visible")) return;
-      const clear = navBottom() + 12;
+      const el = e.target;
+      if (!(el instanceof HTMLElement) || !el.matches(":focus-visible")) return;
+      if (!canNudgePage(el, pinnedRef.current)) return;
+      const edge = navBottom();
       const r = el.getBoundingClientRect();
-      if (r.height && r.top < clear && r.bottom > 0) window.scrollBy({ top: r.top - clear, behavior: "instant" as ScrollBehavior });
+      // Only when meaningfully covered, and only for controls on screen (the browser scrolls off-screen ones).
+      if (r.height && r.top < edge - 4 && r.bottom > 0) window.scrollBy({ top: r.top - (edge + 12), behavior: "instant" as ScrollBehavior });
     };
     document.addEventListener("focusin", onFocus);
     return () => document.removeEventListener("focusin", onFocus);
