@@ -104,6 +104,10 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initial = tabFromHash(window.location.hash);
     if (!initial || initial === "home") return;
+    // Old or renamed anchors (e.g. "#simulator"): point the URL at the section they now open.
+    if (window.location.hash.replace(/^#/, "") !== initial && !document.getElementById(window.location.hash.slice(1))) {
+      window.history.replaceState(null, "", `#${initial}`);
+    }
     // Re-align after the browser's own hash jump and once late layout (fonts, media) has settled.
     const align = () => {
       const y = targetY(initial);

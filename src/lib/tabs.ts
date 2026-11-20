@@ -7,7 +7,6 @@ export const TAB_IDS = [
   "included",
   "industries",
   "dashboard",
-  "simulator",
   "calculator",
   "compare",
   "pricing",
@@ -29,6 +28,8 @@ export function tabFromHash(hash: string): TabId | null {
   if (id === "demo") return "pricing";
   // The old How It Works section is gone; its links open the section now called How It Works.
   if (id === "system") return "included";
+  // The Missed Calls section was removed; old "#simulator" links land on the next section.
+  if (id === "simulator") return "calculator";
   return null;
 }
 

@@ -2,7 +2,7 @@ import type { Locale, Widen } from "./types";
 
 /**
  * Complete EN / ES copy for the marketing site, the interactive Client
- * Dashboard showcase and the SMS simulator. Spanish uses the formal "usted"
+ * Dashboard showcase. Spanish uses the formal "usted"
  * register appropriate for business owners.
  *
  * Tokens in {braces} are filled at render time with `fill()`.
@@ -26,8 +26,6 @@ const en = {
     simulationDisclaimer: {
       dashboard:
         "Illustrative interactive simulation of the SermaWebDesign Client Portal. Actual lead volume, bookings, and revenue depend on market, industry, and business operations. The businesses, people, messages and reviews shown are fictional.",
-      simulator:
-        "Illustrative simulation of the SermaWebDesign missed-call text-back. The business, people, messages and amounts shown are fictional. Actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
       calculator:
         "Estimate only, based on the numbers you set and the formula shown. It is not a guarantee or a typical result: actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
     },
@@ -36,7 +34,6 @@ const en = {
     primaryLabel: "Primary",
     links: {
       dashboard: "Dashboard",
-      simulator: "Missed Calls",
       calculator: "ROI",
       compare: "Compare",
     },
@@ -47,7 +44,6 @@ const en = {
       included: "How It Works",
       industries: "Industries",
       dashboard: "Dashboard",
-      simulator: "Missed Calls",
       calculator: "ROI",
       compare: "Compare",
       pricing: "Pricing",
@@ -180,44 +176,8 @@ const en = {
     /** Singular of `newItems` (screen-reader suffix of a sidebar badge showing 1). */
     newItemsOne: "new",
   },
-  simulator: {
-    index: "(04)",
-    eyebrow: "Coming to Growth · When you can't pick up",
-    scrollHint: "Scroll to play the call — scroll back to rewind.",
-    title: "You keep working. It answers the phone.",
-    body: "A missed call is a customer calling the next business on the list. Soon, Growth clients won't lose them: the caller gets a friendly text in seconds, books themselves in, and you find out after you've finished with the client in front of you.",
-    button: "Simulate a Missed Customer Call",
-    running: "Simulation running…",
-    replay: "Run the simulation again",
-    phoneLabel: "Your business line",
-    phoneRegionLabel: "Simulated business phone",
-    dashboardRegionLabel: "Simulated client dashboard",
-    incoming: "Incoming call",
-    missed: "Missed call",
-    busy: "You're with a client",
-    autoTag: "Sent automatically",
-    typing: "Typing…",
-    smsAuto: "Hi {name}! Sorry we missed your call at {business} — we're with a client right now. Want to book? Next opening: {time}. Reply YES to confirm.",
-    smsReply: "Yes please!",
-    smsConfirm: "You're booked ✓ {service} — {time}. See you soon! Reply STOP to opt out.",
-    idleScreen: "Press “Simulate” to place a call to this business.",
-    steps: ["Missed call detected", "Instant text-back sent", "Appointment booked", "Logged to dashboard"],
-    stepsLabel: "Simulation progress",
-    stepDone: "complete",
-    stepCurrent: "in progress",
-    trackerTitle: "New bookings · today",
-    recovered: "Recovered revenue · today",
-    responseTime: "Text-back time",
-    responseValue: "4 sec",
-    newBadge: "New",
-    source: "Missed call → SMS",
-    earlier: "Booked earlier",
-    announceIncoming: "Incoming call from {name}. You are with a client and can't answer.",
-    announceMissed: "Call missed. The system is texting {name} back automatically.",
-    announceBooked: "{name} booked {service} for {time}. {amount} added to the dashboard.",
-  },
   calculator: {
-    index: "(05)",
+    index: "(04)",
     eyebrow: "The calls you can't take",
     title: "How much are missed calls costing you?",
     body: "Move the sliders to match a normal week. Real math, on the page, no hype. Most owners are surprised by the number.",
@@ -236,7 +196,7 @@ const en = {
     cta: "Get your free mockup",
   },
   compare: {
-    index: "(06)",
+    index: "(05)",
     eyebrow: "The difference",
     title: ["Most websites just sit there.", "Yours should bring in customers."],
     body: "Customers judge your business by your website in seconds. A slow, outdated or missing site sends them to a competitor. Here's what changes when the site is built to turn visitors into calls.",
@@ -290,7 +250,7 @@ const en = {
     ],
   },
   pricing: {
-    index: "(07)",
+    index: "(06)",
     eyebrow: "Pricing",
     title: "Pick your package. Pay only when you love it.",
     body: "Fixed prices, no hourly billing, no surprise add-ons. And you see your finished site before you pay anything.",
@@ -390,8 +350,6 @@ const es: Dictionary = {
     simulationDisclaimer: {
       dashboard:
         "Simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Los negocios, personas, mensajes y reseñas que se muestran son ficticios.",
-      simulator:
-        "Simulación ilustrativa de la respuesta automática por mensaje de texto de SermaWebDesign a una llamada perdida. El negocio, las personas, los mensajes y los montos que se muestran son ficticios. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
       calculator:
         "Es solo una estimación, basada en los valores que usted ajusta y en la fórmula mostrada. No es una garantía ni un resultado típico: el volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
     },
@@ -400,7 +358,6 @@ const es: Dictionary = {
     primaryLabel: "Principal",
     links: {
       dashboard: "Panel",
-      simulator: "Llamadas perdidas",
       calculator: "Retorno",
       compare: "Comparar",
     },
@@ -410,7 +367,6 @@ const es: Dictionary = {
       included: "Cómo funciona",
       industries: "Industrias",
       dashboard: "Panel",
-      simulator: "Llamadas perdidas",
       calculator: "Retorno",
       compare: "Comparar",
       pricing: "Precios",
@@ -540,44 +496,8 @@ const es: Dictionary = {
     newItems: "nuevos",
     newItemsOne: "nuevo",
   },
-  simulator: {
-    index: "(04)",
-    eyebrow: "Próximamente en Crecimiento · Cuando no puede contestar",
-    scrollHint: "Baje para ver la llamada; suba para rebobinar.",
-    title: "Usted sigue trabajando. El sistema contesta.",
-    body: "Una llamada perdida es un cliente que llama al siguiente negocio de la lista. Muy pronto, los clientes de Crecimiento no los perderán: quien llamó recibe un mensaje amable en segundos, agenda solo, y usted se entera al terminar con el cliente que tiene enfrente.",
-    button: "Simular una llamada perdida",
-    running: "Simulación en curso…",
-    replay: "Repetir la simulación",
-    phoneLabel: "Su línea de negocio",
-    phoneRegionLabel: "Teléfono de negocio simulado",
-    dashboardRegionLabel: "Panel de clientes simulado",
-    incoming: "Llamada entrante",
-    missed: "Llamada perdida",
-    busy: "Está con un cliente",
-    autoTag: "Enviado automáticamente",
-    typing: "Escribiendo…",
-    smsAuto: "¡Hola, {name}! Disculpe que no contestáramos su llamada a {business}: estamos con un cliente. ¿Quiere agendar? Próximo horario: {time}. Responda SÍ para confirmar.",
-    smsReply: "¡Sí, por favor!",
-    smsConfirm: "Listo ✓ {service} — {time}. ¡Le esperamos! Responda STOP para no recibir más mensajes.",
-    idleScreen: "Presione “Simular” para llamar a este negocio.",
-    steps: ["Llamada perdida detectada", "Mensaje automático enviado", "Cita agendada", "Registrado en el panel"],
-    stepsLabel: "Progreso de la simulación",
-    stepDone: "completado",
-    stepCurrent: "en curso",
-    trackerTitle: "Nuevas citas · hoy",
-    recovered: "Ingresos recuperados · hoy",
-    responseTime: "Tiempo de respuesta",
-    responseValue: "4 s",
-    newBadge: "Nuevo",
-    source: "Llamada perdida → mensaje",
-    earlier: "Agendada antes",
-    announceIncoming: "Llamada entrante de {name}. Usted está atendiendo a un cliente y no puede contestar.",
-    announceMissed: "Llamada perdida. El sistema le envía un mensaje de texto automático a {name}.",
-    announceBooked: "{name} agendó {service} para {time}. Se agregaron {amount} al panel.",
-  },
   calculator: {
-    index: "(05)",
+    index: "(04)",
     eyebrow: "Las llamadas que no alcanza a contestar",
     title: "¿Cuánto le están costando las llamadas perdidas?",
     body: "Mueva los controles según una semana normal. Cálculo real, a la vista, sin exagerar. A la mayoría de los dueños les sorprende el número.",
@@ -596,7 +516,7 @@ const es: Dictionary = {
     cta: "Su maqueta gratis",
   },
   compare: {
-    index: "(06)",
+    index: "(05)",
     eyebrow: "La diferencia",
     title: ["Muchos sitios web solo ocupan espacio.", "El suyo debe traerle clientes."],
     body: "Los clientes juzgan su negocio por su sitio web en segundos. Un sitio lento, anticuado o inexistente los manda con la competencia. Así cambia todo cuando el sitio está hecho para convertir visitas en llamadas.",
@@ -650,7 +570,7 @@ const es: Dictionary = {
     ],
   },
   pricing: {
-    index: "(07)",
+    index: "(06)",
     eyebrow: "Precios",
     title: "Elija su paquete. Pague solo si le encanta.",
     body: "Precios fijos, sin cobro por hora y sin extras sorpresa. Y usted ve su sitio terminado antes de pagar nada.",

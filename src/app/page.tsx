@@ -8,7 +8,6 @@ import { TabPanels } from "@/components/layout/TabPanels";
 import { ComparisonMatrix } from "@/components/sections/ComparisonMatrix";
 import { DashboardShowcase } from "@/components/sections/DashboardShowcase";
 import { InclusionsList } from "@/components/sections/InclusionsList";
-import { MissedCallSimulator } from "@/components/sections/MissedCallSimulator";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { RevenueCalculator } from "@/components/sections/RevenueCalculator";
 import { Stage } from "@/components/three/Stage";
@@ -40,7 +39,6 @@ export default function HomePage() {
                 { id: "included", node: <InclusionsList /> },
                 { id: "industries", node: <IndustriesChapter /> },
                 { id: "dashboard", node: <DashboardShowcase /> },
-                { id: "simulator", node: <MissedCallSimulator /> },
                 { id: "calculator", node: <RevenueCalculator /> },
                 { id: "compare", node: <ComparisonMatrix /> },
                 { id: "pricing", node: <PricingSection /> },
