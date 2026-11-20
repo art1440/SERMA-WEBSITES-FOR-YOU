@@ -92,15 +92,15 @@ Where pictures go (and where they don't):
 
 | Demo | Hero | Pictures | Count |
 |---|---|---|---|
-| Ironside Barber Co. | **Type-led.** Huge headline, razor-cut motion, no photo | Gallery: fade close-up, beard work, shop interior; one barber portrait for "the crew" | 4 |
-| Maison Lumière | **Photo-led.** Editorial colour-work portrait (hair is the product) | Gallery: 2 colour results; salon interior | 4 |
+| Ironside Barber Co. | **Type-led.** Huge headline, razor-cut motion, no photo | Gallery: fade close-up, straight-razor line-up; shop interior | 3 |
+| Maison Lumière | **Photo-led.** Editorial colour-work portrait (hair is the product) | Gallery: 1 colour result; salon interior | 3 |
 | Velvet Room | **Type + soft shape.** No photo; calm typography on sage | The mask windows: 3 treatment close-ups (lashes, brows, skin) | 3 |
-| Ember & Oak | **Photo-led.** Wood-fire dish, dark and warm (food sells on photos) | Menu highlights: 3 dishes; dining room | 5 |
-| Keystone Build | **Linework-led.** Blueprint drawing, then one finished-build photo wipes in | Projects: 3 completed jobs (kitchen, addition, deck) | 4 |
-| Brightline Home | **Type-led.** Big promise + ETA strip, no photo | Before/after pair for the slider; one technician at work | 3 |
-| **Total** | | | **23** |
+| Ember & Oak | **Photo-led.** Wood-fire dish, dark and warm (food sells on photos) | Menu highlights: 2 dishes; dining room | 4 |
+| Keystone Build | **Linework-led.** Blueprint drawing, then one finished-build photo wipes in | Projects: 2 completed jobs (addition, deck); the kitchen is the hero wipe | 3 |
+| Brightline Home | **Type-led.** Big promise + ETA strip, no photo | Before/after pair for the slider | 2 |
+| **Total** | | | **18** |
 
-- Generate with Higgsfield (~0.25 credits each); 23 images plus re-rolls is about 7–9 credits, so the balance (5 at the time of writing) needs a top-up before the full set.
+- Generated with Higgsfield GPT Image 2.6 (low quality tier, 1k, 0.25 credits each) to fit the owner's 5-credit balance: 18 images = 4.5 credits, leaving 0.5 for two re-dos. Originals are kept outside the repo until approved.
 - **Approval gate:** images are generated per niche and shown to the owner as a contact sheet. Only approved images go into the demos. Rejected ones are re-generated from the owner's notes. Demo layouts may be built in parallel with neutral placeholders, which are swapped for approved images only.
 - Art direction per demo palette, no text in images, no recognisable real brands or people.
 - Store under `public/media/work/<niche>/<name>-v1.webp` (+ sensible widths), alt text in `L10n`.
