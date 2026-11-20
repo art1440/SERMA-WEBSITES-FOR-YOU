@@ -8,6 +8,7 @@ import { HeroFlowCard } from "@/components/ui/HeroFlowCard";
 import { HeroLight } from "@/components/ui/HeroLight";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
+import { useMockup } from "@/context/MockupContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
 import { goToPricing } from "@/lib/scroll";
 
@@ -17,6 +18,12 @@ import { goToPricing } from "@/lib/scroll";
  */
 export function HeroChapter() {
   const { t } = useLanguage();
+  const { openMockup } = useMockup();
+
+  const onMockupClick = (e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    openMockup();
+  };
 
   const onPricingClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -72,11 +79,11 @@ export function HeroChapter() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay: 0.6 }}
           >
-            <MagneticButton href="#pricing" onClick={onPricingClick} className="btn-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_1px_3px_rgb(var(--bone)/0.08),0_12px_24px_-10px_rgb(var(--bone)/0.28)]">
-              {t.common.seePricing}
+            <MagneticButton href="#pricing" onClick={onMockupClick} aria-haspopup="dialog" className="btn-aqua shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_1px_3px_rgb(var(--bone)/0.08),0_12px_24px_-10px_rgb(var(--bone)/0.28)]">
+              {t.common.getStarted}
               <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.75} />
             </MagneticButton>
-            <a href="#included" className="link-quiet group">
+            <a href="#pricing" onClick={onPricingClick} className="link-quiet group">
               {t.hero.secondaryCta}
               <ArrowDown
                 aria-hidden="true"
@@ -86,6 +93,15 @@ export function HeroChapter() {
               />
             </a>
           </motion.div>
+          {/* Reassurance right under the buttons: removes the last reasons not to click. */}
+          <motion.p
+            className="mt-4 text-sm font-medium text-ash"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, ease: EASE_EDITORIAL, delay: 0.75 }}
+          >
+            {t.hero.ctaNote}
+          </motion.p>
         </div>
       </div>
 

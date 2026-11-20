@@ -16,7 +16,7 @@ import { NICHE_BY_ID, NICHES, type NicheId } from "@/data/niches";
 import { fill } from "@/i18n/types";
 import { formatCurrency } from "@/lib/format";
 import { SPRING_SMOOTH, SPRING_SOFT } from "@/lib/motion";
-import { goToPricing } from "@/lib/scroll";
+import { useMockup } from "@/context/MockupContext";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 const WEEKS_PER_MONTH = 4.33;
@@ -121,9 +121,10 @@ export function RevenueCalculator() {
     }
   }, [monthly, annual, reduce, intlLocale]);
 
+  const { openMockup } = useMockup();
   const onCta = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    goToPricing();
+    openMockup();
   };
 
   return (
@@ -283,6 +284,7 @@ export function RevenueCalculator() {
                 <MagneticButton
                   href="#pricing"
                   onClick={onCta}
+                  aria-haspopup="dialog"
                   className="btn-aqua mt-8 self-start whitespace-normal text-left leading-snug"
                 >
                   {t.calculator.cta}

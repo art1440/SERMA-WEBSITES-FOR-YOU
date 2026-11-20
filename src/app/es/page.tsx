@@ -5,7 +5,7 @@ import HomePage from "../page";
 
 const TITLE = dictionaries.es.meta.title;
 const DESCRIPTION =
-  "Sitios web bilingües para barberías, salones, restaurantes y contratistas. A cada llamada perdida le llega un mensaje de texto y sus clientes agendan a cualquier hora, con depósitos y recordatorios.";
+  "Sitios web para barberías, salones, restaurantes y contratistas que convierten búsquedas en llamadas. Lo escribimos y lo construimos por usted, y solo paga después de verlo y decir que sí. Pida su maqueta gratis.";
 
 export const metadata: Metadata = {
   // `absolute` skips the "%s — SermaWebDesign" template: the dictionary title already carries the brand.
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "SermaWebDesign",
     title: "Sitios web que le traen clientes",
     description:
-      "A cada llamada perdida le llega un mensaje de texto. Sus clientes agendan solos, de día o de noche, con depósitos y recordatorios. Usted se queda con el trabajo para el que abrió sus puertas.",
+      "Su próximo cliente lo está buscando ahora mismo. Hacemos el sitio web que lo lleva a llamarle a usted, y no paga hasta verlo y decir que sí.",
     url: `${BASE_PATH}/es/`,
     locale: "es_US",
     alternateLocale: ["en_US"],
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Sitios web que le traen clientes",
-    description: "A cada llamada perdida le llega un mensaje de texto. Sus clientes agendan solos, de día o de noche, con depósitos y recordatorios.",
+    description: "Su próximo cliente lo está buscando. Hacemos el sitio web que lo lleva a llamarle. Paga solo si le encanta.",
   },
 };
 

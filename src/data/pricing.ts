@@ -70,8 +70,8 @@ export const TIERS: Tier[] = [
     id: "starter",
     name: { en: "Starter", es: "Inicial" },
     tagline: {
-      en: "One strong page that gets the phone ringing.",
-      es: "Una página sólida que hace sonar el teléfono.",
+      en: "Everything a customer needs to call you, on one sharp page.",
+      es: "Todo lo que un cliente necesita para llamarle, en una página impecable.",
     },
     price: 299,
     regular: 599,
@@ -93,8 +93,8 @@ export const TIERS: Tier[] = [
     id: "business",
     name: { en: "Business", es: "Negocio" },
     tagline: {
-      en: "A full site for a business that's ready to grow.",
-      es: "Un sitio completo para un negocio listo para crecer.",
+      en: "The full website that makes you look like the best in town.",
+      es: "El sitio completo que lo hace ver como el mejor de la zona.",
     },
     price: 599,
     regular: 1199,
@@ -117,8 +117,8 @@ export const TIERS: Tier[] = [
     id: "growth",
     name: { en: "Growth", es: "Crecimiento" },
     tagline: {
-      en: "The site, plus the system that answers for you.",
-      es: "El sitio, más el sistema que contesta por usted.",
+      en: "Your site in English and Spanish, plus the phone tools as they launch.",
+      es: "Su sitio en inglés y español, más las herramientas del teléfono al lanzarse.",
     },
     price: 999,
     regular: 1999,

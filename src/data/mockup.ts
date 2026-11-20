@@ -11,8 +11,8 @@ export const MOCKUP = {
   headlineMark: { en: "free mockup", es: "maqueta gratis" },
   headlineAfter: { en: "of your new website.", es: "de su nuevo sitio web." },
   pitch: {
-    en: "Most customers look you up before they call. Give them a site that makes choosing you easy.",
-    es: "La mayoría de los clientes lo buscan antes de llamar. Deles un sitio que les facilite elegirlo a usted.",
+    en: "Most customers look you up before they call. If they can’t find you, they call someone they can.",
+    es: "La mayoría de los clientes lo buscan antes de llamar. Si no lo encuentran, le llaman a otro.",
   },
   stepsLabel: { en: "Three easy steps", es: "Tres pasos sencillos" },
   steps: [
