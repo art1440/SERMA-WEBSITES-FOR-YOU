@@ -38,25 +38,31 @@ const BTN = `inline-flex items-center justify-center rounded-[3px] font-semibold
 const BTN_SOLID = `${BTN} bg-[#E0902F] text-[#2A0F0C] hover:bg-[#F7E4CF]`;
 const BTN_LINE = `${BTN} border border-[#F7E4CF]/60 text-[#F7E4CF] hover:border-[#F7E4CF] hover:bg-[#F7E4CF] hover:text-[#2A0F0C]`;
 
-/** Fade-and-rise. `onLoad` plays on mount (hero), otherwise on first view. Plain markup when still. */
+/**
+ * Fade-and-rise. `onLoad` plays on mount (hero), otherwise on first view.
+ * `yOnly` drops the fade, so the content is opaque from the first paint (hero CTAs).
+ * Plain markup when still.
+ */
 function Rise({
   children,
   className,
   delay = 0,
   onLoad = false,
+  yOnly = false,
 }: {
   children: ReactNode;
   className?: string;
   delay?: number;
   onLoad?: boolean;
+  yOnly?: boolean;
 }) {
   const still = useDemoStill();
   if (still) return <div className={className}>{children}</div>;
-  const to = { opacity: 1, y: 0 };
+  const to = yOnly ? { y: 0 } : { opacity: 1, y: 0 };
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 14 }}
+      initial={yOnly ? { y: 14 } : { opacity: 0, y: 14 }}
       {...(onLoad ? { animate: to } : { whileInView: to, viewport: VIEWPORT_ONCE })}
       transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay }}
     >
@@ -78,9 +84,12 @@ function Rise({
  * Worst case (a white pixel under 80% ember): cream 6.5:1, ochre 3.9:1 on
  * the large-text h1; ochre kicker on phones/tablets (>= 85%) 5.0:1.
  * Motion: a dark veil lifts off the photo on load ("the lights come up") and a
- * soft ochre glow over the oven flickers slowly. Opacity only; both are
- * dropped when still.
+ * soft ochre glow over the oven flares once and settles (all motion ends by
+ * ~4.3 s; nothing loops). Opacity only. When still, the glow is static at its
+ * resting opacity and there is no veil.
  */
+const GLOW = "radial-gradient(50% 60% at 50% 25%, rgba(224,144,47,0.32), rgba(224,144,47,0) 70%)";
+
 function HeroPhoto() {
   const still = useDemoStill();
   const { locale } = useLanguage();
@@ -99,7 +108,9 @@ function HeroPhoto() {
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover object-[60%_50%]"
       />
-      {!still && (
+      {still ? (
+        <div aria-hidden="true" className="absolute inset-x-[20%] top-0 h-[55%] opacity-70" style={{ background: GLOW }} />
+      ) : (
         <>
           <motion.div
             aria-hidden="true"
@@ -111,24 +122,14 @@ function HeroPhoto() {
           <motion.div
             aria-hidden="true"
             className="absolute inset-x-[20%] top-0 h-[55%]"
-            style={{ background: "radial-gradient(50% 60% at 50% 25%, rgba(224,144,47,0.32), rgba(224,144,47,0) 70%)" }}
-            initial={{ opacity: 0.5 }}
-            animate={{ opacity: [0.5, 0.95, 0.65, 1, 0.55] }}
-            transition={{ duration: 7, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }}
+            style={{ background: GLOW }}
+            initial={{ opacity: 0.35 }}
+            // One flare as the lights come up, then it settles to a static glow (done by ~4.3 s; no loop).
+            animate={{ opacity: [0.35, 1, 0.7] }}
+            transition={{ duration: 4, times: [0, 0.4, 1], ease: "easeInOut", delay: 0.3 }}
           />
         </>
       )}
-      {/* Desktop: a cream order ticket pinned to the photo, naming the dish in it. */}
-      <p className="absolute bottom-10 right-10 z-10 hidden -rotate-2 bg-[#F7E4CF] px-5 py-4 text-[#2A0F0C] shadow-[0_18px_40px_-12px_rgba(0,0,0,0.7)] lg:block">
-        <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.24em] text-[#9A3B12]">{c.hero.special.label[locale]}</span>
-        <span className="mt-1.5 flex items-baseline gap-4">
-          <span className="demo-display text-[1.25rem] leading-tight">{c.hero.special.name[locale]}</span>
-          <span className="demo-display text-[1.25rem] text-[#9A3B12]">
-            <span className="sr-only">$</span>
-            {c.hero.special.price}
-          </span>
-        </span>
-      </p>
       {/* Phones and tablets: bottom fade under the overlapping headline. */}
       <div
         aria-hidden="true"
@@ -266,7 +267,7 @@ export function RestaurantDemo() {
           <Rise onLoad delay={0.35} className="lg:max-w-[min(34rem,36vw)]">
             <p className="mt-5 max-w-[40ch] text-[1rem] leading-relaxed text-[#F7E4CF]/90 sm:mt-6 sm:text-[1.0625rem]">{L(c.hero.intro)}</p>
           </Rise>
-          <Rise onLoad delay={0.45}>
+          <Rise onLoad yOnly delay={0.45}>
             <div className="mt-6 flex flex-wrap gap-3 sm:mt-8 sm:gap-4">
               <BookButton className={`${BTN_SOLID} h-[3.25rem] flex-1 px-6 text-[0.9375rem] sm:h-14 sm:flex-none sm:px-8 sm:text-[1rem]`}>
                 {L(c.hero.reserve)}
@@ -283,6 +284,18 @@ export function RestaurantDemo() {
             </p>
           </Rise>
         </div>
+        {/* Desktop: a cream order ticket pinned to the photo's lower right, naming the dish in it.
+            After the text in the DOM, so the h1 is read first; positioned against the section. */}
+        <p className="absolute bottom-10 right-10 z-10 hidden -rotate-2 bg-[#F7E4CF] px-5 py-4 text-[#2A0F0C] shadow-[0_18px_40px_-12px_rgba(0,0,0,0.7)] lg:block">
+          <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.24em] text-[#9A3B12]">{c.hero.special.label[locale]}</span>
+          <span className="mt-1.5 flex items-baseline gap-4">
+            <span className="demo-display text-[1.25rem] leading-tight">{c.hero.special.name[locale]}</span>
+            <span className="demo-display text-[1.25rem] text-[#9A3B12]">
+              <span className="sr-only">$</span>
+              {c.hero.special.price}
+            </span>
+          </span>
+        </p>
       </section>
 
       {/* ------------------------------------------------- menu (signature) */}

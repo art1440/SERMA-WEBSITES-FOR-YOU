@@ -106,12 +106,15 @@ export const restaurant: RestaurantContent = {
       { en: "Late tables.", es: "Mesas hasta tarde." },
     ],
     intro: {
-      en: "Everything on the menu meets the oak oven or the grill. Seventy seats, a long bar, and a kitchen that keeps cooking until eleven, midnight at the weekend.",
+      en: "Everything on the menu meets the oak oven or the grill. Seventy seats, a long bar, and a kitchen that keeps cooking until eleven, midnight on weekends.",
       es: "Todo lo que servimos pasa por el horno de roble o por la parrilla. Setenta cubiertos, una barra larga y una cocina que no cierra hasta las once; los fines de semana, hasta medianoche.",
     },
     reserve: { en: "Reserve a table", es: "Reserve mesa" },
     pickup: { en: "Order pickup", es: "Pida para llevar" },
-    tonight: { en: "Kitchen open till 11 · Fri & Sat till midnight", es: "Cocina abierta hasta las 23:00 · viernes y sábado, hasta medianoche" },
+    tonight: {
+      en: "Twelve bar seats held for walk-ins every night",
+      es: "Doce plazas en la barra para quien llegue sin reserva, cada noche",
+    },
     special: {
       label: { en: "Out of the oven", es: "Recién salido del horno" },
       name: { en: "Half chicken, charred lemon", es: "Medio pollo, limón tostado" },
@@ -132,7 +135,7 @@ export const restaurant: RestaurantContent = {
     kicker: { en: "The menu", es: "La carta" },
     title: { en: "Tonight, off the fire.", es: "Esta noche, a la brasa." },
     intro: {
-      en: "The card changes with the market. Order a few small plates for the table, then something from the fire each; the ribeye is built for two.",
+      en: "The menu changes with the market. Order a few small plates for the table, then something from the fire each; the ribeye is built for two.",
       es: "La carta cambia según el mercado. Pida unos platos pequeños para compartir y luego algo de la brasa para cada uno; el ribeye está pensado para dos.",
     },
     cardTitle: { en: "Dinner", es: "Cena" },
@@ -161,7 +164,7 @@ export const restaurant: RestaurantContent = {
             name: { en: "Charred carrots", es: "Zanahorias tatemadas" },
             price: 12,
             detail: {
-              en: "Whipped labneh, hazelnut dukkah, chilli honey, carrot-top salsa verde.",
+              en: "Whipped labneh, hazelnut dukkah, chile honey, carrot-top salsa verde.",
               es: "Labneh batido, dukkah de avellana, miel picante y salsa verde de sus propias hojas.",
             },
           },
@@ -170,7 +173,7 @@ export const restaurant: RestaurantContent = {
             name: { en: "Clams in the embers", es: "Almejas en las brasas" },
             price: 18,
             detail: {
-              en: "Littlenecks opened in a hot pan, ’nduja butter, white wine, lemon, grilled bread to mop.",
+              en: "Littlenecks opened in a hot pan, ’nduja butter, white wine, lemon, grilled bread alongside.",
               es: "Almejas abiertas en sartén muy caliente, mantequilla de ’nduja, vino blanco, limón y pan tostado para mojar.",
             },
           },
@@ -195,7 +198,7 @@ export const restaurant: RestaurantContent = {
             name: { en: "Ember ribeye, 14 oz", es: "Ribeye a la leña, 14 oz" },
             price: 48,
             detail: {
-              en: "Dry-aged 28 days, seared hard over oak, rested and sliced. Chimichurri and grilled spring onions.",
+              en: "Dry-aged 28 days, seared hard over oak, rested and sliced. Chimichurri and grilled scallions.",
               es: "Madurado 28 días, sellado a fuego vivo con roble, reposado y cortado. Chimichurri y cebolletas a la parrilla.",
             },
           },
@@ -212,7 +215,7 @@ export const restaurant: RestaurantContent = {
       },
       {
         id: "sweet",
-        title: { en: "Sweet", es: "Dulces" },
+        title: { en: "Sweet", es: "Postres" },
         note: { en: "to finish", es: "para terminar" },
         items: [
           {
@@ -250,7 +253,7 @@ export const restaurant: RestaurantContent = {
       "restaurant",
       "steak",
       {
-        en: "Sliced ribeye, pink in the middle, under chimichurri, with grilled spring onions and the fire glowing behind.",
+        en: "Sliced ribeye, pink in the middle, under chimichurri, with grilled scallions and the fire glowing behind.",
         es: "Ribeye cortado, rosado por dentro, con chimichurri, cebolletas a la parrilla y el fuego encendido al fondo.",
       },
       1024,
@@ -263,7 +266,7 @@ export const restaurant: RestaurantContent = {
     kicker: { en: "Private dining", es: "Comedor privado" },
     title: { en: "The back room seats up to 24.", es: "¿Una celebración? El salón del fondo acoge hasta 24." },
     body: {
-      en: "One long oak table beside the oven, its own door and its own server. We cook a family-style menu for the whole table, so nobody spends the evening reading a card.",
+      en: "One long oak table beside the oven, its own door and its own server. We cook a family-style menu for the whole table, so nobody spends the evening reading a menu.",
       es: "Una mesa larga de roble junto al horno, con entrada y camarero propios. Cocinamos un menú para compartir para toda la mesa, así nadie pasa la velada leyendo la carta.",
     },
     facts: [
@@ -325,8 +328,8 @@ export const restaurant: RestaurantContent = {
     reserve: { en: "Reserve a table", es: "Reserve mesa" },
     pickup: { en: "Order pickup", es: "Pida para llevar" },
     walkIns: {
-      en: "The bar’s twelve seats are kept for walk-ins every night.",
-      es: "Las doce plazas de la barra se reservan cada noche para quien llegue sin reserva.",
+      en: "Running late? We hold your table for fifteen minutes; a quick call buys you more.",
+      es: "¿Llega tarde? Guardamos su mesa quince minutos; si nos llama, le esperamos más.",
     },
     hoursLabel: { en: "Hours", es: "Horario" },
     closed: { en: "Closed Mondays", es: "Cerrado los lunes" },

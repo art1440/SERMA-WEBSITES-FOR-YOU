@@ -183,8 +183,9 @@ function Course({
         {/* Phones: the note drops under the title (no rule). */}
         <p className={`${SMALL_CAPS} mb-[0.2rem] shrink-0 basis-full text-[#9A3B12] sm:basis-auto`}>{course.note}</p>
       </Head>
+      {/* Desktop: in the fire course the photos take ~45% of the card, set as a deliberate overlapping pair. */}
       {fire ? (
-        <div className="mt-9 grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-14">
+        <div className="mt-9 grid gap-12 lg:grid-cols-[minmax(0,11fr)_minmax(0,9fr)] lg:gap-14">
           {list}
           <div className="grid grid-cols-2 gap-4 lg:block">
             {course.photos!.map((p, j) => {
@@ -207,9 +208,9 @@ function Course({
                     : {})}
                   className={
                     j === 0
-                      ? "lg:w-[78%]"
+                      ? "lg:w-[84%]"
                       : // Desktop: the steak sits lower and to the right, overlapping the flatbread's corner.
-                        "lg:relative lg:z-10 lg:-mt-20 lg:ml-auto lg:w-[64%]"
+                        "lg:relative lg:z-10 lg:-mt-[34%] lg:ml-auto lg:w-[62%]"
                   }
                 >
                   {/* The flatbread's caption sits above it, so the steak can overlap its lower corner on desktop
@@ -219,8 +220,8 @@ function Course({
                     <img
                       src={p.image.src}
                       srcSet={`${p.image.small} 640w, ${p.image.src} ${p.image.width}w`}
-                      // Square boxes: phones/tablets half the card (<= ~480px), desktop <= ~340px.
-                      sizes="(min-width: 1024px) 340px, 45vw"
+                      // Square boxes: phones/tablets half the card (<= ~480px), desktop <= ~400px.
+                      sizes="(min-width: 1024px) 400px, 45vw"
                       width={p.image.width}
                       height={p.image.height}
                       alt={p.alt}

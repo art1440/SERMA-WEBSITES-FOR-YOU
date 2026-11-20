@@ -221,6 +221,29 @@ async function restaurantMenuPlated(page) {
   }
 }
 
+/**
+ * Ember & Oak, with motion: scroll through the menu card in steps and expect
+ * every course to have plated, i.e. [data-signature] reaches data-state="rest".
+ */
+async function restaurantMenuPlatesLive(browser, base) {
+  const { page, errors } = await openPage(browser, `${base}/work/restaurant/`, { width: 1280, height: 800 });
+  const { top, bottom } = await page.evaluate(() => {
+    const r = document.querySelector('[data-signature="restaurant"]').getBoundingClientRect();
+    return { top: r.top + window.scrollY, bottom: r.bottom + window.scrollY };
+  });
+  for (let y = top - 400; y <= bottom; y += 300) {
+    await page.evaluate((v) => window.scrollTo(0, v), y);
+    await page.waitForTimeout(200);
+  }
+  try {
+    await page.waitForFunction(() => document.querySelector('[data-signature="restaurant"]').dataset.state === "rest", null, { timeout: 4000 });
+  } catch {
+    const state = await page.locator('[data-signature="restaurant"]').getAttribute("data-state");
+    throw new Error(`motion: after scrolling the menu, data-state is ${JSON.stringify(state)}, expected "rest"`);
+  }
+  assertNoErrors(errors);
+}
+
 const CHECKS = {
   "home-smoke": async ({ browser, base }) => {
     const { page } = await openPage(browser, `${base}/`);
@@ -228,7 +251,10 @@ const CHECKS = {
   },
   "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
   "demo:beauty": ({ browser, base }) => demoCheck(browser, base, "beauty", { restCheck: beautyWindowsOpen }),
-  "demo:restaurant": ({ browser, base }) => demoCheck(browser, base, "restaurant", { restCheck: restaurantMenuPlated }),
+  "demo:restaurant": async ({ browser, base }) => {
+    await demoCheck(browser, base, "restaurant", { restCheck: restaurantMenuPlated });
+    await restaurantMenuPlatesLive(browser, base);
+  },
   "demo:salon": async ({ browser, base }) => {
     await demoCheck(browser, base, "salon", { restCheck: salonAccentStaysPlum });
     await salonAccentSurvivesLanguageSwitch(browser, base);
