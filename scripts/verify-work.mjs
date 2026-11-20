@@ -401,7 +401,7 @@ const CHECKS = {
     await hoverViewport(page, second);
     await page.waitForTimeout(800);
     await second.click();
-    const dialog = page.getByRole("dialog", { name: "Maison Lumière" });
+    const dialog = page.getByRole("dialog", { name: "Maison Lumière", exact: true });
     await dialog.waitFor({ state: "visible", timeout: 5000 });
     const inside = () => dialog.evaluate((el) => el.contains(document.activeElement));
     if (!(await inside())) throw new Error("focus is not inside the preview on open");
@@ -419,12 +419,43 @@ const CHECKS = {
     await page.waitForTimeout(700);
     await page.mouse.click(8, 8);
     await dialog.waitFor({ state: "hidden", timeout: 5000 });
+
+    // Closing with the mouse over the card's slot: no tilt and no glide may start during the shrink.
+    await page.waitForTimeout(800);
+    const slot = await second.locator("[data-work-viewport]").boundingBox();
+    await second.click();
+    await dialog.waitFor({ state: "visible", timeout: 5000 });
+    await page.waitForTimeout(700);
+    await page.mouse.move(slot.x + slot.width * 0.8, slot.y + slot.height * 0.2);
+    await page.evaluate(() => {
+      window.__settle = [];
+      const card = document.querySelector('[data-work-card="salon"]');
+      const tilt = card.querySelector("[data-work-tilt]");
+      const shot = card.querySelector("[data-work-shot]");
+      const t0 = performance.now();
+      const tick = () => {
+        window.__settle.push({ t: performance.now() - t0, tilt: getComputedStyle(tilt).transform, y: new DOMMatrix(getComputedStyle(shot).transform).m42 });
+        if (performance.now() - t0 < 330) requestAnimationFrame(tick);
+      };
+      document.addEventListener("keydown", () => requestAnimationFrame(tick), { once: true, capture: true });
+    });
+    await page.keyboard.press("Escape");
+    for (let i = 0; i < 8; i++) {
+      await page.mouse.move(slot.x + slot.width * (0.2 + (i % 4) * 0.2), slot.y + slot.height * (0.25 + (i % 2) * 0.5), { steps: 2 });
+    }
+    await page.waitForTimeout(400);
+    const settle = await page.evaluate(() => window.__settle);
+    if (settle.length < 2) throw new Error(`settle: only ${settle.length} samples`);
+    const tilted = settle.filter((s) => s.tilt !== "none" && !/^matrix\(1, 0, 0, 1, 0, 0\)$/.test(s.tilt));
+    if (tilted.length) throw new Error(`settle: card tilted during the shrink (${tilted[0].tilt} at ${Math.round(tilted[0].t)} ms)`);
+    const moved = settle.filter((s) => Math.abs(s.y - settle[0].y) > 1);
+    if (moved.length) throw new Error(`settle: card image moved during the shrink (${settle[0].y} -> ${moved[0].y} at ${Math.round(moved[0].t)} ms)`);
     assertNoErrors(errors);
 
     for (const colorScheme of ["light", "dark"]) {
       const g = await openGallery(browser, base, { colorScheme });
       await g.cards.nth(1).click();
-      await g.page.getByRole("dialog", { name: "Maison Lumière" }).waitFor({ state: "visible", timeout: 5000 });
+      await g.page.getByRole("dialog", { name: "Maison Lumière", exact: true }).waitFor({ state: "visible", timeout: 5000 });
       await g.page.waitForTimeout(900);
       try {
         // Scoped to the gallery + its dialog: the page around it has its own checks (home-smoke).
@@ -442,11 +473,23 @@ const CHECKS = {
     const y = await shotY(first);
     if (Math.abs(y) > 0.5) throw new Error(`reduced motion: translateY is ${y} while hovered, expected 0`);
     await first.click();
-    const dialog = page.getByRole("dialog", { name: "Ironside Barber Co." });
+    const dialog = page.getByRole("dialog", { name: "Ironside Barber Co.", exact: true });
     await dialog.waitFor({ state: "visible", timeout: 5000 });
     await page.keyboard.press("Escape");
     await dialog.waitFor({ state: "hidden", timeout: 5000 });
     assertNoErrors(errors);
+
+    for (const colorScheme of ["light", "dark"]) {
+      const g = await openGallery(browser, base, { reducedMotion: true, colorScheme });
+      await g.cards.nth(0).click();
+      await g.page.getByRole("dialog", { name: "Ironside Barber Co.", exact: true }).waitFor({ state: "visible", timeout: 5000 });
+      await g.page.waitForTimeout(500);
+      try {
+        await runAxe(g.page, { include: ["#work", '[role="dialog"]'] });
+      } catch (e) {
+        throw new Error(`reduced ${colorScheme}, preview open: ${e.message}`);
+      }
+    }
   },
   "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
   "demo:beauty": ({ browser, base }) => demoCheck(browser, base, "beauty", { restCheck: beautyWindowsOpen }),

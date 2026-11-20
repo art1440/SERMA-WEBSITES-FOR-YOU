@@ -23,19 +23,12 @@ type Props = {
 };
 
 /** About when the shrink has landed (SPRING_MORPH); the picture eases back to the top after that. */
-const LAND_MS = 380;
+export const LAND_MS = 380;
 
 /** Hover-scroll speed (px/s of travel) and its duration bounds, per the gallery spec. */
 const SPEED = 140;
 const MIN_S = 4;
 const MAX_S = 9;
-/**
- * The captures carry the demo page's 15 px scrollbar lane at their right edge
- * (content is 1265 of 1280 px). Widen the image so the lane falls outside the
- * clipped viewport. Remove once the shots are re-captured without it.
- */
-export const SHOT_WIDTH = "w-[101.1858%] max-w-none"; // 1280 / 1265
-
 /** Max pointer tilt, degrees. */
 const TILT_X = 7;
 const TILT_Y = 9;
@@ -85,6 +78,21 @@ export function WorkCard({ demo, onOpen, live, morph = true, raised = false, lan
   const wantDown = useRef(false);
   const hovered = useRef(false);
   const rect = useRef<DOMRect | null>(null);
+  const prefetched = useRef(false);
+  /**
+   * True from the click that opens the preview until the shrink back has landed. The preview's root
+   * stops catching the pointer as it exits, so the card sees enter / move / focus mid-shrink: tilting
+   * (an ancestor of the shared view) or starting a glide then would skew the landing or overwrite the
+   * handed-back scroll position.
+   */
+  const settling = useRef(false);
+  const settleTimer = useRef(0);
+  const setSettling = (on: boolean) => {
+    settling.current = on;
+    // Imperative attribute (no re-render): suppresses the hover rim while settling.
+    if (on) buttonRef.current?.setAttribute("data-settling", "");
+    else buttonRef.current?.removeAttribute("data-settling");
+  };
   const liveRef = useRef(live);
   liveRef.current = live;
 
@@ -177,17 +185,29 @@ export function WorkCard({ demo, onOpen, live, morph = true, raised = false, lan
       y.jump(-Math.min(travel.current, landing.ratio * img.offsetHeight));
       setLayerHint(true);
     }
-    const id = window.setTimeout(() => {
+    setSettling(true);
+    // Deliberately not cleared when `landing` changes: no effect cleanup may end settling early (cleanups
+    // run before the preview's focus restore, which would then start a glide mid-shrink).
+    window.clearTimeout(settleTimer.current);
+    settleTimer.current = window.setTimeout(() => {
+      setSettling(false);
       const engaged = hovered.current || buttonRef.current?.matches(":focus-visible");
       if (liveRef.current === "hover" && engaged) descend();
       else if (liveRef.current !== "auto") ascend();
     }, LAND_MS);
-    return () => window.clearTimeout(id);
   }, [landing, y, descend, ascend]);
 
-  useEffect(() => () => anim.current?.stop(), []);
+  useEffect(
+    () => () => {
+      anim.current?.stop();
+      window.clearTimeout(settleTimer.current);
+    },
+    [],
+  );
 
   const prefetch = () => {
+    if (prefetched.current) return;
+    prefetched.current = true;
     const img = new Image();
     img.decoding = "async";
     img.src = shot.full;
@@ -198,11 +218,11 @@ export function WorkCard({ demo, onOpen, live, morph = true, raised = false, lan
     hovered.current = true;
     rect.current = e.currentTarget.getBoundingClientRect();
     prefetch();
-    if (liveRef.current === "hover") descend();
+    if (liveRef.current === "hover" && !settling.current) descend();
   };
 
   const onPointerMove = (e: PointerEvent<HTMLButtonElement>) => {
-    if (e.pointerType !== "mouse" || liveRef.current === "off") return;
+    if (e.pointerType !== "mouse" || liveRef.current === "off" || settling.current) return;
     const r = rect.current ?? (rect.current = e.currentTarget.getBoundingClientRect());
     const px = Math.min(0.5, Math.max(-0.5, (e.clientX - r.left) / r.width - 0.5));
     const py = Math.min(0.5, Math.max(-0.5, (e.clientY - r.top) / r.height - 0.5));
@@ -223,7 +243,7 @@ export function WorkCard({ demo, onOpen, live, morph = true, raised = false, lan
 
   const onFocus = () => {
     // Keyboard focus only: a mouse click (or focus restored after closing the preview) must not start a glide.
-    if (liveRef.current === "hover" && buttonRef.current?.matches(":focus-visible")) {
+    if (liveRef.current === "hover" && !settling.current && buttonRef.current?.matches(":focus-visible")) {
       prefetch();
       descend();
     }
@@ -234,6 +254,9 @@ export function WorkCard({ demo, onOpen, live, morph = true, raised = false, lan
   };
 
   const open = () => {
+    // Settling covers the whole open period too: focus is restored to this card (firing onFocus)
+    // before the landing effect runs.
+    setSettling(true);
     rest();
     onOpen(demo.id);
   };
@@ -253,13 +276,13 @@ export function WorkCard({ demo, onOpen, live, morph = true, raised = false, lan
       className={`group relative block w-full rounded-[18px] text-left [perspective:1100px] ${raised ? "z-20" : "z-0"}`}
       style={{ ["--work-accent" as string]: demo.accent }}
     >
-      <motion.span ref={tiltRef} className="block" style={{ rotateX, rotateY }}>
+      <motion.span ref={tiltRef} data-work-tilt className="block" style={{ rotateX, rotateY }}>
         <span className="relative block rounded-[14px] bg-ink-900 shadow-[0_0_0_1px_rgb(var(--bone)/0.1),0_18px_40px_-24px_rgb(var(--shadow)/0.55)]">
           {/* Accent rim on hover / focus: opacity only. An outer ring, painted under the content, so it never
               lies over the page view while that grows into (or shrinks back from) the preview. */}
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 shadow-[0_0_0_1.5px_var(--work-accent)] transition-opacity duration-300 ease-editorial group-hover:opacity-80 group-focus-visible:opacity-80"
+            className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 shadow-[0_0_0_1.5px_var(--work-accent)] transition-opacity duration-300 ease-editorial group-hover:opacity-80 group-focus-visible:opacity-80 group-data-[settling]:!opacity-0"
           />
           <span className="flex h-8 items-center gap-3 rounded-t-[14px] border-b border-bone/10 bg-ink-800 px-3">
             <FrameDots />
@@ -288,7 +311,7 @@ export function WorkCard({ demo, onOpen, live, morph = true, raised = false, lan
               loading="lazy"
               decoding="async"
               draggable={false}
-              className={`block h-auto select-none ${SHOT_WIDTH}`}
+              className="block h-auto w-full select-none"
               style={{ y }}
             />
           </motion.span>

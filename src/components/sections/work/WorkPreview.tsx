@@ -9,7 +9,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import type { DemoCard } from "@/data/demos";
 import { fill } from "@/i18n/types";
 import { useFocusTrap } from "@/lib/useFocusTrap";
-import { FrameDots, SHOT_WIDTH, SPRING_MORPH } from "./WorkCard";
+import { FrameDots, SPRING_MORPH } from "./WorkCard";
 
 type Props = {
   demo: DemoCard | null;
@@ -102,13 +102,15 @@ function PreviewDialog({ demo, onClose, morph }: { demo: DemoCard; onClose: Prop
       >
         <motion.div
           className="flex h-14 shrink-0 items-center gap-3 rounded-t-[18px] border-b border-bone/10 bg-ink-800 pl-4 pr-2 shadow-[0_0_0_1px_rgb(var(--bone)/0.12)] sm:gap-4 sm:pl-5"
-          initial={still ? false : { opacity: 0, y: 10 }}
-          animate={still ? undefined : { opacity: 1, y: 0, transition: { ...FADE_IN, delay: 0.16 } }}
+          initial={still ? false : { opacity: 0, y: 8 }}
+          animate={still ? undefined : { opacity: 1, y: 0, transition: { ...FADE_IN, delay: 0.24 } }}
           exit={still ? undefined : { opacity: 0, transition: { duration: 0.12, ease: "easeOut" } }}
         >
           <FrameDots />
-          <h2 id={titleId} className="flex min-w-0 items-baseline gap-3">
-            <span className="truncate font-display text-base text-bone">{demo.business}</span>
+          <h2 className="flex min-w-0 items-baseline gap-3">
+            <span id={titleId} className="truncate font-display text-base text-bone">
+              {demo.business}
+            </span>
             <span className="hidden truncate text-sm text-ash sm:inline">{demo.pitchDomain}</span>
           </h2>
           <span className="ml-auto flex shrink-0 items-center gap-2">
@@ -135,7 +137,7 @@ function PreviewDialog({ demo, onClose, morph }: { demo: DemoCard; onClose: Prop
           data-autofocus
           layoutId={morph ? `work-frame-${demo.id}` : undefined}
           transition={{ layout: SPRING_MORPH }}
-          className="relative aspect-[16/10] w-full overflow-y-auto overflow-x-hidden overscroll-contain bg-ink-800 shadow-[0_0_0_1px_rgb(var(--bone)/0.12),0_40px_120px_-30px_rgba(0,0,0,0.7)] focus-visible:outline-offset-[-3px]"
+          className="relative aspect-[16/10] w-full overflow-y-auto overscroll-contain bg-ink-800 shadow-[0_0_0_1px_rgb(var(--bone)/0.12),0_40px_120px_-30px_rgba(0,0,0,0.7)] focus-visible:outline-offset-[-3px]"
           style={{ borderBottomLeftRadius: 18, borderBottomRightRadius: 18 }}
         >
           {/* The card's small shot (already cached) paints underneath until the full one arrives. */}
@@ -147,7 +149,7 @@ function PreviewDialog({ demo, onClose, morph }: { demo: DemoCard; onClose: Prop
             alt=""
             decoding="async"
             draggable={false}
-            className={`block h-auto select-none bg-[length:100%_auto] bg-top bg-no-repeat ${SHOT_WIDTH}`}
+            className="block h-auto w-full select-none bg-[length:100%_auto] bg-top bg-no-repeat"
             style={{ backgroundImage: `url(${shot.small})` }}
           />
         </motion.div>

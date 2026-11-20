@@ -8,7 +8,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { DEMOS, type DemoId } from "@/data/demos";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
-import { WorkCard } from "./WorkCard";
+import { LAND_MS, WorkCard } from "./WorkCard";
 import { WorkPreview } from "./WorkPreview";
 
 /**
@@ -38,7 +38,11 @@ export function WorkGallery() {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
+  const lowerTimer = useRef(0);
+  useEffect(() => () => window.clearTimeout(lowerTimer.current), []);
+
   const onOpen = useCallback((id: DemoId) => {
+    window.clearTimeout(lowerTimer.current);
     setRaisedId(id);
     setOpenId(id);
   }, []);
@@ -49,6 +53,9 @@ export function WorkGallery() {
     if (!id) return;
     setLanding((prev) => ({ id, ratio, n: (prev?.n ?? 0) + 1 }));
     setOpenId(null);
+    // Drop the lift once the shrink has landed (a little margin over LAND_MS).
+    window.clearTimeout(lowerTimer.current);
+    lowerTimer.current = window.setTimeout(() => setRaisedId((r) => (r === id ? null : r)), LAND_MS + 120);
   }, []);
 
   const open = DEMOS.find((d) => d.id === openId) ?? null;
