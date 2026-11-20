@@ -97,42 +97,31 @@ const en = {
   included: {
     index: "(01)",
     eyebrow: "How it works",
-    title: "Exactly what you get, in the order it happens",
-    body: "No surprises and no hourly billing. Here is every step, from our first call to your site going live, and you see the finished pages before you pay anything.",
+    title: "Four steps. You pay after you see it.",
+    body: "No hourly billing and no surprises.",
     items: [
       {
-        title: "A 15-minute intro call to get your details",
-        detail: "Your services, team, hours, the booking tool you already use, and a few photos from your phone.",
+        title: "A 15-minute call",
+        detail: "Your services, hours and a few photos from your phone.",
+        tags: ["No prep needed"],
       },
       {
-        title: "Your best photos, picked and cropped",
-        detail: "Send the photos you already post. We pick the ones that sell your business and crop them to fit.",
+        title: "We build it for you",
+        detail: "Copy, photos and design done for you. You approve every word.",
+        tags: ["Written for you", "Call button on every screen"],
       },
       {
-        title: "Pages written for you, not from a template",
-        detail: "Home, services, hours and location, written from our call. You approve every word before anything goes live.",
+        title: "See it before you pay",
+        detail: "We send a link to your finished site and fix anything that's off.",
+        tags: ["Fixed price", "Pay after you approve"],
       },
       {
-        title: "A call button on every screen",
-        detail: "One tap calls you, at the top and bottom of every page, because most customers will find you on their phone.",
-      },
-      {
-        title: "Fast on any phone",
-        detail: "Built to load quickly on mobile data, not just on fast home wifi.",
-      },
-      {
-        title: "Your finished draft, before you pay",
-        detail: "We send you a link. You point out anything that reads or looks wrong, and we fix it.",
-      },
-      {
-        title: "Live on your own domain",
-        detail: "Your site goes live at your own web address. The domain and your photos stay in your name.",
-      },
-      {
-        title: "Answers from us within one business day",
-        detail: "Message or call us directly and hear back within one business day, site changes included.",
+        title: "Go live",
+        detail: "On your own domain, fast on any phone.",
+        tags: ["Your domain, your name", "Replies within 1 business day"],
       },
     ],
+    closing: "See it finished. Approve it. Then you pay.",
     roadmapLabel: "Not offered yet, building it now",
     roadmapTitle: "The phone side",
     roadmap: [
@@ -465,42 +454,31 @@ const es: Dictionary = {
   included: {
     index: "(01)",
     eyebrow: "Cómo funciona",
-    title: "Lo que recibe, paso por paso",
-    body: "Sin sorpresas ni cobro por hora. Estos son todos los pasos, desde la primera llamada hasta que su sitio sale en línea, y usted ve las páginas terminadas antes de pagar nada.",
+    title: "Cuatro pasos. Paga después de verlo.",
+    body: "Sin cobro por hora y sin sorpresas.",
     items: [
       {
-        title: "Una llamada de presentación de 15 minutos",
-        detail: "Sus servicios, su equipo, su horario, la herramienta de citas que ya usa y unas cuantas fotos de su teléfono.",
+        title: "Una llamada de 15 minutos",
+        detail: "Sus servicios, su horario y unas fotos de su teléfono.",
+        tags: ["No necesita preparar nada"],
       },
       {
-        title: "Sus mejores fotos, elegidas y recortadas",
-        detail: "Mándenos las fotos que ya publica. Nosotros elegimos las que venden su negocio y las recortamos a la medida.",
+        title: "Nosotros lo hacemos",
+        detail: "Textos, fotos y diseño hechos por nosotros. Usted aprueba cada palabra.",
+        tags: ["Textos escritos para usted", "Botón para llamar en cada pantalla"],
       },
       {
-        title: "Páginas escritas para usted, sin plantillas",
-        detail: "Inicio, servicios, horario y ubicación, que escribimos con lo que hablemos en la llamada. Usted aprueba cada palabra antes de publicar.",
+        title: "Véalo antes de pagar",
+        detail: "Le mandamos un enlace a su sitio terminado y corregimos lo que haga falta.",
+        tags: ["Precio fijo", "Paga después de aprobar"],
       },
       {
-        title: "Un botón para llamar en cada pantalla",
-        detail: "Un toque y el cliente le llama, arriba y al final de cada página, porque la mayoría lo encontrará desde el teléfono.",
-      },
-      {
-        title: "Rápido en cualquier teléfono",
-        detail: "Hecho para cargar rápido con datos móviles, no solo con el Wi-Fi de casa.",
-      },
-      {
-        title: "Su borrador terminado, antes de pagar",
-        detail: "Le mandamos un enlace. Usted nos dice qué no le gusta en el texto o en el diseño, y nosotros lo corregimos.",
-      },
-      {
-        title: "En línea con su propio dominio",
-        detail: "Su sitio se publica en su propia dirección web. El dominio y sus fotos quedan a nombre suyo.",
-      },
-      {
-        title: "Respuesta en un día hábil",
-        detail: "Escríbanos o llámenos directamente y le contestamos en un día hábil, cambios del sitio incluidos.",
+        title: "En línea",
+        detail: "En su propio dominio, rápido en cualquier teléfono.",
+        tags: ["Su dominio, a su nombre", "Respuesta en 1 día hábil"],
       },
     ],
+    closing: "Véalo terminado. Apruébelo. Y entonces pague.",
     roadmapLabel: "Aún no disponible, lo estamos desarrollando",
     roadmapTitle: "La parte del teléfono",
     roadmap: [

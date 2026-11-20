@@ -8,7 +8,7 @@ import type { L10n } from "@/i18n/types";
  * `monthly` is an optional ongoing fee (care plan / hosting); leave it `null` to hide the line.
  *
  * Every feature is a two-language string. A feature with `soon: true` is shown with a
- * "When it launches" tag (the phone side is still being built, see `included.roadmap`).
+ * "When it launches" tag (the phone side is still being built).
  */
 export type Feature = L10n & { soon?: boolean };
 
