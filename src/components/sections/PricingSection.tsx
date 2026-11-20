@@ -47,11 +47,11 @@ function Tick({ soon }: { soon?: boolean }) {
   return (
     <span
       aria-hidden="true"
-      className={`mt-[3px] grid h-5 w-5 shrink-0 place-items-center rounded-full ring-1 ring-inset ${
-        soon ? "bg-transparent text-ash ring-bone/20" : "bg-aqua/15 text-aqua ring-aqua/40"
+      className={`mt-px grid h-[1.375rem] w-[1.375rem] shrink-0 place-items-center rounded-full ${
+        soon ? "bg-transparent text-ash ring-[1.5px] ring-inset ring-bone/25" : "bg-aqua text-ink shadow-[0_4px_10px_-3px_rgb(var(--aqua)/0.6)]"
       }`}
     >
-      <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round">
         <motion.path d="M4.5 12.5l5 5L19.5 7" variants={tickVariants} />
       </svg>
     </span>
@@ -140,15 +140,17 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
         ) : null}
       <TiltCard max={5} delay={delay} glare="rounded-glass-lg" className="h-full">
         <div
-          className={`glass-dark glass-solid relative flex h-full flex-col rounded-glass-lg p-6 text-bone [-webkit-backdrop-filter:none] [backdrop-filter:none] sm:p-7 ${
-            tier.featured ? "ring-2 ring-inset ring-aqua/60 shadow-[0_30px_80px_-30px_rgba(42,107,191,0.55)]" : ""
+          className={`relative flex h-full flex-col rounded-glass-lg p-6 text-bone sm:p-7 ${
+            tier.featured
+              ? "surface-navy shadow-[0_0_0_2px_rgb(79_144_238/0.85),0_0_0_8px_rgb(79_144_238/0.15),0_40px_80px_-30px_rgb(30_99_216/0.7)]"
+              : "glass-dark glass-solid ring-1 ring-inset ring-bone/10 [-webkit-backdrop-filter:none] [backdrop-filter:none]"
           }`}
         >
           <div className="flex items-center justify-between gap-3">
-            <h3 className="font-display text-[1.75rem] leading-none tracking-[-0.03em]">{name}</h3>
+            <h3 className="font-display text-[2rem] font-extrabold leading-none tracking-[-0.035em] [font-variation-settings:'wght'_800]">{name}</h3>
             {tier.featured ? (
               <motion.span
-                className="rounded-full bg-aqua px-3 py-1 text-[0.75rem] font-medium text-ink"
+                className="rounded-full bg-aqua-glow px-3.5 py-1.5 text-[0.75rem] font-bold uppercase tracking-[0.08em] text-ink"
                 initial={{ opacity: 0, scale: 0.6, y: 6 }}
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -158,14 +160,14 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
               </motion.span>
             ) : null}
           </div>
-          <p className="mt-3 min-h-[3em] text-pretty text-[0.9375rem] leading-relaxed text-ash">{tier.tagline[locale]}</p>
+          <p className="mt-3 min-h-[3em] text-pretty text-base font-medium leading-relaxed text-bone/80">{tier.tagline[locale]}</p>
 
           {/* Price: a template slot until a number is set in src/data/pricing.ts. */}
           <div className="mt-6 border-t border-bone/[0.14] pt-6">
             {launch ? <LaunchMeta now={now} left={left} /> : null}
             <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
               {launch ? (
-                <del className="font-display text-[1.375rem] leading-none tracking-[-0.02em] text-ash decoration-ash/70 decoration-[1.5px]">
+                <del className="font-display text-[1.5rem] font-bold leading-none tracking-[-0.02em] text-ash decoration-[#e5484d] decoration-[2.5px]">
                   <span className="sr-only">{LAUNCH.regular[locale]}: </span>
                   {formatMetric(tier.regular!, "currency", intlLocale)}
                 </del>
@@ -173,11 +175,11 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
               {price === null ? (
                 <span className="font-display text-[3rem] leading-none tracking-[-0.04em] text-bone/40">$&thinsp;—</span>
               ) : (
-                <PriceNumber key={price} value={price} reduce={reduce} className="font-display text-[3rem] leading-none tracking-[-0.04em]" />
+                <PriceNumber key={price} value={price} reduce={reduce} className="font-display text-[3.75rem] font-extrabold leading-none tracking-[-0.045em] text-bone-50 [font-variation-settings:'wght'_850]" />
               )}
-              <span className="text-sm text-ash">{p.oneTime}</span>
+              <span className="text-sm font-semibold text-ash">{p.oneTime}</span>
             </p>
-            <p className="mt-2 text-sm text-ash">
+            <p className="mt-2 text-sm font-medium text-bone/75">
               {tier.price === null
                 ? p.priceSoon
                 : tier.monthly !== null
@@ -193,13 +195,13 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
               e.preventDefault();
               onPick(tier);
             }}
-            className={`${tier.featured ? "btn-aqua" : "btn-line-dark glass-flat"} mt-6 w-full justify-center`}
+            className="btn-aqua mt-6 w-full justify-center text-base"
           >
             {fill(p.choose, { plan: name })}
             <ArrowUpRight aria-hidden="true" size={15} strokeWidth={1.75} />
           </MagneticButton>
 
-          {tier.inherits ? <p className="eyebrow mt-7 text-ash">{tier.inherits[locale]}</p> : <p className="eyebrow mt-7 text-ash">{p.includes}</p>}
+          <p className="mt-7 text-[0.75rem] font-bold uppercase tracking-[0.12em] text-aqua">{tier.inherits ? tier.inherits[locale] : p.includes}</p>
 
           <motion.ul
             className="mt-4 grid gap-3"
@@ -210,7 +212,7 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
             viewport={{ once: true, margin: "-10%" }}
           >
             {tier.features.map((f) => (
-              <motion.li key={f.en} variants={itemVariants} className="flex items-start gap-3 text-[0.9375rem] leading-snug">
+              <motion.li key={f.en} variants={itemVariants} className="flex items-start gap-3 text-[0.9375rem] font-medium leading-snug">
                 <Tick soon={f.soon} />
                 <span className={f.soon ? "text-ash" : "text-bone"}>
                   {f[locale]}
@@ -286,11 +288,11 @@ export function PricingSection() {
             <h3 className="font-display text-[clamp(1.6rem,2.6vw,2.4rem)] leading-[1.08] tracking-[-0.03em] text-balance">{p.nextTitle}</h3>
             <ol className="mt-6 grid gap-2.5">
               {p.next.map((step, i) => (
-                <li key={step} className="glass-dark glass-flat flex min-h-[60px] items-center gap-3.5 rounded-glass-sm px-4 py-3">
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-aqua/15 text-[0.75rem] font-medium tabular text-bone ring-1 ring-inset ring-aqua/45">
+                <li key={step} className="glass-dark glass-flat flex min-h-[64px] items-center gap-4 rounded-glass-sm px-4 py-3 ring-1 ring-inset ring-bone/10">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-aqua text-[0.8125rem] font-bold tabular text-ink shadow-[0_6px_14px_-6px_rgb(var(--aqua)/0.7)]">
                     0{i + 1}
                   </span>
-                  <span className="text-pretty text-[0.9375rem] leading-snug">{step}</span>
+                  <span className="text-pretty text-base font-semibold leading-snug">{step}</span>
                 </li>
               ))}
             </ol>

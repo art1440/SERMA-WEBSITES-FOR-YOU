@@ -58,11 +58,11 @@ export function LaunchMeta({ now, left }: { now: number | null; left: number }) 
         </span>
         {LAUNCH.label[locale]}
       </p>
-      <p className="mt-2.5 text-[0.8125rem] font-medium text-bone">
+      <p className="mt-2.5 text-[0.8125rem] font-bold text-bone">
         {fill(LAUNCH.spotsLeft[locale], { left, spots: LAUNCH.spots })}
       </p>
       <div
-        className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-bone/[0.1]"
+        className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-bone/[0.12]"
         role="meter"
         aria-valuemin={0}
         aria-valuemax={LAUNCH.spots}
@@ -111,12 +111,12 @@ export function RotatingPerk({ index }: { index: number }) {
   return (
     <motion.p
       key={i}
-      className="mt-3 flex items-center gap-2 text-[0.8125rem] text-bone/85"
+      className="mt-3 flex items-center gap-2 text-[0.8125rem] font-semibold text-bone/90"
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
     >
-      <Check aria-hidden="true" size={14} strokeWidth={2} className="shrink-0 text-live" />
+      <Check aria-hidden="true" size={15} strokeWidth={3} className="shrink-0 text-live" />
       {LAUNCH.perks[i][locale]}
     </motion.p>
   );
