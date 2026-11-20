@@ -142,3 +142,11 @@ Where pictures go (and where they don't):
 - Internal component structure of each demo, as long as signature motions live in their own components.
 - Screenshot widths/quality, exact hover scroll speed, tilt amounts, spring settings (use `src/lib/motion.ts` tokens).
 - Whether the booking sheet pre-selects the niche in the enquiry form (do it if `EnquiryForm` already accepts a prefill).
+
+## As built
+
+- Salon display face is **Bodoni Moda**, not Cormorant: Cormorant's "è" (in "Maison Lumière") was unreadable at display sizes.
+- **18** demo images were generated and shipped (not 23).
+- The phone gallery preview uses phone-size screenshots (390×844 @2x, `shot-<locale>-mobile-v1.jpg`), not the desktop capture scaled down.
+- The contractor is **Trueframe Builders**.
+- The section index is "(02)"; the later sections shift by one. The nav tab bar sits in the capsule from 1280px and in the rail below it under 1280px (eight tabs do not fit the capsule at 1024).

@@ -45,6 +45,56 @@ Set in your host (Vercel → Project → Settings → Environment Variables). Se
 - **60 fps:** only `transform` and `opacity` are animated. Scroll progress is read from Framer Motion MotionValues (no React re-renders per frame); the WebGL loop stops whenever no 3D chapter is on screen; three.js (≈240 KB gz) loads lazily after first paint. Heavy UI chapters pin only on desktop (≥1024px); phones get the same 3D entrances without pinning, plus tap-to-play on the simulator.
 - **Motion controls:** a "Pause animations" button (in the footer, reachable from every tab) stops the 3D engine and every looping video (WCAG 2.2.2). Visitors with "reduce motion" get a calm, unpinned layout with no WebGL.
 
+## Demo sites
+
+Six fictional client websites live under `/work/`, shown in the home page's **Our work** section (`#work`, between How It Works and Industries) and linked from the nav:
+
+| Route | Business | Signature move |
+| --- | --- | --- |
+| `/work/barbershop/` | Ironside Barber Co. | `RazorCutHero` |
+| `/work/salon/` | Maison Lumière | `ColourRibbon` |
+| `/work/beauty/` | Velvet Room | `MaskWindows` |
+| `/work/restaurant/` | Ember & Oak | `MenuPlating` |
+| `/work/contractor/` | Trueframe Builders | `BlueprintHero` |
+| `/work/service/` | Brightline Home | `BeforeAfterSlider` |
+
+Every demo is `noindex, nofollow` and is left out of `sitemap.xml`; `robots.txt` is unchanged. `?lang=es` opens a demo in Spanish.
+
+**How they are built**
+
+- `src/app/work/<id>/page.tsx` — the route: its fonts (`src/app/work/fonts.ts`, self-hosted, OFL licences beside the files), metadata (`demo-metadata.ts`) and the page wrapped in `DemoShell`.
+- `src/components/work/DemoShell.tsx` — shared chrome: the "Demo site by Serma" ribbon with the EN/ES switch and the "Back to Serma" link (to `/#work` or `/es/#work`), and the booking sheet every `[data-book]` button opens (`DemoBookingSheet.tsx`: it explains this is a demo and offers a free mockup). `?capture=1` hides the ribbon for screenshots.
+- `src/components/work/demos/<Name>Demo.tsx` — each page's layout. All user-facing copy (EN + formal-*usted* ES) and image records live in `src/data/demos/<id>.ts`; `src/data/demos/index.ts` holds the gallery records (business, tag, accent, shot paths and heights).
+- `src/components/work/signatures/` — one bespoke scroll/drag interaction per demo (table above). Each marks itself with `data-signature="<id>"` and `data-state` (`rest` when settled; reduced motion always shows the rest state).
+- The gallery itself is `src/components/sections/work/` (`WorkGallery`, `WorkCard`, `WorkPreview`).
+
+**Re-capturing the gallery screenshots**
+
+```bash
+npm run build
+npm run capture:work -- --version v2            # desktop (1280×800, + 640 px copies) and mobile (390×844 @2x) shots, EN + ES
+npm run capture:work -- --version v2 --only mobile   # or --only desktop: one set
+npm run capture:work -- --version v1 --overwrite     # only for a version that has never been deployed
+```
+
+Needs `python3` with Pillow (for the 640 px copies). `/media` is served immutable for a year, so **never overwrite a deployed version**: capture a new one (`--version v2`), then point the shot paths in `src/data/demos/index.ts` at the same version and update its `SHOT_HEIGHT` table from the new files.
+
+Image provenance: see [Media provenance](#media-provenance) below.
+
+**Verify suite** (`scripts/verify-work.mjs`; needs a prior `npm run build` and a global Playwright; it starts `next start` on port 3123, and every check also fails on any console error, page error or CSP violation):
+
+```bash
+npm run verify:work <check...>
+```
+
+Checks: `home-smoke`, `home-wiring` (nav link and tab, section order, Spanish label and shots), `sitemap-clean`, `home-axe-full` (whole home page scrolled through, EN + ES, light + dark, no axe rule disabled), `gallery-desktop`, `gallery-reduced`, `gallery-phone`, `gallery-phone-paused`, `demo:barbershop`, `demo:salon`, `demo:beauty`, `demo:restaurant`, `demo:contractor`, `demo:service`, `shell-lang`, `shell-booking`, `shell-capture`, `shell-noindex`. Full run:
+
+```bash
+npm run typecheck && npm run build && npm run verify:work home-smoke home-wiring sitemap-clean home-axe-full \
+  shell-lang shell-booking shell-capture shell-noindex demo:barbershop demo:salon demo:beauty demo:restaurant \
+  demo:contractor demo:service gallery-desktop gallery-reduced gallery-phone gallery-phone-paused
+```
+
 ## Media provenance
 
 All video loops in `public/media/` were generated with Higgsfield (Kling 3.0 Pro, silent, 1080p source) for this project, then re-encoded as seamless WebM + MP4 loops with posters (~7 MB total). They are illustrative renderings; they do not depict real client businesses (also stated on `/disclaimer`).
