@@ -181,12 +181,33 @@ async function salonAccentStaysPlum(page) {
   if (state !== "rest") throw new Error(`reduced motion: ribbon data-state is ${JSON.stringify(state)} after scrolling`);
 }
 
+/**
+ * Velvet Room: with reduced motion every treatment window is fully open (no
+ * clip, image at scale 1) without scrolling to it.
+ */
+async function beautyWindowsOpen(page) {
+  const windows = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-signature="beauty"] [data-window]')].map((w) => {
+      const clip = getComputedStyle(w).clipPath;
+      const img = w.querySelector("img");
+      const t = img ? getComputedStyle(img).transform : "none";
+      return { clip, t };
+    }),
+  );
+  if (windows.length !== 3) throw new Error(`reduced motion: expected 3 [data-window], found ${windows.length}`);
+  for (const { clip, t } of windows) {
+    if (clip !== "none" && !/^inset\(0(px|%)?[ )]/.test(clip)) throw new Error(`reduced motion: window still clipped (${clip})`);
+    if (t !== "none" && t !== "matrix(1, 0, 0, 1, 0, 0)") throw new Error(`reduced motion: window image transformed (${t})`);
+  }
+}
+
 const CHECKS = {
   "home-smoke": async ({ browser, base }) => {
     const { page } = await openPage(browser, `${base}/`);
     await runAxe(page);
   },
   "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
+  "demo:beauty": ({ browser, base }) => demoCheck(browser, base, "beauty", { restCheck: beautyWindowsOpen }),
   "demo:salon": async ({ browser, base }) => {
     await demoCheck(browser, base, "salon", { restCheck: salonAccentStaysPlum });
     await salonAccentSurvivesLanguageSwitch(browser, base);
