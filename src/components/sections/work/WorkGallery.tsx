@@ -22,8 +22,8 @@ import { WorkPreview } from "./WorkPreview";
  * snap row (80vw cards, max 360 px, so the next one peeks), with tappable dots
  * underneath, so the section costs about one card of height. The layout is pure
  * CSS (no hydration jump); `matchMedia` only switches behaviour. The centred card
- * (IntersectionObserver on the row, 60%) auto-scrolls its picture while the
- * section is on screen; the others rest. A tap opens the preview full-screen; a
+ * (IntersectionObserver on the row, 60%) auto-scrolls its picture while the row
+ * is on screen; the others rest. A tap opens the preview full-screen; a
  * swipe never does.
  */
 export function WorkGallery() {
@@ -42,7 +42,6 @@ export function WorkGallery() {
   const [phone, setPhone] = useState(false);
   const [active, setActive] = useState(0);
   const [onScreen, setOnScreen] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
   const rowRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -53,11 +52,13 @@ export function WorkGallery() {
     return () => mq.removeEventListener("change", sync);
   }, []);
 
-  // The auto-scroll only runs while the section is actually on screen.
+  // The auto-scroll only runs while the row itself (not just the section's padding) is on screen.
   useEffect(() => {
-    const el = sectionRef.current;
+    const el = rowRef.current;
     if (!el || !phone) return;
-    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting));
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting && e.intersectionRatio >= 0.25), {
+      threshold: [0, 0.25],
+    });
     io.observe(el);
     return () => io.disconnect();
   }, [phone]);
@@ -69,7 +70,7 @@ export function WorkGallery() {
     const items = [...row.children];
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) if (e.isIntersecting) setActive(items.indexOf(e.target));
+        for (const e of entries) if (e.isIntersecting && e.intersectionRatio >= 0.6) setActive(items.indexOf(e.target));
       },
       { root: row, threshold: 0.6 },
     );
@@ -119,7 +120,6 @@ export function WorkGallery() {
 
   return (
     <section
-      ref={sectionRef}
       id="work"
       aria-labelledby="work-title"
       data-theme="dark"

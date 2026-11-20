@@ -531,6 +531,10 @@ const CHECKS = {
     const dots = page.locator("#work [data-work-dot]");
     if ((await dots.count()) !== 6) throw new Error(`expected 6 dots, found ${await dots.count()}`);
     if ((await dots.nth(0).getAttribute("aria-current")) !== "true") throw new Error("first dot is not aria-current on load");
+    const lit = await page.locator('#work [data-work-dot][aria-current="true"]').count();
+    if (lit !== 1) throw new Error(`${lit} dots are aria-current on load, expected 1`);
+    const early = await page.evaluate(() => performance.getEntriesByType("resource").filter((r) => r.name.includes("-mobile-")).map((r) => r.name));
+    if (early.length) throw new Error(`phone shots requested before any preview opened: ${early.join(", ")}`);
     if ((await dots.nth(0).getAttribute("aria-label")) !== "Show Ironside Barber Co.") throw new Error(`dot label is ${await dots.nth(0).getAttribute("aria-label")}`);
     const dotBox = await dots.nth(0).boundingBox();
     if (dotBox.width < 24 || dotBox.height < 24) throw new Error(`dot hit area ${dotBox.width}×${dotBox.height} < 24×24`);
@@ -564,22 +568,33 @@ const CHECKS = {
     // Tap the centred card: full-screen preview with the CTA on screen.
     const second = cards.nth(1);
     const cb = await second.locator("[data-work-viewport]").boundingBox();
+    const yBeforeOpen = await page.evaluate(() => window.scrollY);
     await page.touchscreen.tap(cb.x + cb.width / 2, cb.y + cb.height / 2);
     const dialog = page.getByRole("dialog", { name: "Maison Lumière", exact: true });
     await dialog.waitFor({ state: "visible", timeout: 5000 });
     await page.waitForTimeout(700);
     const full = await dialog.evaluate((el) => {
       const r = el.getBoundingClientRect();
-      return { x: r.x, y: r.y, w: r.width, h: r.height, vw: window.innerWidth, vh: window.innerHeight, lock: getComputedStyle(document.body).overflow };
+      return { x: r.x, y: r.y, w: r.width, h: r.height, vw: window.innerWidth, vh: window.innerHeight, lock: getComputedStyle(document.body).overflow, pin: getComputedStyle(document.body).position };
     });
     if (Math.abs(full.x) > 1 || Math.abs(full.y) > 1 || Math.abs(full.w - full.vw) > 1 || Math.abs(full.h - full.vh) > 1)
       throw new Error(`preview is not full-screen: ${JSON.stringify(full)}`);
     if (full.lock !== "hidden") throw new Error(`body scroll not locked (overflow ${full.lock})`);
+    if (full.pin !== "fixed") throw new Error(`body not pinned for iOS (position ${full.pin})`);
+    const shotInfo = await dialog.locator('[role="region"] img').evaluate(async (img) => {
+      await img.decode().catch(() => null);
+      return { src: img.currentSrc || img.src, nw: img.naturalWidth, w: img.getBoundingClientRect().width, vw: window.innerWidth };
+    });
+    if (!/shot-en-mobile-v1\.jpg$/.test(shotInfo.src)) throw new Error(`phone preview shows ${shotInfo.src}, expected the mobile shot`);
+    if (shotInfo.nw !== 780 || Math.abs(shotInfo.w - shotInfo.vw) > 1) throw new Error(`phone shot ${shotInfo.nw}px natural, ${shotInfo.w}px shown (viewport ${shotInfo.vw})`);
     const visit = dialog.getByRole("link", { name: "Visit the full demo" });
     const vb = await visit.boundingBox();
     if (!vb || vb.y < 0 || vb.y + vb.height > full.vh) throw new Error(`"Visit the full demo" is not on screen: ${JSON.stringify(vb)}`);
     await dialog.getByRole("button", { name: "Close preview" }).click();
     await dialog.waitFor({ state: "hidden", timeout: 5000 });
+    const yAfterClose = await page.evaluate(() => window.scrollY);
+    if (Math.abs(yAfterClose - yBeforeOpen) > 1) throw new Error(`page scroll not restored after close (${yBeforeOpen} -> ${yAfterClose})`);
+    if (await page.evaluate(() => getComputedStyle(document.body).position) !== "static") throw new Error("body still pinned after close");
 
     // Dots scroll their card to the centre.
     await dots.nth(3).click();

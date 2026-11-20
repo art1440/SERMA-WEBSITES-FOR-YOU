@@ -316,13 +316,15 @@ export function WorkCard({ demo, onOpen, live, morph = true, shotMorph = false, 
     if (liveRef.current === "hover" && !settling.current) descend();
   };
 
+  // Touch / pen only: a mouse click keeps the desktop behaviour (opens wherever the button was released).
   const trackPress = (e: PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === "mouse") return;
     const p = press.current;
     if (p && !dragged.current && Math.hypot(e.clientX - p.x, e.clientY - p.y) >= TAP_SLOP) dragged.current = true;
   };
 
   const onPointerDown = (e: PointerEvent<HTMLButtonElement>) => {
-    press.current = { x: e.clientX, y: e.clientY };
+    press.current = e.pointerType === "mouse" ? null : { x: e.clientX, y: e.clientY };
     dragged.current = false;
   };
 

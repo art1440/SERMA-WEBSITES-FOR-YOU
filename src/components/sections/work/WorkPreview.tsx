@@ -71,12 +71,43 @@ function PreviewDialog({
   const titleId = `work-preview-title-${demo.id}`;
   const href = locale === "es" ? `${demo.href}?lang=es` : demo.href;
 
+  /**
+   * Phones (full screen): iOS keeps touch-scrolling the page under `body { overflow: hidden }`, so once the
+   * window has landed the body is pinned (position fixed at -scrollY). Pinning moves the page's scroll offset
+   * to 0, which the shared-layout morph would read as the card having jumped, so it is applied only after the
+   * grow has landed and undone (scroll restored synchronously) before the shrink is measured.
+   */
+  const pinnedAt = useRef<number | null>(null);
+  const pinnedStyle = useRef<Partial<CSSStyleDeclaration>>({});
+  const pin = useCallback(() => {
+    if (!full || pinnedAt.current !== null) return;
+    const y = window.scrollY;
+    const b = document.body.style;
+    pinnedStyle.current = { position: b.position, top: b.top, left: b.left, right: b.right, width: b.width };
+    Object.assign(b, { position: "fixed", top: `-${y}px`, left: "0", right: "0", width: "100%" });
+    pinnedAt.current = y;
+  }, [full]);
+  const unpin = useCallback(() => {
+    const y = pinnedAt.current;
+    if (y === null) return;
+    pinnedAt.current = null;
+    Object.assign(document.body.style, pinnedStyle.current);
+    // Instant, even though the site scrolls smoothly: the page must not visibly travel back.
+    const html = document.documentElement.style;
+    const behavior = html.scrollBehavior;
+    html.scrollBehavior = "auto";
+    window.scrollTo(0, y);
+    html.scrollBehavior = behavior;
+  }, []);
+
   /** Hands the card the scroll position the visitor closed at (0..1), so the shrink lands on the same picture. */
   const close = useCallback(() => {
+    unpin();
     const scroller = scrollerRef.current;
     const img = imgRef.current;
-    onClose(scroller && img && img.offsetHeight > 0 ? scroller.scrollTop / img.offsetHeight : 0);
-  }, [onClose]);
+    // Phones show a different capture (the phone layout), so there is no matching position to hand back.
+    onClose(!full && scroller && img && img.offsetHeight > 0 ? scroller.scrollTop / img.offsetHeight : 0);
+  }, [onClose, full, unpin]);
 
   useFocusTrap(ref, present, close);
 
@@ -85,15 +116,17 @@ function PreviewDialog({
     if (!present) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // No morph (reduced motion / Pause) on a phone: nothing to wait for before pinning.
+    if (full && !morph) pin();
     return () => {
+      unpin();
       document.body.style.overflow = previous;
     };
-  }, [present]);
+  }, [present, full, morph, pin, unpin]);
 
   // Still (reduced motion / Pause): the whole window fades. Otherwise the page view grows (shared layout)
   // and the title bar, a supporting element, fades in as it lands and leaves first on close.
   const still = !morph;
-  const radius = full ? 0 : 18;
   return (
     <div
       className={`fixed inset-0 z-[90] grid ${full ? "" : "place-items-center p-4"}`}
@@ -158,38 +191,88 @@ function PreviewDialog({
             </button>
           </span>
         </motion.div>
-        {/* The shared element: grows out of the card's 16:10 page view. Scrolls the full shot (wheel / keys). */}
-        <motion.div
-          ref={scrollerRef}
-          role="region"
-          aria-label={fill(g.shotLabel, { business: demo.business })}
-          tabIndex={0}
-          data-autofocus
-          layoutId={morph ? `work-frame-${demo.id}` : undefined}
-          // Phones pair the picture inside too: its measurements must account for how far it was scrolled.
-          layoutScroll={full}
-          // Phones: no crossfade between the card's window and this one (it would fade the picture inside with it).
-          layoutCrossfade={!full}
-          transition={{ layout: SPRING_MORPH }}
-          className={`relative w-full overflow-y-auto overscroll-contain bg-ink-800 ${full ? "min-h-0 flex-1" : "aspect-[16/10]"} shadow-[0_0_0_1px_rgb(var(--bone)/0.12),0_40px_120px_-30px_rgba(0,0,0,0.7)] focus-visible:outline-offset-[-3px]`}
-          style={{ borderBottomLeftRadius: radius, borderBottomRightRadius: radius }}
-        >
-          {/* The card's small shot (already cached) paints underneath until the full one arrives. */}
-          <motion.img
-            ref={imgRef}
-            layoutId={morph && full ? `work-shot-${demo.id}` : undefined}
+        {full ? (
+          // Phones: the window (`work-frame-<id>`) grows to fill the screen, carrying the card's desktop picture
+          // (`work-shot-<id>`, same aspect ratio, so it never stretches); the phone-sized capture of the page
+          // fades in over it (and out first on close). The scroller is scale-corrected (`layout`), so it is never
+          // squashed while the window is still growing; the window clips it.
+          <motion.div
+            layoutId={morph ? `work-frame-${demo.id}` : undefined}
             layoutCrossfade={false}
             transition={{ layout: SPRING_MORPH }}
-            src={shot.full}
-            width={shot.width}
-            height={shot.height}
-            alt=""
-            decoding="async"
-            draggable={false}
-            className="block h-auto w-full select-none bg-[length:100%_auto] bg-top bg-no-repeat"
-            style={{ backgroundImage: `url(${shot.small})` }}
-          />
-        </motion.div>
+            onLayoutAnimationComplete={() => {
+              if (present) pin();
+            }}
+            className="relative min-h-0 w-full flex-1 overflow-hidden bg-ink-800"
+            style={{ borderRadius: 0 }}
+          >
+            {morph ? (
+              <motion.img
+                aria-hidden="true"
+                layoutId={`work-shot-${demo.id}`}
+                layoutCrossfade={false}
+                transition={{ layout: SPRING_MORPH }}
+                src={shot.small}
+                width={shot.width}
+                height={shot.height}
+                alt=""
+                decoding="async"
+                draggable={false}
+                className="pointer-events-none absolute left-0 top-0 block h-auto w-full select-none"
+              />
+            ) : null}
+            <motion.div
+              ref={scrollerRef}
+              role="region"
+              aria-label={fill(g.shotLabel, { business: demo.business })}
+              tabIndex={0}
+              data-autofocus
+              layout={morph}
+              className="absolute inset-0 overflow-y-auto overscroll-contain focus-visible:outline-offset-[-3px]"
+              initial={still ? false : { opacity: 0 }}
+              animate={still ? undefined : { opacity: 1, transition: { ...FADE_IN, delay: 0.1 } }}
+              exit={still ? undefined : { opacity: 0, transition: { duration: 0.12, ease: "easeOut" } }}
+            >
+              {/* Only requested now the preview is open: twelve tall phone captures are never preloaded. */}
+              <img
+                ref={imgRef}
+                src={shot.mobile.src}
+                width={shot.mobile.width}
+                height={shot.mobile.height}
+                alt=""
+                decoding="async"
+                draggable={false}
+                className="block h-auto w-full select-none bg-ink-800"
+              />
+            </motion.div>
+          </motion.div>
+        ) : (
+          // The shared element: grows out of the card's 16:10 page view. Scrolls the full shot (wheel / keys).
+          <motion.div
+            ref={scrollerRef}
+            role="region"
+            aria-label={fill(g.shotLabel, { business: demo.business })}
+            tabIndex={0}
+            data-autofocus
+            layoutId={morph ? `work-frame-${demo.id}` : undefined}
+            transition={{ layout: SPRING_MORPH }}
+            className="relative aspect-[16/10] w-full overflow-y-auto overscroll-contain bg-ink-800 shadow-[0_0_0_1px_rgb(var(--bone)/0.12),0_40px_120px_-30px_rgba(0,0,0,0.7)] focus-visible:outline-offset-[-3px]"
+            style={{ borderBottomLeftRadius: 18, borderBottomRightRadius: 18 }}
+          >
+            {/* The card's small shot (already cached) paints underneath until the full one arrives. */}
+            <img
+              ref={imgRef}
+              src={shot.full}
+              width={shot.width}
+              height={shot.height}
+              alt=""
+              decoding="async"
+              draggable={false}
+              className="block h-auto w-full select-none bg-[length:100%_auto] bg-top bg-no-repeat"
+              style={{ backgroundImage: `url(${shot.small})` }}
+            />
+          </motion.div>
+        )}
         {full ? (
           <motion.div
             className="shrink-0 border-t border-bone/10 bg-ink-800 p-3"
