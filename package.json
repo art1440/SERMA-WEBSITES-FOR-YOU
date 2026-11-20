@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "verify:work": "node scripts/verify-work.mjs"
+    "verify:work": "node scripts/verify-work.mjs",
+    "capture:work": "node scripts/capture-work.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "9.8.2",
