@@ -70,11 +70,75 @@ function assertNoErrors(errors) {
   if (errors.length) throw new Error(`page errors: ${errors.join(" | ")}`);
 }
 
+/**
+ * Shared per-demo check: at 1280 and 390, in light and dark OS schemes:
+ * 200 status, one h1, >= 2 [data-book], the signature marker, every image
+ * decoded after a full scroll, axe clean. Then with reduced motion at 1280,
+ * no scrolling: the signature is at rest and every text node in main is opaque.
+ */
+async function demoCheck(browser, base, id) {
+  const url = `${base}/work/${id}/`;
+  for (const colorScheme of ["light", "dark"]) {
+    for (const width of [1280, 390]) {
+      const where = `${width}px ${colorScheme}`;
+      const { page, errors } = await openPage(browser, url, { width, height: width > 600 ? 800 : 844, colorScheme });
+      const status = (await page.request.get(url)).status();
+      if (status !== 200) throw new Error(`${where}: ${url} returned ${status}`);
+      const h1 = await page.locator("h1").count();
+      if (h1 !== 1) throw new Error(`${where}: expected exactly one h1, found ${h1}`);
+      const books = await page.locator("[data-book]").count();
+      if (books < 2) throw new Error(`${where}: expected >= 2 [data-book], found ${books}`);
+      if (!(await page.locator(`[data-signature="${id}"]`).count())) throw new Error(`${where}: no [data-signature="${id}"]`);
+      const total = await page.evaluate(() => document.documentElement.scrollHeight);
+      for (let y = 0; y <= total; y += 400) {
+        await page.evaluate((v) => window.scrollTo(0, v), y);
+        await page.waitForTimeout(150);
+      }
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await page.waitForTimeout(600);
+      const broken = await page.evaluate(async () => {
+        const imgs = [...document.querySelectorAll("img")];
+        await Promise.all(imgs.map((i) => (i.complete ? null : i.decode().catch(() => null))));
+        return imgs.filter((i) => !(i.naturalWidth > 0)).map((i) => i.currentSrc || i.src);
+      });
+      if (broken.length) throw new Error(`${where}: images not loaded: ${broken.join(", ")}`);
+      try {
+        await runAxe(page);
+      } catch (e) {
+        throw new Error(`${where}: ${e.message}`);
+      }
+      assertNoErrors(errors);
+    }
+  }
+  const { page, errors } = await openPage(browser, url, { width: 1280, height: 800, reducedMotion: true });
+  await page.waitForTimeout(400);
+  const state = await page.locator("[data-signature]").first().getAttribute("data-state");
+  if (state !== "rest") throw new Error(`reduced motion: [data-signature] data-state is ${JSON.stringify(state)}, expected "rest"`);
+  const faded = await page.evaluate(() => {
+    const out = [];
+    for (const el of document.querySelectorAll("main *:not(:empty)")) {
+      const hasText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+      if (!hasText) continue;
+      let node = el;
+      let opacity = 1;
+      while (node && node !== document.documentElement) {
+        opacity *= parseFloat(getComputedStyle(node).opacity);
+        node = node.parentElement;
+      }
+      if (opacity < 1) out.push(`${el.tagName.toLowerCase()} "${el.textContent.trim().slice(0, 30)}" (${opacity.toFixed(2)})`);
+    }
+    return out;
+  });
+  if (faded.length) throw new Error(`reduced motion: text not fully opaque: ${faded.slice(0, 5).join("; ")}`);
+  assertNoErrors(errors);
+}
+
 const CHECKS = {
   "home-smoke": async ({ browser, base }) => {
     const { page } = await openPage(browser, `${base}/`);
     await runAxe(page);
   },
+  "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
   // ---- DemoShell checks (need a demo route; they 404 until Task 5) ----
   "shell-lang": async ({ browser, base }) => {
     const { page, errors } = await openPage(browser, `${base}/work/barbershop/?lang=es`);
