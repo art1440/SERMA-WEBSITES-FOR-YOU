@@ -201,6 +201,26 @@ async function beautyWindowsOpen(page) {
   }
 }
 
+/**
+ * Ember & Oak: with reduced motion every menu row ([data-plate]) is plated
+ * without scrolling to it: opacity 1 and no transform, on the row itself.
+ */
+async function restaurantMenuPlated(page) {
+  const rows = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-signature="restaurant"] [data-plate]')].map((el) => {
+      const cs = getComputedStyle(el);
+      return { text: el.textContent.trim().slice(0, 30), opacity: cs.opacity, transform: cs.transform };
+    }),
+  );
+  if (rows.length < 6) throw new Error(`reduced motion: expected >= 6 [data-plate] menu rows, found ${rows.length}`);
+  for (const r of rows) {
+    if (r.opacity !== "1") throw new Error(`reduced motion: menu row "${r.text}" has opacity ${r.opacity}`);
+    if (r.transform !== "none" && r.transform !== "matrix(1, 0, 0, 1, 0, 0)") {
+      throw new Error(`reduced motion: menu row "${r.text}" is transformed (${r.transform})`);
+    }
+  }
+}
+
 const CHECKS = {
   "home-smoke": async ({ browser, base }) => {
     const { page } = await openPage(browser, `${base}/`);
@@ -208,6 +228,7 @@ const CHECKS = {
   },
   "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
   "demo:beauty": ({ browser, base }) => demoCheck(browser, base, "beauty", { restCheck: beautyWindowsOpen }),
+  "demo:restaurant": ({ browser, base }) => demoCheck(browser, base, "restaurant", { restCheck: restaurantMenuPlated }),
   "demo:salon": async ({ browser, base }) => {
     await demoCheck(browser, base, "salon", { restCheck: salonAccentStaysPlum });
     await salonAccentSurvivesLanguageSwitch(browser, base);
