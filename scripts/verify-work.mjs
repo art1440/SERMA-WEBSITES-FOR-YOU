@@ -284,6 +284,73 @@ async function contractorHeroSettlesLive(browser, base) {
   assertNoErrors(errors);
 }
 
+/**
+ * Brightline: the before/after slider ([role="slider"] inside the signature).
+ * Mouse drag from 50% to 80% lands at 78-82; the wheel over the slider still
+ * scrolls the page (touch-action: pan-y, no wheel handler); keyboard: ArrowRight
+ * +5, Home 0, End 100. Run with motion on, after the one-time hint sweep.
+ */
+async function serviceSliderWorks(browser, base) {
+  const { page, errors } = await openPage(browser, `${base}/work/service/`, { width: 1280, height: 800 });
+  const sig = page.locator('[data-signature="service"]');
+  await sig.scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    const el = document.querySelector('[data-signature="service"]');
+    window.scrollBy(0, el.getBoundingClientRect().top - 120);
+  });
+  try {
+    await page.waitForFunction(() => document.querySelector('[data-signature="service"]').dataset.state === "rest", null, { timeout: 4000 });
+  } catch {
+    throw new Error("motion: slider never reached data-state=rest after its hint sweep");
+  }
+  const slider = page.locator('[data-signature="service"] [role="slider"]');
+  const now = async () => Number(await slider.getAttribute("aria-valuenow"));
+  for (const attr of ["aria-valuemin", "aria-valuemax", "aria-valuetext"]) {
+    if ((await slider.getAttribute(attr)) == null) throw new Error(`slider: missing ${attr}`);
+  }
+  if ((await now()) !== 50) throw new Error(`slider: expected to start at 50, got ${await now()}`);
+  const frame = await page.evaluate(() => {
+    const r = document.querySelector('[data-signature="service"] [data-frame]').getBoundingClientRect();
+    return { x: r.left, y: r.top, w: r.width, h: r.height };
+  });
+  const y = frame.y + frame.h / 2;
+  await page.mouse.move(frame.x + frame.w * 0.5, y);
+  await page.mouse.down();
+  for (let i = 1; i <= 10; i++) await page.mouse.move(frame.x + frame.w * (0.5 + 0.03 * i), y);
+  await page.mouse.up();
+  const dragged = await now();
+  if (dragged < 78 || dragged > 82) throw new Error(`slider: drag 50% -> 80% gave aria-valuenow ${dragged}`);
+  const before = await page.evaluate(() => window.scrollY);
+  await page.mouse.move(frame.x + frame.w * 0.3, y);
+  await page.mouse.wheel(0, 400);
+  await page.waitForTimeout(500);
+  const after = await page.evaluate(() => window.scrollY);
+  if (after - before < 200) throw new Error(`slider: wheel over the slider scrolled ${after - before}px, expected ~400`);
+  await slider.focus();
+  await page.keyboard.press("Home");
+  if ((await now()) !== 0) throw new Error(`slider: Home gave ${await now()}`);
+  await page.keyboard.press("ArrowRight");
+  if ((await now()) !== 5) throw new Error(`slider: ArrowRight from 0 gave ${await now()}`);
+  await page.keyboard.press("End");
+  if ((await now()) !== 100) throw new Error(`slider: End gave ${await now()}`);
+  await page.keyboard.press("ArrowLeft");
+  if ((await now()) !== 95) throw new Error(`slider: ArrowLeft from 100 gave ${await now()}`);
+  const clip = await page.evaluate(() => getComputedStyle(document.querySelector('[data-signature="service"] [data-after]')).clipPath);
+  if (!/inset\(0(px|%)? 5%/.test(clip)) throw new Error(`slider: after-image clip is ${clip} at 95`);
+  assertNoErrors(errors);
+}
+
+/** Brightline, reduced motion: the slider rests at 50 with the after image half revealed. */
+async function serviceSliderAtRest(page) {
+  const r = await page.evaluate(() => {
+    const s = document.querySelector('[data-signature="service"] [role="slider"]');
+    const a = document.querySelector('[data-signature="service"] [data-after]');
+    return { now: s?.getAttribute("aria-valuenow"), clip: a ? getComputedStyle(a).clipPath : null };
+  });
+  if (r.now !== "50") throw new Error(`reduced motion: slider aria-valuenow ${r.now}, expected 50`);
+  if (!/inset\(0(px|%)? 50%/.test(r.clip ?? "")) throw new Error(`reduced motion: after-image clip is ${r.clip}`);
+}
+
 const CHECKS = {
   "home-smoke": async ({ browser, base }) => {
     const { page } = await openPage(browser, `${base}/`);
@@ -298,6 +365,10 @@ const CHECKS = {
   "demo:contractor": async ({ browser, base }) => {
     await demoCheck(browser, base, "contractor", { restCheck: contractorPhotoShown });
     await contractorHeroSettlesLive(browser, base);
+  },
+  "demo:service": async ({ browser, base }) => {
+    await demoCheck(browser, base, "service", { restCheck: serviceSliderAtRest });
+    await serviceSliderWorks(browser, base);
   },
   "demo:salon": async ({ browser, base }) => {
     await demoCheck(browser, base, "salon", { restCheck: salonAccentStaysPlum });
