@@ -42,7 +42,7 @@ Success: a barber, salon owner, restaurant owner, beauty studio owner, contracto
 
 **Demo depth** — (1) one polished homepage per niche, (2) a 4-page site per niche, (3) one shared template with per-niche skins. **Picked 1**: effort goes where prospects actually look; 2 is ~3× the work for pages few people open; 3 undermines the custom-design pitch.
 
-**Images** — (1) generated with Higgsfield, (2) free stock, self-hosted, (3) typographic/illustrated only. **Picked 1**, reusing the existing niche video loops as heroes where they fit.
+**Images** — (1) generated with Higgsfield, (2) free stock, self-hosted, (3) typographic/illustrated only. **Picked 1**, 18–25 images, used selectively (several heroes are type-led), each approved by the owner.
 
 **Where the showcase lives** — (1) merge into the industries carousel, (2) a separate "Our work" section. **Owner picked 2.**
 
@@ -57,14 +57,14 @@ One record per niche, keyed by `NicheId` so demos and the dashboard stay linked:
 - `id: NicheId`, `slug` (same as id), `business` (fictional name), `pitchDomain` (shown in the browser frame, e.g. `ironsidebarber.com`), `tag: L10n`
 - theme: palette tokens, display + body font, layout variant
 - copy (all `L10n`): hero headline/sub, services/menu items with prices, gallery captions, 2–3 reviews, hours, address (fictional), CTA labels
-- media: hero (existing `niches[].media` video or a new still), 4–5 generated images, gallery screenshot paths
+- media: approved generated images (0–1 hero, plus section images per the table in §3), gallery screenshot paths
 - `signature`: which signature-motion component the page uses
 
 Working cast (names/copy can be refined during build):
 
 | Niche | Business | Look | Signature motion |
 |---|---|---|---|
-| barbershop | Ironside Barber Co. | black, brass, heavy grotesk | Hero headline is cut by a straight-razor line on scroll; the two halves slide apart to reveal the video |
+| barbershop | Ironside Barber Co. | black, brass, heavy grotesk | Hero headline is cut by a straight-razor line on scroll; the two halves slide apart to reveal the services below |
 | salon | Maison Lumière | blush/plum, high-contrast serif | Colour-swatch ribbon: scrolling sweeps a ribbon of hair-colour swatches across the hero, each one recolouring the accent |
 | beauty | Velvet Room | deep sage, soft serif, lots of air | Treatments revealed through rounded mask "windows" that open as they enter (clip-path, no blur) |
 | restaurant | Ember & Oak | ember red/ochre, editorial serif | Menu "plates in": dishes and prices set onto the page like courses, staggered, with a slight drop and settle |
@@ -86,9 +86,24 @@ Each page section order is the demo's own (not one shared order), but every page
 
 ### 3. Images
 
-- **Quality over budget (owner's call: "I want the demo websites to look really good and appealing").** Generate the full set: about 25–30 stills with Higgsfield (4–5 per niche), plus re-rolls for any weak image. Budget is about 8–10 credits at ~0.25 each, so the balance (5 credits at the time of writing) needs a top-up before generation. Builder generates and curates; a contact sheet per niche is shown to the owner without blocking the build. Stills are art-directed per demo palette, no text in images, no recognisable real brands or people.
+**Owner's rules:** no existing niche videos or pictures in the demo heroes; use pictures only where they earn their place (like lvlgruppen, some demos are type-led with no hero photo); **18–25 well-made images in total**; **the owner approves every image before it is built into a demo.**
+
+Where pictures go (and where they don't):
+
+| Demo | Hero | Pictures | Count |
+|---|---|---|---|
+| Ironside Barber Co. | **Type-led.** Huge headline, razor-cut motion, no photo | Gallery: fade close-up, beard work, shop interior; one barber portrait for "the crew" | 4 |
+| Maison Lumière | **Photo-led.** Editorial colour-work portrait (hair is the product) | Gallery: 2 colour results; salon interior | 4 |
+| Velvet Room | **Type + soft shape.** No photo; calm typography on sage | The mask windows: 3 treatment close-ups (lashes, brows, skin) | 3 |
+| Ember & Oak | **Photo-led.** Wood-fire dish, dark and warm (food sells on photos) | Menu highlights: 3 dishes; dining room | 5 |
+| Keystone Build | **Linework-led.** Blueprint drawing, then one finished-build photo wipes in | Projects: 3 completed jobs (kitchen, addition, deck) | 4 |
+| Brightline Home | **Type-led.** Big promise + ETA strip, no photo | Before/after pair for the slider; one technician at work | 3 |
+| **Total** | | | **23** |
+
+- Generate with Higgsfield (~0.25 credits each); 23 images plus re-rolls is about 7–9 credits, so the balance (5 at the time of writing) needs a top-up before the full set.
+- **Approval gate:** images are generated per niche and shown to the owner as a contact sheet. Only approved images go into the demos. Rejected ones are re-generated from the owner's notes. Demo layouts may be built in parallel with neutral placeholders, which are swapped for approved images only.
+- Art direction per demo palette, no text in images, no recognisable real brands or people.
 - Store under `public/media/work/<niche>/<name>-v1.webp` (+ sensible widths), alt text in `L10n`.
-- Reuse existing `public/media/<niche>-v3.*` loops as hero video where the look fits; heroes must have a poster and stay paused under reduced motion / Pause.
 - Add provenance to the README "Media provenance" section.
 
 ### 4. Gallery screenshots
