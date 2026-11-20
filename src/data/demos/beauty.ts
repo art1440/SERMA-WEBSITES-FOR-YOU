@@ -19,14 +19,17 @@ export type BeautyTreatment = {
 
 export type BeautyStep = { when: L10n; title: L10n; body: L10n };
 
-export type BeautyContent = DemoContent & {
+/** A review with the treatment it was written about. */
+export type BeautyReview = DemoContent["reviews"][number] & { treatment: L10n };
+
+export type BeautyContent = Omit<DemoContent, "reviews"> & {
+  reviews: BeautyReview[];
   nav: { treatments: L10n; visit: L10n; reviews: L10n; hours: L10n; book: L10n; home: L10n; primary: L10n };
-  hero: { kicker: L10n; headline: L10n; intro: L10n; cta: L10n; link: L10n; note: L10n };
+  hero: { kicker: L10n; headline: [L10n, L10n, L10n]; intro: L10n; cta: L10n; link: L10n; note: L10n };
   treatments: { kicker: L10n; title: L10n; intro: L10n; label: L10n; minutes: L10n; aftercareLabel: L10n; items: BeautyTreatment[] };
   steps: { kicker: L10n; title: L10n; intro: L10n; items: BeautyStep[] };
   reviewsTitle: L10n;
   reviewsKicker: L10n;
-  reviewTreatments: L10n[];
   visit: {
     kicker: L10n;
     title: L10n;
@@ -63,14 +66,19 @@ export const beauty: BeautyContent = {
   },
   hero: {
     kicker: { en: "Lash, brow & skin studio", es: "Estudio de pestañas, cejas y piel" },
-    headline: { en: "Lashes, brows, skin.", es: "Pestañas, cejas, piel." },
+    // One line each; the h1 reads as "Lashes, brows, skin."
+    headline: [
+      { en: "Lashes,", es: "Pestañas," },
+      { en: "brows,", es: "cejas," },
+      { en: "skin.", es: "piel." },
+    ],
     intro: {
       en: "Three treatment beds, low light and appointments with fifteen spare minutes built in, so nobody is ever rushed off the table. Most clients fall asleep.",
       es: "Tres camillas, luz tenue y citas con quince minutos de margen, para que nadie tenga que levantarse con prisa. La mayoría de nuestras clientas se queda dormida.",
     },
     cta: { en: "Book a treatment", es: "Reserve un tratamiento" },
     link: { en: "See treatments", es: "Ver tratamientos" },
-    note: { en: "9 Willow Court · Tuesday to Saturday", es: "9 Willow Court · de martes a sábado" },
+    note: { en: "Three beds · Tuesday to Saturday · 9\u00a0Willow\u00a0Court", es: "Tres camillas · de martes a sábado · 9\u00a0Willow\u00a0Court" },
   },
   treatments: {
     kicker: { en: "Treatments", es: "Tratamientos" },
@@ -81,7 +89,7 @@ export const beauty: BeautyContent = {
     },
     label: { en: "Treatments, with duration and price", es: "Tratamientos, con duración y precio" },
     minutes: { en: "min", es: "min" },
-    aftercareLabel: { en: "Aftercare", es: "Después" },
+    aftercareLabel: { en: "Aftercare", es: "Cuidados" },
     items: [
       {
         name: { en: "Lash extensions", es: "Extensiones de pestañas" },
@@ -197,6 +205,7 @@ export const beauty: BeautyContent = {
         es: "Me quedé dormida durante las extensiones y me desperté como si hubiera descansado ocho horas. Tres semanas después siguen impecables.",
       },
       name: "Maya R.",
+      treatment: { en: "Lash extensions", es: "Extensiones de pestañas" },
     },
     {
       quote: {
@@ -204,6 +213,7 @@ export const beauty: BeautyContent = {
         es: "Primero me hicieron la prueba y me convencieron de no teñir demasiado oscuro. Por fin mis cejas parecen mías.",
       },
       name: "Daniela C.",
+      treatment: { en: "Brow lamination", es: "Laminado de cejas" },
     },
     {
       quote: {
@@ -211,12 +221,8 @@ export const beauty: BeautyContent = {
         es: "Una hora de verdadera calma. Mi piel estuvo más tranquila toda la semana y nadie intentó venderme una estantería de productos.",
       },
       name: "Jordan T.",
+      treatment: { en: "Signature facial", es: "Facial de la casa" },
     },
-  ],
-  reviewTreatments: [
-    { en: "Lash extensions", es: "Extensiones de pestañas" },
-    { en: "Brow lamination", es: "Laminado de cejas" },
-    { en: "Signature facial", es: "Facial de la casa" },
   ],
   visit: {
     kicker: { en: "Book", es: "Reservas" },

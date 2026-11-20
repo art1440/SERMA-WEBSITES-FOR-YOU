@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useMemo, type CSSProperties, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { beauty as c } from "@/data/demos/beauty";
 import type { L10n } from "@/i18n/types";
@@ -32,6 +32,8 @@ const SOFT = "demo-display [font-variation-settings:'SOFT'_100]";
 const FOCUS = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9CC5A6]";
 const KICKER = "text-[0.75rem] font-medium uppercase tracking-[0.22em]";
 const PILL = `inline-flex items-center justify-center rounded-full font-semibold transition-colors duration-300 ${FOCUS}`;
+/** Desktop offsets for the three quotes: left, right, then in between. */
+const REVIEW_OFFSETS = ["md:mr-[22%] lg:mr-[38%]", "md:ml-[22%] lg:ml-[38%]", "md:mx-[8%] lg:ml-[14%] lg:mr-[30%]"];
 const PILL_SOLID = `${PILL} bg-[#9CC5A6] text-[#1E2A24] hover:bg-[#E8EFE9]`;
 
 /** Slow fade-and-rise. `onLoad` plays on mount (hero), otherwise on first view. Plain markup when still. */
@@ -67,14 +69,63 @@ function Drift({
   );
 }
 
-/** A soft, static sage glow (radial gradient, never animated, no filter). */
-function Glow({ className, style }: { className: string; style?: CSSProperties }) {
+/**
+ * The closed window: a tall, softly lit pill on the right of the hero, the
+ * shape every treatment window starts from before it opens further down the
+ * page. Static gradient and hairline only; never animated, no filter.
+ */
+function ClosedWindow({ className }: { className: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute rounded-full ${className}`}
-      style={{ background: "radial-gradient(circle at center, rgba(156,197,166,0.30) 0%, rgba(156,197,166,0.12) 38%, rgba(156,197,166,0) 70%)", ...style }}
+      className={`pointer-events-none absolute -z-10 rounded-full ${className}`}
+      style={{
+        background:
+          "radial-gradient(130% 55% at 50% 0%, rgba(156,197,166,0.40) 0%, rgba(156,197,166,0.14) 55%, rgba(156,197,166,0.05) 100%)",
+        boxShadow: "inset 0 0 0 1px rgba(156,197,166,0.30)",
+      }}
     />
+  );
+}
+
+/**
+ * The h1, one word per line, each line a step softer: Fraunces at wght 420
+ * and SOFT 0, then 350 / SOFT 50, then 300 / SOFT 100 in sage (optical size
+ * stays automatic, so every line gets the display cut). The lines rise into
+ * place on load; transform only, the h1 is opaque from the first paint (LCP).
+ */
+const HEADLINE_LINES = [
+  { cls: "text-[#E8EFE9]", fvs: "'SOFT' 0, 'wght' 420" },
+  { cls: "text-[#E8EFE9] sm:pl-[0.5em]", fvs: "'SOFT' 50, 'wght' 350" },
+  { cls: "text-[#9CC5A6] sm:pl-[1em]", fvs: "'SOFT' 100, 'wght' 300" },
+];
+
+function HeroHeadline({ lines }: { lines: string[] }) {
+  const still = useDemoStill();
+  return (
+    <h1 className="demo-display mt-6 text-[clamp(4.25rem,10.5vw,10rem)] leading-[0.92] tracking-[-0.03em] sm:mt-8">
+      {lines.map((text, i) => {
+        const { cls, fvs } = HEADLINE_LINES[i];
+        const style = { fontVariationSettings: fvs };
+        // A space between lines keeps the accessible name "Lashes, brows, skin."
+        return still ? (
+          <span key={i} className={`block ${cls}`} style={style}>
+            {text}{" "}
+          </span>
+        ) : (
+          <motion.span
+            key={i}
+            className={`block ${cls}`}
+            style={style}
+            initial={{ y: 28 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 1.3, ease: EASE_EDITORIAL, delay: 0.1 + i * 0.12 }}
+          >
+            {text}{" "}
+          </motion.span>
+        );
+      })}
+    </h1>
   );
 }
 
@@ -150,47 +201,41 @@ export function BeautyDemo() {
         className="relative isolate flex flex-col"
         style={{ minHeight: `calc(100svh - var(--demo-ribbon) - ${NAV_H}px)` }}
       >
-        <Glow className="-left-[18vw] top-[-6%] -z-10 h-[62vw] max-h-[760px] w-[62vw] max-w-[760px] sm:-left-[8vw]" />
-        <Glow className="-right-[22vw] bottom-[-14%] -z-10 h-[56vw] max-h-[680px] w-[56vw] max-w-[680px] opacity-80 sm:-right-[6vw]" />
-        <div className={`${WRAP} flex flex-1 flex-col items-center justify-center pb-12 pt-10 text-center sm:pb-16 sm:pt-16 lg:pt-12`}>
-          <Drift onLoad>
-            <p className={`${KICKER} text-[#B4C4B9]`}>{L(c.hero.kicker)}</p>
-          </Drift>
-          <Drift onLoad delay={0.12}>
-            <h1
-              className={`${SOFT} mt-6 max-w-[11ch] text-[clamp(4rem,10vw,9rem)] font-light leading-[0.98] tracking-[-0.025em] sm:mt-8 lg:max-w-none`}
-            >
-              {L(c.hero.headline)}
-            </h1>
-          </Drift>
-          <Drift onLoad delay={0.3}>
-            <p className="mx-auto mt-7 max-w-[44ch] text-[1.0625rem] leading-relaxed text-[#E8EFE9]/90 sm:mt-9 sm:text-[1.1875rem]">
-              {L(c.hero.intro)}
-            </p>
-          </Drift>
-          <Drift onLoad delay={0.42}>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 sm:mt-10">
-              <BookButton className={`${PILL_SOLID} h-14 px-8 text-[1rem]`}>{L(c.hero.cta)}</BookButton>
-              <a
-                href="#treatments"
-                className={`rounded-full text-[1rem] font-medium underline decoration-[#9CC5A6] decoration-2 underline-offset-[7px] ${FOCUS}`}
-              >
-                {L(c.hero.link)}
-              </a>
-            </div>
-          </Drift>
-        </div>
-        {/* A quiet index of the three treatments along the bottom of the hero. */}
-        <div className={`${WRAP} w-full pb-8`}>
-          <Drift onLoad delay={0.6}>
-            <ul className="flex flex-wrap justify-center gap-x-3 gap-y-2.5 border-t border-[#E8EFE9]/10 pt-6 text-[0.875rem] text-[#B4C4B9]">
-              {c.treatments.items.map((t) => (
-                <li key={t.name.en} className="rounded-full border border-[#E8EFE9]/15 px-4 py-1.5">
-                  {L(t.name)} <span className="text-[#9CC5A6]">· {t.minutes} {L(c.treatments.minutes)}</span>
-                </li>
-              ))}
-            </ul>
-          </Drift>
+        {/* Phones and tablets: off the top-right edge, clear of the headline. */}
+        <ClosedWindow className="-right-12 top-6 h-[220px] w-[120px] sm:right-[6%] sm:top-12 sm:h-[300px] sm:w-[170px] lg:hidden" />
+        <div
+          className={`${WRAP} grid w-full flex-1 content-center gap-y-8 lg:content-end pb-14 pt-8 sm:pb-20 sm:pt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:items-end lg:gap-x-16 lg:pb-24`}
+        >
+          <div>
+            <Drift onLoad>
+              <p className={`${KICKER} text-[#B4C4B9]`}>{L(c.hero.kicker)}</p>
+            </Drift>
+            <HeroHeadline lines={c.hero.headline.map(L)} />
+          </div>
+          <div className="relative lg:pb-3">
+            {/* Desktop: stands just above the intro, anchored to this column. */}
+            <ClosedWindow className="bottom-[calc(100%+2.5rem)] right-[10%] hidden h-[min(30vh,230px)] w-[150px] lg:block" />
+            <Drift onLoad delay={0.45}>
+              <p className="max-w-[40ch] text-[1.0625rem] leading-relaxed text-[#E8EFE9]/90 sm:text-[1.125rem]">{L(c.hero.intro)}</p>
+            </Drift>
+            <Drift onLoad delay={0.55}>
+              <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4 sm:mt-9">
+                <BookButton className={`${PILL_SOLID} h-14 px-8 text-[1rem]`}>{L(c.hero.cta)}</BookButton>
+                <a
+                  href="#treatments"
+                  className={`rounded-full text-[1rem] font-medium underline decoration-[#9CC5A6] decoration-2 underline-offset-[7px] ${FOCUS}`}
+                >
+                  {L(c.hero.link)}
+                </a>
+              </div>
+            </Drift>
+            <Drift onLoad delay={0.65}>
+              <p className="mt-9 flex items-center gap-3 text-[0.875rem] text-[#B4C4B9] sm:mt-12">
+                <span aria-hidden="true" className="hidden h-px w-8 shrink-0 bg-[#9CC5A6] sm:block" />
+                {L(c.hero.note)}
+              </p>
+            </Drift>
+          </div>
         </div>
       </section>
 
@@ -271,19 +316,20 @@ export function BeautyDemo() {
               {L(c.reviewsTitle)}
             </h2>
           </Drift>
-          <ul className="mt-14 grid gap-5 md:mt-16 lg:grid-cols-3 lg:gap-6">
+          {/* Plain typography, no boxes: three quotes stepping across the page like the windows above. */}
+          <ul className="mt-14 space-y-16 md:mt-20 md:space-y-24">
             {c.reviews.map((r, i) => (
-              <Drift as="li" key={r.name} delay={0.1 + i * 0.15} className={i === 1 ? "lg:mt-16" : ""}>
-                <figure className="flex h-full flex-col rounded-[28px] bg-[#26352D] p-8 sm:p-10">
-                  <span aria-hidden="true" className={`${SOFT} block h-8 text-[4rem] font-light leading-[0.9] text-[#9CC5A6]`}>
-                    “
-                  </span>
-                  <blockquote className="mt-4 flex-1">
-                    <p className={`${SOFT} text-[1.3125rem] font-light leading-[1.4] sm:text-[1.4375rem]`}>{L(r.quote)}</p>
+              <Drift as="li" key={r.name} delay={0.1} className={REVIEW_OFFSETS[i]}>
+                <figure>
+                  <span aria-hidden="true" className="block h-px w-14 bg-[#9CC5A6]" />
+                  <blockquote className="mt-8">
+                    <p className={`${SOFT} text-[clamp(1.625rem,3vw,2.5rem)] font-light leading-[1.22] tracking-[-0.01em] [text-indent:-0.42em]`}>
+                      {`“${L(r.quote)}”`}
+                    </p>
                   </blockquote>
-                  <figcaption className="mt-8 border-t border-[#E8EFE9]/10 pt-5 text-[0.9375rem]">
+                  <figcaption className="mt-6 text-[0.9375rem]">
                     <span className="font-semibold">{r.name}</span>
-                    <span className="text-[#B4C4B9]"> · {L(c.reviewTreatments[i])}</span>
+                    <span className="text-[#B4C4B9]"> · {L(r.treatment)}</span>
                   </figcaption>
                 </figure>
               </Drift>
@@ -295,7 +341,6 @@ export function BeautyDemo() {
       {/* -------------------------------------------------------- hours + book */}
       <section id="book" aria-labelledby="book-title" style={SCROLL_MARGIN} className={`${WRAP} pb-16`}>
         <Drift className="relative isolate overflow-hidden rounded-[40px] bg-[#26352D] sm:rounded-[48px]">
-          <Glow className="-right-40 -top-40 -z-10 h-[520px] w-[520px]" />
           <div className="grid gap-14 px-6 py-14 sm:px-12 sm:py-20 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-20 lg:px-16">
             <div>
               <p className={`${KICKER} text-[#9CC5A6]`}>{L(c.visit.kicker)}</p>
