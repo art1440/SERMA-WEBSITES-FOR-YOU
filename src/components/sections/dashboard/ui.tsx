@@ -7,6 +7,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import type { CalendarEvent } from "@/data/dashboard-views";
 import type { Locale } from "@/i18n/types";
 import { EASE_EDITORIAL } from "@/lib/motion";
+import { navBottom } from "@/lib/tabs";
 
 /* ------------------------------------------------------------------ *
  * Shared building blocks for the dashboard's inner sections.
@@ -166,8 +167,8 @@ export function DoneButton({
   );
 }
 
-/** Sticky site header (64–68px) plus breathing room; matches `html { scroll-padding-top }`. */
-const HEADER_CLEARANCE_PX = 88;
+/** Bottom of the sticky header (or the section rail under it) plus breathing room; matches `html { scroll-padding-top }`. */
+const headerClearance = () => navBottom() + 20;
 
 /**
  * After a `focus({ preventScroll: true })` + pane scroll, make sure the target is
@@ -179,10 +180,11 @@ const HEADER_CLEARANCE_PX = 88;
 export function revealInPage(el: Element | null | undefined, pinned: boolean) {
   if (!el || pinned) return;
   const r = el.getBoundingClientRect();
+  const top = headerClearance();
   const bottomLimit = window.innerHeight - 16;
   let dy = 0;
-  if (r.top < HEADER_CLEARANCE_PX) dy = r.top - HEADER_CLEARANCE_PX;
-  else if (r.bottom > bottomLimit) dy = Math.min(r.bottom - bottomLimit, r.top - HEADER_CLEARANCE_PX);
+  if (r.top < top) dy = r.top - top;
+  else if (r.bottom > bottomLimit) dy = Math.min(r.bottom - bottomLimit, r.top - top);
   if (Math.abs(dy) >= 1) window.scrollBy({ top: dy });
 }
 

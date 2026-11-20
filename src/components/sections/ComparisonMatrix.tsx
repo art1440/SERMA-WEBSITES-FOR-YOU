@@ -201,8 +201,8 @@ export function ComparisonMatrix() {
                   {pr}
                 </span>
               ))}
-              {/* In dark mode the Serma column is a pale card: the light theme's brand blue keeps the price AA (5.1:1). */}
-              <span role="cell" className="flex items-center justify-center border-t border-white/10 px-1.5 text-center text-[0.8125rem] font-bold leading-tight text-aqua-glow dark:text-[rgb(30_99_216)] sm:text-lg">
+              {/* In dark mode the Serma column is a pale card: aqua-on-pale keeps the price AA (5.1:1). */}
+              <span role="cell" className="flex items-center justify-center border-t border-white/10 px-1.5 text-center text-[0.8125rem] font-bold leading-tight text-aqua-glow dark:text-aqua-on-pale sm:text-lg">
                 {fromPrice !== null ? fill(c.usPrice, { price: formatCurrency(fromPrice, intlLocale) }) : null}
               </span>
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { registerTabNavigator, tabFromHash, TAB_IDS, type TabId } from "@/lib/tabs";
+import { navBottom, registerTabNavigator, tabFromHash, TAB_IDS, type TabId } from "@/lib/tabs";
 
 type TabsValue = {
   /** The section currently in view (scroll spy). */
@@ -16,14 +16,6 @@ const TabsContext = createContext<TabsValue | null>(null);
 
 function prefersReduced() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-/** Bottom edge of the sticky navbar (on phones the section rail sits below the capsule). */
-function navBottom() {
-  const rail = document.querySelector<HTMLElement>("[data-nav-rail]");
-  const header = document.querySelector<HTMLElement>("header");
-  const el = rail && rail.offsetParent !== null ? rail : header;
-  return el ? Math.max(0, el.getBoundingClientRect().bottom) : 0;
 }
 
 function sectionEl(id: TabId) {
@@ -142,6 +134,22 @@ export function TabsProvider({ children }: { children: ReactNode }) {
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
   }, [go]);
+
+  // Keyboard focus never hides under the sticky navbar (WCAG 2.4.11). Browsers only scroll a
+  // focused element that is outside the viewport; one already on screen but under the header
+  // (or the section rail below it, under 1280px) is nudged down just enough to clear it.
+  useEffect(() => {
+    const onFocus = (e: FocusEvent) => {
+      const el = e.target as Element | null;
+      if (!el || !(el instanceof HTMLElement) || el.closest("header")) return;
+      if (!el.matches(":focus-visible")) return;
+      const clear = navBottom() + 12;
+      const r = el.getBoundingClientRect();
+      if (r.height && r.top < clear && r.bottom > 0) window.scrollBy({ top: r.top - clear, behavior: "instant" as ScrollBehavior });
+    };
+    document.addEventListener("focusin", onFocus);
+    return () => document.removeEventListener("focusin", onFocus);
+  }, []);
 
   useEffect(() => {
     registerTabNavigator(go);

@@ -188,7 +188,6 @@ const en = {
     cta: "Get your free mockup",
   },
   compare: {
-    index: "(06)",
     eyebrow: "Why Serma",
     title: ["Don’t settle for cheap or good.", "Get both."],
     titleMark: "Get both.",
@@ -220,7 +219,7 @@ const en = {
     ctaNote: "Free · No card needed · Takes 1 minute",
   },
   pricing: {
-    index: "(07)",
+    index: "(06)",
     eyebrow: "Pricing",
     title: "Pick your package. Pay only when you love it.",
     body: "Fixed prices, no hourly billing, no surprise add-ons. And you see your finished site before you pay anything.",
@@ -507,7 +506,6 @@ const es: Dictionary = {
     cta: "Su maqueta gratis",
   },
   compare: {
-    index: "(06)",
     eyebrow: "Por qué Serma",
     title: ["No elija entre barato o bueno.", "Tenga ambos."],
     titleMark: "Tenga ambos.",
@@ -539,7 +537,7 @@ const es: Dictionary = {
     ctaNote: "Gratis · Sin tarjeta · Toma 1 minuto",
   },
   pricing: {
-    index: "(07)",
+    index: "(06)",
     eyebrow: "Precios",
     title: "Elija su paquete. Pague solo si le encanta.",
     body: "Precios fijos, sin cobro por hora y sin extras sorpresa. Y usted ve su sitio terminado antes de pagar nada.",

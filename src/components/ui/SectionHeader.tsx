@@ -32,7 +32,7 @@ export function SectionChip({ index, label, className }: SectionChipProps) {
   const number = index.replace(/[()]/g, "").trim();
   return (
     <p className={`chip-dark glass-flat text-ash${className ? ` ${className}` : ""}`}>
-      <span className="tabular text-bone">{number}</span>
+      <span data-section-index className="tabular text-bone">{number}</span>
       <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-aqua shadow-[0_0_8px_1px_rgba(42,107,191,0.6)]" />
       <span>{label}</span>
     </p>

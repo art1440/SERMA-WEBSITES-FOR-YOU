@@ -44,6 +44,8 @@
   --aqua-deep: 20 78 184;
   --aqua-glow: 79 144 238;
   --aqua-hi: 58 126 232;
+  /* Blue for text on a pale card (e.g. the Serma column in dark mode): 5.1:1 on #F4F7FC. Same in both schemes. */
+  --aqua-on-pale: 30 99 216;
   --sand: 220 235 251;
   --amber: 188 217 245;
   --ember: 230 240 251;
@@ -81,6 +83,7 @@ html.dark {
   --aqua-deep: 66 128 214;
   --aqua-glow: 141 187 245;
   --aqua-hi: 111 172 240;
+  --aqua-on-pale: 30 99 216;
   --sand: 22 37 61;
   --amber: 28 51 85;
   --ember: 19 33 58;
@@ -107,6 +110,15 @@ html.dark {
     scroll-behavior: smooth;
     /* Keep focused controls and anchor targets clear of the sticky header (64–68px), WCAG 2.4.11. */
     scroll-padding-top: 5.5rem;
+  }
+  /* Home page under 1280px: the section rail sits below the capsule (header + rail ≈ 112–120px).
+     Mirrors navBottom() in src/lib/tabs.ts, which the JS reveal helpers use. */
+  @media (max-width: 79.99em) {
+    html:has([data-nav-rail]) {
+      scroll-padding-top: 8rem;
+    }
+  }
+  html {
     /* Reserve the scrollbar lane so locking scroll (modals) never shifts layout. */
     scrollbar-gutter: stable;
     -webkit-text-size-adjust: 100%;

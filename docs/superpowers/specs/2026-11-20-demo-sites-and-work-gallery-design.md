@@ -149,4 +149,4 @@ Where pictures go (and where they don't):
 - **18** demo images were generated and shipped (not 23).
 - The phone gallery preview uses phone-size screenshots (390×844 @2x, `shot-<locale>-mobile-v1.jpg`), not the desktop capture scaled down.
 - The contractor is **Trueframe Builders**.
-- The section index is "(02)"; the later sections shift by one. The nav tab bar sits in the capsule from 1280px and in the rail below it under 1280px (eight tabs do not fit the capsule at 1024).
+- The section index is "(02)"; the later sections shift by one, and the visible numbers run (01)–(06) with no gap: Compare shows no number, so it has no index and Pricing is (06). The nav tab bar sits in the capsule from 1280px and in the rail below it under 1280px (eight tabs do not fit the capsule at 1024).

@@ -34,6 +34,18 @@ export function tabFromHash(hash: string): TabId | null {
   return null;
 }
 
+/**
+ * Bottom edge (viewport px) of the sticky navbar: the section rail when it sits below the
+ * capsule (under 1280px on the home page), else the header. The one source of truth for
+ * "clear of the header" in JS; CSS mirrors it with `scroll-padding-top` in globals.css.
+ */
+export function navBottom() {
+  const rail = document.querySelector<HTMLElement>("[data-nav-rail]");
+  const header = document.querySelector<HTMLElement>("header");
+  const el = rail && rail.offsetParent !== null ? rail : header;
+  return el ? Math.max(0, el.getBoundingClientRect().bottom) : 0;
+}
+
 type Navigator = (id: TabId) => Promise<void>;
 let navigator: Navigator | null = null;
 

@@ -414,15 +414,16 @@ const CHECKS = {
   // ---- Home page wiring (Task 14) ----
   "home-wiring": async ({ browser, base }) => {
     const { page, errors } = await openPage(browser, `${base}/`);
-    // The tab bar holds buttons; the plain links list (pages without the tab bar) and the
-    // mobile menu hold the anchors. Any of them counts as "a nav link to #work".
-    const navWork = await page.evaluate(() => {
-      const nav = [...document.querySelectorAll("header nav")];
-      const anchor = nav.some((n) => [...n.querySelectorAll("a[href]")].some((a) => /^\/?#work$/.test(a.getAttribute("href"))));
-      const tab = nav.some((n) => n.querySelector('[data-tab="work"]'));
-      return { anchor, tab };
-    });
-    if (!navWork.tab) throw new Error("home: no work tab in the nav tab bar");
+    // On the home page the nav is the tab bar (buttons); the plain links list is used on pages
+    // without it (legal pages), checked below; the mobile menu holds anchors (checked at 390px).
+    if (!(await page.locator('header nav [data-tab="work"]').count())) throw new Error("home: no work tab in the nav tab bar");
+    // Visible section numbers run (01)…(06) in DOM order, no gaps, no duplicates.
+    const numbers = await page.evaluate(() => [...document.querySelectorAll("main [data-section-index]")].map((el) => el.textContent.trim()));
+    const expected = ["01", "02", "03", "04", "05", "06"];
+    if (numbers.join(",") !== expected.join(",")) throw new Error(`home: section numbers are [${numbers.join(", ")}], expected [${expected.join(", ")}]`);
+    // Legal pages (no tab bar) list /#work in the primary nav links.
+    const { page: legal } = await openPage(browser, `${base}/privacy/`, { width: 1440, height: 800 });
+    if (!(await legal.locator('header nav a[href="/#work"]').count())) throw new Error("/privacy/: no nav link to /#work");
     const order = await page.evaluate(() => {
       const ids = ["included", "work", "industries"].map((id) => document.getElementById(id));
       if (ids.some((el) => !el)) return "missing";
@@ -442,6 +443,53 @@ const CHECKS = {
     await page.waitForTimeout(1600);
     const cur = await page.locator('[data-tab][aria-current="location"]').getAttribute("data-tab");
     if (cur !== "work") throw new Error(`scroll spy: after picking work the current tab is ${cur}`);
+    // Laptop width (rail under the capsule): keyboard focus in the dashboard lands below the rail
+    // (WCAG 2.4.11). (a) Tab forward into the section; (b) a control already on screen but
+    // parked under the rail gets nudged clear when it takes keyboard focus.
+    const { page: lap } = await openPage(browser, `${base}/`, { width: 1100, height: 800 });
+    const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])';
+    const settle = () =>
+      lap.evaluate(async () => {
+        let last = -1;
+        for (let i = 0; i < 20 && scrollY !== last; i++) {
+          last = scrollY;
+          await new Promise((r) => setTimeout(r, 150));
+        }
+      });
+    const focusState = () =>
+      lap.evaluate(() => {
+        const el = document.activeElement;
+        const box = el.getBoundingClientRect();
+        const rail = document.querySelector("[data-nav-rail]").getBoundingClientRect().bottom;
+        return { inDash: !!el.closest("#dashboard"), top: box.top, rail, label: (el.getAttribute("aria-label") || el.textContent || el.tagName).trim().slice(0, 30) };
+      });
+    await lap.evaluate((sel) => {
+      const all = [...document.querySelectorAll(sel)];
+      all[all.findIndex((el) => el.closest("#dashboard")) - 1].focus();
+    }, FOCUSABLE);
+    await settle();
+    let tabbed = 0;
+    for (let n = 0; n < 6; n++) {
+      await lap.keyboard.press("Tab");
+      await settle();
+      const r = await focusState();
+      if (!r.inDash) break;
+      tabbed++;
+      if (r.top < r.rail) throw new Error(`1100px: Tab ${n + 1}: "${r.label}" top ${Math.round(r.top)} is under the nav rail (bottom ${Math.round(r.rail)})`);
+    }
+    if (tabbed < 2) throw new Error(`1100px: only ${tabbed} dashboard controls reached by Tab`);
+    await lap.evaluate((sel) => {
+      const all = [...document.querySelectorAll(sel)];
+      const i = all.findIndex((el) => el.closest("#dashboard"));
+      window.scrollBy({ top: all[i].getBoundingClientRect().top - 60, behavior: "instant" });
+      all[i - 1].focus({ preventScroll: true });
+    }, FOCUSABLE);
+    await lap.waitForTimeout(300);
+    await lap.keyboard.press("Tab");
+    await settle();
+    const parked = await focusState();
+    if (!parked.inDash) throw new Error(`1100px: parked Tab landed outside the dashboard ("${parked.label}")`);
+    if (parked.top < parked.rail) throw new Error(`1100px: parked "${parked.label}" top ${Math.round(parked.top)} is under the nav rail (bottom ${Math.round(parked.rail)})`);
     // Spanish.
     const { page: es } = await openPage(browser, `${base}/es/`);
     const label = (await es.locator('[data-tab="work"]').innerText()).trim();
