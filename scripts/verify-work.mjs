@@ -76,7 +76,7 @@ function assertNoErrors(errors) {
  * decoded after a full scroll, axe clean. Then with reduced motion at 1280,
  * no scrolling: the signature is at rest and every text node in main is opaque.
  */
-async function demoCheck(browser, base, id) {
+async function demoCheck(browser, base, id, { restCheck } = {}) {
   const url = `${base}/work/${id}/`;
   for (const colorScheme of ["light", "dark"]) {
     for (const width of [1280, 390]) {
@@ -130,7 +130,26 @@ async function demoCheck(browser, base, id) {
     return out;
   });
   if (faded.length) throw new Error(`reduced motion: text not fully opaque: ${faded.slice(0, 5).join("; ")}`);
+  // Demo-specific assertions on the same reduced-motion page (may scroll).
+  if (restCheck) await restCheck(page);
   assertNoErrors(errors);
+}
+
+/** Maison Lumière: with reduced motion the ribbon never swaps the accent, even scrolled through. */
+async function salonAccentStaysPlum(page) {
+  const read = () =>
+    page.evaluate(() => getComputedStyle(document.querySelector("[data-demo]")).getPropertyValue("--salon-accent").trim().toUpperCase());
+  const before = await read();
+  if (before !== "#9B4A6B") throw new Error(`reduced motion: --salon-accent is ${JSON.stringify(before)}, expected #9B4A6B`);
+  await page.locator('[data-signature="salon"]').scrollIntoViewIfNeeded();
+  for (let i = 0; i < 6; i++) {
+    await page.mouse.wheel(0, 200);
+    await page.waitForTimeout(120);
+  }
+  const after = await read();
+  if (after !== "#9B4A6B") throw new Error(`reduced motion: --salon-accent changed to ${after} while scrolling the ribbon`);
+  const state = await page.locator('[data-signature="salon"]').getAttribute("data-state");
+  if (state !== "rest") throw new Error(`reduced motion: ribbon data-state is ${JSON.stringify(state)} after scrolling`);
 }
 
 const CHECKS = {
@@ -139,6 +158,7 @@ const CHECKS = {
     await runAxe(page);
   },
   "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
+  "demo:salon": ({ browser, base }) => demoCheck(browser, base, "salon", { restCheck: salonAccentStaysPlum }),
   // ---- DemoShell checks (need a demo route; they 404 until Task 5) ----
   "shell-lang": async ({ browser, base }) => {
     const { page, errors } = await openPage(browser, `${base}/work/barbershop/?lang=es`);
