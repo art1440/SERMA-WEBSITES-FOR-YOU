@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import { useRef, type ReactNode } from "react";
+import { useMemo, useRef, type ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { salon as c, type SalonHeading } from "@/data/demos/salon";
 import type { DemoImage } from "@/data/demos";
@@ -28,7 +28,7 @@ import { useDemoStill } from "../useDemoStill";
  * deep blush or aubergine bands). Default plum #9B4A6B (4.95:1); the ColourRibbon
  * swaps both as the page scrolls. Every consumer transitions over 400 ms.
  */
-const DISPLAY = "demo-display font-light";
+const DISPLAY = "demo-display font-normal";
 const NAV_H = 72;
 const SCROLL_MARGIN = { scrollMarginTop: `calc(var(--demo-ribbon) + ${NAV_H}px)` };
 const WRAP = "mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-14";
@@ -156,7 +156,9 @@ function HeroImage({ image, alt }: { image: DemoImage; alt: string }) {
     />
   );
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-t-[999px] bg-[#E9D3D6] sm:aspect-[5/4] sm:rounded-t-[14rem] lg:aspect-[560/680] lg:rounded-t-[999px]">
+    // Phones: a short arch (34svh) so the eyebrow, headline and CTA share the first screen.
+    // 640-1023px: 3:2, wider than the photo's 1.49, so it is drawn at most ~1000px wide.
+    <div className="relative h-[34svh] min-h-[220px] w-full overflow-hidden rounded-t-[999px] bg-[#E9D3D6] sm:aspect-[3/2] sm:h-auto sm:min-h-0 sm:rounded-t-[14rem] lg:aspect-[560/680] lg:rounded-t-[999px]">
       {img}
     </div>
   );
@@ -177,11 +179,15 @@ export function SalonDemo() {
 
   const wordmark = (size: string) => (
     <span className={`demo-display font-normal leading-none ${size}`}>
-      <span className="italic">Maison</span> Lumière
+      Maison <span className="italic">Lumière</span>
     </span>
   );
 
   const [lead, ...rest] = c.reviews;
+  const swatches = useMemo(
+    () => c.ribbon.swatches.map((s) => ({ name: s.name[locale], note: s.note[locale], hex: s.hex, accent: s.accent ?? s.hex, ink: s.ink })),
+    [locale],
+  );
 
   return (
     <div id="top" className="overflow-x-clip">
@@ -189,7 +195,7 @@ export function SalonDemo() {
       <header className="sticky z-40 border-b border-[#3B1F2B]/10 bg-[#F6E9EA]/95 backdrop-blur-sm" style={{ top: "var(--demo-ribbon)", height: NAV_H }}>
         <div className={`${WRAP} flex h-full items-center gap-8`}>
           <a href="#top" aria-label={L(c.nav.home)} className={FOCUS}>
-            {wordmark("text-[1.5rem] sm:text-[1.75rem]")}
+            {wordmark("text-[1.25rem] sm:text-[1.4375rem]")}
           </a>
           <nav aria-label={L(c.nav.primary)} className="ml-auto hidden lg:block">
             <ul className="flex gap-9 text-[0.8125rem] uppercase tracking-[0.16em]">
@@ -224,7 +230,7 @@ export function SalonDemo() {
             {L(c.hero.caption)}
           </figcaption>
         </figure>
-        <div className="lg:order-1">
+        <div className="flex flex-col lg:order-1">
           <Rise>
             <p className={`${KICKER} text-[#6E4E5A]`}>
               {L(c.hero.kicker)}
@@ -236,11 +242,11 @@ export function SalonDemo() {
           </Rise>
           <HeroHeadline
             lines={[L(c.hero.lines[0]), L(c.hero.lines[1])]}
-            className={`${DISPLAY} mt-5 text-[clamp(3.25rem,6.6vw,7rem)] leading-[0.95] tracking-[-0.015em] text-[#3B1F2B] lg:mt-7`}
+            className={`${DISPLAY} mt-4 text-[clamp(2.625rem,4.9vw,5.5rem)] leading-[1] tracking-[-0.02em] text-[#3B1F2B] sm:mt-5 lg:mt-7`}
           />
-          <Rise delay={0.4}>
-            <p className="mt-7 max-w-[46ch] text-[1.0625rem] leading-relaxed text-[#3B1F2B]/90 lg:mt-9 lg:text-[1.125rem]">{L(c.hero.intro)}</p>
-            <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+          {/* Phones: CTA straight under the headline, intro after it; sm+: intro first. */}
+          <Rise delay={0.4} className="sm:order-2">
+            <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-4 sm:mt-8">
               <BookButton className={`${PILL} ${ACCENT_T} h-14 bg-[var(--salon-ink)] px-8 text-[1rem] text-[#F6E9EA] hover:bg-[#3B1F2B]`}>
                 {L(c.hero.cta)}
               </BookButton>
@@ -252,7 +258,12 @@ export function SalonDemo() {
                 {L(c.hero.menuLink)}
               </a>
             </div>
-            <p className="mt-8 text-[0.875rem] text-[#6E4E5A]">{L(c.hero.open)}</p>
+          </Rise>
+          <Rise delay={0.45} className="sm:order-1">
+            <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-[#3B1F2B]/90 sm:mt-7 lg:mt-9 lg:text-[1.125rem]">{L(c.hero.intro)}</p>
+          </Rise>
+          <Rise delay={0.5} className="sm:order-3">
+            <p className="mt-6 text-[0.875rem] text-[#6E4E5A] sm:mt-8">{L(c.hero.open)}</p>
           </Rise>
         </div>
       </section>
@@ -262,7 +273,7 @@ export function SalonDemo() {
         <div className={`${WRAP} grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-end md:gap-16`}>
           <Rise>
             <p className={`${KICKER} text-[#6E4E5A]`}>{L(c.ribbon.kicker)}</p>
-            <Title h={c.ribbon.title} L={L} id="shades-title" className="mt-4 text-[clamp(2.75rem,5.6vw,5.25rem)] leading-[0.98]" />
+            <Title h={c.ribbon.title} L={L} id="shades-title" className="mt-4 text-[clamp(2.5rem,5vw,4.75rem)] leading-[1]" />
           </Rise>
           <Rise delay={0.1}>
             <p className="max-w-[44ch] leading-relaxed text-[#3B1F2B]/90 md:justify-self-end md:text-[1.0625rem]">{L(c.ribbon.intro)}</p>
@@ -271,7 +282,7 @@ export function SalonDemo() {
         <ColourRibbon
           className="mt-14 md:mt-16"
           label={L(c.ribbon.label)}
-          swatches={c.ribbon.swatches.map((s) => ({ name: L(s.name), note: L(s.note), hex: s.hex, ink: s.ink }))}
+          swatches={swatches}
         />
       </section>
 
@@ -281,7 +292,7 @@ export function SalonDemo() {
           <div className="lg:sticky lg:self-start" style={{ top: `calc(var(--demo-ribbon) + ${NAV_H + 48}px)` }}>
             <Rise>
               <p className={`${KICKER} text-[#6E4E5A]`}>{L(c.services.kicker)}</p>
-              <Title h={c.services.title} L={L} id="menu-title" className="mt-4 text-[clamp(3rem,6vw,5.75rem)] leading-[0.95]" />
+              <Title h={c.services.title} L={L} id="menu-title" className="mt-4 text-[clamp(2.75rem,5.2vw,5rem)] leading-[1]" />
               <p className="mt-6 max-w-[36ch] leading-relaxed text-[#3B1F2B]/90">{L(c.services.intro)}</p>
               <p className={`mt-8 max-w-[36ch] border-l-2 pl-4 text-[0.9375rem] leading-relaxed text-[#6E4E5A] ${ACCENT_T}`} style={{ borderColor: "var(--salon-accent)" }}>
                 {L(c.services.note)}
@@ -300,7 +311,7 @@ export function SalonDemo() {
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0">
-                  <h3 className={`${DISPLAY} text-[1.875rem] leading-[1.05] sm:text-[2.375rem]`}>{L(s.name)}</h3>
+                  <h3 className={`${DISPLAY} text-[1.625rem] leading-[1.1] sm:text-[2rem]`}>{L(s.name)}</h3>
                   <p className="mt-3 max-w-[50ch] leading-relaxed text-[#3B1F2B]/85">{L(s.detail)}</p>
                   <p className="mt-3 text-[0.75rem] font-medium uppercase tracking-[0.18em] text-[#6E4E5A]">{L(s.time)}</p>
                 </div>
@@ -308,10 +319,10 @@ export function SalonDemo() {
                   {s.amount ? (
                     <>
                       {s.from && <span className="mr-2 text-[0.75rem] font-medium uppercase tracking-[0.18em] text-[#6E4E5A]">{L(c.services.from)}</span>}
-                      <span className="demo-display text-[2rem] font-normal leading-none sm:text-[2.375rem]">{usd(s.amount)}</span>
+                      <span className="demo-display text-[1.75rem] font-normal leading-none sm:text-[2rem]">{usd(s.amount)}</span>
                     </>
                   ) : (
-                    <span className="demo-display text-[1.5rem] italic leading-none sm:text-[1.75rem]">{L(c.services.consult)}</span>
+                    <span className="demo-display text-[1.25rem] italic leading-none sm:text-[1.5rem]">{L(c.services.consult)}</span>
                   )}
                 </p>
               </Rise>
@@ -333,7 +344,7 @@ export function SalonDemo() {
           <div className="flex flex-col lg:col-span-6 lg:col-start-7">
             <Rise className="lg:pt-10">
               <p className={`${KICKER} text-[#6E4E5A]`}>{L(c.work.kicker)}</p>
-              <Title h={c.work.title} L={L} id="work-title" className="mt-4 text-[clamp(2.5rem,4.6vw,4.5rem)] leading-[1]" />
+              <Title h={c.work.title} L={L} id="work-title" className="mt-4 text-[clamp(2.25rem,4vw,3.875rem)] leading-[1.05]" />
               <p className="mt-6 max-w-[44ch] leading-relaxed text-[#3B1F2B]/90 md:text-[1.0625rem]">{L(c.work.colour.body)}</p>
             </Rise>
             <Rise as="figure" className="mt-14 lg:mt-auto lg:pt-16" delay={0.1}>
@@ -341,7 +352,7 @@ export function SalonDemo() {
                 <DriftImage image={c.work.studio.image} alt={L(c.work.studio.image.alt)} sizes="(min-width: 1024px) 680px, 100vw" />
               </div>
               <figcaption className="mt-5 grid gap-3 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8">
-                <h3 className={`${DISPLAY} text-[1.75rem] leading-none`}>
+                <h3 className={`${DISPLAY} text-[1.5rem] leading-none`}>
                   <span className="demo-display mr-3 text-[1rem] italic text-[#3B1F2B]">ii.</span>
                   {L(c.work.studio.title)}
                 </h3>
@@ -360,7 +371,7 @@ export function SalonDemo() {
           </h2>
           <Rise as="figure" className="mx-auto mt-10 max-w-[980px] text-center">
             <span aria-hidden="true" className={`mx-auto mb-10 block h-[2px] w-12 bg-[var(--salon-accent)] ${ACCENT_T}`} />
-            <blockquote className="demo-display mx-auto max-w-[26ch] text-[clamp(1.875rem,3.8vw,3.25rem)] font-light leading-[1.15] text-[#3B1F2B]">
+            <blockquote className="demo-display mx-auto max-w-[26ch] text-[clamp(1.75rem,3.4vw,2.875rem)] italic leading-[1.2] text-[#3B1F2B]">
               <p className="demo-display">{`“${L(lead.quote)}”`}</p>
             </blockquote>
             <figcaption className={`${KICKER} mt-8 text-[#6E4E5A]`}>{lead.name}</figcaption>
@@ -369,7 +380,7 @@ export function SalonDemo() {
             {rest.map((r, i) => (
               <Rise as="li" key={r.name} delay={staggerDelay(i)} className={i === 1 ? "md:border-l md:border-[#3B1F2B]/15 md:pl-12" : "md:pr-12"}>
                 <figure>
-                  <blockquote className="demo-display text-[1.5rem] italic leading-snug text-[#3B1F2B] sm:text-[1.75rem]">
+                  <blockquote className="demo-display text-[1.25rem] italic leading-snug text-[#3B1F2B] sm:text-[1.4375rem]">
                     <p className="demo-display">{`“${L(r.quote)}”`}</p>
                   </blockquote>
                   <figcaption className={`${KICKER} mt-5 text-[#6E4E5A]`}>{r.name}</figcaption>
@@ -390,7 +401,7 @@ export function SalonDemo() {
               L={L}
               id="visit-title"
               underline="#D88C8C"
-              className="mt-5 max-w-[14ch] text-[clamp(2.75rem,6.4vw,6rem)] leading-[0.98]"
+              className="mt-5 max-w-[14ch] text-[clamp(2.5rem,5.6vw,5.25rem)] leading-[1.02]"
             />
             <p className="mt-8 max-w-[46ch] text-[1.0625rem] leading-relaxed text-[#F6E9EA]/90">{L(c.visit.body)}</p>
             <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
@@ -410,13 +421,13 @@ export function SalonDemo() {
               {c.hours.map((h) => (
                 <div key={h.days.en} className="flex items-baseline justify-between gap-6 border-b border-[#F6E9EA]/20 py-4">
                   <dt>{L(h.days)}</dt>
-                  <dd className="demo-display whitespace-nowrap text-[1.375rem] lining-nums tabular-nums">{L(h.time)}</dd>
+                  <dd className="demo-display whitespace-nowrap text-[1.125rem] lining-nums tabular-nums">{L(h.time)}</dd>
                 </div>
               ))}
             </dl>
             <p className="mt-4 text-[0.9375rem] text-[#E6C9CE]">{L(c.visit.closed)}</p>
             <h3 className={`${KICKER} mt-12 text-[#E6C9CE]`}>{L(c.visit.findUs)}</h3>
-            <p className="demo-display mt-4 text-[1.75rem] leading-tight">{c.address}</p>
+            <p className="demo-display mt-4 text-[1.5rem] leading-tight">{c.address}</p>
             <p className="mt-2 max-w-[40ch] text-[0.9375rem] leading-relaxed text-[#E6C9CE]">{L(c.visit.directions)}</p>
           </Rise>
         </div>
@@ -427,7 +438,7 @@ export function SalonDemo() {
         <svg aria-hidden="true" width="28" height="36" viewBox="0 0 28 36" fill="none" className="mb-6">
           <path d="M1 35V14C1 6.8 6.8 1 14 1s13 5.8 13 13v21" stroke="#3B1F2B" strokeWidth="1.2" />
         </svg>
-        <p>{wordmark("text-[2.25rem] sm:text-[2.75rem]")}</p>
+        <p>{wordmark("text-[1.875rem] sm:text-[2.25rem]")}</p>
         <p className="mt-3 text-[#6E4E5A]">{L(c.footer.tagline)}</p>
         <p className="mt-8 text-[0.9375rem]">
           {c.address}

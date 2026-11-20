@@ -28,11 +28,13 @@ export const barberBody = localFont({
   fallback: ["system-ui", "Helvetica Neue", "Arial", "sans-serif"],
 });
 
-// Maison Lumière
+// Maison Lumière (Bodoni Moda, variable wght 400..900; replaced Cormorant
+// Garamond, whose grave accent is drawn as a near-vertical tick that made
+// "Lumière" read like a typo)
 export const salonDisplay = localFont({
   src: [
-    { path: "./fonts/CormorantGaramond-latin.woff2", weight: "300 700", style: "normal" },
-    { path: "./fonts/CormorantGaramond-Italic-latin.woff2", weight: "300 700", style: "italic" },
+    { path: "./fonts/BodoniModa-latin.woff2", weight: "400 900", style: "normal" },
+    { path: "./fonts/BodoniModa-Italic-latin.woff2", weight: "400 900", style: "italic" },
   ],
   variable: "--demo-display",
   display: "swap",

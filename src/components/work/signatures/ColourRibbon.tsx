@@ -20,12 +20,14 @@ import { useDemoStill } from "../useDemoStill";
  *   the centre is simply round(5 + (1 - p) * 0.3 * bandWidth / pitch) mod 6.
  *   Band width and pitch are measured on resize only, never per frame.
  * - Whenever that index changes (not per frame), the swatch's colour is
- *   written straight to the demo root as --salon-accent (raw shade, used for
+ *   written straight to the demo root as --salon-accent (the shade, used for
  *   decoration: heading underlines, rules) and --salon-ink (a deeper tone of
  *   the same shade that meets 4.5:1 on the blush page, used for CTA fills and
  *   accent text). Consumers transition those properties over 400 ms. Above
  *   the ribbon (p = 0) the inline values are removed, so the root's default,
- *   plum #9B4A6B, applies again. The swatch under the centre gets
+ *   plum #9B4A6B, applies again. The Plum swatch (painted #7A3E5C) writes
+ *   the brand plum #9B4A6B, so a page scrolled past the ribbon ends on the
+ *   accent it opened with. The swatch under the centre gets
  *   data-active (it lifts 10px, a CSS transform transition).
  * - data-state is "live" while the ribbon is travelling and "rest" once it has
  *   reached its final position (p = 1).
@@ -33,7 +35,8 @@ import { useDemoStill } from "../useDemoStill";
  *   stays plum, data-state="rest".
  */
 
-export type RibbonSwatch = { name: string; note: string; hex: string; ink: string };
+/** hex: painted shade; accent: written to --salon-accent (decoration); ink: written to --salon-ink (AA text/fills). */
+export type RibbonSwatch = { name: string; note: string; hex: string; accent: string; ink: string };
 
 type Props = {
   swatches: RibbonSwatch[];
@@ -54,6 +57,10 @@ export function ColourRibbon({ swatches, label, className }: Props) {
   const bandRef = useRef<HTMLDivElement>(null);
   const geo = useRef({ width: 0, pitch: 0 });
   const active = useRef(-1);
+  // Latest swatches, read at write time: a re-render (e.g. EN/ES switch) must
+  // not change setActive's identity, or effect cleanups would reset the accent.
+  const swatchesRef = useRef(swatches);
+  swatchesRef.current = swatches;
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const x = useTransform(scrollYProgress, [0, 1], ["-30%", "0%"]);
@@ -68,8 +75,9 @@ export function ColourRibbon({ swatches, label, className }: Props) {
           root.style.removeProperty("--salon-accent");
           root.style.removeProperty("--salon-ink");
         } else {
-          root.style.setProperty("--salon-accent", swatches[i].hex);
-          root.style.setProperty("--salon-ink", swatches[i].ink);
+          const s = swatchesRef.current[i];
+          root.style.setProperty("--salon-accent", s.accent);
+          root.style.setProperty("--salon-ink", s.ink);
         }
       }
       bandRef.current?.querySelectorAll<HTMLElement>("[data-swatch]").forEach((el) => {
@@ -78,7 +86,7 @@ export function ColourRibbon({ swatches, label, className }: Props) {
         else el.removeAttribute("data-active");
       });
     },
-    [swatches],
+    [],
   );
 
   const update = useCallback(
@@ -120,17 +128,22 @@ export function ColourRibbon({ swatches, label, className }: Props) {
     return () => ro.disconnect();
   }, [still, update, scrollYProgress]);
 
-  // Still: back to plum, nothing active. On unmount: leave the root clean.
+  // Still: back to plum, nothing active.
   useEffect(() => {
     if (still) {
       active.current = -2;
       setActive(-1);
     }
-    return () => {
+  }, [still, setActive]);
+
+  // On unmount only: leave the demo root clean.
+  useEffect(
+    () => () => {
       active.current = -2;
       setActive(-1);
-    };
-  }, [still, setActive]);
+    },
+    [setActive],
+  );
 
   const set = (copy: number) => {
     const Tag = copy === 0 ? "ul" : "div";
@@ -160,7 +173,7 @@ export function ColourRibbon({ swatches, label, className }: Props) {
                   className="h-1.5 w-1.5 translate-y-[-1px] rounded-full bg-[#3B1F2B] opacity-0 transition-opacity duration-[400ms] group-data-[active]:opacity-100"
                 />
               </div>
-              <p className="demo-display mt-1 text-[1.375rem] italic leading-tight text-[#3B1F2B] sm:text-[1.625rem]">{s.name}</p>
+              <p className="demo-display mt-1 text-[1.125rem] italic leading-tight text-[#3B1F2B] sm:text-[1.3125rem]">{s.name}</p>
               <p className="mt-1 text-[0.8125rem] leading-snug text-[#6E4E5A]">{s.note}</p>
             </Item>
           );
@@ -182,7 +195,7 @@ export function ColourRibbon({ swatches, label, className }: Props) {
       data-state={still ? "rest" : "live"}
       className={`overflow-hidden pt-4 [--gap:12px] [--sw:136px] sm:[--gap:18px] sm:[--sw:180px] lg:[--gap:22px] lg:[--sw:212px] ${className ?? ""}`}
     >
-      <motion.div ref={bandRef} className="flex w-max gap-[var(--gap)] will-change-transform" style={bandStyle}>
+      <motion.div ref={bandRef} className={`flex w-max gap-[var(--gap)] ${still ? "" : "will-change-transform"}`} style={bandStyle}>
         {Array.from({ length: SETS }, (_, k) => set(k))}
       </motion.div>
     </div>

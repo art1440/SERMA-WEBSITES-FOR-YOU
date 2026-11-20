@@ -11,8 +11,10 @@ export type SalonHeading = { pre: L10n; em: L10n; post?: L10n };
 
 export type SalonSwatch = {
   name: L10n;
-  /** The shade as painted on the swatch (decoration only; see ColourRibbon). */
+  /** The shade as painted on the swatch. */
   hex: string;
+  /** Written to --salon-accent while this swatch is centred (decoration only). Defaults to `hex`. */
+  accent?: string;
   /** A deeper tone of the same shade that reaches AA (>= 4.5:1) on #F6E9EA, for text and CTA fills. */
   ink: string;
   note: L10n;
@@ -140,7 +142,9 @@ export const salon: SalonContent = {
       {
         name: { en: "Plum", es: "Ciruela" },
         hex: "#7A3E5C",
-        ink: "#7A3E5C",
+        // Ends the page on the brand plum it opened with (4.95:1 on #F6E9EA).
+        accent: "#9B4A6B",
+        ink: "#9B4A6B",
         note: { en: "Violet in the light only", es: "Violeta solo a contraluz" },
       },
     ],
@@ -297,7 +301,7 @@ export const salon: SalonContent = {
     findUs: { en: "Find us", es: "Dónde estamos" },
     directions: {
       en: "Up one flight, above the florist. Street parking on Rue Lane.",
-      es: "Un piso arriba, encima de la floristería. Aparcamiento en la calle Rue Lane.",
+      es: "Un piso arriba, encima de la floristería. Aparcamiento en Rue Lane.",
     },
   },
   footer: {

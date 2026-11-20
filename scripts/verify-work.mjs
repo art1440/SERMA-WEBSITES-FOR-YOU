@@ -135,6 +135,35 @@ async function demoCheck(browser, base, id, { restCheck } = {}) {
   assertNoErrors(errors);
 }
 
+/**
+ * Maison Lumière, with motion: scroll until the ribbon has swapped the accent
+ * away from plum, switch EN -> ES with the demo ribbon toggle, and assert the
+ * accent (and its ink) did not change: a re-render must not reset it.
+ */
+async function salonAccentSurvivesLanguageSwitch(browser, base) {
+  const { page, errors } = await openPage(browser, `${base}/work/salon/`, { width: 1280, height: 800 });
+  const read = () =>
+    page.evaluate(() => {
+      const cs = getComputedStyle(document.querySelector("[data-demo]"));
+      return `${cs.getPropertyValue("--salon-accent").trim().toUpperCase()} ${cs.getPropertyValue("--salon-ink").trim().toUpperCase()}`;
+    });
+  const top = await page.evaluate(() => document.querySelector("#shades").getBoundingClientRect().top + window.scrollY);
+  let before = "";
+  for (let off = 0; off <= 900; off += 75) {
+    await page.evaluate((v) => window.scrollTo(0, v), top - 100 + off);
+    await page.waitForTimeout(200);
+    before = await read();
+    if (!before.startsWith("#9B4A6B")) break;
+  }
+  if (before.startsWith("#9B4A6B")) throw new Error(`language switch: ribbon never swapped the accent away from plum (${before})`);
+  await page.locator('[data-lang="es"]').click();
+  await page.waitForFunction(() => document.documentElement.lang === "es" || document.querySelector('[data-lang="es"]')?.getAttribute("aria-pressed") === "true");
+  await page.waitForTimeout(600);
+  const after = await read();
+  if (after !== before) throw new Error(`language switch: accent changed from ${before} to ${after}`);
+  assertNoErrors(errors);
+}
+
 /** Maison Lumière: with reduced motion the ribbon never swaps the accent, even scrolled through. */
 async function salonAccentStaysPlum(page) {
   const read = () =>
@@ -158,7 +187,10 @@ const CHECKS = {
     await runAxe(page);
   },
   "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
-  "demo:salon": ({ browser, base }) => demoCheck(browser, base, "salon", { restCheck: salonAccentStaysPlum }),
+  "demo:salon": async ({ browser, base }) => {
+    await demoCheck(browser, base, "salon", { restCheck: salonAccentStaysPlum });
+    await salonAccentSurvivesLanguageSwitch(browser, base);
+  },
   // ---- DemoShell checks (need a demo route; they 404 until Task 5) ----
   "shell-lang": async ({ browser, base }) => {
     const { page, errors } = await openPage(browser, `${base}/work/barbershop/?lang=es`);
