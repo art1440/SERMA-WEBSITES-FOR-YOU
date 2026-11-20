@@ -80,9 +80,6 @@ const en = {
     status: "Booking while you work",
     statusDetail: "Calls · Bookings · Follow-ups",
     secondaryCta: "See how it works",
-    figure: "Fig. 01 — The quiet part of your business.",
-    statement: ["While you’re with a client,", "your site books the next one."],
-    scrollHint: "Scroll to see how",
     videoLabel: "Ambient abstract motion: folded black paper and brushed metal swept by a thin line of warm light.",
     builtFor: "Built for",
     flow: {
@@ -451,9 +448,6 @@ const es: Dictionary = {
     status: "Citas mientras trabaja",
     statusDetail: "Llamadas · Citas · Seguimiento",
     secondaryCta: "Vea cómo funciona",
-    figure: "Fig. 01 — La parte silenciosa de su negocio.",
-    statement: ["Mientras atiende a un cliente,", "su sitio agenda al siguiente."],
-    scrollHint: "Baje para ver cómo",
     videoLabel: "Movimiento abstracto de fondo: papel negro doblado y metal cepillado, cruzados por un fino rayo de luz cálida.",
     builtFor: "Hecho para",
     flow: {

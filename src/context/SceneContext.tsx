@@ -19,7 +19,6 @@ type Chapter = {
 };
 
 type SceneValue = {
-  hero: Chapter;
   system: Chapter;
   finale: Chapter;
   /** True when the visitor prefers reduced motion → chapters render static, unpinned. */
@@ -36,7 +35,7 @@ type SceneValue = {
 
 const SceneContext = createContext<SceneValue | null>(null);
 
-function useChapter(offset: ["start start", "end end"] | ["start end", "end end"]): Chapter {
+function useChapter(offset: ["start end", "end end"]): Chapter {
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset });
   // Cinematic smoothing: filters trackpad/wheel jitter and gives scroll-linked motion weight.
@@ -55,7 +54,6 @@ function useTimelineChapter(): Chapter {
 }
 
 export function SceneProvider({ children }: { children: ReactNode }) {
-  const hero = useChapter(["start start", "end end"]);
   const system = useTimelineChapter();
   const finale = useChapter(["start end", "end end"]);
   const reduce = useReducedMotionSafe();
@@ -78,7 +76,7 @@ export function SceneProvider({ children }: { children: ReactNode }) {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  return <SceneContext.Provider value={{ hero, system, finale, reduce, desktop, pin }}>{children}</SceneContext.Provider>;
+  return <SceneContext.Provider value={{ system, finale, reduce, desktop, pin }}>{children}</SceneContext.Provider>;
 }
 
 export function useScene(): SceneValue {

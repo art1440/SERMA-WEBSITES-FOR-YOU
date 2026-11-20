@@ -117,16 +117,11 @@ const config: Config = {
           "60%": { transform: "translate(-4%, -3%)" },
           "80%": { transform: "translate(6%, 5%)" },
         },
-        "scroll-cue": {
-          "0%": { transform: "translateY(-100%)" },
-          "100%": { transform: "translateY(200%)" },
-        },
       },
       animation: {
         "live-pulse": "live-pulse 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite",
         caret: "caret 1s steps(1) infinite",
         grain: "grain 0.9s steps(1) infinite",
-        "scroll-cue": "scroll-cue 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite",
       },
     },
   },
