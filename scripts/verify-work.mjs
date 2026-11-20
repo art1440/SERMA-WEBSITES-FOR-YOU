@@ -17,6 +17,10 @@ const PORT = 3123;
 const BASE = `http://localhost:${PORT}`;
 const CSP_PREFIX = "[CSP-VIOLATION]";
 
+// Per-check registry of every context opened by openPage and its collected errors.
+// The runner asserts on it and closes all contexts after each check, pass or fail.
+let registry = [];
+
 /**
  * opts: { width=1280, height=800, reducedMotion=false, device }
  * `device` is a Playwright device descriptor (e.g. devices["iPhone 13"]);
@@ -32,6 +36,7 @@ async function openPage(browser, url, opts = {}) {
   const context = await browser.newContext(ctxOpts);
   const page = await context.newPage();
   const errors = [];
+  registry.push({ context, errors, url });
   page.on("console", (m) => {
     if (m.type() === "error") errors.push(`console: ${m.text()}`);
   });
@@ -66,10 +71,8 @@ function assertNoErrors(errors) {
 
 const CHECKS = {
   "home-smoke": async ({ browser, base }) => {
-    const { page, errors } = await openPage(browser, `${base}/`);
-    assertNoErrors(errors);
+    const { page } = await openPage(browser, `${base}/`);
     await runAxe(page);
-    await page.context().close();
   },
 };
 
@@ -137,13 +140,21 @@ async function main() {
     await waitForOk(`${BASE}/`, server);
     browser = await chromium.launch();
     for (const name of names) {
+      registry = [];
+      let failure = null;
       try {
         await CHECKS[name]({ browser, base: BASE });
-        console.log(`PASS ${name}`);
       } catch (e) {
-        failed = true;
-        console.log(`FAIL ${name}: ${e.message}`);
+        failure = e.message;
       }
+      const collected = registry.flatMap((r) => r.errors.map((m) => `${r.url} ${m}`));
+      for (const r of registry) await r.context.close().catch(() => {});
+      registry = [];
+      if (!failure && collected.length) failure = `page errors: ${collected.join(" | ")}`;
+      if (failure) {
+        failed = true;
+        console.log(`FAIL ${name}: ${failure}`);
+      } else console.log(`PASS ${name}`);
     }
   } catch (e) {
     failed = true;
