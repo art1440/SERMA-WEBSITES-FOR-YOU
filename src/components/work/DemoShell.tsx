@@ -60,6 +60,7 @@ export function DemoShell({ id, className, children }: { id: DemoId; className?:
       >
         {showRibbon && (
           <div
+            data-demo-ribbon
             role="region"
             aria-label={d.label}
             className="fixed inset-x-0 top-0 z-[80] flex h-10 items-center gap-2 bg-[#0d2447] px-3 text-[0.8125rem] text-white sm:gap-4 sm:px-4"

@@ -1,5 +1,12 @@
-// Captures full-page gallery screenshots of every demo: node scripts/capture-work.mjs
-// Requires a prior `npm run build`. Starts `next start` on PORT, always kills it.
+// Captures full-page gallery screenshots of every demo.
+//   npm run capture:work [-- --version v2] [-- --overwrite]   (or SHOT_VERSION=v2)
+// Requires a prior `npm run build`, plus python3 with Pillow (for the 640 px copies).
+// Starts `next start` on PORT and always kills it.
+//
+// VERSIONING: /media is served immutable for a year. NEVER overwrite a deployed
+// version. To change the images, bump the version (--version v2) and update the
+// shot paths in src/data/demos/index.ts to the same version. --overwrite is only
+// for versions that have not been deployed yet.
 import { createRequire } from "node:module";
 import { spawn, execFileSync } from "node:child_process";
 import net from "node:net";
@@ -15,6 +22,26 @@ const PORT = 3124;
 const BASE = `http://localhost:${PORT}`;
 const IDS = ["barbershop", "salon", "beauty", "restaurant", "contractor", "service"];
 const LOCALES = ["en", "es"];
+// Salon's signature is scroll-linked: data-state is "live" at the top of the page by design.
+const EXPECT_LIVE = new Set(["salon"]);
+const argv = process.argv.slice(2);
+const OVERWRITE = argv.includes("--overwrite");
+const vi = argv.indexOf("--version");
+const VERSION = (vi >= 0 ? argv[vi + 1] : process.env.SHOT_VERSION) || "v1";
+if (!/^v\d+$/.test(VERSION)) {
+  console.error(`invalid version "${VERSION}" (expected e.g. v2)`);
+  process.exit(1);
+}
+const targets = IDS.flatMap((id) =>
+  LOCALES.flatMap((l) => [`shot-${l}-${VERSION}.jpg`, `shot-${l}-${VERSION}-640.jpg`].map((f) => path.join(ROOT, "public/media/work", id, f))));
+const existing = targets.filter((f) => fs.existsSync(f));
+if (existing.length && !OVERWRITE) {
+  console.error(
+    `Refusing to run: ${existing.length} target file(s) for ${VERSION} already exist (e.g. ${path.relative(ROOT, existing[0])}).\n` +
+      `/media is served immutable; never overwrite a deployed version. Use --version v<next> and update src/data/demos/index.ts,\n` +
+      `or pass --overwrite only if ${VERSION} has NOT been deployed yet.`);
+  process.exit(1);
+}
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function portOpen() {
@@ -59,7 +86,7 @@ async function capture(browser, id, locale) {
   try {
     await page.goto(`${BASE}/work/${id}/?capture=1&lang=${locale}`, { waitUntil: "networkidle" });
     await page.waitForFunction(
-      (l) => document.querySelector('[data-demo][data-capture="true"]') && !document.querySelector('[role="region"][aria-label*="emo"]') && document.documentElement.lang === l,
+      (l) => document.querySelector('[data-demo][data-capture="true"]') && !document.querySelector('[data-demo-ribbon]') && document.documentElement.lang === l,
       locale, { timeout: 15000 });
     const height = await page.evaluate(() => document.documentElement.scrollHeight);
     for (let y = 0; y <= height + 400; y += 400) {
@@ -71,17 +98,15 @@ async function capture(browser, id, locale) {
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.evaluate(() => document.fonts.ready);
     await page.waitForFunction(() => [...document.images].every((i) => i.complete && i.naturalWidth > 0), null, { timeout: 15000 });
-    // Scroll-linked signatures (salon ribbon) are legitimately "live" at the top of the page.
-    try {
+    if (EXPECT_LIVE.has(id)) {
+      console.log(`NOTE ${id}/${locale}: expected case, scroll-linked signature is "live" at the top of the page; not waiting for "rest"`);
+    } else {
       await page.waitForSelector('[data-signature][data-state="rest"]', { state: "attached", timeout: 8000 });
-    } catch {
-      const st = await page.evaluate(() => document.querySelector("[data-signature]")?.getAttribute("data-state"));
-      console.log(`NOTE ${id}/${locale}: signature data-state="${st}" at top (scroll-linked), capturing anyway`);
     }
     await sleep(1500);
     const dir = path.join(ROOT, "public/media/work", id);
     fs.mkdirSync(dir, { recursive: true });
-    const full = path.join(dir, `shot-${locale}-v1.jpg`);
+    const full = path.join(dir, `shot-${locale}-${VERSION}.jpg`);
     let q = 80, size;
     for (;;) {
       await page.screenshot({ path: full, fullPage: true, type: "jpeg", quality: q });
@@ -90,7 +115,7 @@ async function capture(browser, id, locale) {
       q -= 4;
     }
     if (q !== 80) console.log(`NOTE ${id}/${locale}: quality lowered to ${q} (${Math.round(size / 1024)} KB)`);
-    resize(full, path.join(dir, `shot-${locale}-v1-640.jpg`));
+    resize(full, path.join(dir, `shot-${locale}-${VERSION}-640.jpg`));
     console.log(`ok ${id} ${locale} q${q} ${Math.round(size / 1024)}KB`);
   } finally {
     await context.close();
@@ -102,6 +127,7 @@ try {
   await startServer();
   browser = await chromium.launch();
   for (const id of IDS) for (const locale of LOCALES) await capture(browser, id, locale);
+  console.log(`Done. Reminder: src/data/demos/index.ts shot paths must reference ${VERSION}.`);
 } catch (e) {
   console.error(e);
   process.exitCode = 1;
