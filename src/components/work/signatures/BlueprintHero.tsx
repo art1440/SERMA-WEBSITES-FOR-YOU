@@ -180,7 +180,7 @@ export function BlueprintHero({ image, alt, dims, keynotes, keynotesLabel, sizes
     <figure ref={ref} data-signature="contractor" data-state={live ? "drawing" : "rest"} className={className}>
       <style>{CSS}</style>
       {/* Frame, with room around it for the dimension strings. */}
-      <div className="relative ml-8 mt-8 mb-9 sm:ml-10 sm:mt-9 sm:mb-10">
+      <div className="relative mb-9 ml-6 mt-7 sm:mb-10 sm:ml-10 sm:mt-9">
         <div className="relative aspect-[1344/752] overflow-hidden bg-[#0F2440] outline outline-1 outline-offset-0 outline-[#9BB8E0]/45">
           <svg
             data-linework=""
@@ -241,12 +241,12 @@ export function BlueprintHero({ image, alt, dims, keynotes, keynotesLabel, sizes
             </span>
           ))}
         </div>
-        <DimX label={dims.overall} live={live} d={0.2} className="bottom-full left-0 right-0 h-8 sm:h-9" />
-        <DimY label={dims.height} live={live} d={0.35} className="right-full top-0 bottom-0 w-8 sm:w-10" />
+        <DimX label={dims.overall} live={live} d={0.2} className="bottom-full left-0 right-0 h-7 sm:h-9" />
+        <DimY label={dims.height} live={live} d={0.35} className="right-full top-0 bottom-0 w-6 sm:w-10" />
         {/* The island, 24.4% - 71.1% of the frame. */}
         <DimX label={dims.island} live={live} d={0.5} className="left-[24.4%] right-[28.9%] top-full h-9 sm:h-10" />
       </div>
-      <figcaption className="ml-8 sm:ml-10">
+      <figcaption className="ml-6 sm:ml-10">
         <span className="sr-only">{keynotesLabel}: </span>
         <ol className="grid gap-x-6 gap-y-1.5 text-[0.875rem] leading-snug text-[#C4D5EC] sm:grid-cols-3">
           {keynotes.map((k, n) => (

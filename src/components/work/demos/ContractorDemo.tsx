@@ -218,7 +218,7 @@ export function ContractorDemo() {
 
       {/* ---------------------------------------------------- hero: sheet A-101 */}
       <section aria-labelledby="hero-title" className="relative" style={GRID_DARK}>
-        <div className={`${WRAP} pb-10 pt-4 sm:pb-14 sm:pt-6 lg:pt-8`}>
+        <div className={`${WRAP} pb-8 pt-3 max-sm:px-3 sm:pb-14 sm:pt-6 lg:pt-8`}>
           <div className="border border-[#9BB8E0]/40 bg-[#0F2440]/80">
             <div className="grid lg:grid-cols-[minmax(0,4fr)_minmax(0,6fr)] xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
               <div className="flex flex-col px-5 pb-8 pt-6 sm:px-9 sm:pb-10 sm:pt-9 lg:border-r lg:border-[#9BB8E0]/40 lg:px-10 lg:py-12">
@@ -248,7 +248,7 @@ export function ContractorDemo() {
                 </div>
                 <p className="mt-5 text-[0.875rem] text-[#9BB8E0]">{L(c.hero.promise)}</p>
               </div>
-              <div className="border-t border-[#9BB8E0]/40 px-3 pb-7 pt-4 sm:px-8 sm:pb-9 sm:pt-6 lg:flex lg:flex-col lg:justify-center lg:border-t-0 lg:px-7 lg:py-8 xl:px-10">
+              <div className="border-t border-[#9BB8E0]/40 px-2 pb-6 pt-3 sm:px-8 sm:pb-9 sm:pt-6 lg:flex lg:flex-col lg:justify-center lg:border-t-0 lg:px-7 lg:py-8 xl:px-10">
                 <BlueprintHero
                   image={c.hero.image}
                   alt={L(c.hero.image.alt)}
@@ -256,7 +256,7 @@ export function ContractorDemo() {
                   keynotes={c.hero.keynotes.map(L)}
                   keynotesLabel={L(c.hero.keynotesLabel)}
                   // The frame is the column minus padding and the 40px dimension gutter: <= ~700px.
-                  sizes="(min-width: 1360px) 700px, (min-width: 1024px) 52vw, calc(100vw - 72px)"
+                  sizes="(min-width: 1360px) 700px, (min-width: 1024px) 52vw, calc(100vw - 64px)"
                 />
               </div>
             </div>
@@ -290,7 +290,7 @@ export function ContractorDemo() {
 
       {/* --------------------------------------------- services: schedule A-102 */}
       <section id="services" aria-labelledby="services-title" style={{ ...SCROLL_MARGIN, ...GRID_PAPER }} className="bg-[#E9F0FA] text-[#0F2440]">
-        <div className={`${WRAP} py-20 sm:py-24 lg:py-28`}>
+        <div className={`${WRAP} py-14 sm:py-24 lg:py-28`}>
           <SectionHead
             id="services-title"
             paper
@@ -350,7 +350,7 @@ export function ContractorDemo() {
 
       {/* ---------------------------------------------- projects: details A-201 */}
       <section id="projects" aria-labelledby="projects-title" style={SCROLL_MARGIN} className="bg-[#0F2440]">
-        <div className={`${WRAP} py-20 sm:py-24 lg:py-28`}>
+        <div className={`${WRAP} py-14 sm:py-24 lg:py-28`}>
           <SectionHead
             id="projects-title"
             sheet={c.projects.sheet}
@@ -358,9 +358,9 @@ export function ContractorDemo() {
             title={L(c.projects.title)}
             intro={L(c.projects.intro)}
           />
-          <div className="mt-12 grid gap-16 md:mt-16 md:grid-cols-12 md:gap-x-10 lg:gap-x-16">
+          <div className="mt-10 grid gap-12 md:mt-16 md:grid-cols-12 md:gap-x-10 lg:gap-x-16">
             {c.projects.items.map((p, n) => (
-              <article key={p.id} className={n === 0 ? "md:col-span-6" : "md:col-span-5 md:col-start-8 md:mt-40"}>
+              <article key={p.id} className={n === 0 ? "md:col-span-6" : "md:col-span-6 md:mt-24 lg:mt-32"}>
                 <Dimension label={p.dimension} />
                 <div className="relative mt-2">
                   <div className="aspect-[4/5] overflow-hidden outline outline-1 outline-[#9BB8E0]/45">
@@ -410,7 +410,7 @@ export function ContractorDemo() {
 
       {/* --------------------------------------------- process: chain dim A-301 */}
       <section id="process" aria-labelledby="process-title" style={{ ...SCROLL_MARGIN, ...GRID_DARK }} className="bg-[#0A1B31]">
-        <div className={`${WRAP} py-20 sm:py-24 lg:py-28`}>
+        <div className={`${WRAP} py-14 sm:py-24 lg:py-28`}>
           <SectionHead
             id="process-title"
             sheet={c.process.sheet}
@@ -441,7 +441,7 @@ export function ContractorDemo() {
             {c.process.steps.map((s, n) => (
               <li
                 key={s.id}
-                className="relative flex flex-col border-l border-[#9BB8E0]/50 pb-10 pl-6 last:pb-0 sm:pl-8 lg:pb-0 lg:pl-6 lg:pr-6 lg:last:border-r xl:pl-8 xl:pr-8"
+                className="relative flex flex-col border-l border-[#9BB8E0]/50 pb-8 pl-6 last:pb-0 sm:pl-8 lg:pb-0 lg:pl-6 lg:pr-6 lg:last:border-r xl:pl-8 xl:pr-8"
               >
                 <span aria-hidden="true" className="absolute -left-[5px] top-1 h-[9px] w-[9px] bg-[#FF7A1A] lg:hidden" />
                 <p className="flex items-baseline gap-3">
@@ -464,7 +464,7 @@ export function ContractorDemo() {
 
       {/* ------------------------------------------- reviews: revisions A-401 */}
       <section id="reviews" aria-labelledby="reviews-title" style={{ ...SCROLL_MARGIN, ...GRID_PAPER }} className="bg-[#E9F0FA] text-[#0F2440]">
-        <div className={`${WRAP} py-20 sm:py-24 lg:py-28`}>
+        <div className={`${WRAP} py-14 sm:py-24 lg:py-28`}>
           <SectionHead id="reviews-title" paper sheet={c.reviewsBlock.sheet} kicker={L(c.reviewsBlock.kicker)} title={L(c.reviewsBlock.title)} />
           <ul className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-3 lg:gap-0">
             {c.reviews.map((r, n) => (
@@ -489,7 +489,7 @@ export function ContractorDemo() {
 
       {/* ------------------------------------------ estimate + title block A-501 */}
       <section id="estimate" aria-labelledby="estimate-title" style={{ ...SCROLL_MARGIN, ...GRID_DARK }} className="bg-[#0F2440]">
-        <div className={`${WRAP} py-20 sm:py-24 lg:py-28`}>
+        <div className={`${WRAP} py-14 sm:py-24 lg:py-28`}>
           <div className="grid border border-[#9BB8E0]/45 bg-[#0F2440] lg:grid-cols-12">
             <div className="px-5 py-9 sm:px-9 sm:py-12 lg:col-span-7 lg:border-r lg:border-[#9BB8E0]/45 lg:px-12 lg:py-14">
               <p className={`flex items-center gap-3 ${LABEL} text-[#9BB8E0]`}>

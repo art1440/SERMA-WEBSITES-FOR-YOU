@@ -112,7 +112,6 @@ export type ContractorContent = Omit<DemoContent, "reviews"> & {
     officeLabel: L10n;
     officeNote: L10n;
     phoneLabel: L10n;
-    licenceLabel: L10n;
     warrantyLabel: L10n;
     warranty: L10n;
     areaLabel: L10n;
@@ -171,7 +170,9 @@ export const contractor: ContractorContent = {
       1344,
       752,
     ),
-    dims: { overall: "24'-0\"", height: "9'-0\"", island: "10'-6\"" },
+    // Proportional to the 1344:752 frame (1.79:1): 16'-0" x 9'-0" (1.78:1); the
+    // island spans 46.7% of the width, 7'-6" of 16'-0".
+    dims: { overall: "16'-0\"", height: "9'-0\"", island: "7'-6\"" },
     keynotes: [
       { en: "Brass dome pendants, on their own dimmer", es: "Lámparas de cúpula de latón, con regulador propio" },
       { en: "Quartz waterfall island, seats three", es: "Isla de cuarzo en cascada, para tres" },
@@ -428,7 +429,6 @@ export const contractor: ContractorContent = {
     officeLabel: { en: "Shop & office", es: "Taller y oficina" },
     officeNote: { en: "Parking in the yard", es: "Aparcamiento en el patio" },
     phoneLabel: { en: "Phone", es: "Teléfono" },
-    licenceLabel: { en: "License", es: "Licencia" },
     warrantyLabel: { en: "Warranty", es: "Garantía" },
     warranty: { en: "2 years on workmanship, in writing", es: "2 años en mano de obra, por escrito" },
     areaLabel: { en: "Service area", es: "Zona de trabajo" },
