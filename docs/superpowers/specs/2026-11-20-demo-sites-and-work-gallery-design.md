@@ -1,6 +1,6 @@
 # Demo sites + "Our work" gallery — design
 
-Date: 2026-11-20 · Status: approved in conversation, awaiting doc sign-off
+Date: 2026-11-20 · Status: awaiting owner sign-off
 
 ## Intent
 
@@ -86,7 +86,7 @@ Each page section order is the demo's own (not one shared order), but every page
 
 ### 3. Images
 
-- Generate about 25–30 stills with Higgsfield (4–5 per niche), art-directed per demo palette, no text in images, no recognisable real brands or people.
+- **Quality over budget (owner's call: "I want the demo websites to look really good and appealing").** Generate the full set: about 25–30 stills with Higgsfield (4–5 per niche), plus re-rolls for any weak image. Budget is about 8–10 credits at ~0.25 each, so the balance (5 credits at the time of writing) needs a top-up before generation. Builder generates and curates; a contact sheet per niche is shown to the owner without blocking the build. Stills are art-directed per demo palette, no text in images, no recognisable real brands or people.
 - Store under `public/media/work/<niche>/<name>-v1.webp` (+ sensible widths), alt text in `L10n`.
 - Reuse existing `public/media/<niche>-v3.*` loops as hero video where the look fits; heroes must have a poster and stay paused under reduced motion / Pause.
 - Add provenance to the README "Media provenance" section.
