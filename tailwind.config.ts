@@ -71,7 +71,7 @@ const config: Config = {
         /* Headings = Source Serif 4 (brand). */
         display: [
           ["var(--font-display)", "Georgia", "Times New Roman", "serif"],
-          { fontVariationSettings: '"wght" 600' },
+          { fontVariationSettings: '"wght" 700' },
         ],
         /* Accent words in the same serif, italic. */
         serif: ["var(--font-display)", "Georgia", "Times New Roman", "serif"],
