@@ -3,26 +3,20 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { MockupModal } from "@/components/layout/MockupModal";
 
-/** Values a button can hand to the pop-up so the visitor doesn't type them twice. */
-export type MockupPrefill = { business?: string };
-type MockupValue = { openMockup: (prefill?: MockupPrefill) => void };
+type MockupValue = { openMockup: () => void };
 
 const MockupContext = createContext<MockupValue | null>(null);
 
 /** Holds the "Get your free mockup" pop-up so any button on any page can open it. */
 export function MockupProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [prefill, setPrefill] = useState<MockupPrefill>({});
-  const openMockup = useCallback((next?: MockupPrefill) => {
-    setPrefill(next ?? {});
-    setOpen(true);
-  }, []);
+  const openMockup = useCallback(() => setOpen(true), []);
   const close = useCallback(() => setOpen(false), []);
   const value = useMemo(() => ({ openMockup }), [openMockup]);
   return (
     <MockupContext.Provider value={value}>
       {children}
-      <MockupModal open={open} onClose={close} prefill={prefill} />
+      <MockupModal open={open} onClose={close} />
     </MockupContext.Provider>
   );
 }
