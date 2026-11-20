@@ -74,6 +74,48 @@ const CHECKS = {
     const { page } = await openPage(browser, `${base}/`);
     await runAxe(page);
   },
+  // ---- DemoShell checks (need a demo route; they 404 until Task 5) ----
+  "shell-lang": async ({ browser, base }) => {
+    const { page, errors } = await openPage(browser, `${base}/work/barbershop/?lang=es`);
+    const ribbon = page.getByRole("region", { name: "Sitio de demostración por Serma" });
+    await ribbon.waitFor({ state: "visible", timeout: 5000 });
+    const lang = await page.evaluate(() => document.documentElement.lang);
+    if (lang !== "es") throw new Error(`html lang is "${lang}", expected "es"`);
+    await ribbon.locator('button[data-lang="en"]').click();
+    await page.waitForFunction(() => location.search.includes("lang=en"), null, { timeout: 5000 });
+    await page.getByRole("region", { name: "Demo site by Serma" }).waitFor({ state: "visible", timeout: 5000 });
+    assertNoErrors(errors);
+  },
+  "shell-booking": async ({ browser, base }) => {
+    const { page, errors } = await openPage(browser, `${base}/work/barbershop/`);
+    const book = page.locator("[data-book]").first();
+    await book.scrollIntoViewIfNeeded();
+    await book.click();
+    const dialog = page.getByRole("dialog", { name: "This is a demo" });
+    await dialog.waitFor({ state: "visible", timeout: 5000 });
+    const inside = () => dialog.evaluate((el) => el.contains(document.activeElement));
+    if (!(await inside())) throw new Error("focus is not inside the dialog on open");
+    for (let i = 0; i < 10; i++) {
+      await page.keyboard.press("Tab");
+      if (!(await inside())) throw new Error(`focus left the dialog after Tab ${i + 1}`);
+    }
+    await page.keyboard.press("Escape");
+    await dialog.waitFor({ state: "hidden", timeout: 5000 });
+    const back = await book.evaluate((el) => el === document.activeElement);
+    if (!back) throw new Error("focus did not return to the [data-book] button");
+    assertNoErrors(errors);
+  },
+  "shell-capture": async ({ browser, base }) => {
+    const { page, errors } = await openPage(browser, `${base}/work/barbershop/?capture=1`);
+    const visible = await page.getByRole("region", { name: /Demo site by Serma|Sitio de demostración por Serma/ }).isVisible();
+    if (visible) throw new Error("ribbon is visible with ?capture=1");
+    assertNoErrors(errors);
+  },
+  "shell-noindex": async ({ browser, base }) => {
+    const { page } = await openPage(browser, `${base}/work/barbershop/`);
+    const content = await page.locator('meta[name="robots"]').first().getAttribute("content");
+    if (content !== "noindex, nofollow") throw new Error(`robots meta is ${JSON.stringify(content)}`);
+  },
 };
 
 function portInUse(port) {

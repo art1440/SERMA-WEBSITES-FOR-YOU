@@ -275,6 +275,19 @@ const en = {
     contents: "On this page",
     translationNote: "",
   },
+  work: {
+    demo: {
+      label: "Demo site by Serma",
+      cta: "Want one like this?",
+      back: "Back to Serma",
+      dismiss: "Dismiss banner",
+      language: "Language",
+      sheetTitle: "This is a demo",
+      sheetBody: "Booking is switched off on demo sites. Want this site, built for your business?",
+      sheetCta: "Get your free mockup",
+      sheetClose: "Keep looking",
+    },
+  },
 };
 
 export type Dictionary = Widen<typeof en>;
@@ -563,6 +576,19 @@ const es: Dictionary = {
     contents: "En esta página",
     translationNote:
       "Esta traducción se ofrece para su comodidad. En caso de discrepancia, prevalecerá la versión en inglés.",
+  },
+  work: {
+    demo: {
+      label: "Sitio de demostración por Serma",
+      cta: "¿Quiere uno así?",
+      back: "Volver a Serma",
+      dismiss: "Cerrar el aviso",
+      language: "Idioma",
+      sheetTitle: "Esto es una demostración",
+      sheetBody: "Las reservas están desactivadas en los sitios de demostración. ¿Quiere este sitio, hecho para su negocio?",
+      sheetCta: "Obtenga su maqueta gratis",
+      sheetClose: "Seguir mirando",
+    },
   },
 };
 
