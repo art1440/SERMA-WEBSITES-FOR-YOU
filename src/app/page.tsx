@@ -19,9 +19,9 @@ import { SceneProvider } from "@/context/SceneContext";
 import { TabsProvider } from "@/context/TabsContext";
 
 /**
- * The page is a set of tabbed "chapters", one on screen at a time (picked from
- * the navbar). Transparent chapters (hero, finale) reveal the fixed 3D
- * <Stage>; opaque chapters cover it. Each keeps its own scroll choreography.
+ * One page: every section stacked in order; the navbar scrolls between them.
+ * Transparent sections (the pricing finale) reveal the fixed 3D <Stage>;
+ * opaque sections cover it. Each keeps its own scroll choreography.
  */
 export default function HomePage() {
   const { t } = useLanguage();

@@ -1,7 +1,6 @@
 /**
- * The home page is split into tabs: one section on screen at a time, picked
- * from the tab bar in the navbar. Ids double as the sections' anchor ids, so
- * old links like "/#dashboard" still land on the right tab.
+ * The home page is one long page of sections, in this order. Ids double as the
+ * sections' anchor ids, so links like "/#dashboard" land on the right section.
  */
 export const TAB_IDS = [
   "home",
@@ -42,8 +41,8 @@ export function registerTabNavigator(fn: Navigator | null) {
 }
 
 /**
- * Opens a tab and resolves once its panel is on screen. Returns false when no
- * tab bar is mounted (e.g. on /privacy), so callers can fall back to a page load.
+ * Scrolls to a section. Returns false when the home page isn't mounted
+ * (e.g. on /privacy), so callers can fall back to a page load.
  */
 export async function showTab(id: TabId): Promise<boolean> {
   if (!navigator) return false;

@@ -25,6 +25,7 @@ export function HeroChapter() {
 
   return (
     <section
+      id="home"
       aria-labelledby="hero-title"
       data-theme="dark"
       className="relative isolate min-h-[100svh] overflow-hidden"
