@@ -88,6 +88,10 @@ async function capture(browser, id, locale) {
     await page.waitForFunction(
       (l) => document.querySelector('[data-demo][data-capture="true"]') && !document.querySelector('[data-demo-ribbon]') && document.documentElement.lang === l,
       locale, { timeout: 15000 });
+    // No scrollbar (or its reserved gutter) in the shot: the gallery shows the page edge to edge.
+    await page.addStyleTag({
+      content: "html,body{scrollbar-width:none!important;scrollbar-gutter:auto!important}::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}",
+    });
     const height = await page.evaluate(() => document.documentElement.scrollHeight);
     for (let y = 0; y <= height + 400; y += 400) {
       await page.evaluate((v) => window.scrollTo(0, v), y);

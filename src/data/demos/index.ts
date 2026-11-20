@@ -52,12 +52,12 @@ const ORDER: DemoId[] = ["barbershop", "salon", "beauty", "restaurant", "contrac
 
 /** Pixel height of each full shot (all are 1280 wide), read from the files. Re-read after a re-capture. */
 const SHOT_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
-  barbershop: { en: 5127, es: 5293 },
-  salon: { en: 5900, es: 6038 },
-  beauty: { en: 5262, es: 5467 },
-  restaurant: { en: 5187, es: 5380 },
-  contractor: { en: 6223, es: 6472 },
-  service: { en: 5793, es: 5988 },
+  barbershop: { en: 5136, es: 5303 },
+  salon: { en: 5905, es: 6043 },
+  beauty: { en: 5270, es: 5448 },
+  restaurant: { en: 5195, es: 5387 },
+  contractor: { en: 6232, es: 6421 },
+  service: { en: 5743, es: 5920 },
 };
 
 const shot = (id: DemoId, locale: "en" | "es") => ({
