@@ -60,11 +60,26 @@ const SHOT_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
   service: { en: 5743, es: 5920 },
 };
 
+/** Pixel height of each phone shot (all are 780 wide: 390 CSS px at 2×), read from the files. */
+const MOBILE_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
+  barbershop: { en: 10730, es: 10962 },
+  salon: { en: 13996, es: 14594 },
+  beauty: { en: 15040, es: 15568 },
+  restaurant: { en: 13388, es: 14148 },
+  contractor: { en: 18460, es: 19130 },
+  service: { en: 15878, es: 16678 },
+};
+
 const shot = (id: DemoId, locale: "en" | "es") => ({
   full: asset(`/media/work/${id}/shot-${locale}-v1.jpg`),
   small: asset(`/media/work/${id}/shot-${locale}-v1-640.jpg`),
   width: 1280,
   height: SHOT_HEIGHT[id][locale],
+  mobile: {
+    src: asset(`/media/work/${id}/shot-${locale}-mobile-v1.jpg`),
+    width: 780,
+    height: MOBILE_HEIGHT[id][locale],
+  },
 });
 
 export const DEMOS: DemoCard[] = ORDER.map((id) => ({

@@ -1,5 +1,9 @@
 // Captures full-page gallery screenshots of every demo.
-//   npm run capture:work [-- --version v2] [-- --overwrite]   (or SHOT_VERSION=v2)
+//   npm run capture:work [-- --version v2] [-- --overwrite] [-- --only desktop|mobile]   (or SHOT_VERSION=v2)
+// Two sets per demo and locale:
+//   desktop: 1280×800 viewport, DPR 1 -> shot-<locale>-<v>.jpg (+ a 640 px copy, the gallery cards)
+//   mobile:  390×844 viewport, DPR 2  -> shot-<locale>-mobile-<v>.jpg (780 px wide, the phone preview)
+// The overwrite guard is per set: `--only mobile` adds the mobile files while the desktop ones exist.
 // Requires a prior `npm run build`, plus python3 with Pillow (for the 640 px copies).
 // Starts `next start` on PORT and always kills it.
 //
@@ -26,20 +30,30 @@ const LOCALES = ["en", "es"];
 const EXPECT_LIVE = new Set(["salon"]);
 const argv = process.argv.slice(2);
 const OVERWRITE = argv.includes("--overwrite");
+const oi = argv.indexOf("--only");
+const ONLY = oi >= 0 ? argv[oi + 1] : null;
+if (ONLY && ONLY !== "desktop" && ONLY !== "mobile") {
+  console.error(`invalid --only "${ONLY}" (expected desktop or mobile)`);
+  process.exit(1);
+}
+const SETS = ONLY ? [ONLY] : ["desktop", "mobile"];
 const vi = argv.indexOf("--version");
 const VERSION = (vi >= 0 ? argv[vi + 1] : process.env.SHOT_VERSION) || "v1";
 if (!/^v\d+$/.test(VERSION)) {
   console.error(`invalid version "${VERSION}" (expected e.g. v2)`);
   process.exit(1);
 }
-const targets = IDS.flatMap((id) =>
-  LOCALES.flatMap((l) => [`shot-${l}-${VERSION}.jpg`, `shot-${l}-${VERSION}-640.jpg`].map((f) => path.join(ROOT, "public/media/work", id, f))));
+/** Output files of one capture set for one demo + locale. */
+const filesFor = (set, l) =>
+  set === "mobile" ? [`shot-${l}-mobile-${VERSION}.jpg`] : [`shot-${l}-${VERSION}.jpg`, `shot-${l}-${VERSION}-640.jpg`];
+const targets = SETS.flatMap((set) =>
+  IDS.flatMap((id) => LOCALES.flatMap((l) => filesFor(set, l).map((f) => path.join(ROOT, "public/media/work", id, f)))));
 const existing = targets.filter((f) => fs.existsSync(f));
 if (existing.length && !OVERWRITE) {
   console.error(
     `Refusing to run: ${existing.length} target file(s) for ${VERSION} already exist (e.g. ${path.relative(ROOT, existing[0])}).\n` +
       `/media is served immutable; never overwrite a deployed version. Use --version v<next> and update src/data/demos/index.ts,\n` +
-      `or pass --overwrite only if ${VERSION} has NOT been deployed yet.`);
+      `or pass --overwrite only if ${VERSION} has NOT been deployed yet. (--only desktop|mobile limits the run, and this check, to one set.)`);
   process.exit(1);
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -77,9 +91,16 @@ function resize(src, dst) {
     src, dst]);
 }
 
-async function capture(browser, id, locale) {
+/** Per set: viewport, pixel ratio, JPEG quality ladder and size budget. */
+const SET_OPTS = {
+  desktop: { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1, q0: 80, qMin: 68, budget: 900 * 1024 },
+  mobile: { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, q0: 78, qMin: 50, budget: 1.2 * 1024 * 1024 },
+};
+
+async function capture(browser, id, locale, set) {
+  const o = SET_OPTS[set];
   const context = await browser.newContext({
-    viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1,
+    viewport: o.viewport, deviceScaleFactor: o.deviceScaleFactor, isMobile: o.isMobile, hasTouch: o.hasTouch,
     colorScheme: "light", reducedMotion: "no-preference",
   });
   const page = await context.newPage();
@@ -110,17 +131,20 @@ async function capture(browser, id, locale) {
     await sleep(1500);
     const dir = path.join(ROOT, "public/media/work", id);
     fs.mkdirSync(dir, { recursive: true });
-    const full = path.join(dir, `shot-${locale}-${VERSION}.jpg`);
-    let q = 80, size;
+    const [name, smallName] = filesFor(set, locale);
+    const full = path.join(dir, name);
+    let q = o.q0, size;
     for (;;) {
       await page.screenshot({ path: full, fullPage: true, type: "jpeg", quality: q });
       size = fs.statSync(full).size;
-      if (size <= 900 * 1024 || q <= 68) break;
+      if (size <= o.budget || q <= o.qMin) break;
       q -= 4;
     }
-    if (q !== 80) console.log(`NOTE ${id}/${locale}: quality lowered to ${q} (${Math.round(size / 1024)} KB)`);
-    resize(full, path.join(dir, `shot-${locale}-${VERSION}-640.jpg`));
-    console.log(`ok ${id} ${locale} q${q} ${Math.round(size / 1024)}KB`);
+    if (q !== o.q0) console.log(`NOTE ${id}/${locale}/${set}: quality lowered to ${q} (${Math.round(size / 1024)} KB)`);
+    if (size > o.budget) console.log(`WARN ${id}/${locale}/${set}: ${Math.round(size / 1024)} KB is over budget at the minimum quality`);
+    if (smallName) resize(full, path.join(dir, smallName));
+    const dims = execFileSync("python3", ["-c", "import sys\nfrom PIL import Image\nim=Image.open(sys.argv[1])\nprint(im.width, im.height)", full]).toString().trim();
+    console.log(`ok ${id} ${locale} ${set} q${q} ${Math.round(size / 1024)}KB ${dims}`);
   } finally {
     await context.close();
   }
@@ -130,7 +154,7 @@ let browser;
 try {
   await startServer();
   browser = await chromium.launch();
-  for (const id of IDS) for (const locale of LOCALES) await capture(browser, id, locale);
+  for (const set of SETS) for (const id of IDS) for (const locale of LOCALES) await capture(browser, id, locale, set);
   console.log(`Done. Reminder: src/data/demos/index.ts shot paths must reference ${VERSION}.`);
 } catch (e) {
   console.error(e);

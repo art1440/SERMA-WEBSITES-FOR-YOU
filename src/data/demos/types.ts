@@ -20,7 +20,17 @@ export type DemoCard = {
    * /media/work/<id>/shot-<locale>-v1(.jpg|-640.jpg). `width`/`height` are the full
    * (1280 w) file's pixels; `small` is the same shot at 640 w (same aspect ratio).
    */
-  shots: Record<Locale, { full: string; small: string; width: number; height: number }>;
+  shots: Record<
+    Locale,
+    {
+      full: string;
+      small: string;
+      width: number;
+      height: number;
+      /** The same page captured at a phone viewport (390 CSS px, 2×: 780 px wide), for the phone preview. */
+      mobile: { src: string; width: number; height: number };
+    }
+  >;
   /** Hex colour used for the card's hover glow. */
   accent: string;
 };
