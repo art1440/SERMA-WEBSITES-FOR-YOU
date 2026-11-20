@@ -19,8 +19,8 @@ import { useDemoStill } from "../useDemoStill";
  * secondary text grey #A8A091. Contrast on #0E0E0E: bone 15.6:1, grey 7.4:1,
  * brass 8.2:1; black on brass 8.2:1.
  */
-// "!" because the site's base layer gives p/li/h* its own families (see the page's root class).
-const DISPLAY = "!font-[family-name:var(--demo-display)] font-normal";
+// Display type uses the shared `.demo-display` hook (globals.css); body type comes from the shared reset there.
+const DISPLAY = "demo-display font-normal";
 const NAV_H = 64;
 const SCROLL_MARGIN = { scrollMarginTop: `calc(var(--demo-ribbon) + ${NAV_H}px)` };
 const FOCUS = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C9A45C]";
@@ -138,7 +138,7 @@ export function BarbershopDemo() {
         headlineClassName={`${DISPLAY} text-[clamp(64px,13vw,200px)] leading-[0.9] tracking-[-0.02em] text-[#EFE6D6]`}
         before={
           <div className="flex items-center justify-between gap-4 pb-8 text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-[#A8A091]">
-            <span>{c.street}</span>
+            <span>{c.address}</span>
             <span className="hidden sm:inline">{c.phone}</span>
           </div>
         }
@@ -241,9 +241,9 @@ export function BarbershopDemo() {
             <h3 className="mt-7 text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-[#C9A45C]">{L(c.shop.hoursLabel)}</h3>
             <dl className="mt-3 divide-y divide-[#EFE6D6]/10 border-y border-[#EFE6D6]/10">
               {c.hours.map((h) => (
-                <div key={h.time} className="flex justify-between gap-4 py-2.5">
+                <div key={h.days.en} className="flex justify-between gap-4 py-2.5">
                   <dt>{L(h.days)}</dt>
-                  <dd className="tabular-nums">{h.time}</dd>
+                  <dd className="tabular-nums">{L(h.time)}</dd>
                 </div>
               ))}
             </dl>
@@ -322,8 +322,8 @@ export function BarbershopDemo() {
           </div>
           <div className="leading-relaxed">
             {c.hours.map((h) => (
-              <p key={h.time}>
-                {L(h.days)} <span className="text-[#A8A091]">{h.time}</span>
+              <p key={h.days.en}>
+                {L(h.days)} <span className="text-[#A8A091]">{L(h.time)}</span>
               </p>
             ))}
             <p className="text-[#A8A091]">{L(c.shop.closed)}</p>

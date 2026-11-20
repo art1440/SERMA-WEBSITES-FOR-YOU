@@ -49,7 +49,7 @@ export function DemoBookingSheet({ open, onClose, onMockup }: Props) {
             aria-labelledby="demo-sheet-title"
             aria-describedby="demo-sheet-body"
             className="relative w-full rounded-t-3xl bg-white p-6 text-[#0d2447] shadow-2xl md:max-w-md md:rounded-3xl md:p-8"
-            style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}
+            style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))", fontFamily: "var(--font-sans, system-ui, sans-serif)" }}
             {...sheet}
           >
             <h2 id="demo-sheet-title" className="text-xl font-semibold tracking-tight">

@@ -65,7 +65,13 @@ export function DemoShell({ id, className, children }: { id: DemoId; className?:
             className="fixed inset-x-0 top-0 z-[80] flex h-10 items-center gap-2 bg-[#0d2447] px-3 text-[0.8125rem] text-white sm:gap-4 sm:px-4"
             style={{ fontFamily: "var(--font-sans, system-ui, sans-serif)" }}
           >
-            <span className="min-w-0 flex-1 truncate font-medium">{d.label}</span>
+            {/* Phones show "Demo"; the full label stays the region's name and is read in full. */}
+            <span className="min-w-0 flex-1 truncate font-medium">
+              <span className="sr-only sm:not-sr-only">{d.label}</span>
+              <span aria-hidden="true" className="sm:hidden">
+                {d.labelShort}
+              </span>
+            </span>
             <Link
               href={locale === "es" ? "/es/#work" : "/#work"}
               aria-label={d.back}

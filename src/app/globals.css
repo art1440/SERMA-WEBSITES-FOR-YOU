@@ -143,6 +143,27 @@ html.dark {
     @apply font-sans;
   }
 
+  /* ---- /work demo sites (DemoShell root carries [data-demo]) ----------------
+     Every demo's font pair exports the same two variables, --demo-display and
+     --demo-body (src/app/work/fonts.ts), so one reset serves all six demos:
+       - the demo root and everything in its <main> use --demo-body, overriding
+         the Serma families set on p/li/h* above (the ribbon and the booking
+         sheet sit outside <main> and keep Serma's fonts);
+       - add the class `demo-display` to any element that should use the demo's
+         display face (no `!important` needed).
+     :where() keeps the reset at element-level specificity, so Tailwind
+     utilities (font-*, tracking-*) and .demo-display still win over it. */
+  :where([data-demo]) {
+    font-family: var(--demo-body);
+  }
+  :where([data-demo] main) :is(p, li, h1, h2, h3, h4, h5, h6) {
+    font-family: var(--demo-body);
+    letter-spacing: normal;
+  }
+  .demo-display {
+    font-family: var(--demo-display);
+  }
+
   /* Anchor targets clear the sticky navbar. */
   [id] {
     scroll-margin-top: 5rem;

@@ -278,6 +278,7 @@ const en = {
   work: {
     demo: {
       label: "Demo site by Serma",
+      labelShort: "Demo",
       cta: "Want one like this?",
       back: "Back to Serma",
       dismiss: "Dismiss banner",
@@ -580,6 +581,7 @@ const es: Dictionary = {
   work: {
     demo: {
       label: "Sitio de demostración por Serma",
+      labelShort: "Demo",
       cta: "¿Quiere uno así?",
       back: "Volver a Serma",
       dismiss: "Cerrar el aviso",

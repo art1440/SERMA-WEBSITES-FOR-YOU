@@ -27,6 +27,6 @@ export type DemoContent = {
   business: string;
   phone: string;
   address: string;
-  hours: { days: L10n; time: string }[];
+  hours: { days: L10n; time: L10n }[];
   reviews: { quote: L10n; name: string }[];
 };

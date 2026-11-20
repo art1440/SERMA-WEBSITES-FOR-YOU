@@ -9,7 +9,6 @@ import { demoImage, type DemoContent, type DemoImage } from "./index";
 export type BarberService = { name: L10n; detail: L10n; minutes: number; price: number };
 
 export type BarberContent = DemoContent & {
-  street: string;
   nav: { services: L10n; shop: L10n; reviews: L10n; book: L10n; home: L10n; primary: L10n };
   hero: { lines: [L10n, L10n]; intro: L10n; cta: L10n; prices: L10n; walkIns: L10n };
   services: { title: L10n; intro: L10n; items: BarberService[]; minutes: L10n; note: L10n };
@@ -25,10 +24,9 @@ export const barbershop: BarberContent = {
   business: "Ironside Barber Co.",
   phone: "(555) 0142",
   address: "1408 Calder Ave",
-  street: "1408 Calder Ave",
   hours: [
-    { days: { en: "Tue to Fri", es: "Mar. a vie." }, time: "9am – 7pm" },
-    { days: { en: "Saturday", es: "Sábado" }, time: "8am – 4pm" },
+    { days: { en: "Tue to Fri", es: "Mar. a vie." }, time: { en: "9am – 7pm", es: "9:00 – 19:00" } },
+    { days: { en: "Saturday", es: "Sábado" }, time: { en: "8am – 4pm", es: "8:00 – 16:00" } },
   ],
   nav: {
     services: { en: "Prices", es: "Precios" },
@@ -177,7 +175,7 @@ export const barbershop: BarberContent = {
     {
       quote: {
         en: "Booked for 8:40, in the chair at 8:40. Best fade I have had in this city, and I have tried most of them.",
-        es: "Reservé para las 8:40 y a las 8:40 ya estaba en el sillón. El mejor degradado que me han hecho en esta ciudad, y he probado casi todas.",
+        es: "Reservé para las 8:40 y a las 8:40 ya estaba en el sillón. El mejor degradado que me han hecho en esta ciudad, y he probado casi todas las barberías.",
       },
       name: "Marcus T.",
     },
