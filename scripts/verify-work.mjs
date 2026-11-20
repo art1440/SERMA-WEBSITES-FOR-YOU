@@ -244,6 +244,46 @@ async function restaurantMenuPlatesLive(browser, base) {
   assertNoErrors(errors);
 }
 
+/**
+ * Trueframe: with reduced motion the hero kitchen photo is fully shown (no
+ * clip) and the elevation linework is hidden behind it.
+ */
+async function contractorPhotoShown(page) {
+  const r = await page.evaluate(() => {
+    const sig = document.querySelector('[data-signature="contractor"]');
+    const photo = sig?.querySelector("[data-photo]");
+    const lines = sig?.querySelector("[data-linework]");
+    if (!photo || !lines) return { missing: true };
+    const pr = photo.getBoundingClientRect();
+    const lr = lines.getBoundingClientRect();
+    return {
+      clip: getComputedStyle(photo).clipPath,
+      photoOpacity: getComputedStyle(photo).opacity,
+      covers: pr.left <= lr.left + 1 && pr.top <= lr.top + 1 && pr.right >= lr.right - 1 && pr.bottom >= lr.bottom - 1,
+      linesVisibility: getComputedStyle(lines).visibility,
+    };
+  });
+  if (r.missing) throw new Error("reduced motion: hero has no [data-photo] or [data-linework]");
+  if (r.clip !== "none" && !/^inset\(0(px|%)?\)$/.test(r.clip)) throw new Error(`reduced motion: kitchen photo still clipped (${r.clip})`);
+  if (r.photoOpacity !== "1") throw new Error(`reduced motion: kitchen photo opacity ${r.photoOpacity}`);
+  if (!r.covers) throw new Error("reduced motion: the photo does not cover the linework");
+  if (r.linesVisibility !== "hidden") throw new Error(`reduced motion: linework visibility is ${r.linesVisibility}, expected hidden`);
+}
+
+/** Trueframe, with motion: the hero sequence (draw, wipe, edge fade) lands at data-state="rest" with the photo unclipped. */
+async function contractorHeroSettlesLive(browser, base) {
+  const { page, errors } = await openPage(browser, `${base}/work/contractor/`, { width: 1280, height: 800 });
+  const early = await page.locator('[data-signature="contractor"]').getAttribute("data-state");
+  try {
+    await page.waitForFunction(() => document.querySelector('[data-signature="contractor"]').dataset.state === "rest", null, { timeout: 6000 });
+  } catch {
+    const state = await page.locator('[data-signature="contractor"]').getAttribute("data-state");
+    throw new Error(`motion: hero data-state is ${JSON.stringify(state)} after 6 s, expected "rest" (at load: ${JSON.stringify(early)})`);
+  }
+  await contractorPhotoShown(page);
+  assertNoErrors(errors);
+}
+
 const CHECKS = {
   "home-smoke": async ({ browser, base }) => {
     const { page } = await openPage(browser, `${base}/`);
@@ -254,6 +294,10 @@ const CHECKS = {
   "demo:restaurant": async ({ browser, base }) => {
     await demoCheck(browser, base, "restaurant", { restCheck: restaurantMenuPlated });
     await restaurantMenuPlatesLive(browser, base);
+  },
+  "demo:contractor": async ({ browser, base }) => {
+    await demoCheck(browser, base, "contractor", { restCheck: contractorPhotoShown });
+    await contractorHeroSettlesLive(browser, base);
   },
   "demo:salon": async ({ browser, base }) => {
     await demoCheck(browser, base, "salon", { restCheck: salonAccentStaysPlum });
