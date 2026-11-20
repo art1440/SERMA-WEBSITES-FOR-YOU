@@ -373,6 +373,33 @@ async function openGallery(browser, base, opts = {}) {
   return { page, errors, cards };
 }
 
+/** Opens /#work as an iPhone 13 (touch, DPR 3) and waits for the six cards in their row. */
+async function openPhoneGallery(browser, base, opts = {}) {
+  const { page, errors } = await openPage(browser, `${base}/#work`, { device: devices["iPhone 13"], ...opts });
+  const row = page.locator("[data-work-row]");
+  await row.waitFor({ state: "visible", timeout: 5000 });
+  await row.evaluate((el) => el.scrollIntoView({ block: "center" }));
+  const cards = page.locator("[data-work-card]");
+  const n = await cards.count();
+  if (n !== 6) throw new Error(`expected 6 [data-work-card], found ${n}`);
+  await page.waitForTimeout(500);
+  return { page, errors, cards, row };
+}
+
+/** A real touch drag (CDP touch events: pointer events + native scrolling), in small steps. */
+async function touchDrag(page, from, to, steps = 12) {
+  const cdp = await page.context().newCDPSession(page);
+  const pt = (x, y) => [{ x: Math.round(x), y: Math.round(y), id: 1 }];
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: pt(from.x, from.y) });
+  for (let i = 1; i <= steps; i++) {
+    const k = i / steps;
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: pt(from.x + (to.x - from.x) * k, from.y + (to.y - from.y) * k) });
+    await page.waitForTimeout(16);
+  }
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await cdp.detach();
+}
+
 async function hoverViewport(page, card) {
   const box = await card.locator("[data-work-viewport]").boundingBox();
   if (!box) throw new Error("card viewport has no box");
@@ -490,6 +517,134 @@ const CHECKS = {
         throw new Error(`reduced ${colorScheme}, preview open: ${e.message}`);
       }
     }
+  },
+  // ---- "Our work" gallery on phones (Task 13) ----
+  "gallery-phone": async ({ browser, base }) => {
+    const { page, errors, cards, row } = await openPhoneGallery(browser, base);
+    const m = await row.evaluate((el) => ({
+      h: el.getBoundingClientRect().height,
+      w: window.innerWidth,
+      tops: [...el.querySelectorAll("[data-work-card]")].map((c) => Math.round(c.getBoundingClientRect().top)),
+    }));
+    if (!(m.h <= 1.4 * m.w)) throw new Error(`row height ${m.h} > 1.4 × innerWidth (${m.w})`);
+    if (new Set(m.tops).size !== 1) throw new Error(`cards are not on one row: tops ${m.tops.join(", ")}`);
+    const dots = page.locator("#work [data-work-dot]");
+    if ((await dots.count()) !== 6) throw new Error(`expected 6 dots, found ${await dots.count()}`);
+    if ((await dots.nth(0).getAttribute("aria-current")) !== "true") throw new Error("first dot is not aria-current on load");
+    if ((await dots.nth(0).getAttribute("aria-label")) !== "Show Ironside Barber Co.") throw new Error(`dot label is ${await dots.nth(0).getAttribute("aria-label")}`);
+    const dotBox = await dots.nth(0).boundingBox();
+    if (dotBox.width < 24 || dotBox.height < 24) throw new Error(`dot hit area ${dotBox.width}×${dotBox.height} < 24×24`);
+
+    // The active card auto-scrolls while the section is on screen.
+    await page.waitForTimeout(3000);
+    const yAuto = await shotY(cards.nth(0));
+    if (!(yAuto < -1)) throw new Error(`auto: active card translateY is ${yAuto}, expected negative`);
+    if (Math.abs(await shotY(cards.nth(1))) > 0.5) throw new Error("auto: an inactive card is scrolling");
+
+    // Horizontal swipe: never opens, moves the active card to the second one.
+    const rb = await row.boundingBox();
+    const sy = rb.y + Math.min(rb.height / 2, 120);
+    await touchDrag(page, { x: rb.x + rb.width * 0.8, y: sy }, { x: rb.x + rb.width * 0.8 - 250, y: sy });
+    await page.waitForTimeout(900);
+    if (await page.getByRole("dialog").count()) throw new Error("swipe opened the preview");
+    if ((await dots.nth(1).getAttribute("aria-current")) !== "true") throw new Error("after swipe the second dot is not aria-current");
+    await page.waitForTimeout(1200);
+    if (Math.abs(await shotY(cards.nth(0))) > 1) throw new Error(`swiped-away card did not rest: ${await shotY(cards.nth(0))}`);
+
+    // Vertical drag over the row still scrolls the page.
+    const before = await page.evaluate(() => window.scrollY);
+    await touchDrag(page, { x: rb.x + rb.width / 2, y: sy + 60 }, { x: rb.x + rb.width / 2, y: sy - 140 });
+    await page.waitForTimeout(600);
+    const after = await page.evaluate(() => window.scrollY);
+    if (!(after > before + 40)) throw new Error(`vertical drag over the row did not scroll the page (${before} -> ${after})`);
+    if (await page.getByRole("dialog").count()) throw new Error("vertical drag opened the preview");
+    await row.evaluate((el) => el.scrollIntoView({ block: "center" }));
+    await page.waitForTimeout(400);
+
+    // Tap the centred card: full-screen preview with the CTA on screen.
+    const second = cards.nth(1);
+    const cb = await second.locator("[data-work-viewport]").boundingBox();
+    await page.touchscreen.tap(cb.x + cb.width / 2, cb.y + cb.height / 2);
+    const dialog = page.getByRole("dialog", { name: "Maison Lumière", exact: true });
+    await dialog.waitFor({ state: "visible", timeout: 5000 });
+    await page.waitForTimeout(700);
+    const full = await dialog.evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: r.x, y: r.y, w: r.width, h: r.height, vw: window.innerWidth, vh: window.innerHeight, lock: getComputedStyle(document.body).overflow };
+    });
+    if (Math.abs(full.x) > 1 || Math.abs(full.y) > 1 || Math.abs(full.w - full.vw) > 1 || Math.abs(full.h - full.vh) > 1)
+      throw new Error(`preview is not full-screen: ${JSON.stringify(full)}`);
+    if (full.lock !== "hidden") throw new Error(`body scroll not locked (overflow ${full.lock})`);
+    const visit = dialog.getByRole("link", { name: "Visit the full demo" });
+    const vb = await visit.boundingBox();
+    if (!vb || vb.y < 0 || vb.y + vb.height > full.vh) throw new Error(`"Visit the full demo" is not on screen: ${JSON.stringify(vb)}`);
+    await dialog.getByRole("button", { name: "Close preview" }).click();
+    await dialog.waitFor({ state: "hidden", timeout: 5000 });
+
+    // Dots scroll their card to the centre.
+    await dots.nth(3).click();
+    await page.waitForTimeout(1200);
+    if ((await dots.nth(3).getAttribute("aria-current")) !== "true") throw new Error("tapping dot 4 did not make it current");
+    const centred = await cards.nth(3).evaluate((el) => {
+      const r = el.getBoundingClientRect();
+      return Math.abs(r.left + r.width / 2 - window.innerWidth / 2);
+    });
+    if (centred > 2) throw new Error(`dot 4: card is ${centred}px off centre`);
+
+    // Keyboard still opens the focused card.
+    await cards.nth(3).focus();
+    await page.keyboard.press("Enter");
+    const kd = page.getByRole("dialog", { name: "Ember & Oak", exact: true });
+    await kd.waitFor({ state: "visible", timeout: 5000 });
+    await page.keyboard.press("Escape");
+    await kd.waitFor({ state: "hidden", timeout: 5000 });
+
+    // Leaving the section stops the loop and rests the card.
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(1200);
+    if (Math.abs(await shotY(cards.nth(3))) > 1) throw new Error(`off screen: active card translateY ${await shotY(cards.nth(3))}`);
+    assertNoErrors(errors);
+
+    for (const width of [360, 390, 430]) {
+      const g = await openPhoneGallery(browser, base, { width, height: 800 });
+      const o = await g.page.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth }));
+      if (o.sw > o.iw) throw new Error(`${width}px: page overflows horizontally (scrollWidth ${o.sw} > ${o.iw})`);
+    }
+    for (const colorScheme of ["light", "dark"]) {
+      const g = await openPhoneGallery(browser, base, { colorScheme });
+      try {
+        await runAxe(g.page, { include: ["#work"] });
+      } catch (e) {
+        throw new Error(`phone ${colorScheme}: ${e.message}`);
+      }
+      const c = await g.cards.nth(0).locator("[data-work-viewport]").boundingBox();
+      await g.page.touchscreen.tap(c.x + c.width / 2, c.y + c.height / 2);
+      await g.page.getByRole("dialog", { name: "Ironside Barber Co.", exact: true }).waitFor({ state: "visible", timeout: 5000 });
+      await g.page.waitForTimeout(900);
+      try {
+        await runAxe(g.page, { include: ["#work", '[role="dialog"]'] });
+      } catch (e) {
+        throw new Error(`phone ${colorScheme}, preview open: ${e.message}`);
+      }
+    }
+  },
+  "gallery-phone-paused": async ({ browser, base }) => {
+    const { page, errors, cards } = await openPhoneGallery(browser, base);
+    await page.waitForTimeout(3000);
+    if (!(await shotY(cards.nth(0)) < -1)) throw new Error("auto-scroll was not running before Pause");
+    const pause = page.getByRole("button", { name: "Pause animations", exact: true });
+    await pause.click();
+    const yNow = await shotY(cards.nth(0));
+    if (Math.abs(yNow) > 0.5) throw new Error(`Pause: translateY ${yNow} right after pausing, expected 0`);
+    await page.locator("#work").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(3000);
+    const y = await shotY(cards.nth(0));
+    if (Math.abs(y) > 0.5) throw new Error(`paused: active card translateY is ${y} after 3 s, expected 0`);
+    await page.getByRole("button", { name: "Play animations", exact: true }).click();
+    await page.locator("[data-work-row]").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(3000);
+    if (!(await shotY(cards.nth(0)) < -1)) throw new Error("auto-scroll did not resume after unpausing");
+    assertNoErrors(errors);
   },
   "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
   "demo:beauty": ({ browser, base }) => demoCheck(browser, base, "beauty", { restCheck: beautyWindowsOpen }),

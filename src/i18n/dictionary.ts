@@ -287,6 +287,8 @@ const en = {
       open: "Preview {business}",
       visit: "Visit the full demo",
       close: "Close preview",
+      show: "Show {business}",
+      dots: "Choose a demo",
       shotLabel: "Full-page screenshot of the {business} demo. Scroll to see it all.",
     },
     demo: {
@@ -603,6 +605,8 @@ const es: Dictionary = {
       open: "Ver vista previa de {business}",
       visit: "Visitar la demostración completa",
       close: "Cerrar la vista previa",
+      show: "Mostrar {business}",
+      dots: "Elija una demostración",
       shotLabel: "Captura de página completa de la demostración de {business}. Desplácese para verla entera.",
     },
     demo: {
