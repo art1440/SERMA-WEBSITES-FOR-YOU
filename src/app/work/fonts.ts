@@ -2,7 +2,7 @@ import localFont from "next/font/local";
 
 /**
  * Fonts for the /work demo sites, self-hosted from /src/app/work/fonts
- * (SIL Open Font License — see OFL.txt). Same policy as /src/app/fonts.ts:
+ * (SIL Open Font License — see the OFL-*.txt files there). Same policy as /src/app/fonts.ts:
  * served from our own domain, no request to Google or any CDN.
  *
  * Each demo has its own display + body pair. A demo page only ever loads one
