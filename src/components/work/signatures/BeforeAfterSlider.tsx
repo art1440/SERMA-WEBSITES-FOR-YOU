@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
 import type { DemoImage } from "@/data/demos";
 import { useDemoStill } from "../useDemoStill";
 
@@ -24,7 +31,7 @@ import { useDemoStill } from "../useDemoStill";
  *   the page; a horizontal drag (or a press on the knob) moves the handle, and
  *   a tap on the photo never jumps it. There is no wheel handler, so the wheel
  *   over the photo scrolls the page.
- * - Keyboard: the knob is role="slider" (focusable, 56px, visible focus ring):
+ * - Keyboard: the knob is role="slider" (focusable, 56px; focus ring = yellow gap + ink ring, readable on light and dark photo areas):
  *   Arrow keys +/-5, PageUp/PageDown +/-10, Home 0, End 100.
  * - The first time the photo is 60% in view it does one hint sweep,
  *   50 -> 62 -> 50 over 1.3 s, visual only (aria-valuenow stays 50). Skipped
@@ -60,7 +67,19 @@ const SWEEP_MS = 1300;
 
 const clamp = (v: number) => Math.min(100, Math.max(0, v));
 
-export function BeforeAfterSlider({ before, after, beforeAlt, afterAlt, beforeLabel, afterLabel, name, valueText, hint, sizes, className }: Props) {
+export function BeforeAfterSlider({
+  before,
+  after,
+  beforeAlt,
+  afterAlt,
+  beforeLabel,
+  afterLabel,
+  name,
+  valueText,
+  hint,
+  sizes,
+  className,
+}: Props) {
   const still = useDemoStill();
   const [value, setValue] = useState(START);
   const [swept, setSwept] = useState(false);
@@ -72,14 +91,24 @@ export function BeforeAfterSlider({ before, after, beforeAlt, afterAlt, beforeLa
   const valueRef = useRef(START);
   const touchedRef = useRef(false);
   const sweepRaf = useRef(0);
-  const drag = useRef<{ id: number; active: boolean; x0: number; touch: boolean } | null>(null);
+  const drag = useRef<{
+    id: number;
+    active: boolean;
+    x0: number;
+    touch: boolean;
+  } | null>(null);
 
-  const text = useCallback((v: number) => valueText.replace("{n}", String(v)), [valueText]);
+  const text = useCallback(
+    (v: number) => valueText.replace("{n}", String(v)),
+    [valueText],
+  );
 
   /** Visual write: clip + handle position (fractional values allowed). */
   const paint = useCallback((v: number) => {
-    if (afterRef.current) afterRef.current.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
-    if (trackRef.current) trackRef.current.style.transform = `translateX(${v}%)`;
+    if (afterRef.current)
+      afterRef.current.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+    if (trackRef.current)
+      trackRef.current.style.transform = `translateX(${v}%)`;
   }, []);
 
   /** Value write: visuals + ARIA, no React render. */
@@ -114,7 +143,8 @@ export function BeforeAfterSlider({ before, after, beforeAlt, afterAlt, beforeLa
     if (!frame) return;
     const io = new IntersectionObserver(
       (entries) => {
-        if (!entries.some((e) => e.isIntersecting) || touchedRef.current) return;
+        if (!entries.some((e) => e.isIntersecting) || touchedRef.current)
+          return;
         io.disconnect();
         const t0 = performance.now();
         const step = (now: number) => {
@@ -152,9 +182,16 @@ export function BeforeAfterSlider({ before, after, beforeAlt, afterAlt, beforeLa
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
     stopSweep();
-    const onKnob = Boolean((e.target as HTMLElement).closest('[role="slider"]'));
+    const onKnob = Boolean(
+      (e.target as HTMLElement).closest('[role="slider"]'),
+    );
     const touch = e.pointerType === "touch";
-    drag.current = { id: e.pointerId, active: !touch || onKnob, x0: e.clientX, touch };
+    drag.current = {
+      id: e.pointerId,
+      active: !touch || onKnob,
+      x0: e.clientX,
+      touch,
+    };
     if (!touch || onKnob) {
       e.currentTarget.setPointerCapture(e.pointerId);
       if (!onKnob) write(fromX(e.clientX));
@@ -180,7 +217,8 @@ export function BeforeAfterSlider({ before, after, beforeAlt, afterAlt, beforeLa
     const d = drag.current;
     if (!d || d.id !== e.pointerId) return;
     drag.current = null;
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+    if (e.currentTarget.hasPointerCapture(e.pointerId))
+      e.currentTarget.releasePointerCapture(e.pointerId);
     if (d.active) setValue(valueRef.current);
   };
 
@@ -238,7 +276,12 @@ export function BeforeAfterSlider({ before, after, beforeAlt, afterAlt, beforeLa
         </span>
 
         {/* After: on top, clipped from the right. */}
-        <div ref={afterRef} data-after className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - value}% 0 0)` }}>
+        <div
+          ref={afterRef}
+          data-after
+          className="absolute inset-0"
+          style={{ clipPath: `inset(0 ${100 - value}% 0 0)` }}
+        >
           <img
             src={after.src}
             srcSet={`${after.small} 640w, ${after.src} ${after.width}w`}
@@ -261,8 +304,15 @@ export function BeforeAfterSlider({ before, after, beforeAlt, afterAlt, beforeLa
         </div>
 
         {/* Handle: a full-width track moved by transform; the line and knob sit at its left edge. */}
-        <div ref={trackRef} className="pointer-events-none absolute inset-0" style={{ transform: `translateX(${value}%)` }}>
-          <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px] -translate-x-1/2 bg-[#FFD23F] shadow-[0_0_0_1px_rgba(12,58,54,0.35)]" />
+        <div
+          ref={trackRef}
+          className="pointer-events-none absolute inset-0"
+          style={{ transform: `translateX(${value}%)` }}
+        >
+          <span
+            aria-hidden="true"
+            className="absolute inset-y-0 left-0 w-[3px] -translate-x-1/2 bg-[#FFD23F] shadow-[0_0_0_1px_rgba(12,58,54,0.35)]"
+          />
           <div
             ref={knobRef}
             role="slider"
@@ -274,16 +324,34 @@ export function BeforeAfterSlider({ before, after, beforeAlt, afterAlt, beforeLa
             aria-valuenow={value}
             aria-valuetext={text(value)}
             onKeyDown={onKeyDown}
-            className="pointer-events-auto absolute left-0 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 cursor-grab items-center justify-center rounded-full border-[3px] border-[#0C3A36] bg-[#FFD23F] text-[#0C3A36] shadow-[0_6px_18px_-6px_rgba(12,58,54,0.55)] outline-none focus-visible:ring-[3px] focus-visible:ring-white focus-visible:ring-offset-[3px] focus-visible:ring-offset-[#0C3A36] active:cursor-grabbing"
+            className="pointer-events-auto absolute left-0 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 cursor-grab items-center justify-center rounded-full border-[3px] border-[#0C3A36] bg-[#FFD23F] text-[#0C3A36] shadow-[0_6px_18px_-6px_rgba(12,58,54,0.55)] outline-none focus-visible:ring-[3px] focus-visible:ring-[#0C3A36] focus-visible:ring-offset-[3px] focus-visible:ring-offset-[#FFD23F] active:cursor-grabbing"
           >
-            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M9 6L3 12L9 18M15 6L21 12L15 18" />
             </svg>
           </div>
         </div>
       </div>
       <figcaption className="mt-3 flex items-center gap-2 text-[0.9375rem] text-[#3F625E]">
-        <svg aria-hidden="true" viewBox="0 0 24 12" className="h-3 w-6 shrink-0" fill="none" stroke="#0A6B60" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 12"
+          className="h-3 w-6 shrink-0"
+          fill="none"
+          stroke="#0A6B60"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M6 1L1 6L6 11M18 1L23 6L18 11M1 6H23" />
         </svg>
         {hint}

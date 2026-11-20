@@ -6,7 +6,7 @@ import { demoImage, type DemoContent, type DemoImage } from "./index";
  * user-facing string on /work/service/ lives here, in US English and in formal
  * ("usted") Spanish. Prices are typical starting points in USD.
  *
- * Nothing on the page is live: the arrival time is a stated average and the
+ * Nothing on the page is live: the arrival time is labelled as an example and the
  * "what happens when you call" timeline is labelled as a typical example.
  */
 
@@ -88,7 +88,7 @@ export type ServiceContent = Omit<DemoContent, "reviews"> & {
       body: L10n;
     }[];
   };
-  reviewsBlock: { kicker: L10n; title: L10n; rating: L10n };
+  reviewsBlock: { kicker: L10n; title: L10n };
   area: {
     kicker: L10n;
     title: L10n;
@@ -152,15 +152,15 @@ export const service: ServiceContent = {
     cta: { en: "Book a visit", es: "Reserve una visita" },
     call: { en: "Call (555) 0171", es: "Llame al (555) 0171" },
     eta: {
-      tag: { en: "Average", es: "Promedio" },
+      tag: { en: "Example", es: "Ejemplo" },
       label: {
-        en: "Typical same-day arrival",
-        es: "Llegada habitual el mismo día",
+        en: "Next available tech",
+        es: "Próximo técnico disponible",
       },
       value: { en: "42 min", es: "42 min" },
       note: {
-        en: "Our average from call to doorbell on same-day visits. You get a two-hour window and a text when your tech is on the way.",
-        es: "Nuestro promedio desde la llamada hasta su puerta en visitas del mismo día. Le damos una franja de dos horas y un mensaje cuando el técnico va en camino.",
+        en: "The arrival estimate you get by text when you book. This one is an example.",
+        es: "La hora estimada de llegada que recibe por mensaje al reservar. Esta es un ejemplo.",
       },
     },
     route: {
@@ -234,12 +234,12 @@ export const service: ServiceContent = {
         name: { en: "Plumbing", es: "Plomería" },
         lede: {
           en: "Leaks, clogs, toilets, faucets, disposals and sump pumps.",
-          es: "Fugas, atascos, inodoros, grifos, trituradores y bombas de sumidero.",
+          es: "Fugas, tapones, inodoros, llaves, trituradores y bombas de sumidero.",
         },
         from: 149,
         jobs: [
           {
-            name: { en: "Drain clearing", es: "Desatasco de desagüe" },
+            name: { en: "Drain clearing", es: "Destape de desagüe" },
             from: 149,
           },
           {
@@ -247,7 +247,7 @@ export const service: ServiceContent = {
             from: 165,
           },
           {
-            name: { en: "Faucet replacement", es: "Cambio de grifo" },
+            name: { en: "Faucet replacement", es: "Cambio de llave del agua" },
             from: 210,
           },
         ],
@@ -257,7 +257,7 @@ export const service: ServiceContent = {
         name: { en: "Electrical", es: "Electricidad" },
         lede: {
           en: "Outlets, breakers, lighting, EV chargers and panels. Master electricians on staff.",
-          es: "Enchufes, disyuntores, iluminación, cargadores de auto eléctrico y paneles. Maestros electricistas en plantilla.",
+          es: "Enchufes, disyuntores, iluminación, cargadores de auto eléctrico y paneles. Maestros electricistas en nómina.",
         },
         from: 129,
         jobs: [
@@ -439,11 +439,11 @@ export const service: ServiceContent = {
         label: { en: "Background-checked techs", es: "Técnicos verificados" },
         promise: {
           en: "Licensed, background-checked, on our own payroll.",
-          es: "Con licencia, antecedentes verificados y en nuestra plantilla.",
+          es: "Con licencia, antecedentes verificados y en nuestra nómina.",
         },
         body: {
           en: "No subcontractors. You get your tech’s name and photo by text before the doorbell rings, and they wear shoe covers inside.",
-          es: "Sin subcontratas. Recibe el nombre y la foto de su técnico por mensaje antes de que llame a la puerta, y dentro de casa usa cubrezapatos.",
+          es: "Sin subcontratistas. Recibe el nombre y la foto de su técnico por mensaje antes de que llame a la puerta, y dentro de casa usa cubrezapatos.",
         },
       },
     ],
@@ -453,10 +453,6 @@ export const service: ServiceContent = {
     title: {
       en: "From neighbors we have fixed things for",
       es: "De vecinos a los que les hemos arreglado algo",
-    },
-    rating: {
-      en: "4.9 average from 1,200+ reviews",
-      es: "4.9 de media en más de 1,200 reseñas",
     },
   },
   reviews: [

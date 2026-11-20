@@ -13,7 +13,7 @@ import { useDemoStill } from "../useDemoStill";
  * Brightline Home, set as the daylight demo: a pale teal ground, deep teal ink
  * and one confident yellow, used as the "bright line" (a highlighter stroke
  * under the headline, the slider handle, CTA fills). The voice is dispatch:
- * a stated arrival average, a timeline of what happens when you call, a
+ * an example arrival estimate, a timeline of what happens when you call, a
  * service radius, all written as typical examples, never as live data.
  *
  * Rhythm: type-led hero (no photo above the fold) with a dispatch timeline;
@@ -190,14 +190,14 @@ function RadiusMap({
   rings: [string, string];
 }) {
   // Hand-placed in the 500 x 500 viewBox (rings r=100 and r=200 around 250,250):
-  // [x, y, label side]. Order matches the neighborhoods list; Lakeview is the centre.
-  const spots: [number, number, "start" | "end"][] = [
+  // [x, y, label side: start = right of the pin, end = left, below = centred under it]. Order matches the neighborhoods list; Lakeview is the centre.
+  const spots: [number, number, "start" | "end" | "below"][] = [
     [250, 250, "start"],
     [268, 118, "start"],
     [342, 186, "start"],
-    [96, 296, "start"],
+    [100, 250, "below"],
     [360, 380, "end"],
-    [176, 140, "end"],
+    [190, 130, "end"],
     [186, 352, "end"],
     [214, 432, "start"],
   ];
@@ -262,9 +262,15 @@ function RadiusMap({
               <circle cx={x} cy={y} r="5.5" fill="#0C3A36" />
             )}
             <text
-              x={center ? x : side === "end" ? x - 11 : x + 11}
-              y={center ? y + 40 : y + 5}
-              textAnchor={center ? "middle" : side}
+              x={
+                center || side === "below"
+                  ? x
+                  : side === "end"
+                    ? x - 11
+                    : x + 11
+              }
+              y={center ? y + 40 : side === "below" ? y + 24 : y + 5}
+              textAnchor={center || side === "below" ? "middle" : side}
               fontFamily="var(--demo-display)"
               fontSize={center ? 20 : 15}
               fontWeight={center ? 800 : 600}
@@ -342,7 +348,7 @@ export function ServiceDemo() {
       {/* --------------------------------------------------------------- hero */}
       <section aria-labelledby="hero-title" className="relative">
         <div
-          className={`${WRAP} grid gap-x-12 gap-y-10 pb-14 pt-7 sm:pb-20 sm:pt-12 lg:grid-cols-12 lg:pb-24 lg:pt-14`}
+          className={`${WRAP} grid gap-x-12 gap-y-7 pb-14 pt-7 sm:gap-y-10 sm:pb-20 sm:pt-12 lg:grid-cols-12 lg:pb-24 lg:pt-14`}
         >
           <div className="lg:col-span-7">
             <p className={KICKER}>{L(c.hero.kicker)}</p>
@@ -376,7 +382,7 @@ export function ServiceDemo() {
                 </BookButton>
               </div>
 
-              {/* ETA strip: a stated average, not live tracking. */}
+              {/* ETA strip: an example of the estimate a customer receives, not live tracking. */}
               <div className="mt-9 flex max-w-[34rem] items-stretch overflow-hidden rounded-[6px] bg-[#0C3A36] text-[#EAF6F4]">
                 <div className="flex shrink-0 flex-col justify-center gap-1 border-r border-[#EAF6F4]/15 px-4 py-4 sm:px-5">
                   <span className="flex items-center gap-2 text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#A9D3CC]">
@@ -648,7 +654,7 @@ export function ServiceDemo() {
         style={SCROLL_MARGIN}
       >
         <div className={`${WRAP} py-16 sm:py-24`}>
-          <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-3">
+          <div>
             <div>
               <p className={KICKER}>{L(c.reviewsBlock.kicker)}</p>
               <h2
@@ -658,15 +664,6 @@ export function ServiceDemo() {
                 {L(c.reviewsBlock.title)}
               </h2>
             </div>
-            <p className="flex items-center gap-2 text-[0.9375rem] font-medium text-[#0C3A36]">
-              <span
-                aria-hidden="true"
-                className="text-[1.125rem] leading-none tracking-[0.08em] text-[#0F8F80]"
-              >
-                ★★★★★
-              </span>
-              {L(c.reviewsBlock.rating)}
-            </p>
           </div>
 
           {(() => {
