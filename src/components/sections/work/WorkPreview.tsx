@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useIsPresent } from "framer-motion";
 import { ArrowRight, X } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type MouseEvent, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import type { DemoCard } from "@/data/demos";
@@ -86,12 +86,20 @@ function PreviewDialog({
     pinnedStyle.current = { position: b.position, top: b.top, left: b.left, right: b.right, width: b.width };
     Object.assign(b, { position: "fixed", top: `-${y}px`, left: "0", right: "0", width: "100%" });
     pinnedAt.current = y;
+    pinnedPath.current = window.location.pathname;
   }, [full]);
-  const unpin = useCallback(() => {
+  const pinnedPath = useRef<string>("");
+  /**
+   * `restore: false` releases the pin without scrolling back: used when leaving the page through
+   * "Visit the full demo", where the home page's offset would otherwise be applied to the demo
+   * after the router has scrolled it to the top.
+   */
+  const unpin = useCallback(({ restore = true }: { restore?: boolean } = {}) => {
     const y = pinnedAt.current;
     if (y === null) return;
     pinnedAt.current = null;
     Object.assign(document.body.style, pinnedStyle.current);
+    if (!restore) return;
     // Instant, even though the site scrolls smoothly: the page must not visibly travel back.
     const html = document.documentElement.style;
     const behavior = html.scrollBehavior;
@@ -109,6 +117,16 @@ function PreviewDialog({
     onClose(!full && scroller && img && img.offsetHeight > 0 ? scroller.scrollTop / img.offsetHeight : 0);
   }, [onClose, full, unpin]);
 
+  /** "Visit the full demo": drop the pin in place so nothing scrolls the demo once it has loaded. */
+  const leave = useCallback(
+    (e: MouseEvent<HTMLAnchorElement>) => {
+      // A modified click opens a new tab: this page stays, and so does its pin.
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      unpin({ restore: false });
+    },
+    [unpin],
+  );
+
   useFocusTrap(ref, present, close);
 
   // Lock page scroll while open. html reserves the scrollbar lane (scrollbar-gutter: stable), so nothing shifts.
@@ -119,7 +137,8 @@ function PreviewDialog({
     // No morph (reduced motion / Pause) on a phone: nothing to wait for before pinning.
     if (full && !morph) pin();
     return () => {
-      unpin();
+      // Unmounted by a route change (the page under the pin is gone): never scroll the new page.
+      unpin({ restore: window.location.pathname === pinnedPath.current });
       document.body.style.overflow = previous;
     };
   }, [present, full, morph, pin, unpin]);
@@ -176,7 +195,7 @@ function PreviewDialog({
           </h2>
           <span className="ml-auto flex shrink-0 items-center gap-2">
             {full ? null : (
-              <Link href={href} className="btn btn-sm btn-aqua">
+              <Link href={href} className="btn btn-sm btn-aqua" onClick={leave}>
                 {g.visit}
                 <ArrowRight aria-hidden="true" size={16} strokeWidth={2} />
               </Link>
@@ -280,7 +299,7 @@ function PreviewDialog({
             animate={still ? undefined : { opacity: 1, y: 0, transition: { ...FADE_IN, delay: 0.24 } }}
             exit={still ? undefined : { opacity: 0, transition: { duration: 0.12, ease: "easeOut" } }}
           >
-            <Link href={href} className="btn btn-aqua w-full justify-center">
+            <Link href={href} className="btn btn-aqua w-full justify-center" onClick={leave}>
               {g.visit}
               <ArrowRight aria-hidden="true" size={16} strokeWidth={2} />
             </Link>

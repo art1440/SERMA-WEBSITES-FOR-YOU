@@ -93,6 +93,8 @@ async function demoCheck(browser, base, id, { restCheck } = {}) {
       const books = await page.locator("[data-book]").count();
       if (books < 2) throw new Error(`${where}: expected >= 2 [data-book], found ${books}`);
       if (!(await page.locator(`[data-signature="${id}"]`).count())) throw new Error(`${where}: no [data-signature="${id}"]`);
+      const ov = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth }));
+      if (ov.sw > ov.iw) throw new Error(`${where}: page overflows horizontally (scrollWidth ${ov.sw} > ${ov.iw})`);
       const total = await page.evaluate(() => document.documentElement.scrollHeight);
       for (let y = 0; y <= total; y += 400) {
         await page.evaluate((v) => window.scrollTo(0, v), y);
@@ -249,6 +251,47 @@ async function restaurantMenuPlatesLive(browser, base) {
 }
 
 /**
+ * Ember & Oak: a header nav link lands its section right below the sticky header (the site-wide
+ * scroll-padding-top must not add to the section's own scroll-margin-top). Ribbon shown and hidden.
+ */
+async function restaurantAnchorLands(browser, base) {
+  for (const query of ["", "?capture=1"]) {
+    const { page, errors } = await openPage(browser, `${base}/work/restaurant/${query}`, { width: 1280, height: 800, reducedMotion: true });
+    const links = page.locator('header nav a[href^="#"]');
+    const n = await links.count();
+    if (n < 2) throw new Error(`anchor${query}: expected header nav links, found ${n}`);
+    for (let i = 0; i < n; i++) {
+      const link = links.nth(i);
+      const hash = await link.getAttribute("href");
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForTimeout(150);
+      await link.click();
+      await page.waitForFunction((h) => location.hash === h, hash, { timeout: 3000 });
+      // Wait for the scroll (smooth or not) to settle.
+      await page.evaluate(async () => {
+        let last = -1;
+        let still = 0;
+        while (still < 6) {
+          await new Promise((r) => requestAnimationFrame(r));
+          still = scrollY === last ? still + 1 : 0;
+          last = scrollY;
+        }
+      });
+      const m = await page.evaluate((h) => {
+        const header = document.querySelector("[data-demo] header");
+        const target = document.querySelector(h);
+        return { headerBottom: header.getBoundingClientRect().bottom, top: target.getBoundingClientRect().top, y: scrollY, max: document.documentElement.scrollHeight - innerHeight };
+      }, hash);
+      // A section near the end of the page may be unable to reach the top: then the page is at its end.
+      if (m.y >= m.max - 1 && m.top > m.headerBottom) continue;
+      if (Math.abs(m.top - m.headerBottom) > 8)
+        throw new Error(`anchor${query} ${hash}: section top ${m.top.toFixed(1)} vs header bottom ${m.headerBottom.toFixed(1)}`);
+    }
+    assertNoErrors(errors);
+  }
+}
+
+/**
  * Trueframe: with reduced motion the hero kitchen photo is fully shown (no
  * clip) and the elevation linework is hidden behind it.
  */
@@ -384,6 +427,35 @@ async function openPhoneGallery(browser, base, opts = {}) {
   if (n !== 6) throw new Error(`expected 6 [data-work-card], found ${n}`);
   await page.waitForTimeout(500);
   return { page, errors, cards, row };
+}
+
+/**
+ * Phone preview -> "Visit the full demo": the demo opens at its top (the body pin must not hand the
+ * home page's scroll offset to the demo), with its h1 on screen.
+ */
+async function phoneVisitLandsAtTop(browser, base, { reducedMotion }) {
+  const where = reducedMotion ? "phone visit (reduced motion)" : "phone visit";
+  const { page, errors, cards } = await openPhoneGallery(browser, base, { reducedMotion });
+  const yHome = await page.evaluate(() => scrollY);
+  if (!(yHome > 400)) throw new Error(`${where}: gallery is at scrollY ${yHome}, too close to the top to tell`);
+  const c = await cards.nth(0).locator("[data-work-viewport]").boundingBox();
+  await page.touchscreen.tap(c.x + c.width / 2, c.y + c.height / 2);
+  const dialog = page.getByRole("dialog", { name: "Ironside Barber Co.", exact: true });
+  await dialog.waitFor({ state: "visible", timeout: 5000 });
+  await page.waitForTimeout(900);
+  if ((await page.evaluate(() => getComputedStyle(document.body).position)) !== "fixed") throw new Error(`${where}: body not pinned before Visit`);
+  await dialog.getByRole("link", { name: "Visit the full demo" }).tap();
+  await page.waitForURL(/\/work\/barbershop\/?$/, { timeout: 10000 });
+  await page.locator("[data-demo] h1").waitFor({ state: "visible", timeout: 10000 });
+  await page.waitForTimeout(800);
+  const m = await page.evaluate(() => {
+    const r = document.querySelector("[data-demo] h1").getBoundingClientRect();
+    return { y: scrollY, top: r.top, bottom: r.bottom, vh: innerHeight, pos: getComputedStyle(document.body).position, bodyTop: document.body.style.top };
+  });
+  if (m.y !== 0) throw new Error(`${where}: demo opened at scrollY ${m.y}, expected 0`);
+  if (!(m.top >= 0 && m.bottom <= m.vh)) throw new Error(`${where}: h1 not in the viewport (${m.top}..${m.bottom}, vh ${m.vh})`);
+  if (m.pos !== "static" || m.bodyTop) throw new Error(`${where}: body still pinned on the demo (${m.pos}, top ${m.bodyTop})`);
+  assertNoErrors(errors);
 }
 
 /** A real touch drag (CDP touch events: pointer events + native scrolling), in small steps. */
@@ -641,6 +713,24 @@ const CHECKS = {
     if (moved.length) throw new Error(`settle: card image moved during the shrink (${settle[0].y} -> ${moved[0].y} at ${Math.round(moved[0].t)} ms)`);
     assertNoErrors(errors);
 
+    // "Visit the full demo" from the desktop preview opens the demo at its top.
+    {
+      const v = await openGallery(browser, base);
+      await v.page.waitForTimeout(800);
+      if (!((await v.page.evaluate(() => scrollY)) > 400)) throw new Error("desktop visit: gallery too close to the top to tell");
+      await v.cards.nth(1).click();
+      const d = v.page.getByRole("dialog", { name: "Maison Lumière", exact: true });
+      await d.waitFor({ state: "visible", timeout: 5000 });
+      await v.page.waitForTimeout(700);
+      await d.getByRole("link", { name: "Visit the full demo" }).click();
+      await v.page.waitForURL(/\/work\/salon\/?$/, { timeout: 10000 });
+      await v.page.locator("[data-demo] h1").waitFor({ state: "visible", timeout: 10000 });
+      await v.page.waitForTimeout(800);
+      const y = await v.page.evaluate(() => scrollY);
+      if (y !== 0) throw new Error(`desktop visit: demo opened at scrollY ${y}, expected 0`);
+      assertNoErrors(v.errors);
+    }
+
     for (const colorScheme of ["light", "dark"]) {
       const g = await openGallery(browser, base, { colorScheme });
       await g.cards.nth(1).click();
@@ -782,6 +872,9 @@ const CHECKS = {
     if (Math.abs(await shotY(cards.nth(3))) > 1) throw new Error(`off screen: active card translateY ${await shotY(cards.nth(3))}`);
     assertNoErrors(errors);
 
+    await phoneVisitLandsAtTop(browser, base, { reducedMotion: false });
+    await phoneVisitLandsAtTop(browser, base, { reducedMotion: true });
+
     for (const width of [360, 390, 430]) {
       const g = await openPhoneGallery(browser, base, { width, height: 800 });
       const o = await g.page.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth }));
@@ -828,6 +921,7 @@ const CHECKS = {
   "demo:restaurant": async ({ browser, base }) => {
     await demoCheck(browser, base, "restaurant", { restCheck: restaurantMenuPlated });
     await restaurantMenuPlatesLive(browser, base);
+    await restaurantAnchorLands(browser, base);
   },
   "demo:contractor": async ({ browser, base }) => {
     await demoCheck(browser, base, "contractor", { restCheck: contractorPhotoShown });
@@ -848,9 +942,24 @@ const CHECKS = {
     await ribbon.waitFor({ state: "visible", timeout: 5000 });
     const lang = await page.evaluate(() => document.documentElement.lang);
     if (lang !== "es") throw new Error(`html lang is "${lang}", expected "es"`);
+    // Next renders the credit's href without the trailing slash; either form is the Spanish home page.
+    const creditHrefs = () => page.locator("[data-demo] footer a").evaluateAll((as) => as.map((a) => a.getAttribute("href")).filter((h) => /^\/(es\/?)?$/.test(h)));
+    const credit = await creditHrefs();
+    if (credit.length !== 1 || !/^\/es\/?$/.test(credit[0])) throw new Error(`es: footer credit links to ${JSON.stringify(credit)}, expected the Spanish home page`);
     await ribbon.locator('button[data-lang="en"]').click();
     await page.waitForFunction(() => location.search.includes("lang=en"), null, { timeout: 5000 });
     await page.getByRole("region", { name: "Demo site by Serma" }).waitFor({ state: "visible", timeout: 5000 });
+    const creditEn = await creditHrefs();
+    if (creditEn.length !== 1 || creditEn[0] !== "/") throw new Error(`en: footer credit links to ${JSON.stringify(creditEn)}, expected ["/"]`);
+    // Dismissing the ribbon moves focus to <main> without scrolling the page.
+    await page.evaluate(() => window.scrollTo(0, 600));
+    await page.waitForTimeout(200);
+    const yDismiss = await page.evaluate(() => scrollY);
+    await page.getByRole("region", { name: "Demo site by Serma" }).getByRole("button", { name: /dismiss|close|hide/i }).click();
+    await page.waitForTimeout(300);
+    if (!(await page.evaluate(() => document.activeElement?.id === "main"))) throw new Error("ribbon dismiss: focus is not on <main>");
+    const yAfterDismiss = await page.evaluate(() => scrollY);
+    if (Math.abs(yAfterDismiss - yDismiss) > 1) throw new Error(`ribbon dismiss scrolled the page (${yDismiss} -> ${yAfterDismiss})`);
     assertNoErrors(errors);
   },
   "shell-booking": async ({ browser, base }) => {
