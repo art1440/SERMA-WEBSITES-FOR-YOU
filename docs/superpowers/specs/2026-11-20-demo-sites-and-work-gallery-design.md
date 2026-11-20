@@ -68,7 +68,7 @@ Working cast (names/copy can be refined during build):
 | salon | Maison Lumière | blush/plum, high-contrast serif | Colour-swatch ribbon: scrolling sweeps a ribbon of hair-colour swatches across the hero, each one recolouring the accent |
 | beauty | Velvet Room | deep sage, soft serif, lots of air | Treatments revealed through rounded mask "windows" that open as they enter (clip-path, no blur) |
 | restaurant | Ember & Oak | ember red/ochre, editorial serif | Menu "plates in": dishes and prices set onto the page like courses, staggered, with a slight drop and settle |
-| contractor | Keystone Build | blueprint blue + safety orange, condensed sans | Blueprint linework draws itself (SVG stroke), then the finished-build photo wipes in over it |
+| contractor | Trueframe Builders | blueprint blue + safety orange, condensed sans | Blueprint linework draws itself (SVG stroke), then the finished-build photo wipes in over it |
 | service | Brightline Home | clean teal/yellow, friendly sans | Before/after drag slider on a repair photo (finger-tracked, interruptible), plus a "tech on the way" ETA strip |
 
 Each page section order is the demo's own (not one shared order), but every page includes: hero, services/menu with prices, gallery, reviews, hours/location, booking CTA, footer.
@@ -96,7 +96,7 @@ Where pictures go (and where they don't):
 | Maison Lumière | **Photo-led.** Editorial colour-work portrait (hair is the product) | Gallery: 1 colour result; salon interior | 3 |
 | Velvet Room | **Type + soft shape.** No photo; calm typography on sage | The mask windows: 3 treatment close-ups (lashes, brows, skin) | 3 |
 | Ember & Oak | **Photo-led.** Wood-fire dish, dark and warm (food sells on photos) | Menu highlights: 2 dishes; dining room | 4 |
-| Keystone Build | **Linework-led.** Blueprint drawing, then one finished-build photo wipes in | Projects: 2 completed jobs (addition, deck); the kitchen is the hero wipe | 3 |
+| Trueframe Builders | **Linework-led.** Blueprint drawing, then one finished-build photo wipes in | Projects: 2 completed jobs (addition, deck); the kitchen is the hero wipe | 3 |
 | Brightline Home | **Type-led.** Big promise + ETA strip, no photo | Before/after pair for the slider | 2 |
 | **Total** | | | **18** |
 
