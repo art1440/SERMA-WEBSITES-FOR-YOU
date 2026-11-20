@@ -27,11 +27,12 @@ let registry = [];
  * it is spread into newContext, then width/height (if given explicitly) override the viewport.
  */
 async function openPage(browser, url, opts = {}) {
-  const { width, height, reducedMotion = false, device } = opts;
+  const { width, height, reducedMotion = false, device, colorScheme = "light" } = opts;
   const ctxOpts = { ...(device || {}) };
   if (width || height || !device) {
     ctxOpts.viewport = { width: width ?? 1280, height: height ?? 800 };
   }
+  ctxOpts.colorScheme = colorScheme;
   ctxOpts.reducedMotion = reducedMotion ? "reduce" : "no-preference";
   const context = await browser.newContext(ctxOpts);
   const page = await context.newPage();
@@ -104,6 +105,14 @@ const CHECKS = {
     const back = await book.evaluate((el) => el === document.activeElement);
     if (!back) throw new Error("focus did not return to the [data-book] button");
     assertNoErrors(errors);
+    // axe with the sheet open, in both colour schemes
+    for (const colorScheme of ["light", "dark"]) {
+      const { page: p } = await openPage(browser, `${base}/work/barbershop/`, { colorScheme });
+      await p.locator("[data-book]").first().click();
+      await p.getByRole("dialog", { name: "This is a demo" }).waitFor({ state: "visible", timeout: 5000 });
+      await p.waitForTimeout(400);
+      await runAxe(p, { disableRules: ["region"] });
+    }
   },
   "shell-capture": async ({ browser, base }) => {
     const { page, errors } = await openPage(browser, `${base}/work/barbershop/?capture=1`);

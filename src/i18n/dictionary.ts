@@ -585,7 +585,7 @@ const es: Dictionary = {
       dismiss: "Cerrar el aviso",
       language: "Idioma",
       sheetTitle: "Esto es una demostración",
-      sheetBody: "Las reservas están desactivadas en los sitios de demostración. ¿Quiere este sitio, hecho para su negocio?",
+      sheetBody: "Agendar citas está desactivado en los sitios de demostración. ¿Quiere este sitio, hecho para su negocio?",
       sheetCta: "Obtenga su maqueta gratis",
       sheetClose: "Seguir mirando",
     },

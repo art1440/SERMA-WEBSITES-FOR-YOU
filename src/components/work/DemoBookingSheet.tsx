@@ -34,7 +34,7 @@ export function DemoBookingSheet({ open, onClose, onMockup }: Props) {
       {open && (
         <div className="fixed inset-0 z-[90] flex items-end justify-center md:items-center">
           <motion.div
-            className="absolute inset-0 bg-ink/60"
+            className="absolute inset-0 bg-[#0d2447]/60"
             onClick={onClose}
             aria-hidden="true"
             initial={{ opacity: 0 }}
