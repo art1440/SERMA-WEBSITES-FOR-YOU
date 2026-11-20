@@ -51,13 +51,17 @@ async function openPage(browser, url, opts = {}) {
   return { page, errors };
 }
 
-/** Injects axe-core and throws if any violation is found. `opts.disableRules` is an array of rule ids. */
+/**
+ * Injects axe-core and throws if any violation is found. `opts.disableRules` is an array of rule ids;
+ * `opts.include` (CSS selectors) scopes the run to those subtrees instead of the whole document.
+ */
 async function runAxe(page, opts = {}) {
   await page.addScriptTag({ path: path.join(ROOT, "node_modules/axe-core/axe.min.js") });
   const config = opts.disableRules?.length
     ? { rules: Object.fromEntries(opts.disableRules.map((id) => [id, { enabled: false }])) }
     : {};
-  const results = await page.evaluate((c) => window.axe.run(document, c), config);
+  const context = opts.include?.length ? { include: opts.include.map((sel) => [sel]) } : null;
+  const results = await page.evaluate(([ctx, c]) => window.axe.run(ctx ?? document, c), [context, config]);
   if (results.violations.length) {
     const msg = results.violations
       .map((v) => `${v.id} (${v.nodes.length}): ${v.nodes.slice(0, 3).map((n) => n.target.join(" ")).join(", ")}`)
@@ -351,10 +355,98 @@ async function serviceSliderAtRest(page) {
   if (!/inset\(0(px|%)? 50%/.test(r.clip ?? "")) throw new Error(`reduced motion: after-image clip is ${r.clip}`);
 }
 
+
+/** translateY (px) of a card's screenshot image, from its computed transform. */
+async function shotY(card) {
+  return card.locator("[data-work-shot]").evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m42);
+}
+
+/** Opens /#work at 1280x900 and waits for the six cards. */
+async function openGallery(browser, base, opts = {}) {
+  const { page, errors } = await openPage(browser, `${base}/#work`, { width: 1280, height: 900, ...opts });
+  await page.locator("#work").scrollIntoViewIfNeeded();
+  const cards = page.locator("[data-work-card]");
+  await cards.first().waitFor({ state: "visible", timeout: 5000 });
+  const n = await cards.count();
+  if (n !== 6) throw new Error(`expected 6 [data-work-card], found ${n}`);
+  await page.waitForTimeout(300);
+  return { page, errors, cards };
+}
+
+async function hoverViewport(page, card) {
+  const box = await card.locator("[data-work-viewport]").boundingBox();
+  if (!box) throw new Error("card viewport has no box");
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
+}
+
 const CHECKS = {
   "home-smoke": async ({ browser, base }) => {
     const { page } = await openPage(browser, `${base}/`);
     await runAxe(page);
+  },
+  // ---- "Our work" gallery on the home page (Task 12) ----
+  "gallery-desktop": async ({ browser, base }) => {
+    const { page, errors, cards } = await openGallery(browser, base);
+    const first = cards.nth(0);
+    const second = cards.nth(1);
+    await hoverViewport(page, first);
+    await page.waitForTimeout(1500);
+    const yLive = await shotY(first);
+    if (!(yLive < -1)) throw new Error(`hover: first card's image translateY is ${yLive}, expected negative`);
+    await page.mouse.move(4, 450, { steps: 4 });
+    await page.waitForTimeout(1200);
+    const yBack = await shotY(first);
+    if (Math.abs(yBack) > 1) throw new Error(`leave: translateY is ${yBack} after 1200 ms, expected 0 ± 1`);
+
+    await hoverViewport(page, second);
+    await page.waitForTimeout(800);
+    await second.click();
+    const dialog = page.getByRole("dialog", { name: "Maison Lumière" });
+    await dialog.waitFor({ state: "visible", timeout: 5000 });
+    const inside = () => dialog.evaluate((el) => el.contains(document.activeElement));
+    if (!(await inside())) throw new Error("focus is not inside the preview on open");
+    for (let i = 0; i < 15; i++) {
+      await page.keyboard.press("Tab");
+      if (!(await inside())) throw new Error(`focus left the preview after Tab ${i + 1}`);
+    }
+    await page.keyboard.press("Escape");
+    await dialog.waitFor({ state: "hidden", timeout: 5000 });
+    const back = await second.evaluate((el) => el === document.activeElement);
+    if (!back) throw new Error("focus did not return to the second card after Esc");
+
+    await second.click();
+    await dialog.waitFor({ state: "visible", timeout: 5000 });
+    await page.waitForTimeout(700);
+    await page.mouse.click(8, 8);
+    await dialog.waitFor({ state: "hidden", timeout: 5000 });
+    assertNoErrors(errors);
+
+    for (const colorScheme of ["light", "dark"]) {
+      const g = await openGallery(browser, base, { colorScheme });
+      await g.cards.nth(1).click();
+      await g.page.getByRole("dialog", { name: "Maison Lumière" }).waitFor({ state: "visible", timeout: 5000 });
+      await g.page.waitForTimeout(900);
+      try {
+        // Scoped to the gallery + its dialog: the page around it has its own checks (home-smoke).
+        await runAxe(g.page, { include: ["#work", '[role="dialog"]'] });
+      } catch (e) {
+        throw new Error(`${colorScheme}, preview open: ${e.message}`);
+      }
+    }
+  },
+  "gallery-reduced": async ({ browser, base }) => {
+    const { page, errors, cards } = await openGallery(browser, base, { reducedMotion: true });
+    const first = cards.nth(0);
+    await hoverViewport(page, first);
+    await page.waitForTimeout(1500);
+    const y = await shotY(first);
+    if (Math.abs(y) > 0.5) throw new Error(`reduced motion: translateY is ${y} while hovered, expected 0`);
+    await first.click();
+    const dialog = page.getByRole("dialog", { name: "Ironside Barber Co." });
+    await dialog.waitFor({ state: "visible", timeout: 5000 });
+    await page.keyboard.press("Escape");
+    await dialog.waitFor({ state: "hidden", timeout: 5000 });
+    assertNoErrors(errors);
   },
   "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
   "demo:beauty": ({ browser, base }) => demoCheck(browser, base, "beauty", { restCheck: beautyWindowsOpen }),

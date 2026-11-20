@@ -50,9 +50,21 @@ const RECORDS: Record<DemoId, Omit<DemoCard, "id" | "href" | "shots">> = {
 
 const ORDER: DemoId[] = ["barbershop", "salon", "beauty", "restaurant", "contractor", "service"];
 
+/** Pixel height of each full shot (all are 1280 wide), read from the files. Re-read after a re-capture. */
+const SHOT_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
+  barbershop: { en: 5127, es: 5293 },
+  salon: { en: 5900, es: 6038 },
+  beauty: { en: 5262, es: 5467 },
+  restaurant: { en: 5187, es: 5380 },
+  contractor: { en: 6223, es: 6472 },
+  service: { en: 5793, es: 5988 },
+};
+
 const shot = (id: DemoId, locale: "en" | "es") => ({
   full: asset(`/media/work/${id}/shot-${locale}-v1.jpg`),
   small: asset(`/media/work/${id}/shot-${locale}-v1-640.jpg`),
+  width: 1280,
+  height: SHOT_HEIGHT[id][locale],
 });
 
 export const DEMOS: DemoCard[] = ORDER.map((id) => ({

@@ -276,6 +276,19 @@ const en = {
     translationNote: "",
   },
   work: {
+    gallery: {
+      index: "(02)",
+      eyebrow: "Our work",
+      title: ["Sites we'd build for you"],
+      titleEmphasis: "for you",
+      body: "Six demo sites, one per trade. Hover to scroll one, click to open it.",
+      bodyTouch: "Six demo sites, one per trade. Swipe, then tap to open one.",
+      demoTag: "Demo · {tag}",
+      open: "Preview {business}",
+      visit: "Visit the full demo",
+      close: "Close preview",
+      shotLabel: "Full-page screenshot of the {business} demo. Scroll to see it all.",
+    },
     demo: {
       label: "Demo site by Serma",
       labelShort: "Demo",
@@ -579,6 +592,19 @@ const es: Dictionary = {
       "Esta traducción se ofrece para su comodidad. En caso de discrepancia, prevalecerá la versión en inglés.",
   },
   work: {
+    gallery: {
+      index: "(02)",
+      eyebrow: "Nuestro trabajo",
+      title: ["Sitios que haríamos para usted"],
+      titleEmphasis: "para usted",
+      body: "Seis sitios de demostración, uno por oficio. Pase el cursor para recorrer uno y haga clic para abrirlo.",
+      bodyTouch: "Seis sitios de demostración, uno por oficio. Deslice y toque uno para abrirlo.",
+      demoTag: "Demo · {tag}",
+      open: "Ver vista previa de {business}",
+      visit: "Visitar la demostración completa",
+      close: "Cerrar la vista previa",
+      shotLabel: "Captura de página completa de la demostración de {business}. Desplácese para verla entera.",
+    },
     demo: {
       label: "Sitio de demostración por Serma",
       labelShort: "Demo",

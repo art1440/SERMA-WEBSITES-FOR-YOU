@@ -16,8 +16,11 @@ export type DemoCard = {
   pitchDomain: string;
   tag: L10n;
   href: `/work/${DemoId}/`;
-  /** /media/work/<id>/shot-<locale>-v1(.jpg|-640.jpg) */
-  shots: Record<Locale, { full: string; small: string }>;
+  /**
+   * /media/work/<id>/shot-<locale>-v1(.jpg|-640.jpg). `width`/`height` are the full
+   * (1280 w) file's pixels; `small` is the same shot at 640 w (same aspect ratio).
+   */
+  shots: Record<Locale, { full: string; small: string; width: number; height: number }>;
   /** Hex colour used for the card's hover glow. */
   accent: string;
 };
