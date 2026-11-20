@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { DemoCredit } from "@/components/work/DemoCredit";
 import { service as c } from "@/data/demos/service";
 import type { L10n } from "@/i18n/types";
 import { BookButton } from "../DemoShell";
@@ -825,12 +825,11 @@ export function ServiceDemo() {
           <div className="mt-12 flex flex-col gap-3 border-t border-[#EAF6F4]/15 pt-6 text-[0.8125rem] text-[#A9D3CC] sm:flex-row sm:justify-between">
             <p>{L(c.licence)}</p>
             <p>
-              <Link
-                href="/"
+              <DemoCredit
                 className={`underline decoration-[#A9D3CC]/60 underline-offset-4 hover:text-[#EAF6F4] ${FOCUS_DARK}`}
               >
                 {L(c.footer.credit)}
-              </Link>
+              </DemoCredit>
             </p>
           </div>
         </div>

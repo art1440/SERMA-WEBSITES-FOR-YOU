@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { useMemo, type ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { DemoCredit } from "@/components/work/DemoCredit";
 import { restaurant as c } from "@/data/demos/restaurant";
 import type { L10n } from "@/i18n/types";
 import { EASE_EDITORIAL, VIEWPORT_ONCE } from "@/lib/motion";
@@ -459,9 +459,9 @@ export function RestaurantDemo() {
             </p>
           </div>
           <p className="mt-12 text-[0.8125rem] text-[#D4B49A]">
-            <Link href="/" className={`rounded underline decoration-[#D4B49A]/50 underline-offset-4 hover:text-[#F7E4CF] ${FOCUS}`}>
+            <DemoCredit className={`rounded underline decoration-[#D4B49A]/50 underline-offset-4 hover:text-[#F7E4CF] ${FOCUS}`}>
               {L(c.footer.credit)}
-            </Link>
+            </DemoCredit>
           </p>
         </div>
       </footer>

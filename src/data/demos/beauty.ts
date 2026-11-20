@@ -48,7 +48,7 @@ export type BeautyContent = Omit<DemoContent, "reviews"> & {
 export const beauty: BeautyContent = {
   id: "beauty",
   business: "Velvet Room",
-  phone: "(555) 0158",
+  phone: "(555) 555-0158",
   address: "9 Willow Court",
   hours: [
     { days: { en: "Tuesday – Thursday", es: "Martes a jueves" }, time: { en: "10am – 7pm", es: "10:00 – 19:00" } },
@@ -242,7 +242,7 @@ export const beauty: BeautyContent = {
     findUs: { en: "Find us", es: "Dónde estamos" },
     directions: {
       en: "Ground floor, the green door just past the bakery. Two-hour parking on Willow Court.",
-      es: "Planta baja, la puerta verde justo después de la panadería. Aparcamiento de dos horas en Willow Court.",
+      es: "Planta baja, la puerta verde justo después de la panadería. Estacionamiento de dos horas en Willow Court.",
     },
   },
   footer: {

@@ -145,8 +145,21 @@ async function capture(browser, id, locale, set) {
     if (smallName) resize(full, path.join(dir, smallName));
     const dims = execFileSync("python3", ["-c", "import sys\nfrom PIL import Image\nim=Image.open(sys.argv[1])\nprint(im.width, im.height)", full]).toString().trim();
     console.log(`ok ${id} ${locale} ${set} q${q} ${Math.round(size / 1024)}KB ${dims}`);
+    ((HEIGHTS[set] ??= {})[id] ??= {})[locale] = Number(dims.split(" ")[1]);
   } finally {
     await context.close();
+  }
+}
+
+/** Captured pixel heights, printed at the end as literals for SHOT_HEIGHT / MOBILE_HEIGHT in src/data/demos/index.ts. */
+const HEIGHTS = {};
+function printHeights() {
+  const names = { desktop: "SHOT_HEIGHT", mobile: "MOBILE_HEIGHT" };
+  for (const set of Object.keys(HEIGHTS)) {
+    console.log(`\n${names[set]} (paste into src/data/demos/index.ts):`);
+    for (const [id, h] of Object.entries(HEIGHTS[set])) {
+      console.log(`  ${id}: { ${Object.entries(h).map(([l, v]) => `${l}: ${v}`).join(", ")} },`);
+    }
   }
 }
 
@@ -155,6 +168,7 @@ try {
   await startServer();
   browser = await chromium.launch();
   for (const set of SETS) for (const id of IDS) for (const locale of LOCALES) await capture(browser, id, locale, set);
+  printHeights();
   console.log(`Done. Reminder: src/data/demos/index.ts shot paths must reference ${VERSION}.`);
 } catch (e) {
   console.error(e);

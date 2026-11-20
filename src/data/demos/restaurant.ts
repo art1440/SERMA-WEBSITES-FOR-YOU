@@ -84,7 +84,7 @@ export type RestaurantContent = Omit<DemoContent, "reviews"> & {
 export const restaurant: RestaurantContent = {
   id: "restaurant",
   business: "Ember & Oak",
-  phone: "(555) 0119",
+  phone: "(555) 555-0119",
   address: "310 Foundry St",
   hours: [
     { days: { en: "Tuesday – Sunday", es: "Martes a domingo" }, time: { en: "5pm – 11pm", es: "17:00 – 23:00" } },
@@ -336,7 +336,7 @@ export const restaurant: RestaurantContent = {
     findUs: { en: "Find us", es: "Dónde estamos" },
     directions: {
       en: "In the old foundry building; look for the smoke. Street parking after 6pm.",
-      es: "En el antiguo edificio de la fundición; busque el humo. Aparcamiento en la calle a partir de las 18:00.",
+      es: "En el antiguo edificio de la fundición; busque el humo. Estacionamiento en la calle a partir de las 18:00.",
     },
     call: { en: "Phone", es: "Teléfono" },
   },

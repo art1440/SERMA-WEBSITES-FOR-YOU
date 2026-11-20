@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { DemoCredit } from "@/components/work/DemoCredit";
 import { contractor as c } from "@/data/demos/contractor";
 import type { L10n } from "@/i18n/types";
 import { BookButton } from "../DemoShell";
@@ -572,9 +572,9 @@ export function ContractorDemo() {
           <div className="mt-12 flex flex-col gap-3 border-t border-[#9BB8E0]/25 pt-6 text-[0.8125rem] text-[#9BB8E0] sm:flex-row sm:justify-between">
             <p>{L(c.footer.sheets)}</p>
             <p>
-              <Link href="/" className={`underline decoration-[#9BB8E0]/60 underline-offset-4 hover:text-[#E9F0FA] ${FOCUS}`}>
+              <DemoCredit className={`underline decoration-[#9BB8E0]/60 underline-offset-4 hover:text-[#E9F0FA] ${FOCUS}`}>
                 {L(c.footer.credit)}
-              </Link>
+              </DemoCredit>
             </p>
           </div>
         </div>

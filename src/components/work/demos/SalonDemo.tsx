@@ -1,9 +1,9 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import Link from "next/link";
 import { useMemo, useRef, type ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { DemoCredit } from "@/components/work/DemoCredit";
 import { salon as c, type SalonHeading } from "@/data/demos/salon";
 import type { DemoImage } from "@/data/demos";
 import type { L10n } from "@/i18n/types";
@@ -448,9 +448,9 @@ export function SalonDemo() {
           <span className="whitespace-nowrap">{c.phone}</span>
         </p>
         <p className="mt-16 w-full border-t border-[#3B1F2B]/10 pt-6 text-[0.8125rem] text-[#6E4E5A]">
-          <Link href="/" className={`underline decoration-[#6E4E5A]/50 underline-offset-4 hover:text-[#3B1F2B] ${FOCUS}`}>
+          <DemoCredit className={`underline decoration-[#6E4E5A]/50 underline-offset-4 hover:text-[#3B1F2B] ${FOCUS}`}>
             {L(c.footer.credit)}
-          </Link>
+          </DemoCredit>
         </p>
       </footer>
     </div>

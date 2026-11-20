@@ -108,7 +108,7 @@ export function DemoShell({ id, className, children }: { id: DemoId; className?:
               aria-label={d.dismiss}
               onClick={() => {
                 setDismissed(true);
-                mainRef.current?.focus();
+                mainRef.current?.focus({ preventScroll: true });
               }}
               className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/80 hover:text-white"
             >

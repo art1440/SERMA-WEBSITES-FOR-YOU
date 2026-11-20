@@ -123,7 +123,7 @@ export type ContractorContent = Omit<DemoContent, "reviews"> & {
 export const contractor: ContractorContent = {
   id: "contractor",
   business: "Trueframe Builders",
-  phone: "(555) 0163",
+  phone: "(555) 555-0163",
   address: "88 Millwork Rd",
   hours: [
     { days: { en: "Monday – Friday", es: "Lunes a viernes" }, time: { en: "7am – 5pm", es: "7:00 – 17:00" } },
@@ -165,7 +165,7 @@ export const contractor: ContractorContent = {
       "kitchen",
       {
         en: "A finished kitchen remodel: navy Shaker cabinets with brass pulls, two brass dome pendants over a white quartz waterfall island with three stools, and tall black-framed windows onto the garden.",
-        es: "Una cocina reformada y terminada: armarios tipo Shaker azul marino con tiradores de latón, dos lámparas de cúpula de latón sobre una isla de cuarzo blanco en cascada con tres taburetes y ventanales de marco negro hacia el jardín.",
+        es: "Una cocina reformada y terminada: gabinetes tipo Shaker azul marino con tiradores de latón, dos lámparas de cúpula de latón sobre una isla de cuarzo blanco en cascada con tres taburetes y ventanales de marco negro hacia el jardín.",
       },
       1344,
       752,
@@ -192,7 +192,7 @@ export const contractor: ContractorContent = {
     title: { en: "What we build", es: "Lo que construimos" },
     intro: {
       en: "Five kinds of work, done by our own carpenters with the licensed electricians and plumbers we have used for years. Prices are typical starting points; your estimate is itemized and fixed before anything is torn out.",
-      es: "Cinco tipos de obra, hechos por nuestros propios carpinteros junto con los electricistas y fontaneros con licencia que nos acompañan desde hace años. Los precios son puntos de partida habituales; su presupuesto se detalla y se cierra antes de desmontar nada.",
+      es: "Cinco tipos de obra, hechos por nuestros propios carpinteros junto con los electricistas y plomeros con licencia que nos acompañan desde hace años. Los precios son puntos de partida habituales; su presupuesto se detalla y se cierra antes de desmontar nada.",
     },
     cols: {
       no: { en: "No.", es: "N.º" },
@@ -208,7 +208,7 @@ export const contractor: ContractorContent = {
         name: { en: "Kitchens", es: "Cocinas" },
         includes: {
           en: "Layout, cabinets, counters, lighting and appliance hookups; we move walls and plumbing when the plan needs it.",
-          es: "Distribución, armarios, encimeras, iluminación y conexión de electrodomésticos; movemos tabiques y fontanería si el plano lo pide.",
+          es: "Distribución, gabinetes, cubiertas, iluminación y conexión de electrodomésticos; movemos paredes y plomería si el plano lo pide.",
         },
         schedule: { en: "6–10 weeks", es: "6–10 semanas" },
         from: 38000,
@@ -218,7 +218,7 @@ export const contractor: ContractorContent = {
         name: { en: "Bathrooms", es: "Baños" },
         includes: {
           en: "Waterproofing done right, tile, curbless showers or tubs, vanities and a fan that actually vents outside.",
-          es: "Impermeabilización bien hecha, alicatado, duchas a ras de suelo o bañeras, muebles de lavabo y un extractor que de verdad saca el aire fuera.",
+          es: "Impermeabilización bien hecha, azulejos, duchas a ras de suelo o bañeras, muebles de lavabo y un extractor que de verdad saca el aire fuera.",
         },
         schedule: { en: "3–5 weeks", es: "3–5 semanas" },
         from: 16500,
@@ -368,7 +368,7 @@ export const contractor: ContractorContent = {
         span: { en: "On schedule", es: "Según calendario" },
         body: {
           en: "A dated schedule on your fridge, a text from your project lead every Friday, and the site swept every evening.",
-          es: "Un calendario con fechas en su nevera, un mensaje de su jefe de obra cada viernes y la obra barrida cada tarde.",
+          es: "Un calendario con fechas en su refrigerador, un mensaje de su jefe de obra cada viernes y la obra barrida cada tarde.",
         },
         deliverable: { en: "A Friday update, every week", es: "Un resumen cada viernes" },
       },
@@ -427,7 +427,7 @@ export const contractor: ContractorContent = {
     hoursLabel: { en: "Office hours", es: "Horario de oficina" },
     closed: { en: "Sunday closed · site visits by appointment", es: "Domingo cerrado · visitas con cita previa" },
     officeLabel: { en: "Shop & office", es: "Taller y oficina" },
-    officeNote: { en: "Parking in the yard", es: "Aparcamiento en el patio" },
+    officeNote: { en: "Parking in the yard", es: "Estacionamiento en el patio" },
     phoneLabel: { en: "Phone", es: "Teléfono" },
     warrantyLabel: { en: "Warranty", es: "Garantía" },
     warranty: { en: "2 years on workmanship, in writing", es: "2 años en mano de obra, por escrito" },

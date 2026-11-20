@@ -52,7 +52,7 @@ export type SalonContent = DemoContent & {
 export const salon: SalonContent = {
   id: "salon",
   business: "Maison Lumière",
-  phone: "(555) 0137",
+  phone: "(555) 555-0137",
   address: "22 Rue Lane, Suite 3",
   hours: [
     { days: { en: "Tuesday, Wednesday", es: "Martes y miércoles" }, time: { en: "10am – 6pm", es: "10:00 – 18:00" } },
@@ -301,7 +301,7 @@ export const salon: SalonContent = {
     findUs: { en: "Find us", es: "Dónde estamos" },
     directions: {
       en: "Up one flight, above the florist. Street parking on Rue Lane.",
-      es: "Un piso arriba, encima de la floristería. Aparcamiento en Rue Lane.",
+      es: "Un piso arriba, encima de la floristería. Estacionamiento en Rue Lane.",
     },
   },
   footer: {

@@ -107,7 +107,7 @@ export type ServiceContent = Omit<DemoContent, "reviews"> & {
 export const service: ServiceContent = {
   id: "service",
   business: "Brightline Home",
-  phone: "(555) 0171",
+  phone: "(555) 555-0171",
   address: "Serving Greater Lakeview",
   hours: [
     {
@@ -150,7 +150,7 @@ export const service: ServiceContent = {
       es: "Llame antes de las 14:00 y un técnico con licencia va hoy mismo. Recibe un precio cerrado antes de empezar, y la reparación queda garantizada un año entero.",
     },
     cta: { en: "Book a visit", es: "Reserve una visita" },
-    call: { en: "Call (555) 0171", es: "Llame al (555) 0171" },
+    call: { en: "Call (555) 555-0171", es: "Llame al (555) 555-0171" },
     eta: {
       tag: { en: "Example", es: "Ejemplo" },
       label: {

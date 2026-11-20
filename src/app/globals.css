@@ -120,6 +120,11 @@ html.dark {
       scroll-padding-top: 8rem;
     }
   }
+  /* Demo sites (/work/*) have their own sticky header and each section sets its own
+     scroll-margin-top (ribbon + header), so the site-wide padding would double it. */
+  html:has([data-demo]) {
+    scroll-padding-top: 0;
+  }
   html {
     /* Reserve the scrollbar lane so locking scroll (modals) never shifts layout. */
     scrollbar-gutter: stable;

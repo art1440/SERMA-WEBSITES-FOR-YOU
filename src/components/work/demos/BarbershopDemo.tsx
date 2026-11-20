@@ -1,9 +1,9 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import Link from "next/link";
 import { useRef, type ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { DemoCredit } from "@/components/work/DemoCredit";
 import { barbershop as c } from "@/data/demos/barbershop";
 import type { DemoImage } from "@/data/demos";
 import type { L10n } from "@/i18n/types";
@@ -330,9 +330,9 @@ export function BarbershopDemo() {
           </div>
         </div>
         <p className="mt-6 text-[0.8125rem] text-[#A8A091]">
-          <Link href="/" className={`underline decoration-[#A8A091]/50 underline-offset-4 hover:text-[#EFE6D6] ${FOCUS}`}>
+          <DemoCredit className={`underline decoration-[#A8A091]/50 underline-offset-4 hover:text-[#EFE6D6] ${FOCUS}`}>
             {L(c.footer.credit)}
-          </Link>
+          </DemoCredit>
         </p>
       </footer>
     </div>

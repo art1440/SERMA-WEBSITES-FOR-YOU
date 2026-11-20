@@ -22,7 +22,7 @@ export type BarberContent = DemoContent & {
 export const barbershop: BarberContent = {
   id: "barbershop",
   business: "Ironside Barber Co.",
-  phone: "(555) 0142",
+  phone: "(555) 555-0142",
   address: "1408 Calder Ave",
   hours: [
     { days: { en: "Tue to Fri", es: "Mar. a vie." }, time: { en: "9am – 7pm", es: "9:00 – 19:00" } },
