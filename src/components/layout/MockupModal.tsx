@@ -11,7 +11,7 @@ import { ENQUIRY, phoneValid } from "@/data/enquiry";
 import { MOCKUP } from "@/data/mockup";
 import { EASE_EDITORIAL } from "@/lib/motion";
 
-type Props = { open: boolean; onClose: () => void };
+type Props = { open: boolean; onClose: () => void; prefill?: { business?: string } };
 type Status = "idle" | "sending" | "done" | "error";
 type Field = "name" | "business" | "phone" | "consent";
 const ORDER: Field[] = ["name", "business", "phone", "consent"];
@@ -31,7 +31,7 @@ const SPRING_OPEN = { type: "spring", stiffness: 360, damping: 32, mass: 0.9 } a
  * On send, the form gives way to a check that draws itself. Esc, backdrop and
  * the × all close; focus is trapped while open and returned afterwards.
  */
-export function MockupModal({ open, onClose }: Props) {
+export function MockupModal({ open, onClose, prefill }: Props) {
   const { locale, t } = useLanguage();
   const M = MOCKUP;
   const E = ENQUIRY;
@@ -266,6 +266,7 @@ export function MockupModal({ open, onClose }: Props) {
                             placeholder={M.phBusiness[locale]}
                             autoComplete="organization"
                             maxLength={MAX.business}
+                            defaultValue={prefill?.business ?? ""}
                             error={errors.business}
                             onBlur={recheck("business")}
                             onChange={fix("business")}

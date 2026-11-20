@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { type MouseEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
-import { HeroFlowCard } from "@/components/ui/HeroFlowCard";
+import { SitePreview } from "@/components/ui/SitePreview";
 import { HeroLight } from "@/components/ui/HeroLight";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
@@ -40,7 +40,8 @@ export function HeroChapter() {
       <AmbientField variant={0} />
       <HeroLight />
 
-      <div className="frame relative flex min-h-[100svh] flex-col justify-center pb-10 pt-36 lg:pb-16 lg:pt-8">
+      <div className="frame relative flex min-h-[100svh] flex-col justify-center pb-14 pt-36 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:gap-12 lg:pb-16 lg:pt-28 xl:gap-20">
+        <div className="min-w-0">
         {/* Meta chips: what we do + live status */}
         <div className="flex flex-wrap items-center gap-2.5">
           <p className="chip-dark glass-flat shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_1px_3px_rgb(var(--bone)/0.08),0_10px_22px_-10px_rgb(var(--bone)/0.22)] hidden text-ash sm:inline-flex">{t.hero.eyebrow}</p>
@@ -55,7 +56,7 @@ export function HeroChapter() {
 
         <h1
           id="hero-title"
-          className="mt-6 font-display text-display-xl text-bone max-sm:text-[clamp(2.25rem,10.4vw,3rem)] lg:mt-9 lg:w-8/12 lg:text-[clamp(2.75rem,6.6vw,8rem)]"
+          className="mt-6 font-display text-display-xl text-bone max-sm:text-[clamp(2.25rem,10.4vw,3rem)] lg:mt-9 lg:text-[clamp(2.75rem,6vw,7rem)]"
         >
           {t.hero.headline.map((line, i) => (
             <HeadlineLine key={i} index={i} emphasis={t.hero.headlineEmphasis}>
@@ -64,7 +65,7 @@ export function HeroChapter() {
           ))}
         </h1>
 
-        <div className="mt-7 lg:mt-9 lg:w-5/12">
+        <div className="mt-7 lg:mt-9 lg:max-w-lg">
           <motion.p
             className="max-w-md text-pretty text-base leading-relaxed text-ash sm:text-lg"
             initial={{ opacity: 0, y: 20 }}
@@ -103,11 +104,10 @@ export function HeroChapter() {
             {t.hero.ctaNote}
           </motion.p>
         </div>
-      </div>
+        </div>
 
-      {/* Booking-flow card (desktop) */}
-      <div className="pointer-events-none absolute bottom-16 right-6 hidden w-[21rem] lg:block lg:right-10 xl:bottom-20 xl:w-[23rem]">
-        <HeroFlowCard />
+        {/* Live preview: the visitor sees their own business on a sample site. */}
+        <SitePreview className="mx-auto mt-14 lg:mt-0" />
       </div>
     </section>
   );

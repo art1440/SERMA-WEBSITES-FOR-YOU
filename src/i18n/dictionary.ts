@@ -79,17 +79,6 @@ const en = {
     secondaryCta: "See pricing",
     videoLabel: "Ambient abstract motion: folded black paper and brushed metal swept by a thin line of warm light.",
     builtFor: "Built for",
-    flow: {
-      title: "A missed call, start to finish",
-      caption: "Coming soon to Growth · illustration",
-      steps: [
-        { label: "Missed call", meta: "You’re with a client" },
-        { label: "Text sent back", meta: "Seconds later, automatically" },
-        { label: "Appointment booked", meta: "They pick the time" },
-        { label: "Reminder scheduled", meta: "The day before" },
-      ],
-    },
-    stack: ["A website that books", "Calls that get answered", "Reminders that send themselves", "Customers who come back", "Evenings that stay yours"],
   },
   included: {
     index: "(01)",
@@ -368,17 +357,6 @@ const es: Dictionary = {
     secondaryCta: "Ver precios",
     videoLabel: "Movimiento abstracto de fondo: papel negro doblado y metal cepillado, cruzados por un fino rayo de luz cálida.",
     builtFor: "Hecho para",
-    flow: {
-      title: "Una llamada perdida, de principio a fin",
-      caption: "Próximamente en Crecimiento · ilustración",
-      steps: [
-        { label: "Llamada perdida", meta: "Usted está con un cliente" },
-        { label: "Mensaje enviado", meta: "Segundos después, solo" },
-        { label: "Cita agendada", meta: "El cliente elige la hora" },
-        { label: "Recordatorio programado", meta: "Un día antes" },
-      ],
-    },
-    stack: ["Un sitio que agenda", "Llamadas que se contestan", "Recordatorios que se envían solos", "Clientes que regresan", "Noches que siguen siendo suyas"],
   },
   included: {
     index: "(01)",
