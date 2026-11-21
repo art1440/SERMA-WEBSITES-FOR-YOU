@@ -10,6 +10,11 @@
   NODE_VERSION = "22"
   NEXT_TELEMETRY_DISABLED = "1"
 
+# The CRM API behind /admin (netlify/functions/crm.ts). Needs CRM_PASSWORD, CRM_SESSION_SECRET
+# and NETLIFY_API_TOKEN set under Site configuration → Environment variables (see README).
+[functions]
+  directory = "netlify/functions"
+
 # Security headers on every page (mirrors next.config.ts).
 [[headers]]
   for = "/*"
@@ -20,6 +25,13 @@
     X-Frame-Options = "DENY"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+
+# The private lead dashboard: never indexed, never cached.
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
 
 # Videos, posters and hashed build files never change — cache for a year.
 # So never overwrite a file in /media: give a changed file a new name (e.g. -v3) and update its reference,

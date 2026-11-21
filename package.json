@@ -11,6 +11,7 @@
     "capture:work": "node scripts/capture-work.mjs"
   },
   "dependencies": {
+    "@netlify/blobs": "^8.2.0",
     "@react-three/fiber": "9.8.2",
     "framer-motion": "14.9.1",
     "lucide-react": "1.69.0",
