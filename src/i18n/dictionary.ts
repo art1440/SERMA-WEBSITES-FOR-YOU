@@ -1,8 +1,7 @@
 import type { Locale, Widen } from "./types";
 
 /**
- * Complete EN / ES copy for the marketing site, the interactive Client
- * Dashboard showcase. Spanish uses the formal "usted"
+ * Complete EN / ES copy for the marketing site. Spanish uses the formal "usted"
  * register appropriate for business owners.
  *
  * Tokens in {braces} are filled at render time with `fill()`.
@@ -24,8 +23,6 @@ const en = {
     scroll: "Scroll",
     /** FTC micro-copy, one per surface (see SimulationDisclaimer `variant`). */
     simulationDisclaimer: {
-      dashboard:
-        "Illustrative interactive simulation of the SermaWebDesign Client Portal. Actual lead volume, bookings, and revenue depend on market, industry, and business operations. The businesses, people, messages and reviews shown are fictional.",
       calculator:
         "Estimate only, based on the numbers you set and the formula shown. It is not a guarantee or a typical result: actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
     },
@@ -300,8 +297,6 @@ const es: Dictionary = {
     darkMode: "Cambiar a modo oscuro",
     scroll: "Baje",
     simulationDisclaimer: {
-      dashboard:
-        "Simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Los negocios, personas, mensajes y reseñas que se muestran son ficticios.",
       calculator:
         "Es solo una estimación, basada en los valores que usted ajusta y en la fórmula mostrada. No es una garantía ni un resultado típico: el volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
     },

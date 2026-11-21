@@ -265,6 +265,9 @@ export function PricingSection() {
     >
       {/* Reduced motion: no 3D stage behind, so the whole section sits in the light field. */}
       <AmbientField variant={0} className="hidden motion-reduce:block" />
+      {/* Feather the previous section's ink wash into the bare stage, so the 3D scene surfaces
+          out of the page instead of starting at a hard edge. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-ink/[0.86] to-transparent motion-reduce:hidden lg:h-56" />
       {/* Fade from the bare stage into the field the cards sit on (no seam: it ends at the field's ink wash). */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[18vh] h-[14vh] bg-gradient-to-b from-transparent to-ink/[0.86] motion-reduce:hidden lg:top-[16rem] lg:h-48" />
       <AmbientField variant={0} className="top-[32vh] motion-reduce:hidden lg:top-[28rem]" />

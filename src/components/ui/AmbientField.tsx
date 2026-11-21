@@ -40,15 +40,21 @@ const ORBS = [
   ],
 ] as const;
 
+const FEATHER = "linear-gradient(to bottom, transparent, #000 min(22%, 220px), #000 calc(100% - min(22%, 220px)), transparent)";
+
 export function AmbientField({ variant = 0, className }: Props) {
   const background = ORBS[variant]
     .map(([x, y, size, color]) => `radial-gradient(${size}vmax ${size * 0.8}vmax at ${x} ${y}, ${color}, transparent 70%)`)
     .join(", ");
+  // The ink wash is identical in every section, so it tiles seamlessly; the orbs are not.
+  // Feather the orb layer out at the top and bottom edges so neighbouring sections meet on
+  // the shared wash instead of a hard line where one section's glow is clipped.
   return (
     <div
       aria-hidden="true"
       className={`ambient-field pointer-events-none absolute inset-0 -z-10 bg-ink/[0.86] ${className ?? ""}`}
-      style={{ backgroundImage: background }}
-    />
+    >
+      <div className="absolute inset-0" style={{ backgroundImage: background, maskImage: FEATHER, WebkitMaskImage: FEATHER }} />
+    </div>
   );
 }
