@@ -48,7 +48,7 @@ const RECORDS: Record<DemoId, Omit<DemoCard, "id" | "href" | "shots">> = {
   },
 };
 
-const ORDER: DemoId[] = ["restaurant", "contractor", "service", "barbershop", "salon", "beauty"];
+const ORDER: DemoId[] = ["contractor", "service", "restaurant", "barbershop", "salon", "beauty"];
 
 /** Pixel height of each full shot (all are 1280 wide), read from the files. Re-read after a re-capture. */
 const SHOT_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {

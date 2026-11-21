@@ -440,12 +440,12 @@ async function phoneVisitLandsAtTop(browser, base, { reducedMotion }) {
   if (!(yHome > 400)) throw new Error(`${where}: gallery is at scrollY ${yHome}, too close to the top to tell`);
   const c = await cards.nth(0).locator("[data-work-viewport]").boundingBox();
   await page.touchscreen.tap(c.x + c.width / 2, c.y + c.height / 2);
-  const dialog = page.getByRole("dialog", { name: "Ember & Oak", exact: true });
+  const dialog = page.getByRole("dialog", { name: "Trueframe Builders", exact: true });
   await dialog.waitFor({ state: "visible", timeout: 5000 });
   await page.waitForTimeout(900);
   if ((await page.evaluate(() => getComputedStyle(document.body).position)) !== "fixed") throw new Error(`${where}: body not pinned before Visit`);
   await dialog.getByRole("link", { name: "Visit the full demo" }).tap();
-  await page.waitForURL(/\/work\/restaurant\/?$/, { timeout: 10000 });
+  await page.waitForURL(/\/work\/contractor\/?$/, { timeout: 10000 });
   await page.locator("[data-demo] h1").waitFor({ state: "visible", timeout: 10000 });
   await page.waitForTimeout(800);
   const m = await page.evaluate(() => {
@@ -669,7 +669,7 @@ const CHECKS = {
     await hoverViewport(page, second);
     await page.waitForTimeout(800);
     await second.click();
-    const dialog = page.getByRole("dialog", { name: "Trueframe Builders", exact: true });
+    const dialog = page.getByRole("dialog", { name: "Brightline Home", exact: true });
     await dialog.waitFor({ state: "visible", timeout: 5000 });
     const inside = () => dialog.evaluate((el) => el.contains(document.activeElement));
     if (!(await inside())) throw new Error("focus is not inside the preview on open");
@@ -726,11 +726,11 @@ const CHECKS = {
       await v.page.waitForTimeout(800);
       if (!((await v.page.evaluate(() => scrollY)) > 400)) throw new Error("desktop visit: gallery too close to the top to tell");
       await v.cards.nth(1).click();
-      const d = v.page.getByRole("dialog", { name: "Trueframe Builders", exact: true });
+      const d = v.page.getByRole("dialog", { name: "Brightline Home", exact: true });
       await d.waitFor({ state: "visible", timeout: 5000 });
       await v.page.waitForTimeout(700);
       await d.getByRole("link", { name: "Visit the full demo" }).click();
-      await v.page.waitForURL(/\/work\/contractor\/?$/, { timeout: 10000 });
+      await v.page.waitForURL(/\/work\/service\/?$/, { timeout: 10000 });
       await v.page.locator("[data-demo] h1").waitFor({ state: "visible", timeout: 10000 });
       await v.page.waitForTimeout(800);
       const y = await v.page.evaluate(() => scrollY);
@@ -741,7 +741,7 @@ const CHECKS = {
     for (const colorScheme of ["light", "dark"]) {
       const g = await openGallery(browser, base, { colorScheme });
       await g.cards.nth(1).click();
-      await g.page.getByRole("dialog", { name: "Trueframe Builders", exact: true }).waitFor({ state: "visible", timeout: 5000 });
+      await g.page.getByRole("dialog", { name: "Brightline Home", exact: true }).waitFor({ state: "visible", timeout: 5000 });
       await g.page.waitForTimeout(900);
       try {
         // Scoped to the gallery + its dialog: the page around it has its own checks (home-smoke).
@@ -759,7 +759,7 @@ const CHECKS = {
     const y = await shotY(first);
     if (Math.abs(y) > 0.5) throw new Error(`reduced motion: translateY is ${y} while hovered, expected 0`);
     await first.click();
-    const dialog = page.getByRole("dialog", { name: "Ember & Oak", exact: true });
+    const dialog = page.getByRole("dialog", { name: "Trueframe Builders", exact: true });
     await dialog.waitFor({ state: "visible", timeout: 5000 });
     await page.keyboard.press("Escape");
     await dialog.waitFor({ state: "hidden", timeout: 5000 });
@@ -768,7 +768,7 @@ const CHECKS = {
     for (const colorScheme of ["light", "dark"]) {
       const g = await openGallery(browser, base, { reducedMotion: true, colorScheme });
       await g.cards.nth(0).click();
-      await g.page.getByRole("dialog", { name: "Ember & Oak", exact: true }).waitFor({ state: "visible", timeout: 5000 });
+      await g.page.getByRole("dialog", { name: "Trueframe Builders", exact: true }).waitFor({ state: "visible", timeout: 5000 });
       await g.page.waitForTimeout(500);
       try {
         await runAxe(g.page, { include: ["#work", '[role="dialog"]'] });
@@ -794,7 +794,7 @@ const CHECKS = {
     if (lit !== 1) throw new Error(`${lit} dots are aria-current on load, expected 1`);
     const early = await page.evaluate(() => performance.getEntriesByType("resource").filter((r) => r.name.includes("-mobile-")).map((r) => r.name));
     if (early.length) throw new Error(`phone shots requested before any preview opened: ${early.join(", ")}`);
-    if ((await dots.nth(0).getAttribute("aria-label")) !== "Show Ember & Oak") throw new Error(`dot label is ${await dots.nth(0).getAttribute("aria-label")}`);
+    if ((await dots.nth(0).getAttribute("aria-label")) !== "Show Trueframe Builders") throw new Error(`dot label is ${await dots.nth(0).getAttribute("aria-label")}`);
     const dotBox = await dots.nth(0).boundingBox();
     if (dotBox.width < 24 || dotBox.height < 24) throw new Error(`dot hit area ${dotBox.width}×${dotBox.height} < 24×24`);
 
@@ -829,7 +829,7 @@ const CHECKS = {
     const cb = await second.locator("[data-work-viewport]").boundingBox();
     const yBeforeOpen = await page.evaluate(() => window.scrollY);
     await page.touchscreen.tap(cb.x + cb.width / 2, cb.y + cb.height / 2);
-    const dialog = page.getByRole("dialog", { name: "Trueframe Builders", exact: true });
+    const dialog = page.getByRole("dialog", { name: "Brightline Home", exact: true });
     await dialog.waitFor({ state: "visible", timeout: 5000 });
     await page.waitForTimeout(700);
     const full = await dialog.evaluate((el) => {
@@ -896,7 +896,7 @@ const CHECKS = {
       }
       const c = await g.cards.nth(0).locator("[data-work-viewport]").boundingBox();
       await g.page.touchscreen.tap(c.x + c.width / 2, c.y + c.height / 2);
-      await g.page.getByRole("dialog", { name: "Ember & Oak", exact: true }).waitFor({ state: "visible", timeout: 5000 });
+      await g.page.getByRole("dialog", { name: "Trueframe Builders", exact: true }).waitFor({ state: "visible", timeout: 5000 });
       await g.page.waitForTimeout(900);
       try {
         await runAxe(g.page, { include: ["#work", '[role="dialog"]'] });
