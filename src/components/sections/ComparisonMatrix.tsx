@@ -15,14 +15,14 @@ import { EASE_EDITORIAL } from "@/lib/motion";
 
 /**
  * Column tracks. Phones: feature | the picked competitor | Serma.
- * lg+: feature | three competitors | Serma. The background columns and the rows share
+ * lg+: feature | two competitors | Serma. The background columns and the rows share
  * the same template, so the card columns line up with the cells exactly.
  */
 const GRID =
-  "grid grid-cols-[minmax(0,1fr)_5.25rem_5.75rem] gap-x-2 sm:grid-cols-[minmax(0,1fr)_9rem_10rem] sm:gap-x-3 lg:grid-cols-[minmax(0,1.25fr)_repeat(3,minmax(0,1fr))_minmax(0,1.15fr)]";
+  "grid grid-cols-[minmax(0,1fr)_5.25rem_5.75rem] gap-x-2 sm:grid-cols-[minmax(0,1fr)_9rem_10rem] sm:gap-x-3 lg:grid-cols-[minmax(0,1.25fr)_repeat(2,minmax(0,1fr))_minmax(0,1.15fr)]";
 
 /**
- * "Why Serma": you against the three usual alternatives. The Serma column is a dark,
+ * "Why Serma": you against the two usual alternatives. The Serma column is a dark,
  * glowing "Best choice" card; competitors are light cards with outline marks. Phones
  * show one competitor at a time (picked with a switch above the table).
  * Motion (once, when the table scrolls in): the cards rise in a short stagger, the Serma
@@ -53,7 +53,7 @@ export function ComparisonMatrix() {
     openMockup();
   };
 
-  /** Competitor cells: only the picked one on phones, all three from lg. */
+  /** Competitor cells: only the picked one on phones, both from lg. */
   const show = (j: number) => (j === picked ? "flex" : "hidden lg:flex");
   const rowCount = c.rows.length;
 
