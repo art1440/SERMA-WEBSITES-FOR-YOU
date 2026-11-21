@@ -8,7 +8,7 @@ import type { Locale, Widen } from "./types";
  */
 const en = {
   meta: {
-    title: "SermaWebDesign — Websites That Bring In Customers",
+    title: "SermaWebDesign — Premium Websites That Get You Picked First",
   },
   common: {
     skipToContent: "Skip to main content",
@@ -59,8 +59,8 @@ const en = {
   },
   hero: {
     eyebrow: "For barbershops, salons, restaurants and the trades",
-    headline: ["Websites that", "bring in", "customers."],
-    headlineEmphasis: "customers",
+    headline: ["Premium websites", "that get you", "picked first."],
+    headlineEmphasis: "picked first",
     sub: "Your next customer is searching for you right now. We build the website that makes them call you, not the shop down the street, and you don't pay until you've seen it and said yes.",
     subBold: ["searching for you right now", "you don't pay until you've seen it and said yes"],
     status: "You only pay when you love it",
@@ -257,7 +257,7 @@ export type Dictionary = Widen<typeof en>;
  */
 const es: Dictionary = {
   meta: {
-    title: "SermaWebDesign — Sitios web que le traen clientes",
+    title: "SermaWebDesign — Sitios web premium para que lo elijan primero",
   },
   common: {
     skipToContent: "Saltar al contenido principal",
@@ -307,8 +307,8 @@ const es: Dictionary = {
   },
   hero: {
     eyebrow: "Para barberías, salones, restaurantes y contratistas",
-    headline: ["Sitios web que", "le traen", "clientes."],
-    headlineEmphasis: "clientes",
+    headline: ["Sitios web premium", "para que lo", "elijan primero."],
+    headlineEmphasis: "elijan primero",
     sub: "Su próximo cliente lo está buscando ahora mismo. Hacemos el sitio web que lo lleva a llamarle a usted, no al negocio de enfrente, y no paga hasta verlo y decir que sí.",
     subBold: ["lo está buscando ahora mismo", "no paga hasta verlo y decir que sí"],
     status: "Solo paga si le encanta",

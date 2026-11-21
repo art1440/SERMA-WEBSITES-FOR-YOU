@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "SermaWebDesign",
-    title: "Sitios web que le traen clientes",
+    title: "Sitios web premium para que lo elijan primero",
     description:
       "Su próximo cliente lo está buscando ahora mismo. Hacemos el sitio web que lo lleva a llamarle a usted, y no paga hasta verlo y decir que sí.",
     url: `${BASE_PATH}/es/`,
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sitios web que le traen clientes",
+    title: "Sitios web premium para que lo elijan primero",
     description: "Su próximo cliente lo está buscando. Hacemos el sitio web que lo lleva a llamarle. Paga solo si le encanta.",
   },
 };
