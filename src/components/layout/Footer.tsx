@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { MouseEvent, ReactNode } from "react";
-import { ArrowUp, ArrowUpRight, Mail, Pause, Phone, Play, ShieldCheck } from "lucide-react";
+import { ArrowUp, ArrowUpRight, Lock, Mail, Pause, Phone, Play, ShieldCheck } from "lucide-react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { Reveal, staggerDelay } from "@/components/ui/Reveal";
@@ -176,7 +176,18 @@ export function Footer() {
         </Reveal>
 
         <div className="mt-8 flex flex-col gap-4 border-t border-bone/[0.14] pt-6 text-[0.8125rem] text-ash sm:flex-row sm:items-center sm:justify-between">
-          <p>{fill(t.footer.rights, { year, entity: siteConfig.legalEntity })}</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <p>{fill(t.footer.rights, { year, entity: siteConfig.legalEntity })}</p>
+            {/* Quiet on purpose: the lead CRM is for the owner, so it sits in the fine print, not in Explore.
+                A plain <a> (full page load): /admin has its own shell and no site chrome. */}
+            <a href="/admin/" rel="nofollow" className="group inline-flex min-h-[44px] items-center gap-1.5 text-ash hover:text-bone focus-visible:text-bone">
+              <Lock aria-hidden="true" size={13} strokeWidth={1.75} className="shrink-0 transition-transform duration-base ease-editorial group-hover:-translate-y-px motion-reduce:transition-none" />
+              <span className="relative">
+                {t.footer.ownerLogin}
+                <GrowUnderline />
+              </span>
+            </a>
+          </div>
           <a
             href="#top"
             onClick={scrollToTop}
