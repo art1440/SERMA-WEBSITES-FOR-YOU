@@ -1,12 +1,10 @@
 "use client";
 
 import { HeroChapter } from "@/components/chapters/HeroChapter";
-import { IndustriesChapter } from "@/components/chapters/IndustriesChapter";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { TabPanels } from "@/components/layout/TabPanels";
 import { ComparisonMatrix } from "@/components/sections/ComparisonMatrix";
-import { DashboardShowcase } from "@/components/sections/DashboardShowcase";
 import { InclusionsList } from "@/components/sections/InclusionsList";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { RevenueCalculator } from "@/components/sections/RevenueCalculator";
@@ -39,8 +37,6 @@ export default function HomePage() {
                 { id: "home", node: <HeroChapter /> },
                 { id: "included", node: <InclusionsList /> },
                 { id: "work", node: <WorkGallery /> },
-                { id: "industries", node: <IndustriesChapter /> },
-                { id: "dashboard", node: <DashboardShowcase /> },
                 { id: "calculator", node: <RevenueCalculator /> },
                 { id: "compare", node: <ComparisonMatrix /> },
                 { id: "pricing", node: <PricingSection /> },

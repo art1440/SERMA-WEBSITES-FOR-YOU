@@ -1,13 +1,11 @@
 /**
  * The home page is one long page of sections, in this order. Ids double as the
- * sections' anchor ids, so links like "/#dashboard" land on the right section.
+ * sections' anchor ids, so links like "/#calculator" land on the right section.
  */
 export const TAB_IDS = [
   "home",
   "included",
   "work",
-  "industries",
-  "dashboard",
   "calculator",
   "compare",
   "pricing",
@@ -31,6 +29,8 @@ export function tabFromHash(hash: string): TabId | null {
   if (id === "system") return "included";
   // The Missed Calls section was removed; old "#simulator" links land on the next section.
   if (id === "simulator") return "calculator";
+  // The Industries and Dashboard sections were removed; old links land on the calculator.
+  if (id === "industries" || id === "dashboard") return "calculator";
   return null;
 }
 
