@@ -3,7 +3,7 @@
 import { AnimatePresence, LayoutGroup, motion, useDragControls } from "framer-motion";
 import { Download, LogOut, RefreshCw, Search, Inbox } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { Avatar, CARD, CARD_FLUSH, PILL, PILL_OFF, PILL_ON, ROW, ROW_SELECTED, StatusChip } from "@/components/sections/dashboard/ui";
+import { Avatar, CARD, CARD_FLUSH, PILL, PILL_OFF, PILL_ON, ROW, ROW_SELECTED, StatusChip } from "./ui";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { EASE_EDITORIAL, SPRING_SMOOTH, SPRING_SNAPPY } from "@/lib/motion";

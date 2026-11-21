@@ -1,5 +1,5 @@
 import { MOCKUP } from "@/data/mockup";
-import type { Tone } from "@/components/sections/dashboard/ui";
+import type { Tone } from "./ui";
 
 /** Mirrors netlify/functions/crm.ts. */
 export const STATUSES = ["new", "contacted", "mockup", "won", "lost"] as const;

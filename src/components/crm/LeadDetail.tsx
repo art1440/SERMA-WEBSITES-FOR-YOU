@@ -3,7 +3,7 @@
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Check, Copy, Loader2, MessageSquareText, Phone, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { ACTION_PRIMARY, ACTION_SECONDARY, Avatar, LABEL } from "@/components/sections/dashboard/ui";
+import { ACTION_PRIMARY, ACTION_SECONDARY, Avatar, LABEL } from "./ui";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
 import { STATUSES, STATUS_LABEL, dialable, fullDate, relativeTime, sourceOf, type Lead } from "./data";
 
