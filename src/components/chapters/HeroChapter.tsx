@@ -9,6 +9,7 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
 import { useMockup } from "@/context/MockupContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { goToPricing } from "@/lib/scroll";
 
 /**
@@ -55,7 +56,7 @@ export function HeroChapter() {
 
         <h1
           id="hero-title"
-          className="mt-7 font-display text-display-xl font-extrabold [font-variation-settings:'wght'_820] !leading-[0.92] !tracking-[-0.045em] text-bone-50 max-sm:text-[clamp(2.6rem,12.5vw,3.6rem)] lg:mt-9 lg:text-[clamp(3rem,7.4vw,9rem)]"
+          className="mt-7 font-display text-display-xl font-black [font-variation-settings:'wght'_900] !leading-[0.92] !tracking-[-0.045em] text-bone-50 max-sm:text-[clamp(2.6rem,12.5vw,3.6rem)] lg:mt-9 lg:text-[clamp(3rem,7.4vw,9rem)]"
         >
           {t.hero.headline.map((line, i) => (
             <HeadlineLine key={i} index={i} emphasis={t.hero.headlineEmphasis}>
@@ -134,7 +135,7 @@ function HeadlineLine({ children, index, emphasis }: { children: string; index: 
   const parts = children.includes(emphasis) ? children.split(emphasis) : null;
 
   return (
-    <span className="block overflow-hidden pb-[0.1em]">
+    <span className="block overflow-hidden pb-[0.2em] -mb-[0.1em]">
       <motion.span
         className="block"
         initial={{ y: "108%", opacity: 0 }}
@@ -144,17 +145,70 @@ function HeadlineLine({ children, index, emphasis }: { children: string; index: 
         {parts ? (
           <>
             {parts[0]}
-            {/* Accent: the same heavy serif in an aqua gradient (the italic cut has a single weight, so it
-                cannot go bold). The padding stops background-clip from trimming glyph edges. */}
-            <em className="mr-[-0.12em] bg-gradient-to-r from-aqua via-aqua-deep to-aqua bg-clip-text pr-[0.12em] font-display font-extrabold not-italic tracking-[-0.045em] [font-variation-settings:'wght'_860] text-transparent [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
-              {emphasis}
-            </em>
+            <Emphasis delay={0.1 + index * 0.11 + 0.75}>{emphasis}</Emphasis>
             {parts.slice(1).join(emphasis)}
           </>
         ) : (
           children
         )}
       </motion.span>{" "}
+    </span>
+  );
+}
+
+/**
+ * The promise words ("picked first"): the same black-weight serif in an aqua gradient (the
+ * italic cut ships a single light weight, so it can't go bold).
+ * Once the line has landed, a brush stroke draws itself underneath (left to right, like a
+ * pen signing it) and a single sheen of light crosses the letters. Both run once, never
+ * loop, and are skipped for visitors who prefer reduced motion (the stroke is simply there).
+ */
+function Emphasis({ children, delay }: { children: string; delay: number }) {
+  const reduce = useReducedMotionSafe();
+  return (
+    <span className="relative inline-block whitespace-nowrap">
+      {/* Padding stops background-clip from trimming the italic overhang. */}
+      <motion.em
+        key={reduce ? "still" : "sheen"}
+        className="relative z-10 -mr-[0.06em] bg-[linear-gradient(100deg,rgb(var(--aqua-deep))_0%,rgb(var(--aqua))_35%,rgb(var(--aqua-glow))_47%,#fff_50%,rgb(var(--aqua-glow))_53%,rgb(var(--aqua))_65%,rgb(var(--aqua-deep))_100%)] bg-[length:250%_100%] bg-clip-text pr-[0.06em] font-display font-black not-italic [font-variation-settings:'wght'_900] text-transparent [-webkit-box-decoration-break:clone] [box-decoration-break:clone]"
+        initial={{ backgroundPosition: "100% 0%" }}
+        animate={{ backgroundPosition: reduce ? "100% 0%" : "0% 0%" }}
+        transition={{ duration: 1.6, ease: [0.45, 0, 0.2, 1], delay: delay + 0.55 }}
+      >
+        {children}
+      </motion.em>
+      {/* Brush swash behind the baseline: drawn by its path length, letters' descenders cross over it. */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 300 24"
+        preserveAspectRatio="none"
+        className="pointer-events-none absolute -bottom-[0.1em] left-[-0.03em] z-0 h-[0.22em] w-[calc(100%+0.02em)] overflow-visible"
+      >
+        <defs>
+          <linearGradient id="hero-stroke" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stopColor="rgb(var(--aqua))" />
+            <stop offset="0.6" stopColor="rgb(var(--aqua-glow))" />
+            <stop offset="1" stopColor="rgb(var(--aqua-glow))" />
+          </linearGradient>
+        </defs>
+        {/* Remount once the motion preference is known (it resolves after hydration), so a
+            reduced-motion visitor gets the finished stroke instead of the in-flight draw. */}
+        <motion.path
+          key={reduce ? "still" : "draw"}
+          d="M6 16 C 80 10, 170 7, 294 9"
+          fill="none"
+          stroke="url(#hero-stroke)"
+          strokeWidth="12"
+          strokeLinecap="round"
+          initial={{ pathLength: reduce ? 1 : 0, opacity: reduce ? 0.85 : 0 }}
+          animate={{ pathLength: 1, opacity: 0.85 }}
+          transition={
+            reduce
+              ? { duration: 0 }
+              : { pathLength: { duration: 0.85, ease: [0.65, 0, 0.35, 1], delay }, opacity: { duration: 0.15, delay } }
+          }
+        />
+      </svg>
     </span>
   );
 }
