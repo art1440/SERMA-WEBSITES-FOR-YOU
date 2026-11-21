@@ -12,7 +12,7 @@ import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
-import { LAUNCH, TIERS, type Tier } from "@/data/pricing";
+import { GUARANTEE, LAUNCH, TIERS, type Tier } from "@/data/pricing";
 import { LaunchMeta, RotatingPerk, useLaunch } from "./LaunchOffer";
 import { fill } from "@/i18n/types";
 import { formatMetric } from "@/lib/format";
@@ -100,6 +100,21 @@ function PriceNumber({ value, reduce, className }: { value: number; reduce: bool
   );
 }
 
+/**
+ * The featured card's border: a 2px rim with one bright arc of light that travels around it
+ * (a conic gradient spun behind the card, masked to the rim by the card itself sitting on top).
+ * One lap every 6s; frozen with the motion pause control and gone for reduced motion.
+ */
+function RimLight({ still }: { still: boolean }) {
+  return (
+    <span aria-hidden="true" className="pointer-events-none absolute -inset-[2px] overflow-hidden rounded-[32px] bg-[rgb(79_144_238/0.55)]">
+      {still ? null : (
+        <span className="absolute left-1/2 top-1/2 aspect-square min-h-[150%] min-w-[150%] -translate-x-1/2 -translate-y-1/2 animate-[spin_6s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_250deg,rgb(var(--aqua-glow))_320deg,#fff_345deg,transparent_360deg)] motion-reduce:hidden" />
+      )}
+    </span>
+  );
+}
+
 function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void }) {
   const { t, locale, intlLocale } = useLanguage();
   const { reduce } = useScene();
@@ -139,10 +154,11 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
           />
         ) : null}
       <TiltCard max={5} delay={delay} glare="rounded-glass-lg" className="h-full">
+        {tier.featured ? <RimLight still={still} /> : null}
         <div
           className={`relative flex h-full flex-col rounded-glass-lg p-6 text-bone sm:p-7 ${
             tier.featured
-              ? "surface-navy shadow-[0_0_0_2px_rgb(79_144_238/0.85),0_0_0_8px_rgb(79_144_238/0.15),0_40px_80px_-30px_rgb(30_99_216/0.7)]"
+              ? "surface-navy shadow-[0_0_0_8px_rgb(79_144_238/0.12),0_40px_80px_-30px_rgb(30_99_216/0.7)]"
               : "glass-dark glass-solid ring-1 ring-inset ring-bone/10 [-webkit-backdrop-filter:none] [backdrop-filter:none]"
           }`}
         >
@@ -175,9 +191,25 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
               {price === null ? (
                 <span className="font-display text-[3rem] leading-none tracking-[-0.04em] text-bone/40">$&thinsp;—</span>
               ) : (
-                <PriceNumber key={price} value={price} reduce={reduce} className="font-display text-[3.75rem] font-extrabold leading-none tracking-[-0.045em] text-bone-50 [font-variation-settings:'wght'_850]" />
+                <span className="inline-flex items-start">
+                  <PriceNumber
+                    key={price}
+                    value={price}
+                    reduce={reduce}
+                    className={`font-display text-[4rem] font-black leading-[0.9] tracking-[-0.05em] [font-variation-settings:'wght'_900] sm:text-[4.5rem] ${
+                      tier.featured
+                        ? "bg-gradient-to-b from-bone-50 to-aqua-glow bg-clip-text text-transparent"
+                        : "text-bone-50"
+                    }`}
+                  />
+                  {tier.from ? (
+                    <span aria-hidden="true" className="ml-0.5 font-display text-[2.25rem] font-black leading-none text-aqua-glow [font-variation-settings:'wght'_900]">
+                      +
+                    </span>
+                  ) : null}
+                </span>
               )}
-              <span className="text-sm font-semibold text-ash">{p.oneTime}</span>
+              <span className="text-sm font-semibold text-ash">{tier.from ? p.fromNote : p.oneTime}</span>
             </p>
             <p className="mt-2 text-sm font-medium text-bone/75">
               {tier.price === null
@@ -236,10 +268,6 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
  * Pricing: three packages, then the enquiry form. Picking a package carries it
  * down to the form (a chip morphs in above the fields and the "What do you
  * need?" box is pre-filled), so there is one way to get in touch, not four.
- *
- * Finale: the section is the 3D engine's last chapter. The header sits over the
- * transparent stage (the sculpture returns on the right on desktop); the cards
- * and form sit on an ambient light field that fades in underneath.
  */
 export function PricingSection() {
   const { t, locale } = useLanguage();
@@ -267,6 +295,22 @@ export function PricingSection() {
 
       <div className="frame relative">
         <SectionHeader index={p.index} eyebrow={p.eyebrow} title={p.title} body={p.body} headingId="pricing-title" />
+
+        {GUARANTEE ? (
+          <Reveal delay={0.05}>
+            <div className="mt-10 flex flex-col items-start gap-4 rounded-glass-lg bg-[linear-gradient(110deg,rgb(var(--aqua)/0.22),rgb(var(--aqua-glow)/0.08)_60%,transparent)] p-5 ring-1 ring-inset ring-aqua/30 sm:flex-row sm:items-center sm:gap-5 sm:p-6 md:mt-12">
+              <span aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-aqua text-ink shadow-[0_10px_24px_-10px_rgb(var(--aqua)/0.9)]">
+                <ShieldCheck size={24} strokeWidth={2.25} />
+              </span>
+              <div className="min-w-0">
+                <p className="font-display text-[1.375rem] font-black leading-tight tracking-[-0.025em] text-bone-50 [font-variation-settings:'wght'_900] sm:text-[1.625rem]">
+                  {GUARANTEE.title[locale]}
+                </p>
+                <p className="mt-1 text-pretty text-[0.9375rem] font-medium leading-relaxed text-bone/80">{GUARANTEE.detail[locale]}</p>
+              </div>
+            </div>
+          </Reveal>
+        ) : null}
 
         <ol className="mt-12 grid items-stretch gap-6 md:mt-16 lg:grid-cols-3 lg:gap-5 xl:gap-7">
           {TIERS.map((tier) => (

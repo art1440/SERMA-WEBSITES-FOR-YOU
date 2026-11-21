@@ -64,14 +64,14 @@ export const FAQ_ITEMS: FaqItem[] = [
     },
   },
   {
-    id: "launch-price",
+    id: "seven-days",
     q: {
-      en: "Why are two prices shown?",
-      es: "¿Por qué aparecen dos precios?",
+      en: "What does the 7-day guarantee mean?",
+      es: "¿Qué significa la garantía de 7 días?",
     },
     a: {
-      en: "The crossed-out number is our regular price. The first 10 clients on each package get the lower launch price; once a package’s spots are taken, it goes to the regular price. The $99.99 a month is the same either way.",
-      es: "El número tachado es nuestro precio regular. Los primeros 10 clientes de cada paquete reciben el precio de lanzamiento, más bajo; cuando se ocupan los lugares de un paquete, ese paquete pasa al precio regular. La cuota de $99.99 al mes es igual en ambos casos.",
+      en: "Your finished site is ready for you to review within 7 days of our 15-minute intro call, once we have your details and photos. If it isn’t, your first month of hosting and care ($99.99) is free. Going live then happens as soon as you say yes.",
+      es: "Su sitio terminado está listo para que lo revise a más tardar 7 días después de nuestra llamada de 15 minutos, una vez que tengamos sus datos y fotos. Si no lo está, su primer mes de alojamiento y mantenimiento ($99.99) es gratis. Se publica en cuanto usted diga que sí.",
     },
   },
   {

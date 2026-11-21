@@ -18,6 +18,8 @@ export type Tier = {
   tagline: L10n;
   /** One-time build price in USD, or null while not decided. */
   price: number | null;
+  /** True when `price` is a starting point ("$1,000+"): the final quote depends on scope. */
+  from?: boolean;
   /** Optional monthly fee in USD, or null to hide it. */
   monthly: number | null;
   /**
@@ -48,7 +50,7 @@ export type Tier = {
  *    Only claims that apply to EVERY package belong here.
  */
 export const LAUNCH = {
-  active: true,
+  active: false,
   spots: 10,
   endsAt: null as string | null,
   label: { en: "Launch price", es: "Precio de lanzamiento" },
@@ -73,9 +75,7 @@ export const TIERS: Tier[] = [
       en: "Everything a customer needs to call you, on one sharp page.",
       es: "Todo lo que un cliente necesita para llamarle, en una página impecable.",
     },
-    price: 299,
-    regular: 599,
-    launchTaken: 2,
+    price: 499,
     monthly: 99.99,
     features: [
       { en: "One-page website (services, hours, location, contact)", es: "Sitio de una página (servicios, horario, ubicación, contacto)" },
@@ -96,9 +96,7 @@ export const TIERS: Tier[] = [
       en: "The full website that makes you look like the best in town.",
       es: "El sitio completo que lo hace ver como el mejor de la zona.",
     },
-    price: 599,
-    regular: 1199,
-    launchTaken: 5,
+    price: 799,
     monthly: 99.99,
     featured: true,
     inherits: { en: "Everything in Starter, plus:", es: "Todo lo de Inicial, y además:" },
@@ -120,9 +118,8 @@ export const TIERS: Tier[] = [
       en: "Your site in English and Spanish, plus the phone tools as they launch.",
       es: "Su sitio en inglés y español, más las herramientas del teléfono al lanzarse.",
     },
-    price: 999,
-    regular: 1999,
-    launchTaken: 3,
+    price: 1000,
+    from: true,
     monthly: 99.99,
     inherits: { en: "Everything in Business, plus:", es: "Todo lo de Negocio, y además:" },
     features: [
@@ -137,3 +134,19 @@ export const TIERS: Tier[] = [
     ],
   },
 ];
+
+/**
+ * The headline promise shown above the packages. It applies to EVERY package, so only keep it
+ * while you can honor it for every client. Set to null to hide the banner (and its FAQ answer).
+ * "Ready to review" (not "live") on purpose: going live also waits on the client's approval.
+ */
+export const GUARANTEE: { title: { en: string; es: string }; detail: { en: string; es: string } } | null = {
+  title: {
+    en: "Ready in 7 days, or your first month is free.",
+    es: "Listo en 7 días, o su primer mes es gratis.",
+  },
+  detail: {
+    en: "Your finished site is ready to review within 7 days of our intro call. If it isn't, your first month of hosting and care ($99.99) is on us.",
+    es: "Su sitio terminado está listo para revisar a más tardar 7 días después de nuestra llamada. Si no lo está, su primer mes de alojamiento y mantenimiento ($99.99) corre por nuestra cuenta.",
+  },
+};
