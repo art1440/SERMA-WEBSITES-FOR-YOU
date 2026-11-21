@@ -56,7 +56,7 @@ export function HeroChapter() {
 
         <h1
           id="hero-title"
-          className="mt-7 font-display text-display-xl font-black [font-variation-settings:'wght'_900] !leading-[0.92] !tracking-[-0.045em] text-bone-50 max-sm:text-[clamp(2.6rem,12.5vw,3.6rem)] lg:mt-9 lg:text-[clamp(3rem,7.4vw,9rem)]"
+          className="mt-7 font-display text-display-xl font-black [font-variation-settings:'wght'_900] !leading-[0.92] !tracking-[-0.045em] text-bone-50 max-sm:text-[clamp(2.2rem,10.5vw,3rem)] max-sm:!leading-[1] lg:mt-9 lg:text-[clamp(3rem,7.4vw,9rem)]"
         >
           {t.hero.headline.map((line, i) => (
             <HeadlineLine key={i} index={i} emphasis={t.hero.headlineEmphasis}>
@@ -157,7 +157,7 @@ function HeadlineLine({ children, index, emphasis }: { children: string; index: 
 }
 
 /**
- * The promise words ("picked first"): the same black-weight serif in an aqua gradient (the
+ * The promise words ("stand out"): the same black-weight serif in an aqua gradient (the
  * italic cut ships a single light weight, so it can't go bold).
  * Once the line has landed, a brush stroke draws itself underneath (left to right, like a
  * pen signing it) and a single sheen of light crosses the letters. Both run once, never
