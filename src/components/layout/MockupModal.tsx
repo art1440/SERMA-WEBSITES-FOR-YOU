@@ -22,11 +22,11 @@ const FOCUSABLE =
 const SPRING_OPEN = { type: "spring", stiffness: 360, damping: 32, mass: 0.9 } as const;
 
 /**
- * "Get your free mockup" pop-up. Left: why a site matters and three easy steps.
+ * "Get your free preview" pop-up. Left: why a site matters and three easy steps.
  * Right: a three-field form. Posts to the same Netlify form ("enquiries") as the
  * pricing form, so every lead lands in one list.
  *
- * Motion: the sheet springs up from slightly below, the "free mockup" highlight
+ * Motion: the sheet springs up from slightly below, the "free preview" highlight
  * sweeps in behind the words like a marker, and the three steps follow in order.
  * On send, the form gives way to a check that draws itself. Esc, backdrop and
  * the × all close; focus is trapped while open and returned afterwards.

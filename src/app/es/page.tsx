@@ -5,7 +5,7 @@ import HomePage from "../page";
 
 const TITLE = dictionaries.es.meta.title;
 const DESCRIPTION =
-  "Sitios web para barberías, salones, restaurantes y contratistas que convierten búsquedas en llamadas. Lo escribimos y lo construimos por usted, y solo paga después de verlo y decir que sí. Pida su maqueta gratis.";
+  "Sitios web para barberías, salones, restaurantes y contratistas que convierten búsquedas en llamadas. Lo escribimos y lo construimos por usted, y solo paga después de verlo y decir que sí. Pida su vista previa gratis.";
 
 export const metadata: Metadata = {
   // `absolute` skips the "%s — SermaWebDesign" template: the dictionary title already carries the brand.

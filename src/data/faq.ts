@@ -7,7 +7,7 @@ import type { L10n } from "@/i18n/types";
  * ("Yes." / "No." / "Not at all."), then the proof, then one gentle next step.
  *
  * RULE: every answer restates only what the site already promises (pricing.ts,
- * the dictionary, the mockup pop-up). No contract, cancellation or hand-over policies:
+ * the dictionary, the preview pop-up). No contract, cancellation or hand-over policies:
  * the owner chose not to state them here.
  */
 export type FaqGroupId = "start" | "money" | "after" | "why";
@@ -94,11 +94,11 @@ export const FAQ_ITEMS: FaqItem[] = [
     },
   },
   {
-    id: "free-mockup",
+    id: "free-preview",
     group: "start",
     q: {
-      en: "Is the free mockup really free?",
-      es: "¿La maqueta gratis de verdad es gratis?",
+      en: "Is the free preview really free?",
+      es: "¿La vista previa gratis de verdad es gratis?",
     },
     a: {
       en: "Yes. No card, no contract, no catch. Tell us about your business in one minute and we design your homepage for free. Love it? We build the rest. Not for you? You owe nothing, and we part as friends.",
@@ -151,8 +151,8 @@ export const FAQ_ITEMS: FaqItem[] = [
       es: "¿Qué paquete me conviene?",
     },
     a: {
-      en: "Starter ($499) is one sharp page with everything a customer needs to call you. Business ($799) is the full site most owners choose: up to 5 pages, a gallery, a contact form, local SEO basics and monthly edits. Growth ($1,000+) is for owners with many services or Spanish-speaking customers: up to 10 pages, in English and Spanish. Still not sure? Get the free mockup first. We’ll tell you honestly which one fits, even if it’s the smallest.",
-      es: "Inicial ($499) es una página impecable con todo lo que un cliente necesita para llamarle. Negocio ($799) es el sitio completo que elige la mayoría: hasta 5 páginas, galería, formulario de contacto, SEO local básico y cambios cada mes. Crecimiento ($1,000+) es para negocios con muchos servicios o clientes que hablan español: hasta 10 páginas, en inglés y español. ¿Aún no está seguro? Pida primero la maqueta gratis. Le diremos con honestidad cuál le conviene, aunque sea el más pequeño.",
+      en: "Starter ($499) is one sharp page with everything a customer needs to call you. Business ($799) is the full site most owners choose: up to 5 pages, a gallery, a contact form, local SEO basics and monthly edits. Growth ($1,000+) is for owners with many services or Spanish-speaking customers: up to 10 pages, in English and Spanish. Still not sure? Get the free preview first. We’ll tell you honestly which one fits, even if it’s the smallest.",
+      es: "Inicial ($499) es una página impecable con todo lo que un cliente necesita para llamarle. Negocio ($799) es el sitio completo que elige la mayoría: hasta 5 páginas, galería, formulario de contacto, SEO local básico y cambios cada mes. Crecimiento ($1,000+) es para negocios con muchos servicios o clientes que hablan español: hasta 10 páginas, en inglés y español. ¿Aún no está seguro? Pida primero la vista previa gratis. Le diremos con honestidad cuál le conviene, aunque sea el más pequeño.",
     },
   },
   {
@@ -187,8 +187,8 @@ export const FAQ_ITEMS: FaqItem[] = [
       es: "Las agencias cobran miles. ¿Por qué ustedes cobran menos? ¿La calidad es menor?",
     },
     a: {
-      en: "No, and you can judge for yourself: look at “Our work”, or get your free mockup. Agencies bill for account managers, long meetings and hourly changes. We only build for local businesses, with clear fixed packages, so you pay for the website, not the overhead.",
-      es: "No, y usted mismo puede juzgarlo: vea “Nuestro trabajo” o pida su maqueta gratis. Las agencias cobran por gerentes de cuenta, reuniones largas y cambios por hora. Nosotros solo hacemos sitios para negocios locales, con paquetes fijos y claros, así que paga por el sitio web, no por los gastos de la agencia.",
+      en: "No, and you can judge for yourself: look at “Our work”, or get your free preview. Agencies bill for account managers, long meetings and hourly changes. We only build for local businesses, with clear fixed packages, so you pay for the website, not the overhead.",
+      es: "No, y usted mismo puede juzgarlo: vea “Nuestro trabajo” o pida su vista previa gratis. Las agencias cobran por gerentes de cuenta, reuniones largas y cambios por hora. Nosotros solo hacemos sitios para negocios locales, con paquetes fijos y claros, así que paga por el sitio web, no por los gastos de la agencia.",
     },
   },
 
@@ -311,8 +311,8 @@ export const FAQ_ITEMS: FaqItem[] = [
       es: "¿Por qué no esperar a que las cosas se calmen?",
     },
     a: {
-      en: "Because people are searching for what you do today, and every week without a site sends some of them to a competitor. Starting costs you nothing: the mockup is free, you pay only when you love the finished site, and it’s ready to review within 7 days. The only thing waiting saves you is the calls you would have gotten.",
-      es: "Porque hoy mismo hay gente buscando lo que usted hace, y cada semana sin sitio manda a algunos con la competencia. Empezar no le cuesta nada: la maqueta es gratis, solo paga cuando le encanta el sitio terminado y está listo para revisar en 7 días. Lo único que se ahorra esperando son las llamadas que habría recibido.",
+      en: "Because people are searching for what you do today, and every week without a site sends some of them to a competitor. Starting costs you nothing: the preview is free, you pay only when you love the finished site, and it’s ready to review within 7 days. The only thing waiting saves you is the calls you would have gotten.",
+      es: "Porque hoy mismo hay gente buscando lo que usted hace, y cada semana sin sitio manda a algunos con la competencia. Empezar no le cuesta nada: la vista previa es gratis, solo paga cuando le encanta el sitio terminado y está listo para revisar en 7 días. Lo único que se ahorra esperando son las llamadas que habría recibido.",
     },
   },
   {

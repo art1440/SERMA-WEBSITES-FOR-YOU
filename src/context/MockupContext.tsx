@@ -7,7 +7,7 @@ type MockupValue = { openMockup: () => void };
 
 const MockupContext = createContext<MockupValue | null>(null);
 
-/** Holds the "Get your free mockup" pop-up so any button on any page can open it. */
+/** Holds the "Get your free preview" pop-up so any button on any page can open it. */
 export function MockupProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const openMockup = useCallback(() => setOpen(true), []);
