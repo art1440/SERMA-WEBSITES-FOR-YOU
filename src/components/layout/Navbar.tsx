@@ -63,7 +63,6 @@ export function Navbar() {
 
   const links = [
     { href: "/#work", label: t.nav.links.work },
-    { href: "/#calculator", label: t.nav.links.calculator },
     { href: "/#compare", label: t.nav.links.compare },
   ];
 

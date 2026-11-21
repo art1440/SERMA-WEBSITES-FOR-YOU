@@ -45,7 +45,6 @@ export type Niche = {
     amount: number;
     earlier: { name: string; service: L10n; amount: number }[];
   };
-  calculator: { missedCalls: number; avgTicket: number; bookingRate: number };
 };
 
 export const NICHES: Niche[] = [
@@ -99,7 +98,6 @@ export const NICHES: Niche[] = [
         { name: "Tyrell W.", service: { en: "Line-up", es: "Perfilado" }, amount: 20 },
       ],
     },
-    calculator: { missedCalls: 12, avgTicket: 40, bookingRate: 35 },
   },
   {
     id: "salon",
@@ -150,7 +148,6 @@ export const NICHES: Niche[] = [
         { name: "Elena V.", service: { en: "Blowout", es: "Brushing" }, amount: 55 },
       ],
     },
-    calculator: { missedCalls: 10, avgTicket: 140, bookingRate: 30 },
   },
   {
     id: "beauty",
@@ -202,7 +199,6 @@ export const NICHES: Niche[] = [
         { name: "Mariela C.", service: { en: "Gel manicure", es: "Manicura en gel" }, amount: 45 },
       ],
     },
-    calculator: { missedCalls: 14, avgTicket: 70, bookingRate: 35 },
   },
   {
     id: "restaurant",
@@ -253,7 +249,6 @@ export const NICHES: Niche[] = [
         { name: "Omar F.", service: { en: "Table for 2", es: "Mesa para 2" }, amount: 95 },
       ],
     },
-    calculator: { missedCalls: 25, avgTicket: 55, bookingRate: 40 },
   },
   {
     id: "contractor",
@@ -305,7 +300,6 @@ export const NICHES: Niche[] = [
         { name: "Victor M.", service: { en: "Bathroom refresh", es: "Renovación de baño" }, amount: 14200 },
       ],
     },
-    calculator: { missedCalls: 6, avgTicket: 4500, bookingRate: 20 },
   },
   {
     id: "service",
@@ -356,7 +350,6 @@ export const NICHES: Niche[] = [
         { name: "Chris D.", service: { en: "Water heater check", es: "Revisión de calentador" }, amount: 120 },
       ],
     },
-    calculator: { missedCalls: 9, avgTicket: 220, bookingRate: 30 },
   },
 ];
 
