@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "SermaWebDesign",
-    title: "Premium websites that get you picked first",
+    title: "Premium websites that really make your business stand out",
     description:
       "Your next customer is searching for you right now. We build the website that makes them call you, and you don’t pay until you’ve seen it and said yes.",
     // The image comes from src/app/opengraph-image.tsx (built at export time, 1200x630).
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Premium websites that get you picked first",
+    title: "Premium websites that really make your business stand out",
     description: "Your next customer is searching for you. We build the website that makes them call you. Pay only when you love it.",
   },
   robots: { index: true, follow: true },

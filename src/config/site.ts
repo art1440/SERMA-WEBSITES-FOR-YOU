@@ -17,5 +17,5 @@ export const siteConfig = {
     es: "el Estado de Texas, Estados Unidos",
   },
   /** Bump this whenever the legal pages change. */
-  legalLastUpdated: "2026-11-20",
+  legalLastUpdated: "2026-11-21",
 } as const;

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 /** Rendered once at build time; works with `output: "export"`. */
 export const dynamic = "force-static";
-export const alt = "SERMA — Premium websites that get you picked first.";
+export const alt = "SERMA — Premium websites that really make your business stand out.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -77,7 +77,7 @@ export default function Image() {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
-              fontSize: 84,
+              fontSize: 76,
               fontWeight: 800,
               lineHeight: 1.04,
               letterSpacing: -3,
@@ -85,7 +85,7 @@ export default function Image() {
               maxWidth: 900,
             }}
           >
-            Premium websites that get you picked first.
+            Premium websites that really make your business stand out.
           </div>
           <div style={{ marginTop: 28, fontSize: 30, color: BRAND.textSoft }}>
             Built for you. See it finished before you pay.

@@ -231,7 +231,7 @@ const termsEn: LegalDoc = {
       id: "services",
       heading: "1. About our services",
       paragraphs: [
-        "This website describes the websites, Client Dashboard, and automation systems we build for local businesses. It is informational. Any services we provide are governed by a separate written agreement (such as a Master Services Agreement and statement of work), which controls if it conflicts with these Terms. We do not publish pricing; scope and fees are agreed in writing.",
+        "This website describes the websites, Client Dashboard, and automation systems we build for local businesses. It is informational. Any services we provide are governed by a separate written agreement (such as a Master Services Agreement and statement of work), which controls if it conflicts with these Terms. Prices shown on this website are for the packages as described; the final scope and fees for your project are confirmed in writing before any work is billed.",
       ],
     },
     {
@@ -325,7 +325,7 @@ const termsEs: LegalDoc = {
       id: "services",
       heading: "1. Sobre nuestros servicios",
       paragraphs: [
-        "Este sitio web describe los sitios web, el Panel de Clientes y los sistemas de automatización que creamos para negocios locales. Su contenido es informativo. Los servicios que prestamos se rigen por un acuerdo escrito independiente (como un Acuerdo Maestro de Servicios y una declaración de trabajo), que prevalecerá en caso de conflicto con estos Términos. No publicamos precios; el alcance y las tarifas se acuerdan por escrito.",
+        "Este sitio web describe los sitios web, el Panel de Clientes y los sistemas de automatización que creamos para negocios locales. Su contenido es informativo. Los servicios que prestamos se rigen por un acuerdo escrito independiente (como un Acuerdo Maestro de Servicios y una declaración de trabajo), que prevalecerá en caso de conflicto con estos Términos. Los precios que se muestran en este sitio corresponden a los paquetes tal como se describen; el alcance y las tarifas finales de su proyecto se confirman por escrito antes de facturar cualquier trabajo.",
       ],
     },
     {
