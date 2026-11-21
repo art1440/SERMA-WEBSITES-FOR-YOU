@@ -4,17 +4,16 @@ import { Info } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 /** Which surface the disclaimer sits under; each gets copy that matches what it shows. */
-export type DisclaimerVariant = "dashboard" | "calculator";
+export type DisclaimerVariant = "calculator";
 
 /**
- * FTC micro-copy rendered directly under every interactive simulation.
- * `variant` picks the text: the Client Dashboard showcase (default), the
- * missed-call simulator or the ROI calculator (an estimate, not a portal demo).
+ * FTC micro-copy rendered directly under the ROI calculator (an estimate, not a
+ * guarantee). `variant` picks the text; the calculator is the only surface left.
  * Dark-first site: always ash (7.7:1 on ink). `tone` is kept for API
  * compatibility and no longer changes the colour.
  */
 export function SimulationDisclaimer({
-  variant = "dashboard",
+  variant = "calculator",
   className,
 }: {
   variant?: DisclaimerVariant;

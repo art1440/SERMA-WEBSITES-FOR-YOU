@@ -36,7 +36,7 @@ const privacyEn: LegalDoc = {
       paragraphs: [
         "The contact form asks for four things: your name, your business name, your phone number, and what you need. That is the only personal information this site collects. It is stored in the form submissions of our hosting provider (Netlify) with the date and time you sent it, and it reaches our email inbox. We use it to reply to you and to prepare a quote. We do not add you to a mailing list, and we do not sell or share it.",
         "We keep a submission for as long as it takes to answer you and keep a record of the job, and no longer. Ask us to delete it at {email} and we delete it, unless the law requires us to keep it.",
-        "There are no sign-ups, accounts, chat widgets, or analytics. The interactive dashboard, simulator, and calculator run entirely in your browser; nothing you do with them is sent to us.",
+        "There are no sign-ups, accounts, chat widgets, or analytics. The calculator and demo websites run entirely in your browser; nothing you do with them is sent to us.",
         "Like every website, our hosting provider automatically processes basic technical data needed to deliver and secure the site (such as IP address, browser type, and request time in server logs). We do not use this data to identify, track, or profile visitors.",
       ],
     },
@@ -139,7 +139,7 @@ const privacyEs: LegalDoc = {
       paragraphs: [
         "El formulario de contacto pide cuatro datos: su nombre, el nombre de su negocio, su teléfono y qué necesita. Es la única información personal que recopila este sitio. Se guarda en los envíos de formularios de nuestro proveedor de alojamiento web (Netlify) con la fecha y la hora en que lo envió, y llega a nuestra bandeja de entrada de correo. La usamos para responderle y para preparar una cotización. No lo agregamos a ninguna lista de correo y no vendemos ni compartimos esa información.",
         "Conservamos el envío el tiempo necesario para responderle y llevar un registro del trabajo, y no más. Si nos pide eliminarlo en {email}, lo eliminamos, salvo que la ley nos obligue a conservarlo.",
-        "No hay inscripciones, cuentas, ventanas de chat ni analítica. El panel interactivo, el simulador y la calculadora funcionan completamente en su navegador; nada de lo que haga con ellos se nos envía.",
+        "No hay inscripciones, cuentas, ventanas de chat ni analítica. La calculadora y los sitios web de demostración funcionan completamente en su navegador; nada de lo que haga con ellos se nos envía.",
         "Como en cualquier sitio web, nuestro proveedor de alojamiento procesa automáticamente datos técnicos básicos necesarios para entregar y proteger el sitio (como dirección IP, tipo de navegador y hora de la solicitud en los registros del servidor). No usamos estos datos para identificar, rastrear ni perfilar a los visitantes.",
       ],
     },
@@ -236,9 +236,9 @@ const termsEn: LegalDoc = {
     },
     {
       id: "simulations",
-      heading: "2. Interactive simulations",
+      heading: "2. Calculator and demos",
       paragraphs: [
-        "The Client Dashboard showcase, missed-call simulator, and revenue calculator are illustrative interactive simulations using sample data. They are not a promise, projection, or guarantee of any result. Actual lead volume, bookings, and revenue depend on market, industry, and business operations. See our Disclaimer for details.",
+        "The revenue calculator is an illustrative estimate based only on the numbers you enter, and the demo websites use sample data. They are not a promise, projection, or guarantee of any result. Actual lead volume, bookings, and revenue depend on market, industry, and business operations. See our Disclaimer for details.",
       ],
     },
     {
@@ -330,9 +330,9 @@ const termsEs: LegalDoc = {
     },
     {
       id: "simulations",
-      heading: "2. Simulaciones interactivas",
+      heading: "2. Calculadora y demostraciones",
       paragraphs: [
-        "La demostración del Panel de Clientes, el simulador de llamadas perdidas y la calculadora de ingresos son simulaciones interactivas ilustrativas que usan datos de ejemplo. No constituyen una promesa, proyección ni garantía de ningún resultado. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Consulte nuestro Aviso legal para más detalles.",
+        "La calculadora de ingresos es una estimación ilustrativa basada solo en los números que usted ingresa, y los sitios web de demostración usan datos de ejemplo. No constituyen una promesa, proyección ni garantía de ningún resultado. El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio. Consulte nuestro Aviso legal para más detalles.",
       ],
     },
     {
@@ -416,9 +416,9 @@ const disclaimerEn: LegalDoc = {
   sections: [
     {
       id: "simulations",
-      heading: "1. Illustrative simulations",
+      heading: "1. Illustrative figures and demos",
       paragraphs: [
-        "The Client Dashboard showcase is an illustrative interactive simulation of the SermaWebDesign Client Portal, and the missed-call simulator is an illustrative simulation of the SermaWebDesign missed-call text-back. All names, phone numbers, businesses, messages, reviews, metrics, and amounts they show are fictional sample data created for demonstration. Phone numbers use the reserved 555-01XX range. The missed-revenue calculator is an estimate based only on the values you set and the formula shown; it is not a guarantee or a typical result.",
+        "The missed-revenue calculator is an estimate based only on the values you set and the formula shown; it is not a guarantee or a typical result.",
         "Actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
         "The demo websites under /work (Ironside Barber Co., Maison Lumière, Velvet Room, Ember & Oak, Trueframe Builders and Brightline Home) are examples of our design work for fictional businesses. Their names, addresses, phone numbers, prices and reviews are invented, and their photos are AI-generated.",
       ],
@@ -472,9 +472,9 @@ const disclaimerEs: LegalDoc = {
   sections: [
     {
       id: "simulations",
-      heading: "1. Simulaciones ilustrativas",
+      heading: "1. Cifras y demostraciones ilustrativas",
       paragraphs: [
-        "La demostración del Panel de Clientes es una simulación interactiva ilustrativa del Portal de Clientes de SermaWebDesign, y el simulador de llamadas perdidas es una simulación ilustrativa del mensaje de texto automático tras una llamada perdida de SermaWebDesign. Todos los nombres, números de teléfono, negocios, mensajes, reseñas, métricas y montos que muestran son datos de ejemplo ficticios creados para la demostración. Los números de teléfono usan el rango reservado 555-01XX. La calculadora de ingresos perdidos es solo una estimación basada en los valores que usted ajusta y la fórmula que se muestra; no es una garantía ni un resultado típico.",
+        "La calculadora de ingresos perdidos es solo una estimación basada en los valores que usted ajusta y la fórmula que se muestra; no es una garantía ni un resultado típico.",
         "El volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
         "Los sitios web de demostración bajo /work (Ironside Barber Co., Maison Lumière, Velvet Room, Ember & Oak, Trueframe Builders y Brightline Home) son ejemplos de nuestro trabajo de diseño para negocios ficticios. Sus nombres, direcciones, números de teléfono, precios y reseñas son inventados, y sus fotografías fueron generadas con IA.",
       ],
