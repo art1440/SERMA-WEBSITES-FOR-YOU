@@ -64,14 +64,14 @@ export const FAQ_ITEMS: FaqItem[] = [
     },
   },
   {
-    id: "seven-days",
+    id: "google-profile",
     q: {
-      en: "What does the 7-day guarantee mean?",
-      es: "¿Qué significa la garantía de 7 días?",
+      en: "What is the free Google profile makeover?",
+      es: "¿Qué es la renovación gratis del perfil de Google?",
     },
     a: {
-      en: "Your finished site is ready for you to review within 7 days of our 15-minute intro call, once we have your details and photos. If it isn’t, your first month of hosting and care ($99.99) is free. Going live then happens as soon as you say yes.",
-      es: "Su sitio terminado está listo para que lo revise a más tardar 7 días después de nuestra llamada de 15 minutos, una vez que tengamos sus datos y fotos. Si no lo está, su primer mes de alojamiento y mantenimiento ($99.99) es gratis. Se publica en cuanto usted diga que sí.",
+      en: "Your Google Business Profile is what people see in Google Maps and search. With every package we create it or clean it up for free: your best photos, correct hours, your services and categories, and a link to your new site, so you stand out next to the shop down the street.",
+      es: "Su Perfil de Google Business es lo que la gente ve en Google Maps y en la búsqueda. Con cada paquete lo creamos o lo arreglamos gratis: sus mejores fotos, el horario correcto, sus servicios y categorías, y un enlace a su sitio nuevo, para que destaque frente al negocio de enfrente.",
     },
   },
   {
@@ -81,8 +81,8 @@ export const FAQ_ITEMS: FaqItem[] = [
       es: "¿Puedo ver mi sitio antes de pagar?",
     },
     a: {
-      en: "Yes. You see the finished draft before you pay anything. We send you a link, you point out anything that reads or looks wrong, and we fix it.",
-      es: "Sí. Usted ve el borrador terminado antes de pagar nada. Le mandamos un enlace, usted señala lo que se lee o se ve mal, y nosotros lo corregimos.",
+      en: "Yes. You see the finished draft before you pay anything. We send you a link, you point out anything that reads or looks wrong, and we fix it. If you still don’t love it, you walk away and owe nothing.",
+      es: "Sí. Usted ve el borrador terminado antes de pagar nada. Le mandamos un enlace, usted señala lo que se lee o se ve mal, y nosotros lo corregimos. Si aun así no le encanta, se va sin deber nada.",
     },
   },
   {

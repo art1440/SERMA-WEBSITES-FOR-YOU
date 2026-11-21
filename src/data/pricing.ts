@@ -85,6 +85,7 @@ export const TIERS: Tier[] = [
       { en: "Tap-to-call button on every screen", es: "Botón para llamar en cada pantalla" },
       { en: "Fast on any phone", es: "Rápido en cualquier teléfono" },
       { en: "Live on your own domain", es: "Publicado en su propio dominio" },
+      { en: "Free Google Business Profile makeover", es: "Renovación gratis de su Perfil de Google Business" },
       { en: "See the finished draft before you pay", es: "Vea el borrador terminado antes de pagar" },
       { en: "1 round of revisions", es: "1 ronda de cambios" },
     ],
@@ -104,7 +105,6 @@ export const TIERS: Tier[] = [
       { en: "Up to 5 pages (home, services, about, gallery, contact)", es: "Hasta 5 páginas (inicio, servicios, nosotros, galería, contacto)" },
       { en: "Enquiry form that lands in your inbox", es: "Formulario de contacto que llega a su correo" },
       { en: "Link to the booking tool you already use", es: "Enlace a la herramienta de citas que ya usa" },
-      { en: "Google Business Profile set up or tidied", es: "Perfil de Google Business creado o actualizado" },
       { en: "Basic local SEO (titles, descriptions, map)", es: "SEO local básico (títulos, descripciones, mapa)" },
       { en: "2 rounds of revisions", es: "2 rondas de cambios" },
       { en: "Small text and photo edits each month", es: "Cambios pequeños de texto y fotos cada mes" },
@@ -137,16 +137,15 @@ export const TIERS: Tier[] = [
 
 /**
  * The headline promise shown above the packages. It applies to EVERY package, so only keep it
- * while you can honor it for every client. Set to null to hide the banner (and its FAQ answer).
- * "Ready to review" (not "live") on purpose: going live also waits on the client's approval.
+ * while you can honor it for every client. Set to null to hide the banner.
  */
 export const GUARANTEE: { title: { en: string; es: string }; detail: { en: string; es: string } } | null = {
   title: {
-    en: "Ready in 7 days, or your first month is free.",
-    es: "Listo en 7 días, o su primer mes es gratis.",
+    en: "Love it or don't pay. Plus a free Google profile makeover.",
+    es: "Si no le encanta, no paga. Y su perfil de Google renovado, gratis.",
   },
   detail: {
-    en: "Your finished site is ready to review within 7 days of our intro call. If it isn't, your first month of hosting and care ($99.99) is on us.",
-    es: "Su sitio terminado está listo para revisar a más tardar 7 días después de nuestra llamada. Si no lo está, su primer mes de alojamiento y mantenimiento ($99.99) corre por nuestra cuenta.",
+    en: "You see your finished site before you pay a cent. Don't love it? Walk away and owe nothing. And with every package we set up or polish your Google Business Profile (photos, hours, services) so you stand out in Maps.",
+    es: "Usted ve su sitio terminado antes de pagar un centavo. ¿No le encanta? Se va sin deber nada. Y con cada paquete creamos o mejoramos su Perfil de Google Business (fotos, horario, servicios) para que destaque en Maps.",
   },
 };
