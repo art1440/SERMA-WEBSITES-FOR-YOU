@@ -7,8 +7,8 @@ import type { L10n } from "@/i18n/types";
  * ("Yes." / "No." / "Not at all."), then the proof, then one gentle next step.
  *
  * RULE: every answer restates only what the site already promises (pricing.ts,
- * the dictionary, the mockup pop-up). Policies the site does not state yet live in
- * FAQ_PENDING below and are NOT shown until the owner confirms them.
+ * the dictionary, the mockup pop-up). No contract, cancellation or hand-over policies:
+ * the owner chose not to state them here.
  */
 export type FaqGroupId = "start" | "money" | "after" | "why";
 
@@ -325,39 +325,6 @@ export const FAQ_ITEMS: FaqItem[] = [
     a: {
       en: "Leave your name and number in the form above (it takes a minute). We call or text you within one business day to set up a relaxed 15-minute chat. No card, no pressure, nothing to prepare. From there, you’ll see your site before you pay a cent.",
       es: "Deje su nombre y número en el formulario de arriba (toma un minuto). Le llamamos o escribimos en un día hábil para agendar una charla tranquila de 15 minutos. Sin tarjeta, sin presión, nada que preparar. A partir de ahí, verá su sitio antes de pagar un centavo.",
-    },
-  },
-];
-
-/**
- * DRAFTS, NOT SHOWN ON THE SITE. These are the strongest reassurances an owner looks for,
- * but they state business policies the site does not promise yet. Confirm each one is true
- * (and matches your service agreement), edit the wording if needed, then move it into
- * FAQ_ITEMS with a `group`.
- */
-export const FAQ_PENDING: Omit<FaqItem, "group">[] = [
-  {
-    id: "contract",
-    q: { en: "Do I have to sign a long contract?", es: "¿Tengo que firmar un contrato largo?" },
-    a: {
-      en: "No. There’s no long-term contract. The build is a one-time price, and hosting and care is month to month.",
-      es: "No. No hay contrato a largo plazo. La construcción es un pago único, y el alojamiento y mantenimiento es mes a mes.",
-    },
-  },
-  {
-    id: "cancel",
-    q: { en: "Can I cancel the monthly plan?", es: "¿Puedo cancelar el plan mensual?" },
-    a: {
-      en: "Yes, anytime, with no cancellation fee. Just tell us.",
-      es: "Sí, cuando quiera y sin cargo por cancelación. Solo avísenos.",
-    },
-  },
-  {
-    id: "leave",
-    q: { en: "What happens to my site if I leave?", es: "¿Qué pasa con mi sitio si me voy?" },
-    a: {
-      en: "Your domain is already in your name, and we hand over your site files so you can host them anywhere. You’re never locked in.",
-      es: "Su dominio ya está a su nombre, y le entregamos los archivos de su sitio para que lo aloje donde quiera. Nunca queda atado.",
     },
   },
 ];
