@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { registerTabNavigator, tabFromHash, TAB_IDS, type TabId } from "@/lib/tabs";
+import { chaptersPinned, useScene } from "@/context/SceneContext";
+import { canNudgePage, navBottom, registerTabNavigator, tabFromHash, TAB_IDS, type TabId } from "@/lib/tabs";
 
 type TabsValue = {
   /** The section currently in view (scroll spy). */
@@ -16,14 +17,6 @@ const TabsContext = createContext<TabsValue | null>(null);
 
 function prefersReduced() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-/** Bottom edge of the sticky navbar (on phones the section rail sits below the capsule). */
-function navBottom() {
-  const rail = document.querySelector<HTMLElement>("[data-nav-rail]");
-  const header = document.querySelector<HTMLElement>("header");
-  const el = rail && rail.offsetParent !== null ? rail : header;
-  return el ? Math.max(0, el.getBoundingClientRect().bottom) : 0;
 }
 
 function sectionEl(id: TabId) {
@@ -47,6 +40,9 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   const [active, setActive] = useState<TabId>("home");
   const [selected, setSelected] = useState<TabId>("home");
   const holdUntil = useRef(0);
+  const scene = useScene();
+  const pinnedRef = useRef(false);
+  pinnedRef.current = chaptersPinned(scene);
 
   const spy = useCallback(() => {
     const line = navBottom() + window.innerHeight * 0.3;
@@ -142,6 +138,25 @@ export function TabsProvider({ children }: { children: ReactNode }) {
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
   }, [go]);
+
+  // Keyboard focus never hides under the sticky navbar (WCAG 2.4.11). Browsers only scroll a
+  // focused element that is outside the viewport; one already on screen but under the header
+  // (or the section rail below it, under 1280px) is nudged down just enough to clear it.
+  // Same guard as the dashboard's revealInPage: no nudge while chapters are pinned, inside
+  // dialogs or fixed layers, or while a modal is open.
+  useEffect(() => {
+    const onFocus = (e: FocusEvent) => {
+      const el = e.target;
+      if (!(el instanceof HTMLElement) || !el.matches(":focus-visible")) return;
+      if (!canNudgePage(el, pinnedRef.current)) return;
+      const edge = navBottom();
+      const r = el.getBoundingClientRect();
+      // Only when meaningfully covered, and only for controls on screen (the browser scrolls off-screen ones).
+      if (r.height && r.top < edge - 4 && r.bottom > 0) window.scrollBy({ top: r.top - (edge + 12), behavior: "instant" as ScrollBehavior });
+    };
+    document.addEventListener("focusin", onFocus);
+    return () => document.removeEventListener("focusin", onFocus);
+  }, []);
 
   useEffect(() => {
     registerTabNavigator(go);

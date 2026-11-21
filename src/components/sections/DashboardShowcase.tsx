@@ -18,7 +18,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SimulationDisclaimer } from "@/components/ui/SimulationDisclaimer";
 import { useLanguage } from "@/context/LanguageContext";
 import { useNiche } from "@/context/NicheContext";
-import { useScene, useTrackProgress } from "@/context/SceneContext";
+import { chaptersPinned, useScene, useTrackProgress } from "@/context/SceneContext";
 import { NICHES } from "@/data/niches";
 import { NICHE_VIEWS } from "@/data/dashboard-views";
 import { formatCurrency, formatMetric } from "@/lib/format";
@@ -89,7 +89,7 @@ export function DashboardShowcase() {
   const { reduce, desktop, pin } = useScene();
   const track = useTrackProgress();
   // Must match the `motion-safe:pin:` classes below (same media query as SceneContext's `pin`).
-  const pinned = pin && !reduce;
+  const pinned = chaptersPinned({ pin, reduce });
   const d = track.progress;
 
   // 1 · Rise off the table → 2 · explode into layers → 3 · reassemble → 4 · cycle industries

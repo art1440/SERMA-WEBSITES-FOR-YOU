@@ -44,6 +44,8 @@
   --aqua-deep: 20 78 184;
   --aqua-glow: 79 144 238;
   --aqua-hi: 58 126 232;
+  /* Blue for text on a pale card (e.g. the Serma column in dark mode): 5.1:1 on #F4F7FC. Same in both schemes. */
+  --aqua-on-pale: 30 99 216;
   --sand: 220 235 251;
   --amber: 188 217 245;
   --ember: 230 240 251;
@@ -81,6 +83,7 @@ html.dark {
   --aqua-deep: 66 128 214;
   --aqua-glow: 141 187 245;
   --aqua-hi: 111 172 240;
+  --aqua-on-pale: 30 99 216;
   --sand: 22 37 61;
   --amber: 28 51 85;
   --ember: 19 33 58;
@@ -107,6 +110,22 @@ html.dark {
     scroll-behavior: smooth;
     /* Keep focused controls and anchor targets clear of the sticky header (64–68px), WCAG 2.4.11. */
     scroll-padding-top: 5.5rem;
+  }
+  /* Only where the section rail is displayed below the capsule: the home page (the only page
+     with [data-nav-rail]) under 1280px, phones included (Navbar's TabBar is `max-xl:` below
+     the capsule). Header + rail end at ≈116–121px there. From 1280px the rail is inside the
+     capsule and the 5.5rem above applies. JS twin: navBottom() in src/lib/tabs.ts. */
+  @media (max-width: 79.99em) {
+    html:has([data-nav-rail]) {
+      scroll-padding-top: 8rem;
+    }
+  }
+  /* Demo sites (/work/*) have their own sticky header and each section sets its own
+     scroll-margin-top (ribbon + header), so the site-wide padding would double it. */
+  html:has([data-demo]) {
+    scroll-padding-top: 0;
+  }
+  html {
     /* Reserve the scrollbar lane so locking scroll (modals) never shifts layout. */
     scrollbar-gutter: stable;
     -webkit-text-size-adjust: 100%;
@@ -141,6 +160,27 @@ html.dark {
   p,
   li {
     @apply font-sans;
+  }
+
+  /* ---- /work demo sites (DemoShell root carries [data-demo]) ----------------
+     Every demo's font pair exports the same two variables, --demo-display and
+     --demo-body (src/app/work/fonts.ts), so one reset serves all six demos:
+       - the demo root and everything in its <main> use --demo-body, overriding
+         the Serma families set on p/li/h* above (the ribbon and the booking
+         sheet sit outside <main> and keep Serma's fonts);
+       - add the class `demo-display` to any element that should use the demo's
+         display face (no `!important` needed).
+     :where() keeps the reset at element-level specificity, so Tailwind
+     utilities (font-*, tracking-*) and .demo-display still win over it. */
+  :where([data-demo]) {
+    font-family: var(--demo-body);
+  }
+  :where([data-demo] main) :is(p, li, h1, h2, h3, h4, h5, h6) {
+    font-family: var(--demo-body);
+    letter-spacing: normal;
+  }
+  .demo-display {
+    font-family: var(--demo-display);
   }
 
   /* Anchor targets clear the sticky navbar. */

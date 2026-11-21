@@ -60,6 +60,8 @@ const config: Config = {
           deep: "rgb(var(--aqua-deep) / <alpha-value>)",
           glow: "rgb(var(--aqua-glow) / <alpha-value>)",
           hi: "rgb(var(--aqua-hi) / <alpha-value>)",
+          /* Text on pale cards: AA on bone-50 in dark mode. */
+          "on-pale": "rgb(var(--aqua-on-pale) / <alpha-value>)",
         },
         /* Ambient tints — decorative backgrounds only, never text. */
         sand: "rgb(var(--sand) / <alpha-value>)",

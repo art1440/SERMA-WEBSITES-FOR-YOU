@@ -10,6 +10,7 @@ import { DashboardShowcase } from "@/components/sections/DashboardShowcase";
 import { InclusionsList } from "@/components/sections/InclusionsList";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { RevenueCalculator } from "@/components/sections/RevenueCalculator";
+import { WorkGallery } from "@/components/sections/work/WorkGallery";
 import { Stage } from "@/components/three/Stage";
 import { DocumentTitle } from "@/components/ui/DocumentTitle";
 import { useLanguage } from "@/context/LanguageContext";
@@ -37,6 +38,7 @@ export default function HomePage() {
               panels={[
                 { id: "home", node: <HeroChapter /> },
                 { id: "included", node: <InclusionsList /> },
+                { id: "work", node: <WorkGallery /> },
                 { id: "industries", node: <IndustriesChapter /> },
                 { id: "dashboard", node: <DashboardShowcase /> },
                 { id: "calculator", node: <RevenueCalculator /> },

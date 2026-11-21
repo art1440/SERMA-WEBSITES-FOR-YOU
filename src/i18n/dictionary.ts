@@ -33,6 +33,7 @@ const en = {
   nav: {
     primaryLabel: "Primary",
     links: {
+      work: "Our work",
       dashboard: "Dashboard",
       calculator: "ROI",
       compare: "Compare",
@@ -42,6 +43,7 @@ const en = {
     tabs: {
       home: "Home",
       included: "How It Works",
+      work: "Our work",
       industries: "Industries",
       dashboard: "Dashboard",
       calculator: "ROI",
@@ -124,7 +126,7 @@ const en = {
     roadmapNote: "Ask us where it stands and we will tell you straight. Websites come first.",
   },
   industries: {
-    index: "(02)",
+    index: "(03)",
     eyebrow: "Built for",
     title: ["A website built around your business"],
     titleEmphasis: "your business",
@@ -137,7 +139,7 @@ const en = {
     swipeHint: "Swipe · Drag · Arrows",
   },
   dashboard: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Your dashboard",
     title: "Know how the week went in ten seconds.",
     body: "No spreadsheets, no guessing. One screen shows who booked, who's coming back and what came in while you were busy. Pick an industry to see yours.",
@@ -167,7 +169,7 @@ const en = {
     newItemsOne: "new",
   },
   calculator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "The calls you can't take",
     title: "How much are missed calls costing you?",
     body: "Move the sliders to match a normal week. Real math, on the page, no hype. Most owners are surprised by the number.",
@@ -186,7 +188,6 @@ const en = {
     cta: "Get your free mockup",
   },
   compare: {
-    index: "(05)",
     eyebrow: "Why Serma",
     title: ["Don’t settle for cheap or good.", "Get both."],
     titleMark: "Get both.",
@@ -275,6 +276,35 @@ const en = {
     contents: "On this page",
     translationNote: "",
   },
+  work: {
+    gallery: {
+      index: "(02)",
+      eyebrow: "Our work",
+      title: ["Sites we'd build for you"],
+      titleEmphasis: "for you",
+      body: "Six demo sites, one per trade. Hover to scroll one, click to open it.",
+      bodyTouch: "Six demo sites, one per trade. Swipe, then tap to open one.",
+      demoTag: "Demo · {tag}",
+      open: "Preview {business}",
+      visit: "Visit the full demo",
+      close: "Close preview",
+      show: "Show {business}",
+      dots: "Choose a demo",
+      shotLabel: "Full-page screenshot of the {business} demo. Scroll to see it all.",
+    },
+    demo: {
+      label: "Demo site by Serma",
+      labelShort: "Demo",
+      cta: "Want one like this?",
+      back: "Back to Serma",
+      dismiss: "Dismiss banner",
+      language: "Language",
+      sheetTitle: "This is a demo",
+      sheetBody: "Booking is switched off on demo sites. Want this site, built for your business?",
+      sheetCta: "Get your free mockup",
+      sheetClose: "Keep looking",
+    },
+  },
 };
 
 export type Dictionary = Widen<typeof en>;
@@ -325,6 +355,7 @@ const es: Dictionary = {
   nav: {
     primaryLabel: "Principal",
     links: {
+      work: "Nuestro trabajo",
       dashboard: "Panel",
       calculator: "Retorno",
       compare: "Comparar",
@@ -333,6 +364,7 @@ const es: Dictionary = {
     tabs: {
       home: "Inicio",
       included: "Cómo funciona",
+      work: "Nuestro trabajo",
       industries: "Industrias",
       dashboard: "Panel",
       calculator: "Retorno",
@@ -415,7 +447,7 @@ const es: Dictionary = {
     roadmapNote: "Pregúntenos cómo va y le diremos la verdad. Primero van los sitios web.",
   },
   industries: {
-    index: "(02)",
+    index: "(03)",
     eyebrow: "Hecho para",
     title: ["Un sitio web hecho a la medida de su negocio"],
     titleEmphasis: "su negocio",
@@ -428,7 +460,7 @@ const es: Dictionary = {
     swipeHint: "Deslice · Arrastre · Flechas",
   },
   dashboard: {
-    index: "(03)",
+    index: "(04)",
     eyebrow: "Su panel",
     title: "Sepa cómo fue la semana en diez segundos.",
     body: "Sin hojas de cálculo ni suposiciones. Una sola pantalla muestra quién agendó, quién regresa y cuánto entró mientras usted estaba ocupado. Elija una industria para ver la suya.",
@@ -455,7 +487,7 @@ const es: Dictionary = {
     newItemsOne: "nuevo",
   },
   calculator: {
-    index: "(04)",
+    index: "(05)",
     eyebrow: "Las llamadas que no alcanza a contestar",
     title: "¿Cuánto le están costando las llamadas perdidas?",
     body: "Mueva los controles según una semana normal. Cálculo real, a la vista, sin exagerar. A la mayoría de los dueños les sorprende el número.",
@@ -474,7 +506,6 @@ const es: Dictionary = {
     cta: "Su maqueta gratis",
   },
   compare: {
-    index: "(05)",
     eyebrow: "Por qué Serma",
     title: ["No elija entre barato o bueno.", "Tenga ambos."],
     titleMark: "Tenga ambos.",
@@ -563,6 +594,35 @@ const es: Dictionary = {
     contents: "En esta página",
     translationNote:
       "Esta traducción se ofrece para su comodidad. En caso de discrepancia, prevalecerá la versión en inglés.",
+  },
+  work: {
+    gallery: {
+      index: "(02)",
+      eyebrow: "Nuestro trabajo",
+      title: ["Sitios que haríamos para usted"],
+      titleEmphasis: "para usted",
+      body: "Seis sitios de demostración, uno por oficio. Pase el cursor para recorrer uno y haga clic para abrirlo.",
+      bodyTouch: "Seis sitios de demostración, uno por oficio. Deslice y toque uno para abrirlo.",
+      demoTag: "Demo · {tag}",
+      open: "Ver vista previa de {business}",
+      visit: "Visitar la demostración completa",
+      close: "Cerrar la vista previa",
+      show: "Mostrar {business}",
+      dots: "Elija una demostración",
+      shotLabel: "Captura de página completa de la demostración de {business}. Desplácese para verla entera.",
+    },
+    demo: {
+      label: "Sitio de demostración por Serma",
+      labelShort: "Demo",
+      cta: "¿Quiere uno así?",
+      back: "Volver a Serma",
+      dismiss: "Cerrar el aviso",
+      language: "Idioma",
+      sheetTitle: "Esto es una demostración",
+      sheetBody: "Agendar citas está desactivado en los sitios de demostración. ¿Quiere este sitio, hecho para su negocio?",
+      sheetCta: "Obtenga su maqueta gratis",
+      sheetClose: "Seguir mirando",
+    },
   },
 };
 

@@ -5,6 +5,7 @@
 export const TAB_IDS = [
   "home",
   "included",
+  "work",
   "industries",
   "dashboard",
   "calculator",
@@ -31,6 +32,35 @@ export function tabFromHash(hash: string): TabId | null {
   // The Missed Calls section was removed; old "#simulator" links land on the next section.
   if (id === "simulator") return "calculator";
   return null;
+}
+
+/**
+ * Bottom edge (viewport px) of the sticky navbar: the section rail when it sits below the
+ * capsule (under 1280px on the home page), else the header. The one source of truth for
+ * "clear of the header" in JS; CSS mirrors it with `scroll-padding-top` in globals.css.
+ */
+export function navBottom() {
+  const rail = document.querySelector<HTMLElement>("[data-nav-rail]");
+  const header = document.querySelector<HTMLElement>("header");
+  const el = rail && rail.offsetParent !== null ? rail : header;
+  return el ? Math.max(0, el.getBoundingClientRect().bottom) : 0;
+}
+
+/**
+ * Whether a focus nudge may scroll the page for `el`. Shared by the dashboard's
+ * revealInPage and the home page's keyboard-focus nudge (TabsContext):
+ * - never while chapters are pinned (`chaptersPinned()`): scrolling would scrub the scene;
+ * - never while a modal dialog is open, or for anything inside a dialog or a fixed layer:
+ *   the page behind an overlay must not move (body overflow:hidden doesn't stop scrollBy).
+ */
+export function canNudgePage(el: Element, pinned: boolean) {
+  if (pinned) return false;
+  if (document.querySelector('[aria-modal="true"]')) return false;
+  if (el.closest('[role="dialog"],[aria-modal="true"],header')) return false;
+  for (let node: Element | null = el; node && node !== document.body; node = node.parentElement) {
+    if (getComputedStyle(node).position === "fixed") return false;
+  }
+  return true;
 }
 
 type Navigator = (id: TabId) => Promise<void>;

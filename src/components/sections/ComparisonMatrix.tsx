@@ -130,7 +130,7 @@ export function ComparisonMatrix() {
               transition={tr(0.3, 0.7)}
             >
               <span className="absolute inset-x-0 top-0 h-48 rounded-t-[inherit] bg-[radial-gradient(80%_100%_at_50%_0%,rgb(var(--aqua-glow)/0.35),transparent)]" />
-              <span className="absolute left-1/2 top-0 -translate-x-1/2 whitespace-nowrap rounded-b-lg bg-aqua-glow px-2 pb-1 pt-1.5 text-[0.5rem] font-bold uppercase tracking-[0.06em] text-bone-50 sm:rounded-b-xl sm:px-4 sm:pb-1.5 sm:pt-2 sm:text-[0.6875rem] sm:tracking-[0.14em]">
+              <span className="absolute left-1/2 top-0 -translate-x-1/2 whitespace-nowrap rounded-b-lg bg-aqua-glow px-2 pb-1 pt-1.5 text-[0.5rem] font-bold uppercase tracking-[0.06em] text-bone-50 dark:text-ink-900 sm:rounded-b-xl sm:px-4 sm:pb-1.5 sm:pt-2 sm:text-[0.6875rem] sm:tracking-[0.14em]">
                 {c.best}
               </span>
             </motion.span>
@@ -201,7 +201,8 @@ export function ComparisonMatrix() {
                   {pr}
                 </span>
               ))}
-              <span role="cell" className="flex items-center justify-center border-t border-white/10 px-1.5 text-center text-[0.8125rem] font-bold leading-tight text-aqua-glow sm:text-lg">
+              {/* In dark mode the Serma column is a pale card: aqua-on-pale keeps the price AA (5.1:1). */}
+              <span role="cell" className="flex items-center justify-center border-t border-white/10 px-1.5 text-center text-[0.8125rem] font-bold leading-tight text-aqua-glow dark:text-aqua-on-pale sm:text-lg">
                 {fromPrice !== null ? fill(c.usPrice, { price: formatCurrency(fromPrice, intlLocale) }) : null}
               </span>
             </div>

@@ -79,6 +79,15 @@ export function SceneProvider({ children }: { children: ReactNode }) {
   return <SceneContext.Provider value={{ system, finale, reduce, desktop, pin }}>{children}</SceneContext.Provider>;
 }
 
+/**
+ * Chapters pin (sticky scroll scenes) only on big windows with motion allowed:
+ * `motion-safe:pin:` in CSS, this in JS. While pinned, scrolling the page scrubs
+ * the scene, so focus helpers must not nudge it (see canNudgePage in src/lib/tabs.ts).
+ */
+export function chaptersPinned({ pin, reduce }: Pick<SceneValue, "pin" | "reduce">) {
+  return pin && !reduce;
+}
+
 export function useScene(): SceneValue {
   const ctx = useContext(SceneContext);
   if (!ctx) throw new Error("useScene must be used inside <SceneProvider>.");

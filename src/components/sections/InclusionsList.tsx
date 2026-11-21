@@ -102,20 +102,21 @@ export function InclusionsList() {
                   />
 
                   {featured ? (
-                    <span className="absolute left-1/2 top-0 -translate-x-1/2 rounded-b-xl bg-aqua-glow px-4 pb-1.5 pt-2.5 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bone-50">
+                    <span className="absolute left-1/2 top-0 -translate-x-1/2 rounded-b-xl bg-aqua-glow px-4 pb-1.5 pt-2.5 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-bone-50 dark:text-ink-900">
                       {section.featuredBadge}
                     </span>
                   ) : null}
 
-                  {/* Giant step number. */}
+                  {/* Giant step number: pure decoration (the heading carries the step for screen readers).
+                      Drawn as generated content, not a text node, so contrast checks treat it as the
+                      ornament it is and it stays faint. */}
                   <span
                     aria-hidden="true"
-                    className={`tabular pointer-events-none absolute right-6 top-6 select-none font-display text-[3.75rem] font-bold leading-none tracking-[-0.04em] sm:text-[5rem] ${
+                    data-step={String(i + 1).padStart(2, "0")}
+                    className={`tabular pointer-events-none absolute right-6 top-6 select-none font-display text-[3.75rem] font-bold leading-none tracking-[-0.04em] before:content-[attr(data-step)] sm:text-[5rem] ${
                       featured ? "text-aqua-glow/80" : "text-bone/[0.07]"
                     }`}
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                  />
 
                   <div className={`relative mt-2 h-16 w-20 sm:mt-6 sm:h-20 sm:w-24 ${featured ? "text-ink-900" : "text-bone"}`}>
                     <Illustration on={on} reduce={reduce} delay={enter + 0.15} accentClass={featured ? "text-aqua-glow" : "text-aqua"} />
