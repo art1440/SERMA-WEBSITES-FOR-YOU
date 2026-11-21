@@ -3,7 +3,7 @@ import { LegalPage } from "@/components/legal/LegalPage";
 
 export const metadata: Metadata = {
   title: "Disclaimer",
-  description: "How to read the demo websites and calculator figures on SermaWebDesign. Illustrative only; no guarantee of results.",
+  description: "How to read the demo websites on SermaWebDesign. Illustrative only; no guarantee of results.",
   alternates: { canonical: "/disclaimer" },
 };
 

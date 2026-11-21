@@ -21,17 +21,11 @@ const en = {
     playAll: "Play animations",
     darkMode: "Switch to dark mode",
     scroll: "Scroll",
-    /** FTC micro-copy, one per surface (see SimulationDisclaimer `variant`). */
-    simulationDisclaimer: {
-      calculator:
-        "Estimate only, based on the numbers you set and the formula shown. It is not a guarantee or a typical result: actual lead volume, bookings, and revenue depend on market, industry, and business operations.",
-    },
   },
   nav: {
     primaryLabel: "Primary",
     links: {
       work: "Our work",
-      calculator: "ROI",
       compare: "Compare",
     },
     /** One tab per section of the home page (the tab bar in the navbar). */
@@ -40,7 +34,6 @@ const en = {
       home: "Home",
       included: "How It Works",
       work: "Our work",
-      calculator: "ROI",
       compare: "Compare",
       pricing: "Pricing",
     },
@@ -119,25 +112,6 @@ const en = {
     ],
     roadmapNote: "Ask us where it stands and we will tell you straight. Websites come first.",
   },
-  calculator: {
-    index: "(03)",
-    eyebrow: "The calls you can't take",
-    title: "How much are missed calls costing you?",
-    body: "Move the sliders to match a normal week. Real math, on the page, no hype. Most owners are surprised by the number.",
-    presetLabel: "Start from an industry preset",
-    missedCalls: "Missed calls per week",
-    avgTicket: "Average customer value",
-    bookingRate: "Text-back booking rate",
-    bookingRateHint: "Share of texted-back callers who book. Varies by industry — presets start conservative.",
-    perWeek: "{n} / week",
-    monthlyLabel: "Estimated revenue recovered per month",
-    annualLabel: "Annualized",
-    bookingsLabel: "Recovered bookings / month",
-    callsLabel: "Missed calls / month",
-    formula: "{calls} calls/wk × 4.33 wks × {rate}% booked × {ticket}",
-    assumption: "Assumes 4.33 weeks per month and that every missed call receives an automated text-back.",
-    cta: "Get your free mockup",
-  },
   compare: {
     eyebrow: "Why Serma",
     title: ["Don’t settle for cheap or good.", "Get both."],
@@ -170,7 +144,7 @@ const en = {
     ctaNote: "Free · No card needed · Takes 1 minute",
   },
   pricing: {
-    index: "(04)",
+    index: "(03)",
     eyebrow: "Pricing",
     title: "Pick your package. Pay only when you love it.",
     body: "Fixed prices, no hourly billing, no surprise add-ons. And you see your finished site before you pay anything.",
@@ -278,9 +252,8 @@ export type Dictionary = Widen<typeof en>;
  * - Subjunctive after "el que" ("el que le sirva"); "Hecho para" replaces "Diseñado para".
  * - Titles of documents use sentence case ("Política de privacidad", "Términos de servicio",
  *   "Acceso de clientes"); "Portal de Clientes" stays as the product name.
- * - Dashboard tab names are short: "Mensajes" (Inbox), "Función" (Capability), "Sin cubrir / Cubierto".
- * - "Retorno" stays for ROI (tab width); the customer-facing text message is written in
- *   first-person plural, in usted ("Disculpe que no contestáramos su llamada…").
+ * - Customer-facing text messages are written in first-person plural, in usted
+ *   ("Disculpe que no contestáramos su llamada…").
  */
 const es: Dictionary = {
   meta: {
@@ -297,16 +270,11 @@ const es: Dictionary = {
     playAll: "Reanudar animaciones",
     darkMode: "Cambiar a modo oscuro",
     scroll: "Baje",
-    simulationDisclaimer: {
-      calculator:
-        "Es solo una estimación, basada en los valores que usted ajusta y en la fórmula mostrada. No es una garantía ni un resultado típico: el volumen real de prospectos, citas e ingresos depende del mercado, la industria y la operación del negocio.",
-    },
   },
   nav: {
     primaryLabel: "Principal",
     links: {
       work: "Nuestro trabajo",
-      calculator: "Retorno",
       compare: "Comparar",
     },
     tabsLabel: "Secciones",
@@ -314,7 +282,6 @@ const es: Dictionary = {
       home: "Inicio",
       included: "Cómo funciona",
       work: "Nuestro trabajo",
-      calculator: "Retorno",
       compare: "Comparar",
       pricing: "Precios",
     },
@@ -393,25 +360,6 @@ const es: Dictionary = {
     ],
     roadmapNote: "Pregúntenos cómo va y le diremos la verdad. Primero van los sitios web.",
   },
-  calculator: {
-    index: "(03)",
-    eyebrow: "Las llamadas que no alcanza a contestar",
-    title: "¿Cuánto le están costando las llamadas perdidas?",
-    body: "Mueva los controles según una semana normal. Cálculo real, a la vista, sin exagerar. A la mayoría de los dueños les sorprende el número.",
-    presetLabel: "Comenzar con valores de una industria",
-    missedCalls: "Llamadas perdidas por semana",
-    avgTicket: "Valor promedio por cliente",
-    bookingRate: "Tasa de citas por mensaje",
-    bookingRateHint: "Porcentaje de quienes reciben el mensaje y agendan. Varía por industria; los valores iniciales son conservadores.",
-    perWeek: "{n} / semana",
-    monthlyLabel: "Ingresos que recupera al mes (estimado)",
-    annualLabel: "Al año",
-    bookingsLabel: "Citas recuperadas / mes",
-    callsLabel: "Llamadas perdidas / mes",
-    formula: "{calls} llamadas/sem × 4.33 sem × {rate}% agendan × {ticket}",
-    assumption: "Se basa en 4.33 semanas por mes y en que cada llamada perdida recibe un mensaje de texto automático.",
-    cta: "Su maqueta gratis",
-  },
   compare: {
     eyebrow: "Por qué Serma",
     title: ["No elija entre barato o bueno.", "Tenga ambos."],
@@ -444,7 +392,7 @@ const es: Dictionary = {
     ctaNote: "Gratis · Sin tarjeta · Toma 1 minuto",
   },
   pricing: {
-    index: "(04)",
+    index: "(03)",
     eyebrow: "Precios",
     title: "Elija su paquete. Pague solo si le encanta.",
     body: "Precios fijos, sin cobro por hora y sin extras sorpresa. Y usted ve su sitio terminado antes de pagar nada.",

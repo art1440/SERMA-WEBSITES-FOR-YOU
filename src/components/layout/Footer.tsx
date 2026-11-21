@@ -87,7 +87,6 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   const explore = [
-    { href: "/#calculator", label: t.nav.links.calculator },
     { href: "/#compare", label: t.nav.links.compare },
     { href: "/#pricing", label: t.nav.tabs.pricing },
   ];

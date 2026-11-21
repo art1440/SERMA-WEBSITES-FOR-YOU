@@ -7,7 +7,6 @@ import { TabPanels } from "@/components/layout/TabPanels";
 import { ComparisonMatrix } from "@/components/sections/ComparisonMatrix";
 import { InclusionsList } from "@/components/sections/InclusionsList";
 import { PricingSection } from "@/components/sections/PricingSection";
-import { RevenueCalculator } from "@/components/sections/RevenueCalculator";
 import { WorkGallery } from "@/components/sections/work/WorkGallery";
 import { Stage } from "@/components/three/Stage";
 import { DocumentTitle } from "@/components/ui/DocumentTitle";
@@ -37,7 +36,6 @@ export default function HomePage() {
                 { id: "home", node: <HeroChapter /> },
                 { id: "included", node: <InclusionsList /> },
                 { id: "work", node: <WorkGallery /> },
-                { id: "calculator", node: <RevenueCalculator /> },
                 { id: "compare", node: <ComparisonMatrix /> },
                 { id: "pricing", node: <PricingSection /> },
               ]}

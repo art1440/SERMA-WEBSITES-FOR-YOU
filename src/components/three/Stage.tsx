@@ -13,7 +13,7 @@ const Engine3D = dynamic(() => import("./Engine3D"), { ssr: false });
  * Fixed, full-screen backdrop behind the transparent chapters.
  * Light (white + sky blue). Layer order (back → front): sky base → light threads (whole page) → WebGL engine.
  * The hero is static and does not run the engine; the finale (pricing) does.
- * Opaque chapters (dashboard, calculator, …) simply cover it; the engine's render loop
+ * Opaque chapters (work, compare, …) simply cover it; the engine's render loop
  * stops whenever none of the transparent chapters is on screen.
  */
 export function Stage() {
