@@ -28,6 +28,8 @@ export type Tier = {
    * a "was" price that is never charged is a deceptive comparison (FTC, 16 CFR 233.1).
    */
   regular?: number;
+  /** True when the regular price is a starting point ("$1,200+"); after the sale the card shows it with a "+". */
+  regularFrom?: boolean;
   /** Launch spots ALREADY SOLD on this package (real signed clients). Each package has LAUNCH.spots. */
   launchTaken?: number;
   /** The middle card: lifted and marked "Most popular". */
@@ -38,11 +40,12 @@ export type Tier = {
 };
 
 /**
- * Launch offer. Today's prices are launch prices for the first `spots` clients; after that each
- * package goes to its `regular` price. KEEP IT TRUE:
- *  - `spots`: launch spots PER PACKAGE. Each package's `launchTaken` (in TIERS below) is how many
- *    are already sold: bump it each time you sign a client on that package. When a package's
- *    `launchTaken` reaches `spots`, that card switches to its regular price automatically.
+ * Limited-time offer (currently the Black Friday sale). While it is live, each card shows its
+ * `price` with the `regular` price struck through; once `endsAt` passes, every card switches to its
+ * regular price on its own and the sale banner, hero chip and sale FAQ disappear. KEEP IT TRUE:
+ *  - `regular` prices must be what you really charge once the sale ends (FTC, 16 CFR 233.1).
+ *  - `spots`: launch spots PER PACKAGE, or null for no spots limit (no meter is shown). With a
+ *    number, each package's `launchTaken` is how many are already sold.
  *  - `endsAt`: optional REAL end date for the launch offer, e.g. "2027-01-31T23:59:59-06:00".
  *    When set, a live countdown appears; when it reaches zero the launch prices end for good.
  *    Never move it forward to restart the clock: a resetting countdown is a fake deadline (FTC).
@@ -50,10 +53,25 @@ export type Tier = {
  *    Only claims that apply to EVERY package belong here.
  */
 export const LAUNCH = {
-  active: false,
-  spots: 10,
-  endsAt: null as string | null,
-  label: { en: "Launch price", es: "Precio de lanzamiento" },
+  active: true,
+  spots: null as number | null,
+  /** End of Cyber Monday, Central time. Do not move it later to restart the clock. */
+  endsAt: "2026-11-30T23:59:59-06:00" as string | null,
+  label: { en: "Black Friday price", es: "Precio de Black Friday" },
+  save: { en: "Save {amount}", es: "Ahorre {amount}" },
+  /** The countdown banner above the packages and the chip in the hero. */
+  banner: {
+    eyebrow: { en: "Black Friday sale", es: "Oferta de Black Friday" },
+    title: { en: "$200 off every package.", es: "$200 de descuento en cada paquete." },
+    body: {
+      en: "Request your free preview before the timer runs out and the sale price is locked in for your project. When it hits zero, prices go back up.",
+      es: "Pida su vista previa gratis antes de que se acabe el tiempo y el precio de oferta queda asegurado para su proyecto. Cuando llegue a cero, los precios vuelven a subir.",
+    },
+    endsOn: { en: "Ends Monday, Nov 30 at 11:59 pm CT", es: "Termina el lunes 30 de nov. a las 11:59 pm (hora del centro)" },
+    units: { en: ["Days", "Hours", "Min", "Sec"], es: ["Días", "Horas", "Min", "Seg"] },
+    cta: { en: "Lock in my price", es: "Asegurar mi precio" },
+    chip: { en: "Black Friday · $200 off · {time}", es: "Black Friday · $200 menos · {time}" },
+  },
   regular: { en: "Regular price", es: "Precio regular" },
   spotsLeft: { en: "{left} of {spots} launch spots left", es: "Quedan {left} de {spots} lugares de lanzamiento" },
   endsIn: { en: "Ends in", es: "Termina en" },
@@ -76,6 +94,7 @@ export const TIERS: Tier[] = [
       es: "Todo lo que un cliente necesita para llamarle, en una página impecable.",
     },
     price: 499,
+    regular: 699,
     monthly: 99.99,
     features: [
       { en: "One-page website (services, hours, location, contact)", es: "Sitio de una página (servicios, horario, ubicación, contacto)" },
@@ -98,6 +117,7 @@ export const TIERS: Tier[] = [
       es: "El sitio completo que lo hace ver como el mejor de la zona.",
     },
     price: 799,
+    regular: 999,
     monthly: 99.99,
     featured: true,
     inherits: { en: "Everything in Starter, plus:", es: "Todo lo de Inicial, y además:" },
@@ -118,8 +138,9 @@ export const TIERS: Tier[] = [
       en: "Your site in English and Spanish, plus the phone tools as they launch.",
       es: "Su sitio en inglés y español, más las herramientas del teléfono al lanzarse.",
     },
-    price: 1000,
-    from: true,
+    price: 999,
+    regular: 1200,
+    regularFrom: true,
     monthly: 99.99,
     inherits: { en: "Everything in Business, plus:", es: "Todo lo de Negocio, y además:" },
     features: [

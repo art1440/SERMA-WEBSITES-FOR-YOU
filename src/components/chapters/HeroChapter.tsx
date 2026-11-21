@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { type MouseEvent, type ReactNode } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
+import { HeroSaleChip } from "@/components/sections/LaunchOffer";
 import { HeroLight } from "@/components/ui/HeroLight";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useLanguage } from "@/context/LanguageContext";
@@ -45,6 +46,7 @@ export function HeroChapter() {
         {/* Meta chips: what we do + live status */}
         <div className="flex flex-wrap items-center justify-center gap-2.5">
           <p className="inline-flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2 text-sm font-semibold shadow-[0_0_0_1px_rgb(var(--hairline)),0_10px_22px_-12px_rgb(var(--bone)/0.35)] hidden text-bone/75 sm:inline-flex">{t.hero.eyebrow}</p>
+          <HeroSaleChip />
           <p className="inline-flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2 text-sm font-semibold shadow-[0_0_0_1px_rgb(var(--hairline)),0_10px_22px_-12px_rgb(var(--bone)/0.35)] text-bone">
             <span className="relative flex h-2 w-2" aria-hidden="true">
               <span className="absolute inline-flex h-full w-full animate-live-pulse rounded-full bg-live" />

@@ -17,6 +17,8 @@ export type FaqItem = {
   group: FaqGroupId;
   q: L10n;
   a: L10n;
+  /** Shown only while the limited-time offer (LAUNCH in pricing.ts) is live. */
+  whileSale?: boolean;
 };
 
 export const FAQ_HEADING: L10n = {
@@ -129,6 +131,19 @@ export const FAQ_ITEMS: FaqItem[] = [
     a: {
       en: "Then you tell us what to change, and we change it. You see the finished draft before you pay anything: we send you a link, you point out anything that reads or looks wrong, and we fix it. If you still don’t love it, you walk away and owe nothing. You never pay for a site you haven’t seen and approved.",
       es: "Entonces nos dice qué cambiar, y lo cambiamos. Usted ve el borrador terminado antes de pagar nada: le mandamos un enlace, señala lo que se lee o se ve mal, y lo corregimos. Si aun así no le encanta, se va sin deber nada. Nunca paga por un sitio que no haya visto y aprobado.",
+    },
+  },
+  {
+    id: "sale",
+    group: "money",
+    whileSale: true,
+    q: {
+      en: "Why are two prices shown, and how do I get the sale price?",
+      es: "¿Por qué aparecen dos precios y cómo consigo el precio de oferta?",
+    },
+    a: {
+      en: "The crossed-out number is our regular price. For Black Friday, every package is $200 off (Growth is $999 instead of $1,200 or more) until Monday, November 30 at 11:59 pm Central. Request your free preview before then and the sale price is locked in for your project, even though you only pay once you’ve seen and approved your site. After that, prices go back to normal.",
+      es: "El número tachado es nuestro precio regular. Por Black Friday, cada paquete tiene $200 de descuento (Crecimiento cuesta $999 en lugar de $1,200 o más) hasta el lunes 30 de noviembre a las 11:59 pm, hora del centro. Pida su vista previa gratis antes de esa fecha y el precio de oferta queda asegurado para su proyecto, aunque solo paga cuando haya visto y aprobado su sitio. Después, los precios vuelven a la normalidad.",
     },
   },
   {

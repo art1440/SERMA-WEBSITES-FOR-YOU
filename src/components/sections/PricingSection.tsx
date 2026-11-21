@@ -13,7 +13,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
 import { LAUNCH, PROMISES, TIERS, type Tier } from "@/data/pricing";
-import { LaunchMeta, RotatingPerk, useLaunch } from "./LaunchOffer";
+import { LaunchMeta, RotatingPerk, SaleBanner, useLaunch } from "./LaunchOffer";
 import { fill } from "@/i18n/types";
 import { formatMetric } from "@/lib/format";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
@@ -124,9 +124,13 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
   const p = t.pricing;
   // Launch offer (LAUNCH in pricing.ts): while live, the regular price is struck through beside today's
   // launch price; once the spots are gone or the real end date passes, the card shows the regular price.
-  const { live, ended, now, left } = useLaunch(tier.launchTaken);
+  const { live, ended, left } = useLaunch(tier.launchTaken);
   const launch = live && tier.price !== null && tier.regular !== undefined && tier.regular > tier.price;
   const price = ended && tier.regular !== undefined ? tier.regular : tier.price;
+  // "+" (a starting price): the sale price is exact; after the sale, Growth goes back to "$1,200+".
+  const showFrom = ended && tier.regular !== undefined ? !!tier.regularFrom : !!tier.from;
+  const saved = launch ? tier.regular! - tier.price! : 0;
+  const save = launch ? (tier.regularFrom ? `$${Math.floor(saved / 50) * 50}+` : `$${saved}`) : null;
   const delay = CARD_DELAY[tier.id];
   const name = tier.name[locale];
   const still = reduce || paused;
@@ -182,12 +186,13 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
 
           {/* Price: a template slot until a number is set in src/data/pricing.ts. */}
           <div className="mt-6 border-t border-bone/[0.14] pt-6">
-            {launch ? <LaunchMeta now={now} left={left} /> : null}
+            {launch ? <LaunchMeta left={left} save={save} /> : null}
             <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
               {launch ? (
                 <del className="font-display text-[1.5rem] font-bold leading-none tracking-[-0.02em] text-ash decoration-[#e5484d] decoration-[2.5px]">
                   <span className="sr-only">{LAUNCH.regular[locale]}: </span>
                   {formatMetric(tier.regular!, "currency", intlLocale)}
+                  {tier.regularFrom ? "+" : ""}
                 </del>
               ) : null}
               {price === null ? (
@@ -204,14 +209,14 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
                         : "text-bone-50"
                     }`}
                   />
-                  {tier.from ? (
+                  {showFrom ? (
                     <span aria-hidden="true" className="ml-0.5 font-display text-[2.25rem] font-black leading-none text-aqua-glow [font-variation-settings:'wght'_900]">
                       +
                     </span>
                   ) : null}
                 </span>
               )}
-              <span className="text-sm font-semibold text-ash">{tier.from ? p.fromNote : p.oneTime}</span>
+              <span className="text-sm font-semibold text-ash">{showFrom ? p.fromNote : p.oneTime}</span>
             </p>
             <p className="mt-2 text-sm font-medium text-bone/75">
               {tier.price === null
@@ -297,6 +302,8 @@ export function PricingSection() {
 
       <div className="frame relative">
         <SectionHeader index={p.index} eyebrow={p.eyebrow} title={p.title} body={p.body} headingId="pricing-title" />
+
+        <SaleBanner />
 
         {PROMISES.length ? (
           <ul className="mt-10 grid gap-3 sm:gap-4 md:mt-12 lg:grid-cols-3">

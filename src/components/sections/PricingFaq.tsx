@@ -5,7 +5,8 @@ import { ChevronDown } from "lucide-react";
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { useLanguage } from "@/context/LanguageContext";
-import { FAQ_GROUPS, FAQ_HEADING, FAQ_ITEMS } from "@/data/faq";
+import { FAQ_GROUPS, FAQ_HEADING, FAQ_ITEMS as ALL_ITEMS } from "@/data/faq";
+import { useLaunch } from "./LaunchOffer";
 import { SPRING_SNAPPY } from "@/lib/motion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
@@ -19,6 +20,9 @@ import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
  */
 export function PricingFaq() {
   const { locale } = useLanguage();
+  // The sale question only shows while the offer is live.
+  const { live } = useLaunch();
+  const FAQ_ITEMS = ALL_ITEMS.filter((item) => !item.whileSale || live);
   const reduce = useReducedMotionSafe();
   const baseId = useId();
   const [open, setOpen] = useState<string | null>(null);
