@@ -269,6 +269,7 @@ const en = {
     privacyBadge: "No cookies. No trackers. No data resale.",
     rights: "© {year} {entity}. All rights reserved.",
     backToTop: "Back to top",
+    ownerLogin: "Owner login",
   },
   legal: {
     lastUpdated: "Last updated: {date}",
@@ -587,6 +588,7 @@ const es: Dictionary = {
     privacyBadge: "Sin cookies. Sin rastreadores. Sin venta de datos.",
     rights: "© {year} {entity}. Todos los derechos reservados.",
     backToTop: "Volver arriba",
+    ownerLogin: "Acceso del propietario",
   },
   legal: {
     lastUpdated: "Última actualización: {date}",
