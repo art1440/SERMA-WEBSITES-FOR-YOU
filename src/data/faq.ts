@@ -64,6 +64,17 @@ export const FAQ_ITEMS: FaqItem[] = [
     },
   },
   {
+    id: "seven-days",
+    q: {
+      en: "What does the 7-day guarantee mean?",
+      es: "¿Qué significa la garantía de 7 días?",
+    },
+    a: {
+      en: "Your finished site is ready for you to review within 7 days of our 15-minute intro call, once we have your details and photos. If it isn’t, your first month of hosting and care ($99.99) is free. Going live then happens as soon as you say yes.",
+      es: "Su sitio terminado está listo para que lo revise a más tardar 7 días después de nuestra llamada de 15 minutos, una vez que tengamos sus datos y fotos. Si no lo está, su primer mes de alojamiento y mantenimiento ($99.99) es gratis. Se publica en cuanto usted diga que sí.",
+    },
+  },
+  {
     id: "google-profile",
     q: {
       en: "What is the free Google profile makeover?",

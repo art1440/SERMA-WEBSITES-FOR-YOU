@@ -136,16 +136,41 @@ export const TIERS: Tier[] = [
 ];
 
 /**
- * The headline promise shown above the packages. It applies to EVERY package, so only keep it
- * while you can honor it for every client. Set to null to hide the banner.
+ * The promises shown above the packages, side by side. Each applies to EVERY package, so only
+ * keep one while you can honor it for every client. Remove an entry to drop it; an empty list
+ * hides the banner. `icon` picks the glyph in PricingSection.
+ * The 7-day promise says "ready to review" (not "live") on purpose: going live also waits on
+ * the client's approval.
  */
-export const GUARANTEE: { title: { en: string; es: string }; detail: { en: string; es: string } } | null = {
-  title: {
-    en: "Love it or don't pay. Plus a free Google profile makeover.",
-    es: "Si no le encanta, no paga. Y su perfil de Google renovado, gratis.",
-  },
-  detail: {
-    en: "You see your finished site before you pay a cent. Don't love it? Walk away and owe nothing. And with every package we set up or polish your Google Business Profile (photos, hours, services) so you stand out in Maps.",
-    es: "Usted ve su sitio terminado antes de pagar un centavo. ¿No le encanta? Se va sin deber nada. Y con cada paquete creamos o mejoramos su Perfil de Google Business (fotos, horario, servicios) para que destaque en Maps.",
-  },
+export type Promise = {
+  icon: "shield" | "clock" | "map";
+  title: { en: string; es: string };
+  detail: { en: string; es: string };
 };
+
+export const PROMISES: Promise[] = [
+  {
+    icon: "shield",
+    title: { en: "Love it or don't pay", es: "Si no le encanta, no paga" },
+    detail: {
+      en: "See your finished site before you pay a cent. Don't love it? Walk away and owe nothing.",
+      es: "Vea su sitio terminado antes de pagar un centavo. ¿No le encanta? Se va sin deber nada.",
+    },
+  },
+  {
+    icon: "clock",
+    title: { en: "Ready in 7 days", es: "Listo en 7 días" },
+    detail: {
+      en: "Ready to review within 7 days of our intro call, or your first month of care ($99.99) is free.",
+      es: "Listo para revisar a más tardar 7 días después de nuestra llamada, o su primer mes de mantenimiento ($99.99) es gratis.",
+    },
+  },
+  {
+    icon: "map",
+    title: { en: "Free Google profile makeover", es: "Perfil de Google renovado, gratis" },
+    detail: {
+      en: "With every package we set up or polish your Google Business Profile so you stand out in Maps.",
+      es: "Con cada paquete creamos o mejoramos su Perfil de Google Business para que destaque en Maps.",
+    },
+  },
+];

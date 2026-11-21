@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, animate, motion, useInView, useMotionValue, type Variants } from "framer-motion";
-import { ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, Mail, MapPin, Phone, ShieldCheck, Timer } from "lucide-react";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -12,7 +12,7 @@ import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
-import { GUARANTEE, LAUNCH, TIERS, type Tier } from "@/data/pricing";
+import { LAUNCH, PROMISES, TIERS, type Tier } from "@/data/pricing";
 import { LaunchMeta, RotatingPerk, useLaunch } from "./LaunchOffer";
 import { fill } from "@/i18n/types";
 import { formatMetric } from "@/lib/format";
@@ -27,6 +27,8 @@ import { PricingFaq } from "./PricingFaq";
  * swing in a beat later, so the row opens outward from the recommendation
  * instead of reading left to right like a table.
  */
+const PROMISE_ICON = { shield: ShieldCheck, clock: Timer, map: MapPin } as const;
+
 const CARD_DELAY: Record<Tier["id"], number> = { starter: 0, business: 0.06, growth: 0.12 };
 
 const listVariants: Variants = {
@@ -296,20 +298,34 @@ export function PricingSection() {
       <div className="frame relative">
         <SectionHeader index={p.index} eyebrow={p.eyebrow} title={p.title} body={p.body} headingId="pricing-title" />
 
-        {GUARANTEE ? (
-          <Reveal delay={0.05}>
-            <div className="mt-10 flex flex-col items-start gap-4 rounded-glass-lg bg-[linear-gradient(110deg,rgb(var(--aqua)/0.22),rgb(var(--aqua-glow)/0.08)_60%,transparent)] p-5 ring-1 ring-inset ring-aqua/30 sm:flex-row sm:items-center sm:gap-5 sm:p-6 md:mt-12">
-              <span aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-aqua text-ink shadow-[0_10px_24px_-10px_rgb(var(--aqua)/0.9)]">
-                <ShieldCheck size={24} strokeWidth={2.25} />
-              </span>
-              <div className="min-w-0">
-                <p className="font-display text-[1.375rem] font-black leading-tight tracking-[-0.025em] text-bone-50 [font-variation-settings:'wght'_900] sm:text-[1.625rem]">
-                  {GUARANTEE.title[locale]}
-                </p>
-                <p className="mt-1 text-pretty text-[0.9375rem] font-medium leading-relaxed text-bone/80">{GUARANTEE.detail[locale]}</p>
-              </div>
-            </div>
-          </Reveal>
+        {PROMISES.length ? (
+          <ul className="mt-10 grid gap-3 sm:gap-4 md:mt-12 lg:grid-cols-3">
+            {PROMISES.map((item, i) => {
+              const Icon = PROMISE_ICON[item.icon];
+              return (
+                <motion.li
+                  key={item.icon}
+                  className="h-full"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-10%" }}
+                  transition={{ duration: 0.7, ease: EASE_EDITORIAL, delay: 0.05 + i * 0.08 }}
+                >
+                  <div className="flex h-full items-start gap-3.5 rounded-glass-lg bg-[linear-gradient(120deg,rgb(var(--aqua)/0.2),rgb(var(--aqua-glow)/0.06)_65%,transparent)] p-5 ring-1 ring-inset ring-aqua/30 max-sm:px-4 max-sm:py-4 sm:p-6">
+                    <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-12 sm:w-12 sm:rounded-2xl bg-aqua text-ink shadow-[0_10px_24px_-10px_rgb(var(--aqua)/0.9)]">
+                      <Icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.25} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-display text-[1.25rem] font-black leading-tight tracking-[-0.025em] text-bone-50 [font-variation-settings:'wght'_900] sm:text-[1.375rem]">
+                        {item.title[locale]}
+                      </p>
+                      <p className="mt-1 text-pretty text-[0.875rem] font-medium leading-snug text-bone/80 sm:mt-1.5 sm:text-[0.9375rem] sm:leading-relaxed">{item.detail[locale]}</p>
+                    </div>
+                  </div>
+                </motion.li>
+              );
+            })}
+          </ul>
         ) : null}
 
         <ol className="mt-12 grid items-stretch gap-6 md:mt-16 lg:grid-cols-3 lg:gap-5 xl:gap-7">
