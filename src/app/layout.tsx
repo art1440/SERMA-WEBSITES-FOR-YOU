@@ -15,7 +15,7 @@ const siteUrl = process.env.SITE_URL ?? "https://sermawebdesign.com";
 const cspMeta = process.env.CSP_META === "true";
 
 const SITE_DESCRIPTION =
-  "Websites for barbershops, salons, restaurants and contractors that turn searches into calls. We write and build it for you, and you only pay once you’ve seen it and said yes. Get your free mockup.";
+  "Websites for barbershops, salons, restaurants and contractors that turn searches into calls. We write and build it for you, and you only pay once you’ve seen it and said yes. Get your free preview.";
 
 /** Structured data for search engines. Only facts we hold: no ratings, reviews, addresses or prices. */
 const jsonLd = {

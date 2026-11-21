@@ -1,14 +1,14 @@
 import type { L10n } from "@/i18n/types";
 
 /**
- * Copy for the "Get your free mockup" pop-up. Only promises the site already
+ * Copy for the "Get your free preview" pop-up. Only promises the site already
  * makes elsewhere: see it before you pay, fixed price, no card, a reply within
  * one business day, a 15-minute call.
  */
 export const MOCKUP = {
   // Left panel: why, and how easy it is.
   headlineBefore: { en: "Get a", es: "Reciba una" },
-  headlineMark: { en: "free mockup", es: "maqueta gratis" },
+  headlineMark: { en: "free preview", es: "vista previa gratis" },
   headlineAfter: { en: "of your new website.", es: "de su nuevo sitio web." },
   pitch: {
     en: "Most customers look you up before they call. If they can’t find you, they call someone they can.",
@@ -31,7 +31,7 @@ export const MOCKUP = {
   ] as { title: L10n; detail: L10n }[],
 
   // Right panel: the form.
-  chip: { en: "Free homepage mockup · No card needed", es: "Maqueta gratis · Sin tarjeta" },
+  chip: { en: "Free homepage preview · No card needed", es: "Vista previa gratis · Sin tarjeta" },
   title: { en: "Let’s get your website started", es: "Empecemos su sitio web" },
   subBefore: { en: "Leave your details and we’ll", es: "Deje sus datos y" },
   subStrong: { en: "call or text you within one business day", es: "le llamamos o escribimos en un día hábil" },
@@ -41,7 +41,7 @@ export const MOCKUP = {
   fieldPhone: { en: "Phone number", es: "Teléfono" },
   phName: { en: "Maria Lopez", es: "María López" },
   phBusiness: { en: "Lopez Barbershop", es: "Barbería López" },
-  submit: { en: "Get my free mockup", es: "Quiero mi maqueta gratis" },
+  submit: { en: "Get my free preview", es: "Quiero mi vista previa gratis" },
   sending: { en: "Sending…", es: "Enviando…" },
   trust: [
     { en: "No spam, ever", es: "Nada de spam" },
@@ -60,5 +60,7 @@ export const MOCKUP = {
   doneBack: { en: "Back to the site", es: "Volver al sitio" },
 
   /** Written into the enquiry's "What do you need?" so the inbox shows where it came from. */
-  needNote: "Free homepage mockup request (website pop-up)",
+  needNote: "Free homepage preview request (website pop-up)",
+  /** Earlier wordings of needNote, so leads sent before a rename still show as pop-up leads in the CRM. */
+  legacyNeedNotes: ["Free homepage mockup request (website pop-up)"] as string[],
 };

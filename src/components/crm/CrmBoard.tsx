@@ -183,7 +183,7 @@ export function CrmBoard({ preview, onSignedOut }: { preview: boolean; onSignedO
   const KPIS = [
     { label: "All leads", value: counts.all, hint: `${(leads ?? []).filter((l) => Date.now() - +new Date(l.receivedAt) < 7 * 864e5).length} this week` },
     { label: "Waiting on you", value: counts.new, hint: counts.new ? "Reply within a day" : "All answered", accent: counts.new > 0 },
-    { label: "In progress", value: counts.contacted + counts.mockup, hint: `${counts.mockup} with a mockup` },
+    { label: "In progress", value: counts.contacted + counts.mockup, hint: `${counts.mockup} with a preview` },
     { label: "Won", value: won, hint: closed ? `${Math.round((won / closed) * 100)}% of closed leads` : "None closed yet" },
   ];
 
@@ -226,7 +226,7 @@ export function CrmBoard({ preview, onSignedOut }: { preview: boolean; onSignedO
             Your <span className="font-serif font-normal italic text-aqua">leads</span>
           </h1>
           <p className="mt-2 text-[0.9375rem] text-ash">
-            {preview ? "Local preview with sample people. " : ""}Everyone who sent the pricing form or asked for a free mockup.
+            {preview ? "Local preview with sample people. " : ""}Everyone who sent the pricing form or asked for a free preview.
           </p>
         </motion.div>
 
