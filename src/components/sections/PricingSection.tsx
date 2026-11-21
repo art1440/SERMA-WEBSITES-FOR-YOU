@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, animate, motion, useInView, useMotionValue, type Variants } from "framer-motion";
-import { ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, Mail, MapPin, Phone, ShieldCheck, Timer } from "lucide-react";
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -12,7 +12,7 @@ import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/context/LanguageContext";
 import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
-import { LAUNCH, TIERS, type Tier } from "@/data/pricing";
+import { LAUNCH, PROMISES, TIERS, type Tier } from "@/data/pricing";
 import { LaunchMeta, RotatingPerk, useLaunch } from "./LaunchOffer";
 import { fill } from "@/i18n/types";
 import { formatMetric } from "@/lib/format";
@@ -27,6 +27,8 @@ import { PricingFaq } from "./PricingFaq";
  * swing in a beat later, so the row opens outward from the recommendation
  * instead of reading left to right like a table.
  */
+const PROMISE_ICON = { shield: ShieldCheck, clock: Timer, map: MapPin } as const;
+
 const CARD_DELAY: Record<Tier["id"], number> = { starter: 0, business: 0.06, growth: 0.12 };
 
 const listVariants: Variants = {
@@ -100,6 +102,21 @@ function PriceNumber({ value, reduce, className }: { value: number; reduce: bool
   );
 }
 
+/**
+ * The featured card's border: a 2px rim with one bright arc of light that travels around it
+ * (a conic gradient spun behind the card, masked to the rim by the card itself sitting on top).
+ * One lap every 6s; frozen with the motion pause control and gone for reduced motion.
+ */
+function RimLight({ still }: { still: boolean }) {
+  return (
+    <span aria-hidden="true" className="pointer-events-none absolute -inset-[2px] overflow-hidden rounded-[32px] bg-[rgb(79_144_238/0.55)]">
+      {still ? null : (
+        <span className="absolute left-1/2 top-1/2 aspect-square min-h-[150%] min-w-[150%] -translate-x-1/2 -translate-y-1/2 animate-[spin_6s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_250deg,rgb(var(--aqua-glow))_320deg,#fff_345deg,transparent_360deg)] motion-reduce:hidden" />
+      )}
+    </span>
+  );
+}
+
 function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void }) {
   const { t, locale, intlLocale } = useLanguage();
   const { reduce } = useScene();
@@ -139,10 +156,11 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
           />
         ) : null}
       <TiltCard max={5} delay={delay} glare="rounded-glass-lg" className="h-full">
+        {tier.featured ? <RimLight still={still} /> : null}
         <div
           className={`relative flex h-full flex-col rounded-glass-lg p-6 text-bone sm:p-7 ${
             tier.featured
-              ? "surface-navy shadow-[0_0_0_2px_rgb(79_144_238/0.85),0_0_0_8px_rgb(79_144_238/0.15),0_40px_80px_-30px_rgb(30_99_216/0.7)]"
+              ? "surface-navy shadow-[0_0_0_8px_rgb(79_144_238/0.12),0_40px_80px_-30px_rgb(30_99_216/0.7)]"
               : "glass-dark glass-solid ring-1 ring-inset ring-bone/10 [-webkit-backdrop-filter:none] [backdrop-filter:none]"
           }`}
         >
@@ -175,9 +193,25 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
               {price === null ? (
                 <span className="font-display text-[3rem] leading-none tracking-[-0.04em] text-bone/40">$&thinsp;—</span>
               ) : (
-                <PriceNumber key={price} value={price} reduce={reduce} className="font-display text-[3.75rem] font-extrabold leading-none tracking-[-0.045em] text-bone-50 [font-variation-settings:'wght'_850]" />
+                <span className="inline-flex items-start">
+                  <PriceNumber
+                    key={price}
+                    value={price}
+                    reduce={reduce}
+                    className={`font-display text-[4rem] font-black leading-[0.9] tracking-[-0.05em] [font-variation-settings:'wght'_900] sm:text-[4.5rem] ${
+                      tier.featured
+                        ? "bg-gradient-to-b from-bone-50 to-aqua-glow bg-clip-text text-transparent"
+                        : "text-bone-50"
+                    }`}
+                  />
+                  {tier.from ? (
+                    <span aria-hidden="true" className="ml-0.5 font-display text-[2.25rem] font-black leading-none text-aqua-glow [font-variation-settings:'wght'_900]">
+                      +
+                    </span>
+                  ) : null}
+                </span>
               )}
-              <span className="text-sm font-semibold text-ash">{p.oneTime}</span>
+              <span className="text-sm font-semibold text-ash">{tier.from ? p.fromNote : p.oneTime}</span>
             </p>
             <p className="mt-2 text-sm font-medium text-bone/75">
               {tier.price === null
@@ -236,10 +270,6 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
  * Pricing: three packages, then the enquiry form. Picking a package carries it
  * down to the form (a chip morphs in above the fields and the "What do you
  * need?" box is pre-filled), so there is one way to get in touch, not four.
- *
- * Finale: the section is the 3D engine's last chapter. The header sits over the
- * transparent stage (the sculpture returns on the right on desktop); the cards
- * and form sit on an ambient light field that fades in underneath.
  */
 export function PricingSection() {
   const { t, locale } = useLanguage();
@@ -261,19 +291,42 @@ export function PricingSection() {
       ref={finale.ref}
       aria-labelledby="pricing-title"
       data-theme="dark"
-      className="relative z-10 pb-24 pt-[30vh] text-bone motion-reduce:isolate motion-reduce:overflow-hidden motion-reduce:pt-24 lg:pb-36 lg:pt-36"
+      className="relative isolate z-10 overflow-hidden py-24 text-bone lg:py-32"
     >
-      {/* Reduced motion: no 3D stage behind, so the whole section sits in the light field. */}
-      <AmbientField variant={0} className="hidden motion-reduce:block" />
-      {/* Feather the previous section's ink wash into the bare stage, so the 3D scene surfaces
-          out of the page instead of starting at a hard edge. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-ink/[0.86] to-transparent motion-reduce:hidden lg:h-56" />
-      {/* Fade from the bare stage into the field the cards sit on (no seam: it ends at the field's ink wash). */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[18vh] h-[14vh] bg-gradient-to-b from-transparent to-ink/[0.86] motion-reduce:hidden lg:top-[16rem] lg:h-48" />
-      <AmbientField variant={0} className="top-[32vh] motion-reduce:hidden lg:top-[28rem]" />
+      <AmbientField variant={0} />
 
       <div className="frame relative">
         <SectionHeader index={p.index} eyebrow={p.eyebrow} title={p.title} body={p.body} headingId="pricing-title" />
+
+        {PROMISES.length ? (
+          <ul className="mt-10 grid gap-3 sm:gap-4 md:mt-12 lg:grid-cols-3">
+            {PROMISES.map((item, i) => {
+              const Icon = PROMISE_ICON[item.icon];
+              return (
+                <motion.li
+                  key={item.icon}
+                  className="h-full"
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-10%" }}
+                  transition={{ duration: 0.7, ease: EASE_EDITORIAL, delay: 0.05 + i * 0.08 }}
+                >
+                  <div className="flex h-full items-start gap-3.5 rounded-glass-lg bg-[linear-gradient(120deg,rgb(var(--aqua)/0.2),rgb(var(--aqua-glow)/0.06)_65%,transparent)] p-5 ring-1 ring-inset ring-aqua/30 max-sm:px-4 max-sm:py-4 sm:p-6">
+                    <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl sm:h-12 sm:w-12 sm:rounded-2xl bg-aqua text-ink shadow-[0_10px_24px_-10px_rgb(var(--aqua)/0.9)]">
+                      <Icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.25} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-display text-[1.25rem] font-black leading-tight tracking-[-0.025em] text-bone-50 [font-variation-settings:'wght'_900] sm:text-[1.375rem]">
+                        {item.title[locale]}
+                      </p>
+                      <p className="mt-1 text-pretty text-[0.875rem] font-medium leading-snug text-bone/80 sm:mt-1.5 sm:text-[0.9375rem] sm:leading-relaxed">{item.detail[locale]}</p>
+                    </div>
+                  </div>
+                </motion.li>
+              );
+            })}
+          </ul>
+        ) : null}
 
         <ol className="mt-12 grid items-stretch gap-6 md:mt-16 lg:grid-cols-3 lg:gap-5 xl:gap-7">
           {TIERS.map((tier) => (

@@ -18,6 +18,8 @@ export type Tier = {
   tagline: L10n;
   /** One-time build price in USD, or null while not decided. */
   price: number | null;
+  /** True when `price` is a starting point ("$1,000+"): the final quote depends on scope. */
+  from?: boolean;
   /** Optional monthly fee in USD, or null to hide it. */
   monthly: number | null;
   /**
@@ -48,7 +50,7 @@ export type Tier = {
  *    Only claims that apply to EVERY package belong here.
  */
 export const LAUNCH = {
-  active: true,
+  active: false,
   spots: 10,
   endsAt: null as string | null,
   label: { en: "Launch price", es: "Precio de lanzamiento" },
@@ -73,9 +75,7 @@ export const TIERS: Tier[] = [
       en: "Everything a customer needs to call you, on one sharp page.",
       es: "Todo lo que un cliente necesita para llamarle, en una página impecable.",
     },
-    price: 299,
-    regular: 599,
-    launchTaken: 2,
+    price: 499,
     monthly: 99.99,
     features: [
       { en: "One-page website (services, hours, location, contact)", es: "Sitio de una página (servicios, horario, ubicación, contacto)" },
@@ -85,6 +85,7 @@ export const TIERS: Tier[] = [
       { en: "Tap-to-call button on every screen", es: "Botón para llamar en cada pantalla" },
       { en: "Fast on any phone", es: "Rápido en cualquier teléfono" },
       { en: "Live on your own domain", es: "Publicado en su propio dominio" },
+      { en: "Free Google Business Profile makeover", es: "Renovación gratis de su Perfil de Google Business" },
       { en: "See the finished draft before you pay", es: "Vea el borrador terminado antes de pagar" },
       { en: "1 round of revisions", es: "1 ronda de cambios" },
     ],
@@ -96,9 +97,7 @@ export const TIERS: Tier[] = [
       en: "The full website that makes you look like the best in town.",
       es: "El sitio completo que lo hace ver como el mejor de la zona.",
     },
-    price: 599,
-    regular: 1199,
-    launchTaken: 5,
+    price: 799,
     monthly: 99.99,
     featured: true,
     inherits: { en: "Everything in Starter, plus:", es: "Todo lo de Inicial, y además:" },
@@ -106,7 +105,6 @@ export const TIERS: Tier[] = [
       { en: "Up to 5 pages (home, services, about, gallery, contact)", es: "Hasta 5 páginas (inicio, servicios, nosotros, galería, contacto)" },
       { en: "Enquiry form that lands in your inbox", es: "Formulario de contacto que llega a su correo" },
       { en: "Link to the booking tool you already use", es: "Enlace a la herramienta de citas que ya usa" },
-      { en: "Google Business Profile set up or tidied", es: "Perfil de Google Business creado o actualizado" },
       { en: "Basic local SEO (titles, descriptions, map)", es: "SEO local básico (títulos, descripciones, mapa)" },
       { en: "2 rounds of revisions", es: "2 rondas de cambios" },
       { en: "Small text and photo edits each month", es: "Cambios pequeños de texto y fotos cada mes" },
@@ -120,9 +118,8 @@ export const TIERS: Tier[] = [
       en: "Your site in English and Spanish, plus the phone tools as they launch.",
       es: "Su sitio en inglés y español, más las herramientas del teléfono al lanzarse.",
     },
-    price: 999,
-    regular: 1999,
-    launchTaken: 3,
+    price: 1000,
+    from: true,
     monthly: 99.99,
     inherits: { en: "Everything in Business, plus:", es: "Todo lo de Negocio, y además:" },
     features: [
@@ -135,5 +132,45 @@ export const TIERS: Tier[] = [
       { en: "Online booking with deposits", es: "Citas en línea con anticipo", soon: true },
       { en: "Automatic reminder the day before", es: "Recordatorio automático un día antes", soon: true },
     ],
+  },
+];
+
+/**
+ * The promises shown above the packages, side by side. Each applies to EVERY package, so only
+ * keep one while you can honor it for every client. Remove an entry to drop it; an empty list
+ * hides the banner. `icon` picks the glyph in PricingSection.
+ * The 7-day promise says "ready to review" (not "live") on purpose: going live also waits on
+ * the client's approval.
+ */
+export type Promise = {
+  icon: "shield" | "clock" | "map";
+  title: { en: string; es: string };
+  detail: { en: string; es: string };
+};
+
+export const PROMISES: Promise[] = [
+  {
+    icon: "shield",
+    title: { en: "Love it or don't pay", es: "Si no le encanta, no paga" },
+    detail: {
+      en: "See your finished site before you pay a cent. Don't love it? Walk away and owe nothing.",
+      es: "Vea su sitio terminado antes de pagar un centavo. ¿No le encanta? Se va sin deber nada.",
+    },
+  },
+  {
+    icon: "clock",
+    title: { en: "Ready in 7 days", es: "Listo en 7 días" },
+    detail: {
+      en: "Ready to review within 7 days of our intro call, or your first month of care ($99.99) is free.",
+      es: "Listo para revisar a más tardar 7 días después de nuestra llamada, o su primer mes de mantenimiento ($99.99) es gratis.",
+    },
+  },
+  {
+    icon: "map",
+    title: { en: "Free Google profile makeover", es: "Perfil de Google renovado, gratis" },
+    detail: {
+      en: "With every package we set up or polish your Google Business Profile so you stand out in Maps.",
+      es: "Con cada paquete creamos o mejoramos su Perfil de Google Business para que destaque en Maps.",
+    },
   },
 ];
