@@ -45,6 +45,26 @@ Set in your host (Vercel → Project → Settings → Environment Variables). Se
 - **60 fps:** only `transform` and `opacity` are animated. Scroll progress is read from Framer Motion MotionValues (no React re-renders per frame); the WebGL loop stops whenever no 3D chapter is on screen; three.js (≈240 KB gz) loads lazily after first paint. Heavy UI chapters pin only on desktop (≥1024px); phones get the same 3D entrances without pinning, plus tap-to-play on the simulator.
 - **Motion controls:** a "Pause animations" button (in the footer, reachable from every tab) stops the 3D engine and every looping video (WCAG 2.2.2). Visitors with "reduce motion" get a calm, unpinned layout with no WebGL.
 
+## Lead CRM (`/admin/`)
+
+A private dashboard for everything people send through the pricing form and the free-mockup pop-up (both post to the Netlify form **enquiries**). It shows every lead with a pipeline stage (New → Contacted → Mockup sent → Won / Lost), private notes, call / text / copy buttons, search, filters and a CSV export. It refreshes itself every minute.
+
+- Page: `src/app/admin/page.tsx` → `src/components/crm/` (same Liquid Glass components and motion tokens as the site). `noindex`, not in the sitemap, `no-store`.
+- API: `netlify/functions/crm.ts` at `/api/crm/*`. It reads submissions from the Netlify API and keeps stage + notes in Netlify Blobs (store `crm`). Same origin, so the CSP is unchanged.
+- Sign-in: one password. The session is an HttpOnly, Secure, SameSite=Strict cookie scoped to `/api/crm`, valid 12 hours (strictly necessary, admin only: visitors never get it). 10 wrong tries per IP lock sign-in for 15 minutes.
+
+**One-time setup** (Netlify → Site configuration → Environment variables, scope must include **Functions**):
+
+| Variable | Value |
+| --- | --- |
+| `CRM_PASSWORD` | The password you will type on `/admin/`. Use a long one. |
+| `CRM_SESSION_SECRET` | 32+ random characters, e.g. the output of `openssl rand -base64 48`. Changing it signs everyone out. |
+| `NETLIFY_API_TOKEN` | A personal access token: Netlify → User settings → Applications → New access token. |
+
+Then redeploy and open `https://<your-domain>/admin/`.
+
+**Local preview:** `npm run dev` and open http://localhost:3000/admin. Without the Netlify function running, any password opens fictional sample leads so the layout can be worked on. `netlify dev` runs the real function locally.
+
 ## Demo sites
 
 Six fictional client websites live under `/work/`, shown in the home page's **Our work** section (`#work`, between How It Works and Industries) and linked from the nav:
