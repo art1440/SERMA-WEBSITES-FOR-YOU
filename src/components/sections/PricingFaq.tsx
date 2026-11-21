@@ -5,12 +5,13 @@ import { ChevronDown } from "lucide-react";
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { useLanguage } from "@/context/LanguageContext";
-import { FAQ_HEADING, FAQ_ITEMS } from "@/data/faq";
+import { FAQ_GROUPS, FAQ_HEADING, FAQ_ITEMS } from "@/data/faq";
 import { SPRING_SNAPPY } from "@/lib/motion";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 
 /**
- * Pricing FAQ: an accordion, one question open at a time.
+ * Pricing FAQ: an accordion, one question open at a time, in labelled groups
+ * (FAQ_GROUPS order). Arrow keys run across groups as one list.
  * Each question is a button (aria-expanded, aria-controls) that owns a labelled region.
  * The answer height is never animated in JS: the wrapper transitions grid-template-rows
  * 0fr to 1fr in CSS, and the chevron rotates with SPRING_SNAPPY (transform only).
@@ -56,8 +57,16 @@ export function PricingFaq() {
           {FAQ_HEADING[locale]}
         </h3>
 
-        <ul className="mt-6 grid gap-2.5">
-          {FAQ_ITEMS.map((item, i) => {
+        {FAQ_GROUPS.map((group) => {
+          const items = FAQ_ITEMS.filter((item) => item.group === group.id);
+          if (!items.length) return null;
+          const groupId = `${baseId}-g-${group.id}`;
+          return (
+            <div key={group.id} className="mt-10 first-of-type:mt-8">
+              <p id={groupId} className="eyebrow text-aqua">{group.label[locale]}</p>
+        <ul aria-labelledby={groupId} className="mt-3 grid gap-2.5">
+          {items.map((item) => {
+            const i = FAQ_ITEMS.indexOf(item);
             const isOpen = open === item.id;
             const buttonId = `${baseId}-q-${item.id}`;
             const panelId = `${baseId}-a-${item.id}`;
@@ -97,13 +106,16 @@ export function PricingFaq() {
                   }`}
                 >
                   <div className="min-h-0 overflow-hidden">
-                    <p className="px-4 pb-4 text-pretty text-[0.9375rem] leading-relaxed text-ash sm:px-5">{item.a[locale]}</p>
+                    <p className="px-4 pb-5 text-pretty text-[0.9375rem] leading-relaxed text-bone/80 sm:px-5">{item.a[locale]}</p>
                   </div>
                 </div>
               </li>
             );
           })}
         </ul>
+            </div>
+          );
+        })}
 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       </section>
