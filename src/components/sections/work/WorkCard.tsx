@@ -428,7 +428,8 @@ export function WorkCard({ demo, onOpen, live, morph = true, shotMorph = false, 
             layoutId={morph ? `work-frame-${demo.id}` : undefined}
             layoutCrossfade={!shotMorph}
             transition={{ layout: SPRING_MORPH }}
-            className="relative block aspect-[16/10] overflow-hidden bg-ink-800"
+            // Pinned phone row: the gallery sets --work-view (taller, up to square, fitted to the screen height).
+            className="relative block aspect-[16/10] overflow-hidden bg-ink-800 pan:aspect-auto pan:h-[var(--work-view)]"
             style={{ borderBottomLeftRadius: 14, borderBottomRightRadius: 14 }}
           >
             <motion.img
