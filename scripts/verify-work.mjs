@@ -434,10 +434,18 @@ async function phoneCardY(page, i) {
   }, i);
 }
 
-/** Phone: scrolls straight to card i's hold (pinned row) and lets the row's spring settle. */
+/**
+ * Phone: brings card i to the centre and lets the row settle. Pinned row: scrolls straight to its hold.
+ * Unpinned (this visit already scrolled past all six): centres the stage on screen and taps its dot.
+ */
 async function showPhoneCard(page, i) {
-  const y = await phoneCardY(page, i);
-  await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), y);
+  if (await phonePinned(page)) {
+    const y = await phoneCardY(page, i);
+    await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), y);
+  } else {
+    await page.locator("[data-work-stage]").evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+    await page.locator("#work [data-work-dot]").nth(i).evaluate((el) => el.click());
+  }
   await page.waitForTimeout(900);
 }
 
@@ -952,24 +960,70 @@ const CHECKS = {
         }
         await showPhoneCard(w.page, i);
         const at = await stageBox();
-        if (at.top !== first.top) throw new Error(`card ${i + 1}: stage moved (${first.top} -> ${at.top})`);
+        // ±1 px: reaching the last card unpins the row at rest, and the scroll that keeps it in place rounds.
+        if (Math.abs(at.top - first.top) > 1) throw new Error(`card ${i + 1}: stage moved (${first.top} -> ${at.top})`);
         const off = await offCentre(w.cards.nth(i));
         if (off > 2) throw new Error(`card ${i + 1}: ${off}px off centre at its hold`);
         if ((await wdots.nth(i).getAttribute("aria-current")) !== "true") throw new Error(`card ${i + 1}: its dot is not aria-current`);
       }
-      // A sideways swipe back steps to the previous card.
+
+      // Seen all six: at rest, the row unpins for the rest of the visit. Nothing on screen moved (checked
+      // above), and going back up is just the section again, not another walk through the runway.
+      const un = await w.page.evaluate(() => {
+        const stage = document.querySelector("[data-work-stage]");
+        return {
+          seen: document.documentElement.hasAttribute("data-work-seen"),
+          stored: sessionStorage.getItem("serma-work-seen"),
+          pos: getComputedStyle(stage).position,
+          spacer: getComputedStyle(document.querySelector("[data-work-spacer]")).display,
+          back: window.scrollY - (document.getElementById("work").getBoundingClientRect().top + window.scrollY),
+          vh: window.innerHeight,
+        };
+      });
+      if (!un.seen || un.stored !== "1") throw new Error(`last card: row not marked seen (attr ${un.seen}, stored ${un.stored})`);
+      if (un.pos === "sticky" || un.spacer !== "none") throw new Error(`last card: row still pinned (${un.pos}, spacer ${un.spacer})`);
+      if (!(un.back < un.vh)) throw new Error(`last card: ${un.back}px of scroll back to the section top, expected under one screen (${un.vh})`);
+
+      // Unpinned, a sideways swipe or a dot steps the row itself; the page stays put.
+      const yFree = await w.page.evaluate(() => window.scrollY);
       const wb = await w.row.boundingBox();
       const wy = wb.y + Math.min(wb.height / 2, 120);
       await touchDrag(w.page, { x: 70, y: wy }, { x: 320, y: wy });
-      await w.page.waitForTimeout(1500);
-      if ((await wdots.nth(4).getAttribute("aria-current")) !== "true") throw new Error("swipe right from the last card did not step back to card 5");
-      // Past the end the stage unpins and scrolls away with the page.
-      const end = await phoneCardY(w.page, 5);
-      await w.page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), end + 600);
-      await w.page.waitForTimeout(500);
-      const after = await stageBox();
-      if (!(after.top < first.top - 300)) throw new Error(`stage still pinned past the end (top ${after.top})`);
+      await w.page.waitForTimeout(1000);
+      if ((await wdots.nth(4).getAttribute("aria-current")) !== "true") throw new Error("unpinned: swipe right from the last card did not step back to card 5");
+      await wdots.nth(1).evaluate((el) => el.click());
+      await w.page.waitForTimeout(1000);
+      if ((await wdots.nth(1).getAttribute("aria-current")) !== "true") throw new Error("unpinned: dot 2 did not make it current");
+      if ((await offCentre(w.cards.nth(1))) > 2) throw new Error("unpinned: dot 2 did not centre card 2");
+      const yAfter = await w.page.evaluate(() => window.scrollY);
+      if (Math.abs(yAfter - yFree) > 1) throw new Error(`unpinned: stepping the row scrolled the page (${yFree} -> ${yAfter})`);
+
+      // A reload in the same visit lays the row out unpinned before any script of ours runs.
+      await w.page.reload({ waitUntil: "domcontentloaded" });
+      const early = await w.page.evaluate(() => ({
+        seen: document.documentElement.hasAttribute("data-work-seen"),
+        pos: getComputedStyle(document.querySelector("[data-work-stage]")).position,
+      }));
+      if (!early.seen || early.pos === "sticky") throw new Error(`reload: row pinned again (attr ${early.seen}, ${early.pos})`);
       assertNoErrors(w.errors);
+    }
+
+    // Scrolling straight past (a fling, or a nav jump) counts too; the row then waits on the first site.
+    {
+      const f = await openPhoneGallery(browser, base);
+      const past = (await phoneCardY(f.page, 5)) + 900;
+      await f.page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), past);
+      await f.page.waitForTimeout(80);
+      const anchor = () => f.page.evaluate(() => Math.round(document.getElementById("compare").getBoundingClientRect().top));
+      const before = await anchor();
+      await f.page.waitForTimeout(700);
+      if (!(await f.page.evaluate(() => document.documentElement.hasAttribute("data-work-seen")))) throw new Error("scrolled past: row not marked seen");
+      const after = await anchor();
+      if (Math.abs(after - before) > 1) throw new Error(`scrolled past: the page jumped when the row unpinned (${before} -> ${after})`);
+      await f.cards.nth(0).evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+      await f.page.waitForTimeout(500);
+      if ((await offCentre(f.cards.nth(0))) > 2) throw new Error("scrolled past: back at the gallery, card 1 is not centred");
+      assertNoErrors(f.errors);
     }
 
     await phoneVisitLandsAtTop(browser, base, { reducedMotion: false });

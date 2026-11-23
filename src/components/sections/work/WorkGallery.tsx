@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useMotionValueEvent, useSpring, useTransform, type MotionValue } from "framer-motion";
+import { animate, motion, useMotionValue, useMotionValueEvent, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { useCallback, useEffect, useRef, useState, type FocusEvent, type PointerEvent, type ReactNode } from "react";
 import { AmbientField } from "@/components/ui/AmbientField";
 import { Reveal, RevealLines, staggerDelay } from "@/components/ui/Reveal";
@@ -12,6 +12,7 @@ import { fill } from "@/i18n/types";
 import { MOTION } from "@/lib/motion";
 import { navBottom } from "@/lib/tabs";
 import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
+import { WORK_SEEN_ATTR, WORK_SEEN_KEY } from "@/lib/workSeen";
 import { LAND_MS, WorkCard } from "./WorkCard";
 import { WorkPreview } from "./WorkPreview";
 
@@ -45,6 +46,12 @@ function cardAt(p: number) {
 
 /** Progress (0..1) at the middle of card i's hold. */
 const holdOf = (i: number) => (i * (HOLD + 1) + HOLD / 2) / UNITS;
+/** Progress at which the last card is fully centred: from here the visitor has seen all six. */
+const LAST = ((N - 1) * (HOLD + 1)) / UNITS;
+/** The row unpins this long after the page comes to rest (no scroll events, no finger down). */
+const IDLE_MS = 200;
+/** Unpinned row: one swipe / dot step (quick, no overshoot). */
+const STEP_SPRING = { type: "spring", stiffness: 260, damping: 32, mass: 0.9 } as const;
 
 /**
  * One slot in the row. While the row is pinned the cards either side of centre sit a little smaller with a
@@ -52,7 +59,11 @@ const holdOf = (i: number) => (i * (HOLD + 1) + HOLD / 2) / UNITS;
  * clear as they reach the centre. Transform + opacity only. Neutral whenever the row is not pinned.
  */
 function PanItem({ i, pos, on, className, children }: { i: number; pos: MotionValue<number>; on: MotionValue<number>; className: string; children: ReactNode }) {
-  const near = useTransform(() => (on.get() ? Math.min(1, Math.abs(pos.get() - i)) : 0));
+  // Every input read up front: a computed value only subscribes to what it read at render time.
+  const near = useTransform(() => {
+    const d = Math.min(1, Math.abs(pos.get() - i));
+    return on.get() ? d : 0;
+  });
   const scale = useTransform(near, (d) => 1 - 0.1 * d);
   const dim = useTransform(near, (d) => 0.55 * d);
   return (
@@ -83,6 +94,12 @@ function PanItem({ i, pos, on, className, children }: { i: number; pos: MotionVa
  * A sideways swipe, a dot or keyboard focus scrolls the page to that card's hold.
  * The centred card auto-scrolls its picture; a tap opens it full-screen.
  *
+ * Once the visitor has reached the last card, the row unpins for the rest of the
+ * visit (lib/workSeen.ts): the scroll room collapses while the page is at rest,
+ * scrolled by the same amount so nothing on screen moves, and from then on the
+ * gallery is a plain block. Going back up never walks the six sites again; a
+ * swipe or a dot steps the row directly.
+ *
  * Phones that can't pin (reduced motion, or too short, e.g. landscape) stack the
  * six cards in one column instead, so scrolling still passes every one. Layout is
  * pure CSS (no hydration jump); `matchMedia` only switches behaviour.
@@ -112,10 +129,22 @@ export function WorkGallery() {
   // Pinned progress (0..1 through the spacer), smoothed on the page's scroll spring, then mapped to cards.
   const raw = useMotionValue(0);
   const smooth = useSpring(raw, MOTION.cinematic);
-  const pos = useTransform(smooth, cardAt);
+  // Unpinned (seen all six): the row's position is its own value, stepped by swipes, dots and focus.
+  const free = useMotionValue(0);
+  const loose = useMotionValue(0);
+  // Computed values subscribe only to what they read while React renders, so read every input, never
+  // just the branch that happens to be live at that moment.
+  const pos = useTransform(() => {
+    const pinned = cardAt(smooth.get());
+    const stepped = loose.get();
+    return free.get() ? stepped : pinned;
+  });
   const on = useMotionValue(0);
   const stride = useMotionValue(0);
-  const x = useTransform(() => (on.get() ? -pos.get() * stride.get() : 0));
+  const x = useTransform(() => {
+    const shift = -pos.get() * stride.get();
+    return on.get() ? shift : 0;
+  });
   const pill = useTransform(() => pos.get() * DOT_PITCH);
 
   // Held still while a preview is open or shrinking back: the body pin and the landing measure the slot.
@@ -123,6 +152,7 @@ export function WorkGallery() {
   frozen.current = openId !== null || raisedId !== null;
   const stillRef = useRef(still);
   stillRef.current = still;
+  const seenAll = useRef(false);
 
   useEffect(() => {
     const phoneMq = window.matchMedia("(max-width: 767px)");
@@ -149,15 +179,63 @@ export function WorkGallery() {
     const row = rowRef.current;
     on.set(pan ? 1 : 0);
     if (!pan || !runway || !stage || !spacer || !row) return;
+    const html = document.documentElement;
+    // Already walked this visit (set before first paint by the inline script): the CSS never pinned it.
+    if (html.hasAttribute(WORK_SEEN_ATTR)) {
+      seenAll.current = true;
+      free.set(1);
+    }
     let first = true;
+    let idle = 0;
+    let touching = false;
+    const settle = () => {
+      window.clearTimeout(idle);
+      idle = window.setTimeout(unpin, IDLE_MS);
+    };
+    // Only at rest: moving the scroll position under a finger or mid-fling makes iOS stop dead.
+    const unpin = () => {
+      if (free.get()) return;
+      if (touching || frozen.current || document.body.style.position === "fixed") return settle();
+      const box = stage.getBoundingClientRect();
+      const before = box.top;
+      // On screen: carry on from where the row is (settling onto the nearest card). Already scrolled past:
+      // nobody is watching, so it waits on the first site for whoever comes back up.
+      const onScreen = box.bottom > 0 && box.top < window.innerHeight;
+      const at = onScreen ? pos.get() : 0;
+      loose.jump(at);
+      free.set(1);
+      if (Math.abs(at - Math.round(at)) > 0.001) animate(loose, Math.round(at), STEP_SPRING);
+      // The stage drops back to the top of its collapsed runway: scroll by the same amount so nothing on
+      // screen moves. Scroll anchoring is off for this one layout so the browser can't correct it twice.
+      const roots = [html, document.body];
+      for (const el of roots) el.style.overflowAnchor = "none";
+      html.setAttribute(WORK_SEEN_ATTR, "");
+      const shift = stage.getBoundingClientRect().top - before;
+      if (Math.abs(shift) >= 0.5) window.scrollTo({ top: window.scrollY + shift, behavior: "instant" as ScrollBehavior });
+      requestAnimationFrame(() => requestAnimationFrame(() => roots.forEach((el) => (el.style.overflowAnchor = ""))));
+      try {
+        sessionStorage.setItem(WORK_SEEN_KEY, "1");
+      } catch {
+        /* storage unavailable: the row stays unpinned until reload */
+      }
+    };
     const update = () => {
-      if (frozen.current) return;
+      if (frozen.current || free.get()) return;
       const h = spacer.offsetHeight;
       const p = h ? clamp01((stage.getBoundingClientRect().top - runway.getBoundingClientRect().top) / h) : 0;
       raw.set(p);
       // No sweep across the row on arrival (deep link, reload mid-page); Pause follows the thumb exactly.
       if (first || stillRef.current) smooth.jump(p);
       first = false;
+      if (p >= LAST) seenAll.current = true;
+      if (seenAll.current) settle();
+    };
+    const onTouchStart = () => {
+      touching = true;
+    };
+    const onTouchEnd = () => {
+      touching = false;
+      if (seenAll.current && !free.get()) settle();
     };
     const measure = () => {
       const items = row.children;
@@ -172,12 +250,19 @@ export function WorkGallery() {
     ro.observe(row);
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", measure);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
     return () => {
+      window.clearTimeout(idle);
       ro.disconnect();
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", measure);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchEnd);
     };
-  }, [pan, on, raw, smooth, stride]);
+  }, [pan, on, raw, smooth, stride, free, loose, pos]);
 
   // Active card = the one nearest the centre.
   const activeRef = useRef(0);
@@ -199,8 +284,14 @@ export function WorkGallery() {
     return () => io.disconnect();
   }, [pan]);
 
-  /** Scrolls the page to the middle of card i's hold (the row follows on its own). */
+  /** Pinned: scrolls the page to the middle of card i's hold (the row follows). Unpinned: steps the row. */
   const goTo = useCallback((i: number) => {
+    const target = Math.min(N - 1, Math.max(0, i));
+    if (free.get()) {
+      if (stillRef.current) loose.jump(target);
+      else animate(loose, target, STEP_SPRING);
+      return;
+    }
     const runway = runwayRef.current;
     const stage = stageRef.current;
     const spacer = spacerRef.current;
@@ -208,9 +299,9 @@ export function WorkGallery() {
     if (!runway || !stage || !spacer || document.body.style.position === "fixed") return;
     const top = parseFloat(getComputedStyle(stage).top) || 0;
     const start = window.scrollY + runway.getBoundingClientRect().top - top;
-    const y = Math.round(start + holdOf(Math.min(N - 1, Math.max(0, i))) * spacer.offsetHeight);
+    const y = Math.round(start + holdOf(target) * spacer.offsetHeight);
     window.scrollTo({ top: y, behavior: (stillRef.current ? "instant" : "smooth") as ScrollBehavior });
-  }, []);
+  }, [free, loose]);
 
   // A sideways swipe on the row (touch / pen) steps one card. The row is `touch-action: pan-y`, so the
   // browser keeps vertical drags (and cancels the pointer); sideways ones reach us.
@@ -305,10 +396,10 @@ export function WorkGallery() {
           </Reveal>
         </div>
 
-        {/* Phones that pin: the stage sticks and the spacer under it is the scroll room the row walks through.
-            Other phones: one column. md and up: the grid. */}
+        {/* Phones that pin: the stage sticks and the spacer under it is the scroll room the row walks through,
+            until the visit has seen all six (html[data-work-seen]). Other phones: one column. md and up: the grid. */}
         <div ref={runwayRef} data-work-runway className="relative mt-10 md:mt-12 lg:mt-16">
-          <div ref={stageRef} data-work-stage className="pan:sticky" style={{ top: STAGE_TOP }}>
+          <div ref={stageRef} data-work-stage className="pan:sticky [html[data-work-seen]_&]:static" style={{ top: STAGE_TOP }}>
             {/* Full-bleed (out past the frame's gutters) and clipped sideways: `clip`, not `hidden`, so focus
                 can never scroll it and knock the row off its transform. */}
             <div
@@ -372,7 +463,13 @@ export function WorkGallery() {
               />
             </div>
           </div>
-          <div ref={spacerRef} aria-hidden="true" data-work-spacer className="hidden pan:block" style={{ height: RUNWAY }} />
+          <div
+            ref={spacerRef}
+            aria-hidden="true"
+            data-work-spacer
+            className="hidden pan:block [html[data-work-seen]_&]:hidden"
+            style={{ height: RUNWAY }}
+          />
         </div>
       </div>
       <WorkPreview demo={open} onClose={onClose} morph={!still} full={phone} />
