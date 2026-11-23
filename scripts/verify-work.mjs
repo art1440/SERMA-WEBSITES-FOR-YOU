@@ -416,16 +416,68 @@ async function openGallery(browser, base, opts = {}) {
   return { page, errors, cards };
 }
 
-/** Opens /#work as an iPhone 13 (touch, DPR 3) and waits for the six cards in their row. */
+/**
+ * Page Y that puts phone card i in the middle of its hold in the pinned row. Mirrors holdOf() in
+ * WorkGallery.tsx (six cards, HOLD 0.5): the stage pins when the runway's top reaches the stage's sticky top,
+ * then the spacer's height is the row's scroll room.
+ */
+async function phoneCardY(page, i) {
+  return page.evaluate((i) => {
+    const N = 6;
+    const HOLD = 0.5;
+    const UNITS = N * HOLD + (N - 1);
+    const run = document.querySelector("[data-work-runway]");
+    const stage = document.querySelector("[data-work-stage]");
+    const spacer = document.querySelector("[data-work-spacer]");
+    const start = window.scrollY + run.getBoundingClientRect().top - parseFloat(getComputedStyle(stage).top);
+    return Math.round(start + ((i * (HOLD + 1) + HOLD / 2) / UNITS) * spacer.offsetHeight);
+  }, i);
+}
+
+/**
+ * Phone: brings card i to the centre and lets the row settle. Pinned row: scrolls straight to its hold.
+ * Unpinned (this visit already scrolled past all six): centres the stage on screen and taps its dot.
+ */
+async function showPhoneCard(page, i) {
+  if (await phonePinned(page)) {
+    const y = await phoneCardY(page, i);
+    await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), y);
+  } else {
+    await page.locator("[data-work-stage]").evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+    await page.locator("#work [data-work-dot]").nth(i).evaluate((el) => el.click());
+  }
+  await page.waitForTimeout(900);
+}
+
+/** Whether the phone row is pinned (else the cards stack: reduced motion, or a short landscape screen). */
+async function phonePinned(page) {
+  return page.locator("[data-work-stage]").evaluate((el) => getComputedStyle(el).position === "sticky");
+}
+
+/** Horizontal offset (px) of a card's centre from the viewport's centre. */
+async function offCentre(card) {
+  return card.evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return Math.abs(r.left + r.width / 2 - window.innerWidth / 2);
+  });
+}
+
+/**
+ * Opens /#work as an iPhone 13 (touch, DPR 3) and waits for the six cards. Pinned row: lands on the first
+ * card's hold. Stacked cards: the first card in the middle of the screen.
+ */
 async function openPhoneGallery(browser, base, opts = {}) {
   const { page, errors } = await openPage(browser, `${base}/#work`, { device: devices["iPhone 13"], ...opts });
   const row = page.locator("[data-work-row]");
   await row.waitFor({ state: "visible", timeout: 5000 });
-  await row.evaluate((el) => el.scrollIntoView({ block: "center" }));
   const cards = page.locator("[data-work-card]");
   const n = await cards.count();
   if (n !== 6) throw new Error(`expected 6 [data-work-card], found ${n}`);
-  await page.waitForTimeout(500);
+  if (await phonePinned(page)) await showPhoneCard(page, 0);
+  else {
+    await cards.first().evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+    await page.waitForTimeout(500);
+  }
   return { page, errors, cards, row };
 }
 
@@ -780,10 +832,12 @@ const CHECKS = {
   // ---- "Our work" gallery on phones (Task 13) ----
   "gallery-phone": async ({ browser, base }) => {
     const { page, errors, cards, row } = await openPhoneGallery(browser, base);
+    if (!(await phonePinned(page))) throw new Error("phone: the row's stage is not sticky");
+    // Layout boxes (offsetTop): the off-centre slots are scaled down, which moves their rendered tops.
     const m = await row.evaluate((el) => ({
       h: el.getBoundingClientRect().height,
       w: window.innerWidth,
-      tops: [...el.querySelectorAll("[data-work-card]")].map((c) => Math.round(c.getBoundingClientRect().top)),
+      tops: [...el.children].map((li) => li.offsetTop),
     }));
     if (!(m.h <= 1.4 * m.w)) throw new Error(`row height ${m.h} > 1.4 × innerWidth (${m.w})`);
     if (new Set(m.tops).size !== 1) throw new Error(`cards are not on one row: tops ${m.tops.join(", ")}`);
@@ -804,11 +858,11 @@ const CHECKS = {
     if (!(yAuto < -1)) throw new Error(`auto: active card translateY is ${yAuto}, expected negative`);
     if (Math.abs(await shotY(cards.nth(1))) > 0.5) throw new Error("auto: an inactive card is scrolling");
 
-    // Horizontal swipe: never opens, moves the active card to the second one.
+    // Horizontal swipe: never opens, scrolls the page on to the second card.
     const rb = await row.boundingBox();
     const sy = rb.y + Math.min(rb.height / 2, 120);
-    await touchDrag(page, { x: rb.x + rb.width * 0.8, y: sy }, { x: rb.x + rb.width * 0.8 - 250, y: sy });
-    await page.waitForTimeout(900);
+    await touchDrag(page, { x: 320, y: sy }, { x: 70, y: sy });
+    await page.waitForTimeout(1200);
     if (await page.getByRole("dialog").count()) throw new Error("swipe opened the preview");
     if ((await dots.nth(1).getAttribute("aria-current")) !== "true") throw new Error("after swipe the second dot is not aria-current");
     await page.waitForTimeout(1200);
@@ -821,8 +875,7 @@ const CHECKS = {
     const after = await page.evaluate(() => window.scrollY);
     if (!(after > before + 40)) throw new Error(`vertical drag over the row did not scroll the page (${before} -> ${after})`);
     if (await page.getByRole("dialog").count()) throw new Error("vertical drag opened the preview");
-    await row.evaluate((el) => el.scrollIntoView({ block: "center" }));
-    await page.waitForTimeout(400);
+    await showPhoneCard(page, 1);
 
     // Tap the centred card: full-screen preview with the CTA on screen.
     const second = cards.nth(1);
@@ -855,14 +908,11 @@ const CHECKS = {
     if (Math.abs(yAfterClose - yBeforeOpen) > 1) throw new Error(`page scroll not restored after close (${yBeforeOpen} -> ${yAfterClose})`);
     if (await page.evaluate(() => getComputedStyle(document.body).position) !== "static") throw new Error("body still pinned after close");
 
-    // Dots scroll their card to the centre.
+    // Dots scroll the page to their card's hold: the row brings it to the centre.
     await dots.nth(3).click();
-    await page.waitForTimeout(1200);
+    await page.waitForTimeout(1800);
     if ((await dots.nth(3).getAttribute("aria-current")) !== "true") throw new Error("tapping dot 4 did not make it current");
-    const centred = await cards.nth(3).evaluate((el) => {
-      const r = el.getBoundingClientRect();
-      return Math.abs(r.left + r.width / 2 - window.innerWidth / 2);
-    });
+    const centred = await offCentre(cards.nth(3));
     if (centred > 2) throw new Error(`dot 4: card is ${centred}px off centre`);
 
     // Keyboard still opens the focused card.
@@ -878,6 +928,103 @@ const CHECKS = {
     await page.waitForTimeout(1200);
     if (Math.abs(await shotY(cards.nth(3))) > 1) throw new Error(`off screen: active card translateY ${await shotY(cards.nth(3))}`);
     assertNoErrors(errors);
+
+    // Scrolling down walks the pinned row through every card, in order, while the stage holds still on
+    // screen (clear of the nav, nothing cut off at the bottom); then the page carries on past it.
+    {
+      const w = await openPhoneGallery(browser, base);
+      const nav = await w.page.evaluate(() => {
+        const rail = document.querySelector("[data-nav-rail]");
+        const el = rail && rail.offsetParent !== null ? rail : document.querySelector("header");
+        return el.getBoundingClientRect().bottom;
+      });
+      const stageBox = () =>
+        w.page.locator("[data-work-stage]").evaluate((el) => {
+          const r = el.getBoundingClientRect();
+          return { top: Math.round(r.top), bottom: Math.round(r.bottom), vh: window.innerHeight };
+        });
+      const first = await stageBox();
+      if (first.top < nav - 1 || first.bottom > first.vh + 1) throw new Error(`pinned stage ${first.top}..${first.bottom} not on screen under the nav (${nav}..${first.vh})`);
+      const wdots = w.page.locator("#work [data-work-dot]");
+      for (let i = 0; i < 6; i++) {
+        // Halfway into the glide before card i, then its hold.
+        if (i > 0) {
+          const from = await phoneCardY(w.page, i - 1);
+          const to = await phoneCardY(w.page, i);
+          await w.page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), Math.round((from + to) / 2));
+          await w.page.waitForTimeout(700);
+          const mid = await stageBox();
+          if (mid.top !== first.top) throw new Error(`between cards ${i} and ${i + 1}: stage moved (${first.top} -> ${mid.top})`);
+          const gap = await offCentre(w.cards.nth(i));
+          if (!(gap > 20)) throw new Error(`between cards ${i} and ${i + 1}: card ${i + 1} already centred (glide has no travel)`);
+        }
+        await showPhoneCard(w.page, i);
+        const at = await stageBox();
+        // ±1 px: reaching the last card unpins the row at rest, and the scroll that keeps it in place rounds.
+        if (Math.abs(at.top - first.top) > 1) throw new Error(`card ${i + 1}: stage moved (${first.top} -> ${at.top})`);
+        const off = await offCentre(w.cards.nth(i));
+        if (off > 2) throw new Error(`card ${i + 1}: ${off}px off centre at its hold`);
+        if ((await wdots.nth(i).getAttribute("aria-current")) !== "true") throw new Error(`card ${i + 1}: its dot is not aria-current`);
+      }
+
+      // Seen all six: at rest, the row unpins for the rest of the visit. Nothing on screen moved (checked
+      // above), and going back up is just the section again, not another walk through the runway.
+      const un = await w.page.evaluate(() => {
+        const stage = document.querySelector("[data-work-stage]");
+        return {
+          seen: document.documentElement.hasAttribute("data-work-seen"),
+          stored: sessionStorage.getItem("serma-work-seen"),
+          pos: getComputedStyle(stage).position,
+          spacer: getComputedStyle(document.querySelector("[data-work-spacer]")).display,
+          back: window.scrollY - (document.getElementById("work").getBoundingClientRect().top + window.scrollY),
+          vh: window.innerHeight,
+        };
+      });
+      if (!un.seen || un.stored !== "1") throw new Error(`last card: row not marked seen (attr ${un.seen}, stored ${un.stored})`);
+      if (un.pos === "sticky" || un.spacer !== "none") throw new Error(`last card: row still pinned (${un.pos}, spacer ${un.spacer})`);
+      if (!(un.back < un.vh)) throw new Error(`last card: ${un.back}px of scroll back to the section top, expected under one screen (${un.vh})`);
+
+      // Unpinned, a sideways swipe or a dot steps the row itself; the page stays put.
+      const yFree = await w.page.evaluate(() => window.scrollY);
+      const wb = await w.row.boundingBox();
+      const wy = wb.y + Math.min(wb.height / 2, 120);
+      await touchDrag(w.page, { x: 70, y: wy }, { x: 320, y: wy });
+      await w.page.waitForTimeout(1000);
+      if ((await wdots.nth(4).getAttribute("aria-current")) !== "true") throw new Error("unpinned: swipe right from the last card did not step back to card 5");
+      await wdots.nth(1).evaluate((el) => el.click());
+      await w.page.waitForTimeout(1000);
+      if ((await wdots.nth(1).getAttribute("aria-current")) !== "true") throw new Error("unpinned: dot 2 did not make it current");
+      if ((await offCentre(w.cards.nth(1))) > 2) throw new Error("unpinned: dot 2 did not centre card 2");
+      const yAfter = await w.page.evaluate(() => window.scrollY);
+      if (Math.abs(yAfter - yFree) > 1) throw new Error(`unpinned: stepping the row scrolled the page (${yFree} -> ${yAfter})`);
+
+      // A reload in the same visit lays the row out unpinned before any script of ours runs.
+      await w.page.reload({ waitUntil: "domcontentloaded" });
+      const early = await w.page.evaluate(() => ({
+        seen: document.documentElement.hasAttribute("data-work-seen"),
+        pos: getComputedStyle(document.querySelector("[data-work-stage]")).position,
+      }));
+      if (!early.seen || early.pos === "sticky") throw new Error(`reload: row pinned again (attr ${early.seen}, ${early.pos})`);
+      assertNoErrors(w.errors);
+    }
+
+    // Scrolling straight past (a fling, or a nav jump) counts too; the row then waits on the first site.
+    {
+      const f = await openPhoneGallery(browser, base);
+      const past = (await phoneCardY(f.page, 5)) + 900;
+      await f.page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), past);
+      await f.page.waitForTimeout(80);
+      const anchor = () => f.page.evaluate(() => Math.round(document.getElementById("compare").getBoundingClientRect().top));
+      const before = await anchor();
+      await f.page.waitForTimeout(700);
+      if (!(await f.page.evaluate(() => document.documentElement.hasAttribute("data-work-seen")))) throw new Error("scrolled past: row not marked seen");
+      const after = await anchor();
+      if (Math.abs(after - before) > 1) throw new Error(`scrolled past: the page jumped when the row unpinned (${before} -> ${after})`);
+      await f.cards.nth(0).evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+      await f.page.waitForTimeout(500);
+      if ((await offCentre(f.cards.nth(0))) > 2) throw new Error("scrolled past: back at the gallery, card 1 is not centred");
+      assertNoErrors(f.errors);
+    }
 
     await phoneVisitLandsAtTop(browser, base, { reducedMotion: false });
     await phoneVisitLandsAtTop(browser, base, { reducedMotion: true });
@@ -918,10 +1065,38 @@ const CHECKS = {
     const y = await shotY(cards.nth(0));
     if (Math.abs(y) > 0.5) throw new Error(`paused: active card translateY is ${y} after 3 s, expected 0`);
     await page.getByRole("button", { name: "Play animations", exact: true }).click();
-    await page.locator("[data-work-row]").scrollIntoViewIfNeeded();
-    await page.waitForTimeout(3000);
+    await showPhoneCard(page, 0);
+    await page.waitForTimeout(2100);
     if (!(await shotY(cards.nth(0)) < -1)) throw new Error("auto-scroll did not resume after unpausing");
     assertNoErrors(errors);
+  },
+  // Phones that can't pin the row (reduced motion; a short landscape screen) stack all six cards instead.
+  "gallery-phone-stacked": async ({ browser, base }) => {
+    for (const [where, opts] of [
+      ["reduced motion", { reducedMotion: true }],
+      ["landscape 667x375", { width: 667, height: 375 }],
+    ]) {
+      const { page, errors, cards, row } = await openPhoneGallery(browser, base, opts);
+      if (await phonePinned(page)) throw new Error(`${where}: the row is pinned`);
+      const m = await row.evaluate((el) => ({
+        tops: [...el.children].map((li) => li.offsetTop),
+        spacer: getComputedStyle(document.querySelector("[data-work-spacer]")).display,
+        dots: getComputedStyle(document.querySelector("#work [data-work-dot]").parentElement).display,
+        sw: document.documentElement.scrollWidth,
+        iw: window.innerWidth,
+      }));
+      if (!m.tops.every((t, i) => i === 0 || t > m.tops[i - 1])) throw new Error(`${where}: cards are not stacked (tops ${m.tops.join(", ")})`);
+      if (m.spacer !== "none") throw new Error(`${where}: the pin's spacer is displayed`);
+      if (m.dots !== "none") throw new Error(`${where}: the dots are displayed`);
+      if (m.sw > m.iw) throw new Error(`${where}: page overflows horizontally (${m.sw} > ${m.iw})`);
+      for (let i = 0; i < 6; i++) {
+        if ((await offCentre(cards.nth(i))) > 2) throw new Error(`${where}: card ${i + 1} is not centred`);
+      }
+      await page.waitForTimeout(2500);
+      if (Math.abs(await shotY(cards.nth(0))) > 0.5) throw new Error(`${where}: a stacked card auto-scrolls`);
+      await runAxe(page, { include: ["#work"] });
+      assertNoErrors(errors);
+    }
   },
   "demo:barbershop": ({ browser, base }) => demoCheck(browser, base, "barbershop"),
   "demo:beauty": ({ browser, base }) => demoCheck(browser, base, "beauty", { restCheck: beautyWindowsOpen }),

@@ -134,6 +134,12 @@ const config: Config = {
     plugin(({ addVariant }) => {
       addVariant("pin", "@media (min-width: 1280px) and (min-height: 840px)");
     }),
+    /* `pan:` = a phone (portrait, under the md grid) tall enough to pin the "Our work" row while the
+       page scroll walks it sideways, with motion allowed. Everywhere else under md the cards stack.
+       Keep the query in sync with PAN_QUERY in src/components/sections/work/WorkGallery.tsx. */
+    plugin(({ addVariant }) => {
+      addVariant("pan", "@media (max-width: 767px) and (min-height: 500px) and (prefers-reduced-motion: no-preference)");
+    }),
   ],
 };
 

@@ -7,6 +7,7 @@ import { buildCsp } from "@/config/csp";
 import { siteConfig } from "@/config/site";
 import { BASE_PATH } from "@/lib/asset";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
+import { WORK_SEEN_SCRIPT } from "@/lib/workSeen";
 import "./globals.css";
 import "./motion.css";
 
@@ -86,6 +87,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {cspMeta ? <meta httpEquiv="Content-Security-Policy" content={buildCsp({ meta: true })} /> : null}
         {/* Sets html.dark before first paint (no flash of the wrong theme). Inline scripts are allowed by the CSP. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* Unpins the phone "Our work" row before first paint if this visit already walked it (lib/workSeen.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: WORK_SEEN_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
