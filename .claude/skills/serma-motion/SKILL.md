@@ -83,7 +83,7 @@ Every component that animates starts with a doc comment in this shape. `RazorCut
 
 **Still state.** On demo sites, call `const still = useDemoStill()`. When it is true, render the final markup with no motion props at all. `MotionConfig reducedMotion="user"` is not enough, because it still runs opacity animations. On the main site, use `useReducedMotionSafe()` for anything that changes markup, and `useMotionPause()` for JS loops and video. CSS keyframe loops freeze by themselves through `html[data-motion-paused]`. At rest, no text is left below full opacity.
 
-**Triggers.** Put `whileInView` on a wrapper that is neither transformed nor clipped, because IntersectionObserver sees zero area on a fully clipped or translated-out element. Measure with `ResizeObserver` on resize, never per frame.
+**Triggers.** When an element starts hidden by a mask or clip (a line at `y: 108%` inside `overflow-hidden`, a closed `clip-path` window), put `whileInView` on an unmasked wrapper, as `RevealLines` and `MaskWindows` do. A masked element never reports as in view. An element that is only scaled or faded can trigger itself, as `Leader` does. Measure with `ResizeObserver` on resize, never per frame.
 
 **Replay.** Something that has played stays played. Decide at mount (with a `useState` initializer) whether it starts at rest, so an EN/ES switch or lifting Pause never replays it. `MenuPlating` and `MaskWindows` show how.
 

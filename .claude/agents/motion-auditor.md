@@ -35,6 +35,8 @@ Each animated element is one inventory row.
 - **Tokens:** are there one-off timings or easings where a house token exists?
 - **Text:** is body copy split into words or letters?
 
+Don't report missing spec comments on existing code. The spec comment is a rule for new work, and listing it on old components is noise.
+
 Then fill in the **motion budget** for the page and check it against the roles. There should be one signature. A section that has an entrance on every item is fade-up noise.
 
 ## 3. Runtime checks
@@ -53,6 +55,6 @@ Return exactly these sections, in this order:
 1. **Verdict:** two sentences on the page's motion overall.
 2. **Motion budget:** the skill's table, filled in.
 3. **Inventory:** a table with the columns # | `file:line` | what moves | trigger | purpose | verdict (keep / cut / fix).
-4. **Findings:** ranked, most severe first. Each one gives its type (`bug`, `a11y`, `perf`, `taste`), `file:line`, what's wrong, the **evidence** (a quoted line of code or a measured number), and a one-line fix. Drop any finding you can't back with evidence.
+4. **Findings:** ranked by type (`bug`, then `a11y`, then `perf`, then `taste`), and by impact within each type. Each one gives its type (`bug`, `a11y`, `perf`, `taste`), `file:line`, what's wrong, the **evidence** (a quoted line of code or a measured number), and a one-line fix. Drop any finding you can't back with evidence.
 5. **Carrying the page:** the top 3 animations, one line each on why. Then **Noise:** the ones to cut.
 6. **Verified vs read-only:** which commands and measurements ran and what they returned, and what you only read.
