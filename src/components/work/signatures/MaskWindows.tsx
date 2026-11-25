@@ -12,16 +12,17 @@ import { useDemoStill } from "../useDemoStill";
  *
  * - Each window ([data-window]) starts clipped to a closed pill in its centre,
  *   clip-path: inset(50% 50% 50% 50% round 999px), and opens to
- *   inset(0% 0% 0% 0% round 28px) over 0.9 s (EASE_EDITORIAL) the first time its
+ *   inset(0% 0% 0% 0% round 28px) over 1.3 s (EASE_EDITORIAL) the first time its
  *   list item is 10% inside the viewport (whileInView + VIEWPORT_ONCE on the
  *   unclipped <li>; a fully clipped element never intersects), delayed by
- *   0.18 s per window (STEP * i). Each window has its own trigger, so on phones
+ *   0.22 s per window (STEP * i). Velvet Room is the slowest site in the
+ *   collection, so every move here is long and short-travelled. Each window has its own trigger, so on phones
  *   (stacked) they open one by one as you reach them; on desktop (one row,
  *   middle window lower) they open left to right, visibly one after another.
  * - Windows are tall: 3:4 on phones and tablets, 2:3 on desktop (the 4:5
  *   photo is cropped by object-cover and is still never drawn wider than its
  *   896px source: at most ~650px on phones, ~460px on desktop).
- * - The photo inside settles from scale 1.12 to 1 over 1.4 s on the same
+ * - The photo inside settles from scale 1.1 to 1 over 1.6 s on the same
  *   trigger (driven by the parent's variant, no extra observer).
  * - clip-path is the only non-transform property animated, on the window
  *   elements only. No React state changes during the animation.
@@ -60,16 +61,16 @@ const CLOSED = "inset(50% 50% 50% 50% round 999px)";
 const OPEN = "inset(0% 0% 0% 0% round 28px)";
 
 /** Seconds between one window opening and the next. */
-const STEP = 0.18;
+const STEP = 0.22;
 
 const windowVariants: Variants = {
   closed: { clipPath: CLOSED },
-  open: (i: number) => ({ clipPath: OPEN, transition: { duration: 0.9, ease: EASE_EDITORIAL, delay: STEP * i } }),
+  open: (i: number) => ({ clipPath: OPEN, transition: { duration: 1.3, ease: EASE_EDITORIAL, delay: STEP * i } }),
 };
 
 const imageVariants: Variants = {
-  closed: { scale: 1.12 },
-  open: (i: number) => ({ scale: 1, transition: { duration: 1.4, ease: EASE_EDITORIAL, delay: STEP * i } }),
+  closed: { scale: 1.1 },
+  open: (i: number) => ({ scale: 1, transition: { duration: 1.6, ease: EASE_EDITORIAL, delay: STEP * i } }),
 };
 
 // Box widths: <640 at most 608px; 640-1023 ~40% of the row (<= 410px); >= 1024

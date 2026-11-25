@@ -17,7 +17,10 @@ export type BeautyTreatment = {
   image: DemoImage;
 };
 
-export type BeautyStep = { when: L10n; title: L10n; body: L10n };
+export type BeautyStep = { when: L10n; title: L10n; body: L10n; image: DemoImage };
+
+/** One photo in "The room" strip, with its short caption. */
+export type BeautyTexture = { image: DemoImage; caption: L10n };
 
 /** A review with the treatment it was written about. */
 export type BeautyReview = DemoContent["reviews"][number] & { treatment: L10n };
@@ -25,11 +28,22 @@ export type BeautyReview = DemoContent["reviews"][number] & { treatment: L10n };
 export type BeautyContent = Omit<DemoContent, "reviews"> & {
   reviews: BeautyReview[];
   nav: { treatments: L10n; visit: L10n; reviews: L10n; hours: L10n; book: L10n; home: L10n; primary: L10n };
-  hero: { kicker: L10n; headline: [L10n, L10n, L10n]; intro: L10n; cta: L10n; link: L10n; note: L10n };
-  treatments: { kicker: L10n; title: L10n; intro: L10n; label: L10n; minutes: L10n; aftercareLabel: L10n; items: BeautyTreatment[] };
+  hero: {
+    kicker: L10n;
+    headline: [L10n, L10n, L10n];
+    intro: L10n;
+    cta: L10n;
+    link: L10n;
+    note: L10n;
+    /** The room, seen through the tall window frame. */
+    room: DemoImage;
+    /** The small second window. */
+    detail: DemoImage;
+  };
+  treatments: { title: L10n; intro: L10n; label: L10n; minutes: L10n; aftercareLabel: L10n; items: BeautyTreatment[] };
+  room: { title: L10n; intro: L10n; items: BeautyTexture[] };
   steps: { kicker: L10n; title: L10n; intro: L10n; items: BeautyStep[] };
   reviewsTitle: L10n;
-  reviewsKicker: L10n;
   visit: {
     kicker: L10n;
     title: L10n;
@@ -41,6 +55,7 @@ export type BeautyContent = Omit<DemoContent, "reviews"> & {
     closed: L10n;
     findUs: L10n;
     directions: L10n;
+    image: DemoImage;
   };
   footer: { tagline: L10n; credit: L10n };
 };
@@ -50,6 +65,19 @@ export const beauty: BeautyContent = {
   business: "Velvet Room",
   phone: "(555) 555-0158",
   address: "9 Willow Court",
+  photoCredits: [
+    "Mayur Roxan",
+    "360floralflaves",
+    "Mathilde Langevin",
+    "Anna Keibalo",
+    "Yuliya Derbisheva",
+    "Kateryna Hliznitsova",
+    "Paulina S.",
+    "engin akyurt",
+    "Sanket Khatua",
+    "Shutter Speed",
+    "madelief went",
+  ],
   hours: [
     { days: { en: "Tuesday – Thursday", es: "Martes a jueves" }, time: { en: "10am – 7pm", es: "10:00 – 19:00" } },
     { days: { en: "Friday", es: "Viernes" }, time: { en: "10am – 6pm", es: "10:00 – 18:00" } },
@@ -79,9 +107,25 @@ export const beauty: BeautyContent = {
     cta: { en: "Book a treatment", es: "Reserve un tratamiento" },
     link: { en: "See treatments", es: "Ver tratamientos" },
     note: { en: "Three beds · Tuesday to Saturday · 9\u00a0Willow\u00a0Court", es: "Tres camillas · de martes a sábado · 9\u00a0Willow\u00a0Court" },
+    room: demoImage(
+      "beauty",
+      "hero-room",
+      {
+        en: "A treatment room seen through its half-open door: a bed made up in pale linen beside a stone basin, lit by a tall window.",
+        es: "Una sala de tratamiento vista desde la puerta entreabierta: una camilla con sábana de lino claro junto a un lavabo de piedra, iluminada por una ventana alta.",
+      },
+      933,
+      1400,
+    ),
+    detail: demoImage(
+      "beauty",
+      "hero-leaf",
+      { en: "Close-up of soft, velvety sage leaves.", es: "Primer plano de hojas de salvia suaves y aterciopeladas." },
+      675,
+      900,
+    ),
   },
   treatments: {
-    kicker: { en: "Treatments", es: "Tratamientos" },
     title: { en: "Three things, done slowly.", es: "Tres tratamientos, sin prisa." },
     intro: {
       en: "One therapist stays with you from consultation to aftercare. Prices include everything listed; nothing is added at the till.",
@@ -162,6 +206,51 @@ export const beauty: BeautyContent = {
       },
     ],
   },
+  room: {
+    title: { en: "The room, up close.", es: "La sala, de cerca." },
+    intro: {
+      en: "Unscented linen, towels from the warming cabinet, sage on the windowsill. Nothing in here beeps, and the music stays low enough to sleep through.",
+      es: "Lino sin perfume, toallas recién salidas del calentador, salvia en el alféizar. Aquí nada pita, y la música está lo bastante baja como para dormirse.",
+    },
+    items: [
+      {
+        caption: { en: "Unscented linen", es: "Lino sin perfume" },
+        image: demoImage("beauty", "room-linen", { en: "Unbleached linen lying in soft folds.", es: "Lino crudo en pliegues suaves." }, 750, 1000),
+      },
+      {
+        caption: { en: "Sage on stone", es: "Salvia sobre piedra" },
+        image: demoImage("beauty", "room-sage", { en: "A sprig of sage on pale grey stone.", es: "Una ramita de salvia sobre piedra gris clara." }, 1000, 750),
+      },
+      {
+        caption: { en: "One drop at a time", es: "Gota a gota" },
+        image: demoImage(
+          "beauty",
+          "room-serum",
+          { en: "A glass dropper holding one clear drop above a small bottle.", es: "Un cuentagotas de cristal con una gota transparente sobre un frasco pequeño." },
+          750,
+          1000,
+        ),
+      },
+      {
+        caption: { en: "Towels, warmed", es: "Toallas templadas" },
+        image: demoImage("beauty", "room-towels", { en: "Cream towels rolled tight and stacked.", es: "Toallas de color crema bien enrolladas y apiladas." }, 1000, 750),
+      },
+      {
+        caption: { en: "From the window box", es: "De la jardinera" },
+        image: demoImage("beauty", "room-leaves", { en: "Dusty sage leaves seen from above.", es: "Hojas de salvia empolvadas vistas desde arriba." }, 749, 1000),
+      },
+      {
+        caption: { en: "Lashes, close up", es: "Pestañas, de cerca" },
+        image: demoImage(
+          "beauty",
+          "room-lashes",
+          { en: "Macro of a closed eye and its fine lashes in soft light.", es: "Macro de un ojo cerrado y sus pestañas finas con luz suave." },
+          1000,
+          750,
+        ),
+      },
+    ],
+  },
   steps: {
     kicker: { en: "Your visit", es: "Su visita" },
     title: { en: "How a visit works", es: "Cómo es una visita" },
@@ -177,6 +266,16 @@ export const beauty: BeautyContent = {
           en: "For lashes and any tint we dab a little adhesive or dye behind your ear. Drop in any time we are open, no appointment needed. If nothing itches after two days, you are set.",
           es: "Para pestañas y cualquier tinte, aplicamos un poco de adhesivo o tinte detrás de la oreja. Puede pasar cuando estemos abiertos, sin cita. Si en dos días no nota picor, todo está listo.",
         },
+        image: demoImage(
+          "beauty",
+          "step-patch",
+          {
+            en: "A therapist's hands lift a single drop from a small glass bottle, a linen cloth draped below.",
+            es: "Las manos de una especialista toman una sola gota de un pequeño frasco de cristal, con un paño de lino debajo.",
+          },
+          1120,
+          1400,
+        ),
       },
       {
         when: { en: "On the day", es: "El día de la cita" },
@@ -185,6 +284,16 @@ export const beauty: BeautyContent = {
           en: "Arrive with clean skin and no eye makeup. We talk through the look you want, then you settle under a warm blanket. Conversation is optional; we will not mind if you doze.",
           es: "Venga con la piel limpia y sin maquillaje en los ojos. Hablamos del resultado que desea y luego se acomoda bajo una manta templada. Conversar es opcional; no nos importa que se duerma.",
         },
+        image: demoImage(
+          "beauty",
+          "step-rest",
+          {
+            en: "A client lies back with her eyes closed, her head on a rolled towel, as a therapist's fingertips rest at her temples.",
+            es: "Una clienta recostada con los ojos cerrados y la cabeza sobre una toalla enrollada, mientras la especialista apoya las yemas de los dedos en sus sienes.",
+          },
+          1120,
+          1400,
+        ),
       },
       {
         when: { en: "The next 48 hours", es: "Las 48 horas siguientes" },
@@ -193,10 +302,19 @@ export const beauty: BeautyContent = {
           en: "You leave with a printed aftercare card and a clean spoolie. Two days later we text to see how things have settled, and book your refill or next facial only if you want one.",
           es: "Se lleva una tarjeta impresa con los cuidados y un cepillo limpio. Dos días después le escribimos para saber cómo va y reservamos su retoque o su próximo facial solo si usted lo desea.",
         },
+        image: demoImage(
+          "beauty",
+          "step-card",
+          {
+            en: "Two plain aftercare cards on grey linen, with sprigs of eucalyptus laid beside them.",
+            es: "Dos tarjetas de cuidados sencillas sobre lino gris, con ramitas de eucalipto a su lado.",
+          },
+          1119,
+          1400,
+        ),
       },
     ],
   },
-  reviewsKicker: { en: "Reviews", es: "Reseñas" },
   reviewsTitle: { en: "Said on the way out", es: "Lo que dicen al salir" },
   reviews: [
     {
@@ -244,6 +362,16 @@ export const beauty: BeautyContent = {
       en: "Ground floor, the green door just past the bakery. Two-hour parking on Willow Court.",
       es: "Planta baja, la puerta verde justo después de la panadería. Estacionamiento de dos horas en Willow Court.",
     },
+    image: demoImage(
+      "beauty",
+      "studio",
+      {
+        en: "A corner of the treatment room in bright window light: a speckled stone basin, a small clock and a bed made up with a soft pillow.",
+        es: "Un rincón de la sala de tratamiento con la luz clara de la ventana: un lavabo de piedra moteada, un pequeño reloj y una camilla con una almohada suave.",
+      },
+      1200,
+      1200,
+    ),
   },
   footer: {
     tagline: { en: "Lashes, brows and skin, done slowly.", es: "Pestañas, cejas y piel, sin prisa." },
