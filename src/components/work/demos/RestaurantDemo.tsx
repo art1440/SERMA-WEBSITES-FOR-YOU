@@ -21,7 +21,7 @@ import { BTN_LINE, BTN_SOLID, FOCUS, NAV_H, Rise, SCROLL_MARGIN, SMALL_CAPS, STI
  * Instrument Sans capitals, small and tracked, as on a printed menu.
  *
  * The page, top to bottom (one device per section, never the same twice in a row):
- *   hero        three planes: photo, type, a print of embers (bespoke, ./restaurant/Hero)
+ *   hero        one wide photo of the open fire behind the headline (HeroBackdrop, ./restaurant/Hero)
  *   menu        the signature: MenuPlating, dishes "plated" course by course
  *   fire        THE PEAK: ExpandImage opens the oven to full bleed (longest pin on
  *               the page, after the quiet of the menu card), then TextReveal lines

@@ -8,7 +8,6 @@ import { contractor as c } from "@/data/demos/contractor";
 import type { L10n } from "@/i18n/types";
 import { BookButton } from "../DemoShell";
 import { BlueprintHero } from "../signatures/BlueprintHero";
-import { HeroDetail, HeroGrid } from "./contractor/HeroPlanes";
 import { ProcessSteps } from "./contractor/ProcessSteps";
 import { ProjectsGallery } from "./contractor/ProjectsGallery";
 import {
@@ -31,7 +30,8 @@ import {
 /*
  * Trueframe Builders, set like a small set of construction documents: every
  * section is a "sheet" (A-101 ... A-501) with its number in a tag, the hero is
- * a drawing sheet with a title block along its foot, services are a schedule
+ * a full-width photo drawn before it is built, with a slim title block along
+ * its foot, services are a schedule
  * (spec table), projects are the details sheet, the process is a chain
  * dimension, reviews carry revision deltas. Palette is hard-coded and the root
  * sets color-scheme: dark, so the page is identical in either OS theme.
@@ -49,8 +49,10 @@ import {
  * (400/500) everything else, including the dimension strings.
  *
  * Motion, one device per sheet (all honour useDemoStill):
- *   A-101 hero      BlueprintHero (signature) + two Parallax planes: the grid
- *                   lags, a detail photo runs ahead (HeroPlanes.tsx)
+ *   A-101 hero      BlueprintHero (signature) is the hero backdrop: the room's
+ *                   linework and dimensions draw over the navy, the photo
+ *                   (HeroBackdrop) wipes in under them, the drawing fades; the
+ *                   photo then settles and drifts slower than the type
  *   A-102 services  HoverPreview: a square, hard-edged photo trails the cursor
  *                   over the schedule (mouse only; phones keep the table)
  *   A-201 projects  the peak: HorizontalGallery of eight details, each photo a
@@ -79,8 +81,8 @@ export function ContractorDemo() {
   ];
 
   const h1Size = es
-    ? "text-[clamp(2.625rem,11.5vw,3.5rem)] sm:text-[4.25rem] lg:text-[clamp(3.5rem,4.6vw,4.5rem)]"
-    : "text-[clamp(3rem,14vw,4rem)] sm:text-[5rem] lg:text-[clamp(4rem,5.8vw,5.25rem)]";
+    ? "text-[clamp(2.75rem,13.5vw,3.5rem)] sm:text-[4.5rem] lg:text-[clamp(4.25rem,5.6vw,5.75rem)]"
+    : "text-[clamp(3.25rem,17.5vw,4.5rem)] sm:text-[6rem] lg:text-[clamp(5.5rem,7.6vw,7.5rem)]";
   const [h1Lead, h1Tail] = c.hero.headline.map(L);
 
   return (
@@ -95,7 +97,7 @@ export function ContractorDemo() {
             <Wordmark />
           </a>
           <nav aria-label={L(c.nav.primary)} className="ml-auto hidden lg:block">
-            <ul className="flex gap-8 text-[0.9375rem]">
+            <ul className="flex gap-6 whitespace-nowrap text-[0.9375rem] xl:gap-8">
               {navLinks.map((l) => (
                 <li key={l.href}>
                   <a href={l.href} className={`demo-underline inline-flex items-baseline gap-2 pb-1 text-[#E9F0FA] ${FOCUS}`}>
@@ -121,84 +123,71 @@ export function ContractorDemo() {
       </header>
 
       {/* ---------------------------------------------------- hero: sheet A-101 */}
-      <section aria-labelledby="hero-title" className="relative overflow-hidden">
-        <HeroGrid />
-        <div className={`${WRAP} relative pb-8 pt-3 max-sm:px-3 sm:pb-14 sm:pt-6 lg:pt-8`}>
-          <div className="border border-[#9BB8E0]/40 bg-[#0F2440]/80">
-            <div className="grid lg:grid-cols-[minmax(0,4fr)_minmax(0,6fr)] xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-              <div className="flex flex-col px-5 pb-8 pt-6 sm:px-9 sm:pb-10 sm:pt-9 lg:border-r lg:border-[#9BB8E0]/40 lg:px-10 lg:py-12 xl:pb-10 xl:pt-11">
-                <p className={`${LABEL} flex items-start gap-2.5 text-[#FF7A1A]`}>
-                  <span aria-hidden="true" className="mt-[0.3em] h-2 w-2 shrink-0 bg-[#FF7A1A]" />
-                  {L(c.hero.kicker)}
-                </p>
-                <h1
-                  id="hero-title"
-                  className={`demo-display mt-5 font-extrabold leading-[0.92] tracking-[-0.01em] text-[#E9F0FA] ${h1Size}`}
-                >
-                  <span className="block">{h1Lead} </span>
-                  <span className="block text-[#FF7A1A]">{h1Tail}</span>
-                </h1>
-                <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-[#C4D5EC] lg:mt-7">{L(c.hero.intro)}</p>
-                {/* At xl the CTAs stack so the detail photo can sit on the column line beside them. */}
-                <div className="mt-7 lg:mt-auto lg:pt-9 xl:flex xl:items-end xl:justify-between xl:gap-6 xl:pt-8">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-x-7 gap-y-4 xl:flex-col xl:items-start">
-                      <Magnetic>
-                        <BookButton className={`${BTN} group h-[3.25rem] px-5 text-[1.0625rem] sm:px-6 sm:text-[1.125rem]`}>
-                          <RollText>{L(c.hero.cta)}</RollText>
-                          <Arrow className="h-3 w-5 transition-transform duration-300 ease-[cubic-bezier(.22,1,.36,1)] group-hover:translate-x-1" />
-                        </BookButton>
-                      </Magnetic>
-                      <a
-                        href="#projects"
-                        className={`text-[1rem] font-medium text-[#E9F0FA] underline decoration-[#9BB8E0] underline-offset-[6px] transition-[text-decoration-color] duration-200 hover:decoration-[#FF7A1A] ${FOCUS}`}
-                      >
-                        {L(c.hero.secondary)}
-                      </a>
-                    </div>
-                    <p className="mt-5 text-[0.875rem] text-[#9BB8E0]">{L(c.hero.promise)}</p>
-                  </div>
-                  {/* 100px wide, astride the column line (40px padding + 40px), hanging just below the CTA block. */}
-                  <HeroDetail image={c.hero.detail} alt={L(c.hero.detail.alt)} className="-mb-[18px] -mr-[80px]" />
-                </div>
-              </div>
-              <div className="relative border-t border-[#9BB8E0]/40 px-2 pb-6 pt-3 sm:px-8 sm:pb-9 sm:pt-6 lg:flex lg:flex-col lg:justify-center lg:border-t-0 lg:px-7 lg:py-8 xl:px-10">
-                <BlueprintHero
-                  image={c.hero.image}
-                  alt={L(c.hero.image.alt)}
-                  dims={c.hero.dims}
-                  keynotes={c.hero.keynotes.map(L)}
-                  keynotesLabel={L(c.hero.keynotesLabel)}
-                  // The frame is the column minus padding and the 40px dimension gutter: <= ~700px.
-                  sizes="(min-width: 1360px) 700px, (min-width: 1024px) 52vw, calc(100vw - 64px)"
-                />
-              </div>
-            </div>
-            {/* Title block along the foot of the sheet. */}
-            <div className="grid grid-cols-2 border-t border-[#9BB8E0]/40 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
-              <div className="col-span-2 flex flex-col justify-center gap-1.5 border-b border-[#9BB8E0]/40 px-5 py-3.5 sm:col-span-1 sm:border-b-0 sm:px-6">
-                <p className="demo-display text-[1.125rem] font-extrabold uppercase leading-none tracking-[0.03em] text-[#E9F0FA]">{c.business}</p>
-                <p className="text-[0.8125rem] text-[#9BB8E0]">
-                  {c.address} · {c.phone}
-                </p>
-              </div>
-              {c.hero.titleBlock.map((row, n) => (
-                <div
-                  key={n}
-                  className={`flex flex-col justify-center gap-1.5 px-5 py-3.5 sm:border-l sm:border-[#9BB8E0]/40 sm:px-5 ${
-                    n === 0 ? "col-span-2 border-b border-[#9BB8E0]/40 sm:col-span-1 sm:border-b-0" : n === 1 ? "border-r border-[#9BB8E0]/40 sm:border-r-0" : ""
-                  }`}
-                >
-                  <p className={`${LABEL} text-[0.6875rem] text-[#9BB8E0]`}>{L(row.label)}</p>
-                  <p className="text-[0.9375rem] font-medium leading-tight text-[#E9F0FA]">{L(row.value)}</p>
-                </div>
-              ))}
-              <div className="col-span-2 flex items-center justify-between gap-4 border-t border-[#9BB8E0]/40 bg-[#FF7A1A] px-5 py-3 sm:col-span-1 sm:flex-col sm:items-start sm:justify-center sm:gap-1 sm:border-t-0 sm:px-6">
-                <p className={`${LABEL} text-[0.6875rem] text-[#0F2440]`}>{L(c.hero.sheetLabel)}</p>
-                <p className="demo-display text-[1.75rem] font-extrabold leading-none tracking-[0.02em] text-[#0F2440]">A-101</p>
-              </div>
-            </div>
+      {/*
+        One photo, one headline, one intro, one CTA row, and the title block along
+        the foot. The signature is the backdrop: the room is drawn over the navy,
+        the photo wipes in under the drawing, the drawing fades. The kitchen sits
+        centre-right; the navy scrim is only where the type is: from the left on
+        desktop, from the top on phones and portrait tablets (type at the top, the
+        island showing below it).
+      */}
+      <section
+        aria-labelledby="hero-title"
+        className="relative isolate flex min-h-[max(720px,calc(100svh_-_var(--demo-ribbon)_-_60px))] flex-col overflow-hidden bg-[#0F2440] sm:min-h-[min(960px,calc(100svh_-_var(--demo-ribbon)_-_60px))]"
+      >
+        <BlueprintHero
+          image={c.hero.image}
+          alt={L(c.hero.image.alt)}
+          focus={[0.6, 0.6]}
+          mobileFocus={[0.7, 0.5]}
+          dims={c.hero.dims}
+          labels={[L(c.hero.labels[0]), L(c.hero.labels[1])]}
+          scrims={[
+            // Phones and portrait tablets: from the top, over the type only (px stops: the type has a fixed height).
+            "lg:hidden bg-[linear-gradient(180deg,rgba(10,27,49,0.88)_0px,rgba(10,27,49,0.82)_470px,rgba(10,27,49,0.2)_600px,rgba(10,27,49,0)_680px)]",
+            // Desktop: from the left, dark behind the type column, gone before the island and the hood.
+            "max-lg:hidden bg-[linear-gradient(90deg,rgba(10,27,49,0.88)_0%,rgba(10,27,49,0.78)_min(480px,42%),rgba(10,27,49,0.45)_min(680px,58%),rgba(10,27,49,0)_min(960px,80%))]",
+          ]}
+        />
+        <div className={`${WRAP} flex flex-1 flex-col pb-14 pt-8 sm:pb-20 sm:pt-14 lg:justify-center lg:pb-16 lg:pt-12`}>
+          <p className={`${LABEL} flex items-start gap-2.5 text-[#E9F0FA]`}>
+            <span aria-hidden="true" className="mt-[0.3em] h-2 w-2 shrink-0 bg-[#FF7A1A]" />
+            {L(c.hero.kicker)}
+          </p>
+          <h1 id="hero-title" className={`demo-display mt-5 font-extrabold leading-[0.9] tracking-[-0.01em] text-[#E9F0FA] lg:mt-6 ${h1Size}`}>
+            <span className="block text-balance">{h1Lead} </span>
+            <span className="block text-balance">{h1Tail}</span>
+          </h1>
+          <p className="mt-6 max-w-[38ch] text-[1.0625rem] leading-relaxed text-[#C4D5EC] sm:text-[1.125rem] lg:mt-8">{L(c.hero.intro)}</p>
+          <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4 lg:mt-10">
+            <Magnetic>
+              <BookButton className={`${BTN} group h-[3.25rem] px-5 text-[1.0625rem] sm:px-6 sm:text-[1.125rem]`}>
+                <RollText>{L(c.hero.cta)}</RollText>
+                <Arrow className="h-3 w-5 transition-transform duration-300 ease-[cubic-bezier(.22,1,.36,1)] group-hover:translate-x-1" />
+              </BookButton>
+            </Magnetic>
+            <a
+              href="#projects"
+              className={`text-[1rem] font-medium text-[#E9F0FA] underline decoration-[#9BB8E0] underline-offset-[6px] transition-[text-decoration-color] duration-200 hover:decoration-[#FF7A1A] ${FOCUS}`}
+            >
+              {L(c.hero.secondary)}
+            </a>
           </div>
+        </div>
+        {/* The title block along the foot of the sheet (tablet and up). */}
+        <div className="hidden border-t border-[#9BB8E0]/30 bg-[#0A1B31]/90 sm:block">
+          <dl className={`${WRAP} flex h-14 items-stretch`}>
+            {c.hero.titleBlock.map((row, n) => (
+              <div key={n} className={`flex items-center gap-3 pr-7 ${n ? "border-l border-[#9BB8E0]/30 pl-7" : ""}`}>
+                <dt className={`${LABEL} text-[0.6875rem] text-[#9BB8E0]`}>{L(row.label)}</dt>
+                <dd className="text-[0.9375rem] font-medium text-[#E9F0FA]">{L(row.value)}</dd>
+              </div>
+            ))}
+            <div className="ml-auto flex items-center gap-3 bg-[#FF7A1A] px-5">
+              <dt className={`${LABEL} text-[0.6875rem] text-[#0F2440]`}>{L(c.hero.sheetLabel)}</dt>
+              <dd className="demo-display text-[1.5rem] font-extrabold leading-none tracking-[0.02em] text-[#0F2440]">A-101</dd>
+            </div>
+          </dl>
         </div>
       </section>
 

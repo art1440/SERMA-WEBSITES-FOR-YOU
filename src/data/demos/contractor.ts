@@ -1,5 +1,5 @@
 import type { L10n } from "@/i18n/types";
-import { demoImage, type DemoContent, type DemoImage } from "./index";
+import { demoImage, heroImage, type DemoContent, type DemoImage } from "./index";
 
 /**
  * Trueframe Builders (fictional remodeling contractor). Every user-facing
@@ -11,9 +11,9 @@ import { demoImage, type DemoContent, type DemoImage } from "./index";
  * carry a wide right side-bearing that opens a gap before the hyphen:
  * "24′ -0″". The straight marks set tight.)
  *
- * Photos: kitchen, addition and deck are the original set; everything else is
- * from Unsplash (photographers in `photoCredits`), graded cool so the set reads
- * as one shoot: daylight, white and navy, pale oak.
+ * Photos: addition and deck are the original set; everything else (the hero
+ * kitchen included) is from Unsplash (photographers in `photoCredits`), graded
+ * cool so the set reads as one shoot: daylight, white and navy, pale oak.
  */
 
 export type ContractorService = {
@@ -73,17 +73,15 @@ export type ContractorContent = Omit<DemoContent, "reviews"> & {
     intro: L10n;
     cta: L10n;
     secondary: L10n;
-    promise: L10n;
+    /** The full-width hero photo (heroImage: 640 / 1600 / 2560 px files). */
     image: DemoImage;
-    /** Dimension strings around the drawing (language-neutral). */
-    dims: { overall: string; height: string; island: string };
-    /** Keynotes: numbered tags on the photo, listed under it. */
-    keynotes: L10n[];
-    keynotesLabel: L10n;
+    /** Dimension strings the drawing sets over the photo (language-neutral). */
+    dims: { pendants: string; island: string; height: string };
+    /** Two annotations on the drawing (decorative: they fade with the linework). */
+    labels: [L10n, L10n];
+    /** The slim title block along the foot of the hero: project, duration. */
     titleBlock: { label: L10n; value: L10n }[];
     sheetLabel: L10n;
-    /** The small detail photo that floats over the sheet on wide screens. */
-    detail: DemoImage;
   };
   services: {
     sheet: string;
@@ -141,15 +139,16 @@ export type ContractorContent = Omit<DemoContent, "reviews"> & {
 
 /* ------------------------------------------------------------------ photos */
 
-const KITCHEN = demoImage(
+/** The hero: one wide daylight kitchen, 3200 px source (Clay Banks), graded cool. */
+const HERO_KITCHEN = heroImage(
   "contractor",
-  "kitchen",
+  "hero-wide",
   {
-    en: "A finished kitchen remodel: navy Shaker cabinets with brass pulls, two brass dome pendants over a white quartz waterfall island with three stools, and tall black-framed windows onto the garden.",
-    es: "Una cocina reformada y terminada: gabinetes tipo Shaker azul marino con tiradores de latón, dos lámparas de cúpula de latón sobre una isla de cuarzo blanco en cascada con tres taburetes y ventanales de marco negro hacia el jardín.",
+    en: "A finished kitchen remodel in daylight: a slate-navy island with a white quartz top and four black stools, three pleated pendant lights, a stainless range hood over marble subway tile, and a glass door open to the garden.",
+    es: "Una cocina reformada y terminada, a la luz del día: una isla azul pizarra con cubierta de cuarzo blanco y cuatro taburetes negros, tres lámparas colgantes plisadas, una campana de acero sobre azulejo de mármol y una puerta de vidrio abierta al jardín.",
   },
-  1344,
-  752,
+  1600,
+  1067,
 );
 
 const ADDITION = demoImage(
@@ -262,7 +261,6 @@ export const contractor: ContractorContent = {
     "Tanner Marquis",
     "Franco Debartolo",
     "Roger Starnes Sr",
-    "Sven Mieke",
   ],
   licence: {
     en: "Licensed & insured · Lic. #CB-000000 (demo)",
@@ -286,41 +284,23 @@ export const contractor: ContractorContent = {
       { en: "the first time.", es: "desde la primera vez." },
     ],
     intro: {
-      en: "Kitchens, baths, additions and decks within 25 miles of Millwork Road. One project lead from the first tape measure to the final walkthrough, a dated schedule before demo day, and a job site swept clean every evening.",
-      es: "Cocinas, baños, ampliaciones y terrazas a menos de 25 millas de Millwork Road. Un mismo jefe de obra desde la primera medición hasta la entrega, un calendario con fechas antes de empezar y la obra barrida cada tarde.",
+      en: "Kitchens, baths, additions and decks within 25 miles of Millwork Road, with one project lead from the first tape measure to the final walkthrough.",
+      es: "Cocinas, baños, ampliaciones y terrazas a menos de 25 millas de Millwork Road, con un mismo jefe de obra desde la primera medición hasta la entrega.",
     },
     cta: { en: "Get a free estimate", es: "Pida presupuesto gratis" },
     secondary: { en: "See recent projects", es: "Vea obras recientes" },
-    promise: {
-      en: "Free on-site visit · itemized written estimate within 48 hours",
-      es: "Visita gratuita · presupuesto detallado por escrito en 48 horas",
-    },
-    image: KITCHEN,
-    // Proportional to the 1344:752 frame (1.79:1): 16'-0" x 9'-0" (1.78:1); the
-    // island spans 46.7% of the width, 7'-6" of 16'-0".
-    dims: { overall: "16'-0\"", height: "9'-0\"", island: "7'-6\"" },
-    keynotes: [
-      { en: "Brass dome pendants, on their own dimmer", es: "Lámparas de cúpula de latón, con regulador propio" },
-      { en: "Quartz waterfall island, seats three", es: "Isla de cuarzo en cascada, para tres" },
-      { en: "New window opening, header resized", es: "Nuevo hueco de ventana, dintel recalculado" },
+    image: HERO_KITCHEN,
+    // Pendants 2'-6" apart, an 8'-0" island, 9'-0" from floor to ceiling.
+    dims: { pendants: "2'-6\"", island: "8'-0\"", height: "9'-0\"" },
+    labels: [
+      { en: "Three pendants, own dimmer", es: "Tres colgantes, regulador propio" },
+      { en: "Quartz top, seats four", es: "Cubierta de cuarzo, para cuatro" },
     ],
-    keynotesLabel: { en: "Keynotes", es: "Notas" },
     titleBlock: [
       { label: { en: "Project", es: "Proyecto" }, value: { en: "Kitchen remodel, Elm Park", es: "Reforma de cocina, Elm Park" } },
       { label: { en: "Duration", es: "Duración" }, value: { en: "7 weeks", es: "7 semanas" } },
-      { label: { en: "Scale", es: "Escala" }, value: { en: "1/4\" = 1'-0\"", es: "1/4\" = 1'-0\"" } },
     ],
     sheetLabel: { en: "Sheet", es: "Hoja" },
-    detail: demoImage(
-      "contractor",
-      "detail-pencil",
-      {
-        en: "Close-up of a sharpened pencil resting on a construction drawing, its tip beside a dimension line.",
-        es: "Primer plano de un lápiz afilado sobre un plano de obra, con la punta junto a una línea de cota.",
-      },
-      640,
-      800,
-    ),
   },
   services: {
     sheet: "A-102",

@@ -5,6 +5,7 @@
  * clip-path only. See each file's header for the contract.
  */
 export { ExpandImage } from "./ExpandImage";
+export { HeroBackdrop } from "./HeroBackdrop";
 export { HorizontalGallery } from "./HorizontalGallery";
 export { HoverPreview } from "./HoverPreview";
 export { Magnetic } from "./Magnetic";

@@ -1,5 +1,5 @@
 import type { L10n } from "@/i18n/types";
-import { demoImage, type DemoContent, type DemoImage } from "./index";
+import { demoImage, heroImage, type DemoContent, type DemoImage } from "./index";
 
 /**
  * Ember & Oak (fictional wood-fired restaurant). Every user-facing string on
@@ -37,11 +37,8 @@ export type RestaurantContent = Omit<DemoContent, "reviews"> & {
     reserve: L10n;
     pickup: L10n;
     tonight: L10n;
-    /** The ticket pinned to the hero photo (desktop): what is in the photo, priced as on the menu. */
-    special: { label: L10n; name: L10n; price: number };
+    /** The full-width photo behind the headline (HeroBackdrop; carries the 2560 px file). */
     image: DemoImage;
-    /** The small print of oak embers that floats over the hero photo (foreground plane). */
-    embers: DemoImage;
   };
   menu: {
     title: L10n;
@@ -138,26 +135,14 @@ export const restaurant: RestaurantContent = {
       en: "Twelve bar seats held for walk-ins every night",
       es: "Doce plazas en la barra para quien llegue sin reserva, cada noche",
     },
-    special: {
-      label: { en: "Out of the oven", es: "Recién salido del horno" },
-      name: { en: "Half chicken, charred lemon", es: "Medio pollo, limón tostado" },
-      price: 29,
-    },
-    image: demoImage(
+    image: heroImage(
       "restaurant",
-      "hero",
+      "hero-wide",
       {
-        en: "A spatchcocked chicken in a cast-iron pan with charred lemon halves and rosemary, the wood oven burning behind it.",
-        es: "Un pollo abierto en una sartén de hierro con medios limones tostados y romero, con el horno de leña encendido al fondo.",
+        en: "The open wood fire at the kitchen counter late in the evening: flames rising under a copper hood, warming lamps along the pass, a server waiting at the end of the counter.",
+        es: "El fuego de leña abierto en la barra de la cocina, ya entrada la noche: llamas bajo una campana de cobre, lámparas para mantener los platos calientes en el pase y un camarero esperando al final de la barra.",
       },
-      1024,
-      688,
-    ),
-    embers: demoImage(
-      "restaurant",
-      "embers",
-      { en: "Oak embers glowing red under a charred log.", es: "Brasas de roble al rojo bajo un tronco carbonizado." },
-      720,
+      1600,
       900,
     ),
   },
@@ -511,8 +496,8 @@ export const restaurant: RestaurantContent = {
     credit: { en: "Demo design by Serma", es: "Diseño de demostración por Serma" },
   },
   photoCredits: [
+    "Valentin Kremer",
     "Ty Finck",
-    "Marius",
     "Mitili Mitili",
     "Ash Edmonds",
     "Jordane Mathieu",

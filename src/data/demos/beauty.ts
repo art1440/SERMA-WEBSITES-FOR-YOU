@@ -1,5 +1,5 @@
 import type { L10n } from "@/i18n/types";
-import { demoImage, type DemoContent, type DemoImage } from "./index";
+import { demoImage, heroImage, type DemoContent, type DemoImage } from "./index";
 
 /**
  * Velvet Room (fictional lash, brow and skin studio). Every user-facing string
@@ -29,16 +29,16 @@ export type BeautyContent = Omit<DemoContent, "reviews"> & {
   reviews: BeautyReview[];
   nav: { treatments: L10n; visit: L10n; reviews: L10n; hours: L10n; book: L10n; home: L10n; primary: L10n };
   hero: {
+    /** Names the hero section for assistive tech; the headline says it on screen. */
     kicker: L10n;
     headline: [L10n, L10n, L10n];
     intro: L10n;
     cta: L10n;
     link: L10n;
+    /** One quiet line under the call to action. */
     note: L10n;
-    /** The room, seen through the tall window frame. */
-    room: DemoImage;
-    /** The small second window. */
-    detail: DemoImage;
+    /** The full-width photo behind the headline (heroImage: 640 / 1600 / 2560 px files). */
+    image: DemoImage;
   };
   treatments: { title: L10n; intro: L10n; label: L10n; minutes: L10n; aftercareLabel: L10n; items: BeautyTreatment[] };
   room: { title: L10n; intro: L10n; items: BeautyTexture[] };
@@ -66,8 +66,7 @@ export const beauty: BeautyContent = {
   phone: "(555) 555-0158",
   address: "9 Willow Court",
   photoCredits: [
-    "VIE ATELIER BY IK",
-    "360floralflaves",
+    "Fernanda Arias",
     "Mathilde Langevin",
     "Anna Keibalo",
     "Daria Glakteeva",
@@ -107,22 +106,15 @@ export const beauty: BeautyContent = {
     cta: { en: "Book a treatment", es: "Reserve un tratamiento" },
     link: { en: "See treatments", es: "Ver tratamientos" },
     note: { en: "Three beds · Tuesday to Saturday · 9\u00a0Willow\u00a0Court", es: "Tres camillas · de martes a sábado · 9\u00a0Willow\u00a0Court" },
-    room: demoImage(
+    image: heroImage(
       "beauty",
-      "hero-room",
+      "hero-wide",
       {
-        en: "A dim treatment room in warm lamplight: made-up beds with rolled towels and small stone bowls, round stools, and soft pendant lamps glowing overhead.",
-        es: "Una sala de tratamiento en penumbra con luz cálida: camillas preparadas con toallas enrolladas y pequeños cuencos de piedra, taburetes redondos y lámparas colgantes encendidas.",
+        en: "A sprig of garden sage in low evening light, its soft grey-green leaves against deep green shadow.",
+        es: "Una rama de salvia del jardín con la luz tenue de la tarde, sus hojas suaves de verde grisáceo sobre una sombra verde profunda.",
       },
-      875,
-      1400,
-    ),
-    detail: demoImage(
-      "beauty",
-      "hero-leaf",
-      { en: "Close-up of soft, velvety sage leaves.", es: "Primer plano de hojas de salvia suaves y aterciopeladas." },
-      675,
-      900,
+      1600,
+      1066,
     ),
   },
   treatments: {
