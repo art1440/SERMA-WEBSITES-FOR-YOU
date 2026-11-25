@@ -26,10 +26,17 @@ export function Parallax({ children, className, innerClassName, distance = 80, x
   const ref = useRef<HTMLDivElement>(null);
   const still = useDemoStill();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const ty = useTransform(scrollYProgress, [0, 1], [distance, -distance]);
-  const tx = useTransform(scrollYProgress, [0, 1], [x, -x]);
-  const rot = useTransform(scrollYProgress, [0, 1], [-rotate / 2, rotate / 2]);
-  const sc = useTransform(scrollYProgress, [0, 1], scale ?? [1, 1]);
+  // Framer keeps a transform's range from the first render, so the ranges are
+  // read from a ref: a distance that changes with a breakpoint applies at once.
+  const cfg = useRef({ distance, x, rotate, scale });
+  cfg.current = { distance, x, rotate, scale };
+  const ty = useTransform(scrollYProgress, (p) => cfg.current.distance * (1 - 2 * p));
+  const tx = useTransform(scrollYProgress, (p) => cfg.current.x * (1 - 2 * p));
+  const rot = useTransform(scrollYProgress, (p) => (cfg.current.rotate / 2) * (2 * p - 1));
+  const sc = useTransform(scrollYProgress, (p) => {
+    const [a, b] = cfg.current.scale ?? [1, 1];
+    return a + (b - a) * p;
+  });
 
   const Tag = as;
   if (still) {
