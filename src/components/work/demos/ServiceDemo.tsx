@@ -8,8 +8,8 @@ import { service as c } from "@/data/demos/service";
 import type { L10n } from "@/i18n/types";
 import { BookButton } from "../DemoShell";
 import { BeforeAfterSlider } from "../signatures/BeforeAfterSlider";
-import { useDemoStill } from "../useDemoStill";
 import {
+  HeroBackdrop,
   Magnetic,
   Parallax,
   RevealImage,
@@ -25,22 +25,26 @@ import { RadiusMap } from "./service/RadiusMap";
 
 /*
  * Brightline Home, set as the daylight demo: a pale teal ground, deep teal ink
- * and one confident yellow, used as the "bright line" (a highlighter stroke
- * under the headline, the slider handle, the story's progress rule, CTA fills).
+ * and one confident yellow, used as the "bright line" (the stroke under the
+ * headline, the slider handle, the story's progress rule, CTA fills).
  * The voice is dispatch: an example arrival estimate, a typical visit told step
  * by step, a service radius, all written as typical examples, never live data.
  *
  * Rhythm (one device per section, never the same one twice in a row):
- *   hero        three depth planes: the photo plate drifts slowest, the
- *               headline is the mid plane, the dispatch card is the foreground
- *               and overlaps the photo's edge (Parallax + RevealImage, the h1
- *               rises line by line with TextReveal on load)
+ *   hero        one wide photo of a plumber at work in a real bathroom
+ *               (HeroBackdrop: settles on load, drifts slower than the type).
+ *               Desktop: the type sits on the left over a deep-teal scrim from
+ *               the left, the plumber stays clear right of centre, and one
+ *               small dispatch card (an example ETA) sits bottom right.
+ *               Phones / portrait tablets: the plumber shows at the top, the
+ *               type sits at the bottom over a scrim from the bottom.
+ *               The h1 rises line by line (TextReveal on load).
  *   visit       THE PEAK: "What happens when you call" pinned (StickyStory),
  *               four steps, each with its own photo, a yellow progress rule
  *   prices      four trade cards, photos wiping open as one wave (RevealImage,
  *               waveDelay), demo-zoom on hover
- *   work        the before/after slider (signature) + two jobs from the same
- *               week on separate Parallax planes
+ *   work        the before/after slider (signature) with the job's timeline,
+ *               scope and price
  *   guarantees  deep teal; each promise rises word by word (TextReveal) beside
  *               a photo of a tech explaining the repair (RevealImage)
  *   job log     recent jobs that slide sideways only while scrolling (ScrollMarquee)
@@ -84,20 +88,31 @@ const BTN_INK =
 const BTN_SOLID_INK =
   "group demo-display inline-flex items-center justify-center gap-2.5 rounded-full bg-[#0C3A36] font-bold text-[#FFD23F] transition-[background-color,transform] duration-200 hover:bg-[#08302C] active:scale-[0.98] " +
   FOCUS;
+/** Hero buttons sit on the deep-teal scrim, so they take the yellow focus ring. */
+const BTN_Y_HERO =
+  "group demo-display inline-flex items-center justify-center gap-2.5 rounded-full bg-[#FFD23F] font-bold text-[#0C3A36] transition-[background-color,transform] duration-200 hover:bg-[#FFC70A] active:scale-[0.98] " +
+  FOCUS_DARK;
+const BTN_LIGHT_HERO =
+  "demo-display inline-flex items-center justify-center gap-2.5 rounded-full border-2 border-[#EAF6F4]/70 font-bold text-[#EAF6F4] transition-[background-color,border-color,color,transform] duration-200 hover:border-[#EAF6F4] hover:bg-[#EAF6F4] hover:text-[#0C3A36] active:scale-[0.98] " +
+  FOCUS_DARK;
 
-/** The yellow highlighter stroke behind a run of text. */
-const HIGHLIGHT: CSSProperties = {
-  backgroundImage:
-    "linear-gradient(transparent 58%, #FFD23F 58%, #FFD23F 90%, transparent 90%)",
-  boxDecorationBreak: "clone",
-  WebkitBoxDecorationBreak: "clone",
+/**
+ * The hero fills the first screen under the sticky header (capped on very tall
+ * screens). Its content can still make it taller on small phones.
+ */
+const HERO_MIN_H = `min(960px, calc(100svh - var(--demo-ribbon) - ${NAV_H}px))`;
+
+/**
+ * The bright line under "Guaranteed.": a yellow underline below the letters
+ * (never behind them), so the light type keeps its contrast over the scrim.
+ */
+const BRIGHT_LINE: CSSProperties = {
+  textDecorationLine: "underline",
+  textDecorationColor: "#FFD23F",
+  textDecorationThickness: "0.075em",
+  textUnderlineOffset: "0.1em",
+  textDecorationSkipInk: "none",
 };
-
-const CSS = `
-.bl-ping{animation:bl-ping 1.2s cubic-bezier(0,0,.2,1) 3 both}
-@keyframes bl-ping{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(2.6);opacity:0}}
-@media (prefers-reduced-motion: reduce){.bl-ping{animation:none;opacity:0}}
-`;
 
 const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
 
@@ -247,7 +262,6 @@ export function ServiceDemo() {
   const { locale } = useLanguage();
   const L = (v: L10n) => v[locale];
   const es = locale === "es";
-  const still = useDemoStill();
 
   const navLinks = [
     { href: "#prices", label: L(c.nav.services) },
@@ -256,9 +270,10 @@ export function ServiceDemo() {
     { href: "#area", label: L(c.nav.area) },
   ];
   const [h1a, h1b] = c.hero.headline.map(L);
+  // Desktop sizes keep "Guaranteed." left of the plumber (about 52% across the photo).
   const h1Size = es
-    ? "text-[clamp(3rem,14vw,4.25rem)] sm:text-[clamp(4.5rem,10vw,6.5rem)] lg:text-[clamp(4.5rem,7.4vw,6.25rem)]"
-    : "text-[clamp(3.25rem,16.5vw,4.5rem)] sm:text-[clamp(4.75rem,11vw,7rem)] lg:text-[clamp(5.25rem,8.6vw,7.5rem)]";
+    ? "text-[clamp(3rem,14vw,4.25rem)] sm:text-[clamp(4.25rem,9.6vw,6rem)] lg:text-[clamp(4rem,6.4vw,6.25rem)]"
+    : "text-[clamp(3.25rem,16.5vw,4.5rem)] sm:text-[clamp(4.5rem,10.4vw,6.5rem)] lg:text-[clamp(4.25rem,7vw,6.75rem)]";
 
   const storySteps: StoryStep[] = c.story.steps.map((s) => ({
     key: s.key,
@@ -286,8 +301,6 @@ export function ServiceDemo() {
 
   return (
     <div id="top" className="overflow-x-clip">
-      <style>{CSS}</style>
-
       {/* ---------------------------------------------------------------- nav */}
       <header
         className="sticky z-40 border-b border-[#0C3A36]/10 bg-[#EAF6F4]/95 backdrop-blur-sm"
@@ -335,116 +348,95 @@ export function ServiceDemo() {
       </header>
 
       {/* --------------------------------------------------------------- hero */}
-      <section aria-labelledby="hero-title" className="relative">
+      <section
+        aria-labelledby="hero-title"
+        className="relative isolate flex overflow-hidden bg-[#0C3A36]"
+        style={{ minHeight: HERO_MIN_H }}
+      >
+        <HeroBackdrop
+          image={c.hero.image}
+          alt={L(c.hero.image.alt)}
+          position="50% 40%"
+          mobilePosition="66% 50%"
+          // Below lg the photo fills the top of the hero only and fades into the
+          // deep teal under the type: the plumber stays above the headline, and a
+          // portrait crop is zoomed about half as much (sharper on phones).
+          className="max-sm:bottom-[34%] sm:max-lg:bottom-[26%]"
+          scrims={[
+            // Phones: the type sits below; solid for the bottom 13.5rem of the photo box
+            // (in px, so a short phone, where the type reaches higher, stays covered).
+            "sm:hidden bg-[linear-gradient(to_top,#0C3A36_0,#0C3A36_13.5rem,rgba(12,58,54,0.88)_16rem,rgba(12,58,54,0)_22rem)]",
+            // Portrait tablets: the same idea, scaled to the taller photo box.
+            "hidden sm:block lg:hidden bg-gradient-to-t from-[#0C3A36] from-[34%] via-[#0C3A36]/90 via-[48%] to-[#0C3A36]/0 to-[80%]",
+            // Desktop: the type sits on the left; the shade fades out across the plumber's arm.
+            "hidden lg:block bg-gradient-to-r from-[#0C3A36]/[0.94] from-[12%] via-[#0C3A36]/[0.78] via-[40%] to-[#0C3A36]/0 to-[60%]",
+            // ...and a low shade from the bottom under the CTA row and the dispatch card.
+            "hidden lg:block bg-gradient-to-t from-[#0C3A36]/50 to-[#0C3A36]/0 to-[38%]",
+          ]}
+        />
+
         <div
-          className={`${WRAP} grid gap-x-10 gap-y-10 pb-20 pt-7 sm:pb-28 sm:pt-12 lg:grid-cols-12 lg:items-center lg:gap-x-8 lg:pb-32 lg:pt-12`}
+          className={`${WRAP} flex flex-col justify-end pb-8 pt-24 sm:pb-14 lg:flex-row lg:items-end lg:justify-between lg:gap-10 lg:pb-[clamp(3rem,9svh,6.5rem)]`}
         >
-          {/* Mid plane: the type. */}
-          <Parallax className="relative z-10 lg:col-span-7" distance={16}>
-            <p className={KICKER}>{L(c.hero.kicker)}</p>
+          <div className="max-w-[40rem] lg:max-w-[33rem] xl:max-w-[36rem]">
+            <p className="text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-[#EAF6F4] sm:text-[0.8125rem] sm:tracking-[0.14em] lg:text-[#A9D3CC]">
+              {L(c.hero.kicker)}
+            </p>
             <TextReveal
               as="h1"
               id="hero-title"
               trigger="mount"
-              delay={0.1}
+              delay={0.15}
               spread={0.14}
               tilt={3}
-              className={`demo-display mt-3 font-extrabold leading-[0.92] tracking-[-0.045em] text-[#0C3A36] sm:mt-4 ${h1Size}`}
+              className={`demo-display mt-3 font-extrabold leading-[0.92] tracking-[-0.045em] text-[#EAF6F4] sm:mt-4 ${h1Size}`}
               lines={[
                 h1a,
-                <span
-                  key="b"
-                  style={HIGHLIGHT}
-                  className="-mx-[0.04em] px-[0.04em]"
-                >
+                <span key="b" style={BRIGHT_LINE}>
                   {h1b}
                 </span>,
               ]}
             />
-            <p className="mt-6 max-w-[44ch] text-[1.0625rem] leading-relaxed text-[#0C3A36] sm:mt-9 sm:text-[1.1875rem]">
+            <p className="mt-5 max-w-[36ch] text-[1rem] leading-relaxed text-[#EAF6F4] sm:mt-8 sm:max-w-[40ch] sm:text-[1.1875rem] lg:max-w-[26rem] xl:max-w-[40ch]">
               {L(c.hero.intro)}
             </p>
-            <div className="mt-6 flex flex-wrap gap-3 sm:mt-8">
+            <div className="mt-6 flex flex-wrap gap-3 sm:mt-9">
               <Magnetic>
                 <BookButton
-                  className={`${BTN_Y} h-[3.25rem] px-6 text-[1.0625rem]`}
+                  className={`${BTN_Y_HERO} h-12 px-5 text-[1rem] sm:h-[3.25rem] sm:px-6 sm:text-[1.0625rem]`}
                 >
                   <RollText>{L(c.hero.cta)}</RollText>
                   <Arrow className="h-3 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </BookButton>
               </Magnetic>
               <BookButton
-                className={`${BTN_INK} h-[3.25rem] px-5 text-[1.0625rem] tabular-nums`}
+                className={`${BTN_LIGHT_HERO} h-12 px-5 text-[1rem] tabular-nums sm:h-[3.25rem] sm:text-[1.0625rem]`}
               >
                 <Phone className="h-5 w-5" />
-                {L(c.hero.call)}
+                <span className="sm:hidden">{L(c.hero.callShort)}</span>
+                <span className="hidden sm:inline">{L(c.hero.call)}</span>
               </BookButton>
             </div>
-          </Parallax>
+          </div>
 
-          <div className="relative mb-16 sm:mx-auto sm:w-[78%] lg:col-span-5 lg:mb-0 lg:w-full">
-            {/* Back plane: the photo plate, drifting slower than the page. */}
-            <Parallax distance={-40}>
-              <RevealImage
-                image={c.hero.image}
-                alt={L(c.hero.image.alt)}
-                priority
-                fill
-                from="bottom"
-                parallax={4}
-                zoom={1.14}
-                sizes="(min-width: 1280px) 470px, (min-width: 1024px) 38vw, (min-width: 640px) 78vw, calc(100vw - 32px)"
-                className="aspect-[4/5] w-full rounded-[28px] bg-[#0C3A36]"
+          {/* The one foreground accent: a small dispatch card, wide screens only
+              (it needs the wall right of the plumber), labelled as an example. */}
+          <div className="hidden w-[20.5rem] shrink-0 rounded-[18px] bg-[#0C3A36] p-5 text-[#EAF6F4] shadow-[0_24px_48px_-24px_rgba(0,0,0,0.6)] ring-1 ring-[#EAF6F4]/15 xl:block">
+            <p className="flex items-center gap-2 text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#A9D3CC]">
+              <span
+                aria-hidden="true"
+                className="h-2 w-2 shrink-0 rounded-full bg-[#FFD23F]"
               />
-            </Parallax>
-
-            {/* Foreground plane: the dispatch card, drifting faster and overlapping the photo's edge. */}
-            <Parallax
-              className="absolute -bottom-14 left-3 right-3 z-20 sm:-left-10 sm:right-auto sm:w-[23rem] lg:-left-20 lg:-bottom-12"
-              distance={64}
-            >
-              <div className="rounded-[20px] bg-[#0C3A36] p-5 text-[#EAF6F4] shadow-[0_24px_48px_-24px_rgba(12,58,54,0.65)] sm:p-6">
-                <div className="flex items-end justify-between gap-4">
-                  <div>
-                    <p className="flex items-center gap-2 text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[#A9D3CC]">
-                      <span
-                        aria-hidden="true"
-                        className="relative inline-flex h-2.5 w-2.5"
-                      >
-                        {!still && (
-                          <span className="bl-ping absolute inset-0 rounded-full bg-[#FFD23F]" />
-                        )}
-                        <span className="relative h-2.5 w-2.5 rounded-full bg-[#FFD23F]" />
-                      </span>
-                      {L(c.hero.eta.tag)}
-                    </p>
-                    <p className="demo-display mt-1.5 text-[1.0625rem] font-semibold leading-snug">
-                      {L(c.hero.eta.label)}
-                    </p>
-                  </div>
-                  <p className="demo-display shrink-0 text-[2.5rem] font-extrabold leading-none tracking-[-0.04em] text-[#FFD23F] tabular-nums">
-                    {L(c.hero.eta.value)}
-                  </p>
-                </div>
-                <ol className="mt-5 grid grid-cols-3 gap-3 border-t border-[#EAF6F4]/15 pt-4">
-                  {c.hero.stops.map((s, n) => (
-                    <li key={s.time}>
-                      <span
-                        className={`demo-display block text-[1rem] font-bold tabular-nums ${n === c.hero.stops.length - 1 ? "text-[#FFD23F]" : "text-[#EAF6F4]"}`}
-                      >
-                        {s.time}
-                      </span>
-                      <span className="mt-0.5 block text-[0.8125rem] leading-snug text-[#A9D3CC]">
-                        {L(s.text)}
-                      </span>
-                    </li>
-                  ))}
-                </ol>
-                <p className="mt-4 text-[0.8125rem] leading-snug text-[#A9D3CC]">
-                  {L(c.hero.eta.note)}
-                </p>
-              </div>
-            </Parallax>
+              {L(c.hero.eta.tag)}
+            </p>
+            <div className="mt-2.5 flex items-end justify-between gap-4">
+              <p className="demo-display text-[1rem] font-semibold leading-snug">
+                {L(c.hero.eta.label)}
+              </p>
+              <p className="demo-display shrink-0 text-[2.125rem] font-extrabold leading-none tracking-[-0.04em] text-[#FFD23F] tabular-nums">
+                {L(c.hero.eta.value)}
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -574,7 +566,7 @@ export function ServiceDemo() {
         className="bg-white"
       >
         <div
-          className={`${WRAP} grid gap-x-12 gap-y-8 pt-20 sm:pt-28 lg:grid-cols-12`}
+          className={`${WRAP} grid gap-x-12 gap-y-8 pb-20 pt-20 sm:pb-28 sm:pt-28 lg:grid-cols-12`}
         >
           <div className="lg:col-span-5 lg:row-start-1 lg:self-end">
             <p className={KICKER}>{L(c.work.kicker)}</p>
@@ -639,41 +631,6 @@ export function ServiceDemo() {
               </span>
             </p>
           </div>
-        </div>
-
-        {/* Same week, other jobs: two photos on separate depth planes. */}
-        <div
-          className={`${WRAP} grid gap-x-8 gap-y-10 pb-24 pt-16 sm:grid-cols-2 sm:pb-32 sm:pt-20 lg:grid-cols-12`}
-        >
-          <div className="sm:col-span-2 lg:col-span-4 lg:pt-6">
-            <h3 className="demo-display text-[1.5rem] font-bold leading-tight tracking-[-0.02em] text-[#0C3A36] sm:text-[1.75rem]">
-              {L(c.work.more.title)}
-            </h3>
-            <p className="mt-3 max-w-[38ch] text-[1rem] leading-relaxed text-[#3F625E]">
-              {L(c.work.more.body)}
-            </p>
-          </div>
-          {c.work.more.items.map((m, i) => (
-            <Parallax
-              key={m.image.src}
-              className={`lg:col-span-4 ${i ? "lg:mt-20" : ""}`}
-              distance={i ? 56 : 18}
-            >
-              <figure className="group">
-                <div className="aspect-[4/3] overflow-hidden rounded-[20px] bg-[#D5EEEA]">
-                  <Photo
-                    image={m.image}
-                    alt={L(m.image.alt)}
-                    sizes="(min-width: 1280px) 380px, (min-width: 1024px) 31vw, (min-width: 640px) 46vw, calc(100vw - 32px)"
-                    className="demo-zoom"
-                  />
-                </div>
-                <figcaption className="mt-3 text-[0.9375rem] font-medium text-[#0C3A36]">
-                  {L(m.caption)}
-                </figcaption>
-              </figure>
-            </Parallax>
-          ))}
         </div>
       </section>
 

@@ -1,5 +1,5 @@
 import type { L10n } from "@/i18n/types";
-import { demoImage, type DemoContent, type DemoImage } from "./index";
+import { demoImage, heroImage, type DemoContent, type DemoImage } from "./index";
 
 /**
  * Brightline Home (fictional plumbing, electrical and HVAC company). Every
@@ -43,11 +43,12 @@ export type ServiceContent = Omit<DemoContent, "reviews"> & {
     intro: L10n;
     cta: L10n;
     call: L10n;
-    /** The photo plate behind the headline (the LCP image). */
+    /** Phones (< 640px): the call button's short label, so both CTAs share one row. */
+    callShort: L10n;
+    /** The full-width photo behind the headline (the LCP image). */
     image: DemoImage;
-    eta: { tag: L10n; label: L10n; value: L10n; note: L10n };
-    /** A compact, three-stop version of the visit timeline on the foreground card. */
-    stops: { time: string; text: L10n }[];
+    /** The small dispatch card (desktop only), labelled as an example. */
+    eta: { tag: L10n; label: L10n; value: L10n };
   };
   /** "What happens when you call": the pinned story (the page's peak). */
   story: {
@@ -90,12 +91,6 @@ export type ServiceContent = Omit<DemoContent, "reviews"> & {
     quoted: L10n;
     paid: L10n;
     price: string;
-    /** Supporting photos beside the slider: other jobs from the same week. */
-    more: {
-      title: L10n;
-      body: L10n;
-      items: { image: DemoImage; caption: L10n }[];
-    };
   };
   guarantees: {
     kicker: L10n;
@@ -136,15 +131,15 @@ export type ServiceContent = Omit<DemoContent, "reviews"> & {
 /* ------------------------------------------------------------------ photos */
 // Unsplash photos, graded cool so they sit with the before/after pair. Credits in photoCredits.
 
-const heroPlumber = demoImage(
+const heroWide = heroImage(
   "service",
-  "hero-plumber",
+  "hero-wide",
   {
-    en: "A plumber in a red work shirt reaches under a kitchen sink to tighten a white drain trap, the cabinet lit in cool blue.",
-    es: "Un plomero con camisa de trabajo roja se agacha bajo el fregadero para ajustar un sifón blanco, con el mueble iluminado en azul frío.",
+    en: "In a bright, gray-tiled bathroom, a plumber in navy overalls works on the water pipes behind an open access panel, his blue toolbox resting on the toilet lid.",
+    es: "En un baño luminoso de azulejos grises, un plomero con overol azul marino trabaja en las tuberías detrás de un panel de registro abierto, con su caja de herramientas azul sobre la tapa del inodoro.",
   },
-  1120,
-  1400,
+  1600,
+  1066,
 );
 const storyCall = demoImage(
   "service",
@@ -246,27 +241,6 @@ const areaStreet = demoImage(
   1600,
   1200,
 );
-const jobToilet = demoImage(
-  "service",
-  "job-toilet",
-  {
-    en: "A technician in red work gloves fits the flush plate of a wall-hung toilet in a marble-tiled bathroom.",
-    es: "Un técnico con guantes rojos coloca el pulsador de un inodoro suspendido en un baño de mármol.",
-  },
-  1200,
-  900,
-);
-const jobAc = demoImage(
-  "service",
-  "job-ac",
-  {
-    en: "Hands connect a gauge hose to the service valve of an outdoor air conditioning unit.",
-    es: "Unas manos conectan la manguera del manómetro a la válvula de servicio de una unidad exterior de aire acondicionado.",
-  },
-  1200,
-  900,
-);
-
 export const service: ServiceContent = {
   id: "service",
   business: "Brightline Home",
@@ -302,19 +276,20 @@ export const service: ServiceContent = {
   hero: {
     kicker: {
       en: "Plumbing · Electrical · Heating & cooling",
-      es: "Plomería · Electricidad · Calefacción y aire",
+      es: "Plomería · Electricidad · Climatización",
     },
     headline: [
       { en: "Fixed today.", es: "Reparado hoy." },
       { en: "Guaranteed.", es: "Garantizado." },
     ],
     intro: {
-      en: "Call before 2pm and a licensed tech comes today. You get a fixed price before any work starts, and the repair is guaranteed for a full year.",
-      es: "Llame antes de las 14:00 y un técnico con licencia va hoy mismo. Recibe un precio cerrado antes de empezar, y la reparación queda garantizada un año entero.",
+      en: "Call before 2pm and a licensed tech comes today. A fixed price before any work starts, and the repair is guaranteed for a full year.",
+      es: "Llame antes de las 14:00 y un técnico con licencia va hoy mismo. Un precio cerrado antes de empezar, y la reparación queda garantizada un año entero.",
     },
     cta: { en: "Book a visit", es: "Reserve una visita" },
     call: { en: "Call (555) 555-0171", es: "Llame al (555) 555-0171" },
-    image: heroPlumber,
+    callShort: { en: "Call us", es: "Llámenos" },
+    image: heroWide,
     eta: {
       tag: { en: "Example", es: "Ejemplo" },
       label: {
@@ -322,25 +297,7 @@ export const service: ServiceContent = {
         es: "Próximo técnico disponible",
       },
       value: { en: "42 min", es: "42 min" },
-      note: {
-        en: "The arrival estimate you get by text when you book. This one is an example.",
-        es: "La hora estimada de llegada que recibe por mensaje al reservar. Esta hora es solo un ejemplo.",
-      },
     },
-    stops: [
-      {
-        time: "9:02",
-        text: { en: "A person answers", es: "Le atiende una persona" },
-      },
-      {
-        time: "9:44",
-        text: { en: "Your tech is 10 min out", es: "Su técnico, a 10 min" },
-      },
-      {
-        time: "11:20",
-        text: { en: "Fixed and guaranteed", es: "Reparado y garantizado" },
-      },
-    ],
   },
   story: {
     title: { en: "What happens when you call", es: "Qué pasa cuando llama" },
@@ -592,32 +549,6 @@ export const service: ServiceContent = {
     quoted: { en: "Quoted", es: "Presupuesto" },
     paid: { en: "Paid", es: "Pagado" },
     price: "$385",
-    more: {
-      title: {
-        en: "Same week, other jobs",
-        es: "La misma semana, otros trabajos",
-      },
-      body: {
-        en: "Every job is photographed before and after, and the photos go on your invoice. Two more from that week:",
-        es: "Fotografiamos cada trabajo antes y después, y las fotos van en su factura. Dos más de esa semana:",
-      },
-      items: [
-        {
-          image: jobToilet,
-          caption: {
-            en: "Wall-hung toilet, new flush valve · Harbor Heights",
-            es: "Inodoro suspendido, válvula nueva · Harbor Heights",
-          },
-        },
-        {
-          image: jobAc,
-          caption: {
-            en: "AC tune-up and recharge · Pine Ridge",
-            es: "Revisión y recarga de aire · Pine Ridge",
-          },
-        },
-      ],
-    },
   },
 
   guarantees: {
@@ -816,8 +747,8 @@ export const service: ServiceContent = {
     "Marian Florinel Condruz",
     "HiveBoxx",
     "Eilis Garvey",
-    "Joel Muniz",
     "Annika Wischnewsky",
+    "bhagya laxmi",
   ],
   footer: {
     tagline: {

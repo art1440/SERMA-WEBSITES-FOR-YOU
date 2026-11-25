@@ -9,6 +9,7 @@ import { salon as c } from "@/data/demos/salon";
 import type { L10n } from "@/i18n/types";
 import { EASE_EDITORIAL } from "@/lib/motion";
 import {
+  HeroBackdrop,
   HoverPreview,
   Magnetic,
   Parallax,
@@ -22,7 +23,6 @@ import {
 import { BookButton } from "../DemoShell";
 import { ColourRibbon } from "../signatures/ColourRibbon";
 import { useDemoStill } from "../useDemoStill";
-import { HeroPlanes } from "./salon/HeroPlanes";
 import { Lookbook } from "./salon/Lookbook";
 import { ACCENT_T, DISPLAY, Em, FOCUS, KICKER, NAV_H, PILL, Rise, SCROLL_MARGIN, Title, WRAP } from "./salon/ui";
 
@@ -42,7 +42,7 @@ import { ACCENT_T, DISPLAY, Em, FOCUS, KICKER, NAV_H, PILL, Rise, SCROLL_MARGIN,
  * swaps both as the page scrolls. Every consumer transitions over 400 ms.
  *
  * Page grammar (one device per section, never the same one twice in a row):
- *   hero      three Parallax planes (arch photo, detail photo, outline arch) + line masks
+ *   hero      HeroBackdrop (one wide editorial photo, settling and drifting) + line masks
  *   shades    ColourRibbon, the signature (recolours the accent)
  *   menu      sticky title + HoverPreview (inline arched thumbnails on touch / still)
  *   lookbook  the PEAK: Parallax columns shearing past each other, RevealImage wipes
@@ -52,7 +52,7 @@ import { ACCENT_T, DISPLAY, Em, FOCUS, KICKER, NAV_H, PILL, Rise, SCROLL_MARGIN,
  */
 
 /** The hero headline: each line rises out of its own mask on load. */
-function HeroHeadline({ lines, className }: { lines: [string, string]; className: string }) {
+function HeroHeadline({ id, lines, className }: { id: string; lines: [string, string]; className: string }) {
   const still = useDemoStill();
   const line = (text: string, i: number, italic: boolean) => {
     const inner = italic ? <Em underline="var(--salon-accent)">{text}</Em> : text;
@@ -74,12 +74,26 @@ function HeroHeadline({ lines, className }: { lines: [string, string]; className
     );
   };
   return (
-    <h1 className={className}>
+    <h1 id={id} className={className}>
       {line(lines[0], 0, false)}
       {line(lines[1], 1, true)}
     </h1>
   );
 }
+
+/*
+ * Hero legibility, only where the type sits (never a flat wash over the photo):
+ *   below lg  the kicker sits at the top and the copy at the foot of the photo; a
+ *             light blush veil comes in from each edge, measured in rem so it tracks
+ *             the copy rather than the hero height, and lets the hair read through
+ *   lg+       the copy sits on the wall left of the figure, which darkens toward the
+ *             corners; blush lifts it from the left edge and is gone before the figure
+ */
+const HERO_SCRIMS = [
+  "bg-[linear-gradient(to_bottom,rgb(246_233_234/0.55)_0rem,rgb(246_233_234/0.35)_3rem,rgb(246_233_234/0)_6.5rem)] lg:hidden",
+  "bg-[linear-gradient(to_top,rgb(246_233_234/0.86)_0rem,rgb(246_233_234/0.72)_10rem,rgb(246_233_234/0.56)_18rem,rgb(246_233_234/0)_27rem)] lg:hidden",
+  "hidden lg:block bg-[linear-gradient(to_right,rgb(246_233_234/0.8)_0%,rgb(246_233_234/0.45)_24%,rgb(246_233_234/0)_44%)]",
+];
 
 export function SalonDemo() {
   const { locale } = useLanguage();
@@ -142,21 +156,25 @@ export function SalonDemo() {
       </header>
 
       {/* --------------------------------------------------------------- hero */}
+      {/* One wide photo, the headline over it. Phones and tablets: the copy sits at
+          the foot of the photo on a rising blush fade. lg+: the photo anchors left so
+          the figure sits right of centre and the copy takes the wall beside her. */}
       <section
-        aria-label={L(c.hero.kicker)}
-        className={`${WRAP} grid items-center gap-y-8 pb-16 pt-5 sm:pt-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,min(560px,44vw))] lg:gap-x-16 lg:py-12 xl:gap-x-24`}
-        style={{ minHeight: `calc(100svh - var(--demo-ribbon) - ${NAV_H}px)` }}
+        aria-labelledby="hero-title"
+        className="relative isolate flex flex-col overflow-hidden"
+        style={{ minHeight: `min(calc(100svh - var(--demo-ribbon) - ${NAV_H}px), 960px)` }}
       >
-        <figure className="lg:order-2">
-          <HeroPlanes image={c.hero.image} alt={L(c.hero.image.alt)} detail={c.hero.detail} detailAlt={L(c.hero.detail.alt)} />
-          <figcaption className="mt-3 flex items-center gap-3 text-[0.8125rem] text-[#6E4E5A] lg:justify-end">
-            <span aria-hidden="true" className={`h-px w-8 bg-[var(--salon-accent)] ${ACCENT_T}`} />
-            {L(c.hero.caption)}
-          </figcaption>
-        </figure>
-        <div className="relative z-30 flex flex-col lg:order-1">
+        <HeroBackdrop
+          image={c.hero.image}
+          alt={L(c.hero.image.alt)}
+          mobilePosition="60% 50%"
+          position="58% 50%"
+          imgClassName="lg:[object-position:0%_20%]"
+          scrims={HERO_SCRIMS}
+        />
+        <div className="flex flex-1 flex-col px-4 pb-7 pt-5 sm:px-8 sm:pb-12 sm:pt-8 lg:px-14 lg:pb-16 lg:pt-10">
           <Rise>
-            <p className={`${KICKER} text-[#6E4E5A]`}>
+            <p className={`${KICKER} text-[#3B1F2B]`}>
               {L(c.hero.kicker)}
               <span aria-hidden="true" className="hidden px-2 sm:inline">
                 ·
@@ -164,33 +182,34 @@ export function SalonDemo() {
               <span className="mt-1.5 block whitespace-nowrap sm:mt-0 sm:inline">{c.address}</span>
             </p>
           </Rise>
-          <HeroHeadline
-            lines={[L(c.hero.lines[0]), L(c.hero.lines[1])]}
-            className={`${DISPLAY} mt-4 text-[clamp(2.625rem,4.9vw,5.5rem)] leading-[1] tracking-[-0.02em] text-[#3B1F2B] sm:mt-5 lg:mt-7`}
-          />
-          {/* Phones: CTA straight under the headline, intro after it; sm+: intro first. */}
-          <Rise delay={0.4} className="sm:order-2">
-            <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-4 sm:mt-8">
-              <Magnetic>
-                <BookButton className={`group ${PILL} ${ACCENT_T} h-14 bg-[var(--salon-ink)] px-8 text-[1rem] text-[#F6E9EA] hover:bg-[#3B1F2B]`}>
-                  <RollText>{L(c.hero.cta)}</RollText>
-                </BookButton>
-              </Magnetic>
-              <a
-                href="#menu"
-                className={`text-[1rem] font-medium underline decoration-2 underline-offset-[7px] ${ACCENT_T} ${FOCUS}`}
-                style={{ textDecorationColor: "var(--salon-accent)" }}
-              >
-                {L(c.hero.menuLink)}
-              </a>
-            </div>
-          </Rise>
-          <Rise delay={0.45} className="sm:order-1">
-            <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-[#3B1F2B]/90 sm:mt-7 lg:mt-9 lg:text-[1.125rem]">{L(c.hero.intro)}</p>
-          </Rise>
-          <Rise delay={0.5} className="sm:order-3">
-            <p className="mt-6 text-[0.875rem] text-[#6E4E5A] sm:mt-8">{L(c.hero.open)}</p>
-          </Rise>
+          <div className="mt-auto pt-16 lg:max-w-[min(46vw,44rem)]">
+            <HeroHeadline
+              id="hero-title"
+              lines={[L(c.hero.lines[0]), L(c.hero.lines[1])]}
+              className={`${DISPLAY} text-[2.75rem] leading-[1] tracking-[-0.02em] text-[#3B1F2B] sm:text-[3.5rem] lg:text-[clamp(3.25rem,5vw,5.5rem)]`}
+            />
+            <Rise delay={0.4}>
+              <p className="mt-5 max-w-[34ch] text-[1.0625rem] leading-relaxed text-[#3B1F2B] sm:mt-6 lg:text-[1.125rem]">{L(c.hero.intro)}</p>
+            </Rise>
+            <Rise delay={0.5}>
+              <div className="mt-6 flex flex-wrap items-center gap-x-7 gap-y-4 sm:mt-8">
+                <Magnetic>
+                  <BookButton
+                    className={`group ${PILL} ${ACCENT_T} h-[3.25rem] bg-[var(--salon-ink)] px-6 text-[0.9375rem] text-[#F6E9EA] hover:bg-[#3B1F2B] sm:h-14 sm:px-8 sm:text-[1rem]`}
+                  >
+                    <RollText>{L(c.hero.cta)}</RollText>
+                  </BookButton>
+                </Magnetic>
+                <a
+                  href="#menu"
+                  className={`text-[0.9375rem] font-medium text-[#3B1F2B] underline decoration-2 underline-offset-[7px] sm:text-[1rem] ${ACCENT_T} ${FOCUS}`}
+                  style={{ textDecorationColor: "var(--salon-accent)" }}
+                >
+                  {L(c.hero.menuLink)}
+                </a>
+              </div>
+            </Rise>
+          </div>
         </div>
       </section>
 

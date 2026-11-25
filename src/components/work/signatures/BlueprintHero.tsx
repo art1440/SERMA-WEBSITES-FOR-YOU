@@ -1,162 +1,225 @@
 "use client";
 
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { HeroBackdrop } from "@/components/work/motion";
 import type { DemoImage } from "@/data/demos";
 import { useDemoStill } from "../useDemoStill";
 
 /**
- * Trueframe's signature: the hero kitchen is drawn before it is built.
+ * Trueframe's signature, at hero scale: the kitchen is drawn before it is built.
  *
- * An inline SVG elevation of the kitchen (24 hand-placed rectangles and lines
- * on a faint grid, traced over the photo's composition) draws itself with
- * stroke-dashoffset, group by group; then the finished photo wipes in over it,
- * left to right, via clip-path, led by a 6px safety-orange edge that fades out
- * once the wipe lands. The dimension strings stay around the frame and three
- * keynote tags land on the photo, so the "drawing" is still there when the
- * job is done.
+ * The signature IS the hero backdrop. Put it as the first child of a
+ * `relative isolate overflow-hidden` hero section: it fills the section
+ * (absolute, inset 0, -z-10) and the section's own markup (h1, CTAs) sits over
+ * it in normal flow. Three layers, bottom to top:
+ *   [data-photo]     the kit's HeroBackdrop (full-width photo + scrims), wiped
+ *                    in left to right with clip-path;
+ *   [data-linework]  a faint drafting grid and a fine trace of the room (island,
+ *                    counter, hood, pendants) with three dimension strings and
+ *                    two annotations, laid exactly over the photo;
+ *   a 3px safety-orange edge that travels with the wipe.
  *
- * Timeline (all CSS animations, started by the server-rendered markup, so the
+ * Timeline (CSS animations, started by the server-rendered markup, so the
  * sequence begins at first paint, not at hydration; nothing loops):
- *   0.00-1.60 s  linework draws (5 groups, 0.15 s apart, 1.0 s each)
- *   0.20-1.10 s  dimension lines extend (transform), labels fade in 0.9-1.3 s
- *   1.75-2.85 s  photo wipes in (clip-path inset), edge travels with it (transform)
- *   2.85-3.30 s  orange edge fades (opacity); keynote tags fade in 2.85-3.25 s
- *   ~3.30 s      every animation has finished -> data-state="rest"
- * At rest (and from the start when reduced motion or Pause is on) the photo is
- * unclipped, the linework is visibility:hidden behind it and nothing animates.
- * No React state changes per frame: one state flip when the sequence ends.
+ *   0.10-1.45 s  the trace draws over the navy (4 groups, 0.15 s apart)
+ *   0.60-1.75 s  dimension lines and leaders draw; strings fade in 1.15-1.95 s
+ *   1.90-3.10 s  the photo wipes in under the drawing, the orange edge leading
+ *   3.40-4.10 s  the drawing fades away, so the headline reads on the photo
+ *   ~4.1 s       every animation has finished -> data-state="rest"
+ * At rest (and from the start under reduced motion, Pause or capture) the photo
+ * is unclipped and fully opaque, and [data-linework] is visibility:hidden. One
+ * React state flip when the sequence ends; no per-frame state.
  *
- * Sizing: the frame has the photo's own aspect ratio (1344:752), so the image
- * is drawn at exactly the frame width, never wider than its 1344px source
- * (the hero caps the frame well below that at every breakpoint).
+ * Alignment: the trace is drawn in the photo's own pixels (1600 x 1067) on a
+ * box that reproduces the photo's object-fit: cover + object-position (CSS
+ * container units against the same parallax plane HeroBackdrop uses), and that
+ * plane gets the same scroll drift and load settle, so the lines sit on the
+ * island, the hood and the pendants at every viewport.
  *
- * Everything decorative (linework, dimensions, keynote tags) is aria-hidden;
- * the photo's alt text carries the picture and the keynote legend is real text.
+ * Everything in the drawing is decorative (aria-hidden); the photo's alt text
+ * carries the picture.
  */
 
+const VB_W = 1600;
+const VB_H = 1067;
+const RATIO = (VB_W / VB_H).toFixed(5);
 const LINE = "#9BB8E0";
 const EASE_DRAW = "cubic-bezier(.45,0,.2,1)";
 const EASE_WIPE = "cubic-bezier(.65,0,.25,1)";
+/** Must match HeroBackdrop's load settle so the drawing stays on the photo. */
+const SETTLE = [0.22, 1, 0.36, 1] as const;
 
 const CSS = `
-.tf-draw{stroke-dasharray:1 1;stroke-dashoffset:1;animation:tf-draw 1s ${EASE_DRAW} var(--d,0s) both}
+.tf-draw{stroke-dasharray:1 1;stroke-dashoffset:1;animation:tf-draw .9s ${EASE_DRAW} var(--d,0s) both}
 @keyframes tf-draw{to{stroke-dashoffset:0}}
-.tf-wipe{clip-path:inset(0 100% 0 0);animation:tf-wipe 1.1s ${EASE_WIPE} 1.75s forwards}
+.tf-wipe{clip-path:inset(0 100% 0 0);animation:tf-wipe 1.2s ${EASE_WIPE} 1.9s forwards}
 @keyframes tf-wipe{to{clip-path:inset(0 0 0 0)}}
-.tf-track{transform:translateX(0);animation:tf-track 1.1s ${EASE_WIPE} 1.75s forwards}
+.tf-track{transform:translateX(0);animation:tf-track 1.2s ${EASE_WIPE} 1.9s forwards}
 @keyframes tf-track{to{transform:translateX(100%)}}
-.tf-edge{opacity:0;animation:tf-edge 1.55s linear 1.75s forwards}
-@keyframes tf-edge{0%,71%{opacity:1}100%{opacity:0}}
-.tf-dimx{transform:scaleX(0);animation:tf-grow .9s ${EASE_DRAW} var(--d,0s) forwards}
-.tf-dimy{transform:scaleY(0);animation:tf-grow .9s ${EASE_DRAW} var(--d,0s) forwards}
-@keyframes tf-grow{to{transform:none}}
+.tf-edge{opacity:0;animation:tf-edge 1.5s linear 1.9s forwards}
+@keyframes tf-edge{0%,80%{opacity:1}100%{opacity:0}}
 .tf-fade{opacity:0;animation:tf-fade .4s ease-out var(--d,0s) forwards}
 @keyframes tf-fade{to{opacity:1}}
+.tf-out{animation:tf-out .7s cubic-bezier(.22,1,.36,1) 3.4s forwards}
+@keyframes tf-out{to{opacity:0}}
+.tf-box{container-type:size}
+.tf-cover{--w:max(100cqw,calc(100cqh*${RATIO}));position:absolute;width:var(--w);height:calc(var(--w)/${RATIO});left:calc((100cqw - var(--w))*var(--tf-px-m));top:calc((100cqh - var(--w)/${RATIO})*var(--tf-py-m))}
+@media (min-width:640px){.tf-cover{left:calc((100cqw - var(--w))*var(--tf-px));top:calc((100cqh - var(--w)/${RATIO})*var(--tf-py))}}
 [data-signature="contractor"][data-state="rest"] [data-linework]{visibility:hidden}
 `;
 
-type Seg = { d: string };
-/**
- * The elevation, in the photo's own coordinates (1344 x 752), so the photo
- * lands on top of its own drawing. 24 elements in 5 drawing groups.
- */
-const GROUPS: Seg[][] = [
-  // 0 - floor, tall pantry wall and the doorway
-  [{ d: "M0 704H1344" }, { d: "M18 58H226V690H18Z" }, { d: "M98 182H190V636H98Z" }, { d: "M236 184H386V528H236Z" }],
-  // 1 - upper cabinet run and the hood
+/** The faint drafting sheet under the trace (fades with it). */
+const GRID: CSSProperties = {
+  backgroundImage:
+    "linear-gradient(rgba(155,184,224,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(155,184,224,0.08) 1px, transparent 1px)",
+  backgroundSize: "32px 32px",
+};
+
+/** The trace, in the photo's own pixels (1600 x 1067), in four drawing groups. */
+const TRACE: string[][] = [
+  // 0 - back counter, open shelf, backsplash edge and the plaster panel
+  ["M760 604L1578 623", "M768 507H1145", "M1145 264V597", "M1388 248V515H1575"],
+  // 1 - the island: slab top, slab edge, body
+  ["M614 686L1048 748L1360 647L1000 622Z", "M614 686V700L1048 762L1360 657V647M1048 748V762", "M627 700V982L940 1067", "M952 748V1067"],
+  // 2 - range hood
+  ["M1212 256V372M1281 256V372", "M1212 372L1140 425H1344L1281 372Z", "M1140 425V432H1344V425"],
+  // 3 - pendants: canopy, cord, shade
   [
-    { d: "M410 140H1034V328H410Z" },
-    { d: "M630 140V328" },
-    { d: "M815 140V328" },
-    { d: "M630 266H815" },
-    { d: "M520 140V328" },
-    { d: "M925 140V328" },
-  ],
-  // 2 - counters and the base run
-  [{ d: "M400 404H1344" }, { d: "M956 412H1344V532H956Z" }, { d: "M640 394H808V420H640Z" }],
-  // 3 - island and stools
-  [
-    { d: "M328 440H956V706H328Z" },
-    { d: "M328 470H956" },
-    { d: "M406 508H550V550H406Z" },
-    { d: "M586 508H726V550H586Z" },
-    { d: "M750 508H900V550H750Z" },
-  ],
-  // 4 - pendants and the window
-  [
-    { d: "M533 14V150" },
-    { d: "M474 226Q474 150 533 150Q592 150 592 226Z" },
-    { d: "M790 14V150" },
-    { d: "M731 226Q731 150 790 150Q849 150 849 226Z" },
-    { d: "M1080 70H1344V400H1080ZM1140 70V400M1212 70V400M1080 172H1344" },
+    "M866 99H896M881 99V355M852 385L881 355L910 385Z",
+    "M1000 151H1028M1014 151V369M989 396L1014 369L1040 396Z",
+    "M1112 191H1140M1126 191V387M1104 412L1126 387L1148 412Z",
   ],
 ];
 
-/** Keynote tag positions on the frame, in % (left, top). */
-const TAGS: [number, number][] = [
-  [45.5, 23],
-  [66, 64],
-  [91, 15],
+/** Dimension lines (with slash ticks and extension lines) and their string positions. */
+const DIMS = {
+  pendants: {
+    d: "M881 240H1126M875 246L887 234M1008 246L1020 234M1120 246L1132 234",
+    at: [
+      [947.5, 240],
+      [1070, 240],
+    ],
+  },
+  island: { d: "M614 566H1360M614 576V676M1360 576V637M608 572L620 560M1354 572L1366 560", at: [[987, 566]] },
+  height: { d: "M1560 226V836M1546 226H1574M1546 836H1574M1554 232L1566 220M1554 842L1566 830", at: [[1560, 531]] },
+};
+
+/** Annotation leaders: a dot on the feature, a dogleg, then the label (desktop only). */
+const LEADERS: { d: string; dot: [number, number]; label: [number, number] }[] = [
+  { d: "M1014 151L1052 118H1096", dot: [1014, 151], label: [1102, 118] },
+  { d: "M1046 704L1088 842H1128", dot: [1046, 704], label: [1134, 842] },
 ];
 
 type Props = {
   image: DemoImage;
   alt: string;
-  dims: { overall: string; height: string; island: string };
-  keynotes: string[];
-  keynotesLabel: string;
-  /** `sizes` for the photo. */
-  sizes: string;
-  className?: string;
+  dims: { pendants: string; island: string; height: string };
+  labels: [string, string];
+  /** object-position of the photo as fractions [x, y], from 640px up and below it. */
+  focus: [number, number];
+  mobileFocus: [number, number];
+  /** Legibility scrims, passed to HeroBackdrop (they wipe in with the photo). */
+  scrims: string[];
+  parallax?: number;
 };
 
 function delay(s: number): CSSProperties {
   return { "--d": `${s}s` } as CSSProperties;
 }
 
-const DIM_LABEL = "bg-[#0F2440] px-1.5 text-[0.8125rem] font-medium leading-none tracking-[0.02em] text-[#C4D5EC] tabular-nums sm:text-[0.875rem]";
+const pct = (x: number, y: number): CSSProperties => ({ left: `${(x / VB_W) * 100}%`, top: `${(y / VB_H) * 100}%` });
+const CHIP = "absolute whitespace-nowrap bg-[#0F2440] leading-none text-[#C4D5EC]";
 
-/** A horizontal dimension line with architectural slash ticks and its string in a gap. */
-function DimX({ label, live, d, className }: { label: string; live: boolean; d: number; className: string }) {
+function Drawing({ dims, labels, parallax }: { dims: Props["dims"]; labels: Props["labels"]; parallax: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // The same drift and settle HeroBackdrop gives the photo, on a plane of the same box.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", `${parallax}%`]);
+  let i = 0;
+  const path = (d: string, at: number, width = 1.25) => (
+    <path
+      key={i++}
+      d={d}
+      pathLength={1}
+      stroke={LINE}
+      strokeWidth={width}
+      strokeLinejoin="miter"
+      vectorEffect="non-scaling-stroke"
+      className="tf-draw"
+      style={delay(at)}
+    />
+  );
   return (
-    <div aria-hidden="true" className={`pointer-events-none absolute flex items-center ${className}`}>
-      <span className={`absolute inset-x-0 top-1/2 h-px origin-center bg-[#9BB8E0] ${live ? "tf-dimx" : ""}`} style={live ? delay(d) : undefined} />
-      <span className="absolute left-0 top-1/2 h-3 w-px -translate-y-1/2 bg-[#9BB8E0]" />
-      <span className="absolute right-0 top-1/2 h-3 w-px -translate-y-1/2 bg-[#9BB8E0]" />
-      <span className="absolute left-0 top-1/2 h-px w-3 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-[#9BB8E0]" />
-      <span className="absolute right-0 top-1/2 h-px w-3 -translate-y-1/2 translate-x-1/2 -rotate-45 bg-[#9BB8E0]" />
-      <span className={`relative mx-auto ${DIM_LABEL} ${live ? "tf-fade" : ""}`} style={live ? delay(d + 0.7) : undefined}>
-        {label}
-      </span>
+    <div ref={ref} className="absolute inset-0">
+      <motion.div className="absolute inset-x-0 top-0 will-change-transform" style={{ y, bottom: `-${parallax}%` }}>
+        <motion.div
+          className="tf-box absolute inset-0"
+          initial={{ scale: 1.06 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 2.4, ease: SETTLE }}
+        >
+          <div className="tf-cover">
+            <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full" fill="none">
+              {TRACE.map((group, g) => group.map((d) => path(d, 0.1 + g * 0.15)))}
+              {path(DIMS.pendants.d, 0.6, 1)}
+              {path(DIMS.island.d, 0.75, 1)}
+              {path(DIMS.height.d, 0.85, 1)}
+              <g className="max-lg:hidden">
+                {LEADERS.map((l, n) => (
+                  <g key={n}>
+                    {path(l.d, 0.9 + n * 0.15, 1)}
+                    <circle cx={l.dot[0]} cy={l.dot[1]} r={4} fill="#FF7A1A" className="tf-fade" style={delay(0.9 + n * 0.15)} />
+                  </g>
+                ))}
+              </g>
+            </svg>
+            {DIMS.pendants.at.map(([x, yy], n) => (
+              <span
+                key={`p${n}`}
+                className={`${CHIP} tf-fade -translate-x-1/2 -translate-y-1/2 px-1 text-[0.75rem] font-medium tabular-nums sm:text-[0.8125rem]`}
+                style={{ ...pct(x, yy), ...delay(1.15 + n * 0.08) }}
+              >
+                {dims.pendants}
+              </span>
+            ))}
+            <span
+              className={`${CHIP} tf-fade -translate-x-1/2 -translate-y-1/2 px-1.5 text-[0.8125rem] font-medium tabular-nums sm:text-[0.875rem]`}
+              style={{ ...pct(DIMS.island.at[0][0], DIMS.island.at[0][1]), ...delay(1.3) }}
+            >
+              {dims.island}
+            </span>
+            <span
+              className={`${CHIP} tf-fade -translate-x-1/2 -translate-y-1/2 -rotate-90 px-1.5 text-[0.8125rem] font-medium tabular-nums sm:text-[0.875rem]`}
+              style={{ ...pct(DIMS.height.at[0][0], DIMS.height.at[0][1]), ...delay(1.4) }}
+            >
+              {dims.height}
+            </span>
+            {LEADERS.map((l, n) => (
+              <span
+                key={`l${n}`}
+                className={`${CHIP} tf-fade -translate-y-1/2 px-2 py-1 text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#E9F0FA] max-lg:hidden`}
+                style={{ ...pct(l.label[0], l.label[1]), ...delay(1.35 + n * 0.15) }}
+              >
+                {labels[n]}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
 
-/** The vertical dimension, string turned to read bottom-to-top. */
-function DimY({ label, live, d, className }: { label: string; live: boolean; d: number; className: string }) {
-  return (
-    <div aria-hidden="true" className={`pointer-events-none absolute flex items-center justify-center ${className}`}>
-      <span className={`absolute inset-y-0 left-1/2 w-px origin-center bg-[#9BB8E0] ${live ? "tf-dimy" : ""}`} style={live ? delay(d) : undefined} />
-      <span className="absolute left-1/2 top-0 h-px w-3 -translate-x-1/2 bg-[#9BB8E0]" />
-      <span className="absolute bottom-0 left-1/2 h-px w-3 -translate-x-1/2 bg-[#9BB8E0]" />
-      <span className="absolute left-1/2 top-0 h-px w-3 -translate-x-1/2 -rotate-45 bg-[#9BB8E0]" />
-      <span className="absolute bottom-0 left-1/2 h-px w-3 -translate-x-1/2 -rotate-45 bg-[#9BB8E0]" />
-      <span className={`relative -rotate-90 whitespace-nowrap ${DIM_LABEL} ${live ? "tf-fade" : ""}`} style={live ? delay(d + 0.7) : undefined}>
-        {label}
-      </span>
-    </div>
-  );
-}
-
-export function BlueprintHero({ image, alt, dims, keynotes, keynotesLabel, sizes, className }: Props) {
+export function BlueprintHero({ image, alt, dims, labels, focus, mobileFocus, scrims, parallax = 12 }: Props) {
   const still = useDemoStill();
   const [done, setDone] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const live = !still && !done;
 
-  // One state flip when every animation in the figure has finished (or been
-  // cancelled). getAnimations() also catches a sequence that already ran out
-  // before hydration; the timer is a backstop for a browser without it.
+  // One state flip when the drawing's own CSS animations (tf-*) have finished or
+  // been cancelled. getAnimations() also catches a sequence that already ran
+  // out before hydration; the timer is a backstop for a browser without it.
   useEffect(() => {
     if (still || done) return;
     const el = ref.current;
@@ -164,9 +227,9 @@ export function BlueprintHero({ image, alt, dims, keynotes, keynotesLabel, sizes
     const finish = () => {
       if (!cancelled) setDone(true);
     };
-    const backstop = window.setTimeout(finish, 4500);
+    const backstop = window.setTimeout(finish, 5000);
     if (el && typeof el.getAnimations === "function") {
-      const anims = el.getAnimations({ subtree: true });
+      const anims = el.getAnimations({ subtree: true }).filter((a) => String((a as CSSAnimation).animationName ?? "").startsWith("tf-"));
       Promise.allSettled(anims.map((a) => a.finished)).then(finish);
     }
     return () => {
@@ -175,93 +238,39 @@ export function BlueprintHero({ image, alt, dims, keynotes, keynotesLabel, sizes
     };
   }, [still, done]);
 
-  let i = 0;
+  const vars = {
+    "--tf-px": focus[0],
+    "--tf-py": focus[1],
+    "--tf-px-m": mobileFocus[0],
+    "--tf-py-m": mobileFocus[1],
+  } as CSSProperties;
+  const pos = (f: [number, number]) => `${f[0] * 100}% ${f[1] * 100}%`;
+
   return (
-    <figure ref={ref} data-signature="contractor" data-state={live ? "drawing" : "rest"} className={className}>
+    <div
+      ref={ref}
+      data-signature="contractor"
+      data-state={live ? "drawing" : "rest"}
+      className="absolute inset-0 -z-10 overflow-hidden bg-[#0F2440]"
+      style={vars}
+    >
       <style>{CSS}</style>
-      {/* Frame, with room around it for the dimension strings. */}
-      <div className="relative mb-9 ml-6 mt-7 sm:mb-10 sm:ml-10 sm:mt-9">
-        <div className="relative aspect-[1344/752] overflow-hidden bg-[#0F2440] outline outline-1 outline-offset-0 outline-[#9BB8E0]/45">
-          <svg
-            data-linework=""
-            aria-hidden="true"
-            viewBox="0 0 1344 752"
-            preserveAspectRatio="none"
-            className="absolute inset-0 h-full w-full"
-            fill="none"
-          >
-            <defs>
-              <pattern id="tf-grid" width="48" height="47" patternUnits="userSpaceOnUse">
-                <path d="M48 0H0V47" stroke={LINE} strokeOpacity="0.16" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-              </pattern>
-            </defs>
-            <rect width="1344" height="752" fill="url(#tf-grid)" />
-            {GROUPS.map((group, g) =>
-              group.map((seg) => (
-                <path
-                  key={i++}
-                  d={seg.d}
-                  pathLength={1}
-                  stroke={LINE}
-                  strokeWidth={1.5}
-                  strokeLinejoin="miter"
-                  vectorEffect="non-scaling-stroke"
-                  className={live ? "tf-draw" : undefined}
-                  style={live ? delay(g * 0.15) : undefined}
-                />
-              )),
-            )}
-          </svg>
-          <div data-photo="" className={`absolute inset-0 ${live ? "tf-wipe" : ""}`}>
-            <img
-              src={image.src}
-              srcSet={`${image.small} 640w, ${image.src} ${image.width}w`}
-              sizes={sizes}
-              width={image.width}
-              height={image.height}
-              alt={alt}
-              fetchPriority="high"
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
-          </div>
-          {live && (
-            <div aria-hidden="true" className="tf-track pointer-events-none absolute inset-0">
-              <span className="tf-edge absolute inset-y-0 -left-[3px] w-[6px] bg-[#FF7A1A]" />
-            </div>
-          )}
-          {TAGS.map(([x, y], n) => (
-            <span
-              key={n}
-              aria-hidden="true"
-              className={`absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[1.5px] border-[#FF7A1A] bg-[#0F2440] text-[0.75rem] font-medium leading-none text-[#E9F0FA] sm:h-7 sm:w-7 sm:text-[0.8125rem] ${live ? "tf-fade" : ""}`}
-              style={{ left: `${x}%`, top: `${y}%`, ...(live ? delay(2.85 + n * 0.1) : {}) }}
-            >
-              {n + 1}
-            </span>
-          ))}
-        </div>
-        <DimX label={dims.overall} live={live} d={0.2} className="bottom-full left-0 right-0 h-7 sm:h-9" />
-        <DimY label={dims.height} live={live} d={0.35} className="right-full top-0 bottom-0 w-6 sm:w-10" />
-        {/* The island, 24.4% - 71.1% of the frame. */}
-        <DimX label={dims.island} live={live} d={0.5} className="left-[24.4%] right-[28.9%] top-full h-9 sm:h-10" />
+      <div data-photo="" className={`absolute inset-0 isolate ${live ? "tf-wipe" : ""}`}>
+        <HeroBackdrop image={image} alt={alt} position={pos(focus)} mobilePosition={pos(mobileFocus)} parallax={parallax} scrims={scrims} />
       </div>
-      <figcaption className="ml-6 sm:ml-10">
-        <span className="sr-only">{keynotesLabel}: </span>
-        <ol className="grid gap-x-6 gap-y-1.5 text-[0.875rem] leading-snug text-[#C4D5EC] sm:grid-cols-3">
-          {keynotes.map((k, n) => (
-            <li key={n} className="flex gap-2.5">
-              <span
-                aria-hidden="true"
-                className="mt-px flex h-[1.125rem] w-[1.125rem] shrink-0 items-center justify-center rounded-full border border-[#FF7A1A] text-[0.6875rem] font-medium leading-none text-[#E9F0FA]"
-              >
-                {n + 1}
-              </span>
-              <span>{k}</span>
-            </li>
-          ))}
-        </ol>
-      </figcaption>
-    </figure>
+      <div
+        data-linework=""
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 overflow-hidden ${live ? "tf-out" : ""}`}
+        style={GRID}
+      >
+        {live && <Drawing dims={dims} labels={labels} parallax={parallax} />}
+      </div>
+      {live && (
+        <div aria-hidden="true" className="tf-track pointer-events-none absolute inset-0">
+          <span className="tf-edge absolute inset-y-0 -left-[1.5px] w-[3px] bg-[#FF7A1A]" />
+        </div>
+      )}
+    </div>
   );
 }

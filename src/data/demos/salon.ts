@@ -1,5 +1,5 @@
 import type { L10n } from "@/i18n/types";
-import { demoImage, type DemoContent, type DemoImage } from "./index";
+import { demoImage, heroImage, type DemoContent, type DemoImage } from "./index";
 
 /**
  * Maison Lumière (fictional colour studio). Every user-facing string on
@@ -28,7 +28,8 @@ export type SalonLook = { image: DemoImage; shade: L10n; technique: L10n; by: st
 
 export type SalonContent = DemoContent & {
   nav: { menu: L10n; shades: L10n; lookbook: L10n; studio: L10n; reviews: L10n; visit: L10n; book: L10n; home: L10n; primary: L10n };
-  hero: { kicker: L10n; lines: [L10n, L10n]; intro: L10n; cta: L10n; menuLink: L10n; open: L10n; image: DemoImage; detail: DemoImage; caption: L10n };
+  /** `image`: the full-width landscape photo behind the headline (heroImage: 640 / 1600 / 2560 files). */
+  hero: { kicker: L10n; lines: [L10n, L10n]; intro: L10n; cta: L10n; menuLink: L10n; image: DemoImage };
   ribbon: { title: SalonHeading; intro: L10n; label: L10n; swatches: SalonSwatch[] };
   services: { kicker: L10n; title: SalonHeading; intro: L10n; items: SalonService[]; from: L10n; consult: L10n; note: L10n };
   lookbook: { title: SalonHeading; intro: L10n; label: L10n; looks: SalonLook[] };
@@ -203,40 +204,26 @@ export const salon: SalonContent = {
   hero: {
     kicker: { en: "Colour studio, est. 2014", es: "Estudio de color, desde 2014" },
     lines: [
-      { en: "Colour that", es: "Color que hace" },
-      { en: "turns heads.", es: "voltear miradas." },
+      { en: "Colour that", es: "Color que" },
+      { en: "turns heads.", es: "roba miradas." },
     ],
     intro: {
-      en: "Balayage, glosses and corrections, painted by hand by three colourists who only do colour. Every appointment starts with a strand test and a price you agree to before anything is mixed.",
-      es: "Balayage, baños de brillo y correcciones, pintados a mano por tres coloristas que solo se dedican al color. Cada cita empieza con una prueba de mechón y un precio que usted aprueba antes de preparar la mezcla.",
+      en: "Balayage, glosses and corrections, painted by hand by three colourists who only do colour.",
+      es: "Balayage, baños de brillo y correcciones, pintados a mano por tres coloristas que solo se dedican al color.",
     },
     cta: { en: "Book a consultation", es: "Reserve una consulta" },
-    menuLink: { en: "See the menu", es: "Ver servicios y precios" },
-    open: { en: "Open Tuesday to Saturday", es: "Abierto de martes a sábado" },
-    image: demoImage(
+    menuLink: { en: "See the menu", es: "Ver la carta" },
+    // Unsplash WCPg9ROZbM0 (Element5 Digital), cropped 16:9 and graded warm.
+    image: heroImage(
       "salon",
-      "hero",
+      "hero-wide",
       {
-        en: "A woman seen from behind against a dusty-rose wall, her long hair in loose waves of chestnut melting into honey-gold balayage.",
-        es: "Una mujer de espaldas ante una pared rosa empolvado, con el cabello largo en ondas sueltas que pasan del castaño a un balayage dorado miel.",
+        en: "A woman seen from behind against a dusty-rose wall, hands in her hair, her long loose waves melting from chestnut into honey balayage.",
+        es: "Una mujer de espaldas ante una pared rosa empolvado, con las manos en el cabello y ondas largas y sueltas que pasan del castaño a un balayage miel.",
       },
-      1024,
-      688,
+      1600,
+      900,
     ),
-    detail: demoImage(
-      "salon",
-      "detail",
-      {
-        en: "Close on a client's hands holding a loose copper braid threaded with sprigs of baby's breath.",
-        es: "Primer plano de las manos de una clienta sosteniendo una trenza suelta color cobre con ramitas de paniculata.",
-      },
-      800,
-      1000,
-    ),
-    caption: {
-      en: "Soft balayage, chestnut to honey. Inès, 3\u00a0h\u00a040\u00a0min.",
-      es: "Balayage suave, de castaño a miel. Inès, 3\u00a0h\u00a040\u00a0min.",
-    },
   },
   ribbon: {
     title: {
@@ -526,7 +513,7 @@ export const salon: SalonContent = {
     imageCaption: { en: "The hall and stair up from Rue Lane.", es: "El vestíbulo y la escalera desde Rue Lane." },
   },
   photoCredits: [
-    "Alvin Mahmudov",
+    "Element5 Digital",
     "Gabriel Silvério",
     "OmAr Taha",
     "Lera Kogan",
