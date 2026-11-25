@@ -1,5 +1,6 @@
 "use client";
 
+import { Wordmark } from "@/components/ui/Wordmark";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Building2, Check, Loader2, Phone, User, X, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
@@ -378,7 +379,7 @@ function Pitch({ locale, audience }: { locale: "en" | "es"; audience: string }) 
         className="pointer-events-none absolute -bottom-24 -right-24 -z-10 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgb(var(--aqua-glow)/0.5),transparent)]"
       />
 
-      <p className="font-display text-lg font-semibold tracking-[0.28em]">SERMA</p>
+      <Wordmark className="text-ink-900" markClassName="h-6 sm:h-7" />
 
       <h3 className="mt-6 font-display text-[2.125rem] font-semibold leading-[1.02] tracking-[-0.035em] text-balance sm:mt-10 sm:text-[2.75rem]">
         {M.headlineBefore[locale]}{" "}

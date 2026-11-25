@@ -1,4 +1,12 @@
 import { ImageResponse } from "next/og";
+import {
+  LOGO_LETTERS,
+  LOGO_SWOOSH,
+  LOGO_SWOOSH_FROM,
+  LOGO_SWOOSH_STOPS,
+  LOGO_SWOOSH_TO,
+  LOGO_VIEWBOX,
+} from "@/components/ui/logo-paths";
 
 /** Rendered once at build time; works with `output: "export"`. */
 export const dynamic = "force-static";
@@ -52,27 +60,24 @@ export default function Image() {
           ))}
         </svg>
 
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div
-            style={{
-              width: 14,
-              height: 14,
-              borderRadius: 7,
-              background: BRAND.accent,
-              marginRight: 16,
-            }}
-          />
-          <div
-            style={{
-              fontSize: 40,
-              fontWeight: 700,
-              letterSpacing: 10,
-              color: BRAND.text,
-            }}
-          >
-            SERMA
-          </div>
-        </div>
+        {/* The SERMA logo (Cinzel letters + swoosh), same artwork as the site header. */}
+        <svg width="372" height="60" viewBox={LOGO_VIEWBOX} style={{ display: "flex" }}>
+          <defs>
+            <linearGradient
+              id="swoosh"
+              gradientUnits="userSpaceOnUse"
+              x1={LOGO_SWOOSH_FROM.x}
+              y1={LOGO_SWOOSH_FROM.y}
+              x2={LOGO_SWOOSH_TO.x}
+              y2={LOGO_SWOOSH_TO.y}
+            >
+              <stop offset="0" stopColor={LOGO_SWOOSH_STOPS[0]} />
+              <stop offset="1" stopColor={LOGO_SWOOSH_STOPS[1]} />
+            </linearGradient>
+          </defs>
+          <path d={LOGO_LETTERS} fill={BRAND.text} />
+          <path d={LOGO_SWOOSH} fill="url(#swoosh)" />
+        </svg>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div

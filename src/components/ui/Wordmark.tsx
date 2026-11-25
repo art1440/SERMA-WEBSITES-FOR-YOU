@@ -1,57 +1,102 @@
-/**
- * The brand mark: a faceted core inside an orbit, on a friendly-blue app-icon tile.
- * Colours are CSS variables (set on the <svg> via `style`, since SVG presentation attributes
- * don't reliably resolve var()), so the mark re-tints in dark mode: the tile brightens to the
- * dark accent while the white core keeps its contrast against it.
- * Decorative — the wordmark carries the accessible name.
- */
-function BrandMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false" className={`brand-mark ${className ?? ""}`}>
-      <rect width="64" height="64" rx="16" style={{ fill: "var(--mark-tile)" }} />
-      <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" fill="none" stroke="#FFFFFF" strokeOpacity="0.3" strokeWidth="1.5" />
-      <g transform="rotate(-22 32 32)">
-        <ellipse cx="32" cy="32" rx="26" ry="9.5" fill="none" stroke="#CFE5FC" strokeWidth="3.2" strokeDasharray="58 8" strokeDashoffset="-34" />
-      </g>
-      <polygon points="32,14 47,26 42,46 22,46 17,26" fill="#FFFFFF" />
-      <polygon points="32,14 47,26 32,31" fill="#DCEBFB" />
-      <polygon points="17,26 32,31 22,46" fill="#BCD9F5" />
-      <polygon points="32,31 42,46 22,46" fill="#F2F8FF" />
-      <g transform="rotate(-22 32 32)">
-        <path d="M6 32 A26 9.5 0 0 0 58 32" fill="none" stroke="#FFFFFF" strokeWidth="3.2" />
-      </g>
-    </svg>
-  );
-}
+"use client";
+
+import { motion } from "framer-motion";
+import { useId } from "react";
+import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
+import {
+  LOGO_LETTERS,
+  LOGO_LOCKUP_VIEWBOX,
+  LOGO_SWOOSH,
+  LOGO_SWOOSH_FROM,
+  LOGO_SWOOSH_STOPS,
+  LOGO_SWOOSH_TO,
+  LOGO_TAGLINE,
+  LOGO_VIEWBOX,
+} from "./logo-paths";
+
+/** Left edge and full width of the swoosh, for the draw-in clip. */
+const SWOOSH_X = LOGO_SWOOSH_FROM.x - 1;
+const SWOOSH_W = LOGO_SWOOSH_TO.x - LOGO_SWOOSH_FROM.x + 2;
 
 /**
- * SERMA wordmark — Source Serif 4, set firm, wide tracking, always on brand
- * (text colour follows the `bone` token: deep blue in light, soft off-white in dark).
- * One accessible name (sr-only).
- * `tone` is kept for API compatibility and ignored.
+ * The SERMA logo: Cinzel letters with a blue swoosh sweeping out from under the A
+ * (artwork in logo-paths.ts, traced from the brand card).
+ *
+ * Letters follow `currentColor` (the `bone` token: deep navy in light, off-white in dark); the
+ * swoosh keeps the brand gradient. Motion: once, on mount, the swoosh draws itself out of the A,
+ * left to right, like a pen stroke. Reduced motion: it is simply there.
+ *
+ * `md` is the mark alone (navbar, CRM); `xl` adds "WEBSITE DESIGNS" (footer).
+ * One accessible name (sr-only). `tone` is kept for API compatibility and ignored.
+ * `className` overrides the letter colour (e.g. on a panel that stays light in dark mode);
+ * `markClassName` overrides the mark's height.
  */
-export function Wordmark({ size = "md" }: { tone?: "light" | "dark"; size?: "md" | "xl" }) {
-  if (size === "xl") {
-    return (
-      <span className="block leading-none text-bone">
-        <span className="sr-only">SERMA</span>
-        {/* `sd-wordmark` drives the CSS scroll-linked slide-in — keep it on this element. */}
-        <span
-          aria-hidden="true"
-          className="sd-wordmark block whitespace-nowrap pb-[0.14em] font-serif text-[clamp(2.5rem,10.5vw,9.5rem)] font-semibold uppercase leading-none tracking-[0.06em]"
+export function Wordmark({
+  size = "md",
+  className = "text-bone",
+  markClassName = "h-[22px] sm:h-6",
+}: {
+  tone?: "light" | "dark";
+  size?: "md" | "xl";
+  className?: string;
+  markClassName?: string;
+}) {
+  const id = useId();
+  const reduce = useReducedMotionSafe();
+  const gradId = `${id}-swoosh`;
+  const clipId = `${id}-draw`;
+  const xl = size === "xl";
+
+  const svg = (
+    <svg
+      viewBox={xl ? LOGO_LOCKUP_VIEWBOX : LOGO_VIEWBOX}
+      aria-hidden="true"
+      focusable="false"
+      className={xl ? "block h-auto w-full overflow-visible" : `block w-auto overflow-visible ${markClassName}`}
+    >
+      <defs>
+        <linearGradient
+          id={gradId}
+          gradientUnits="userSpaceOnUse"
+          x1={LOGO_SWOOSH_FROM.x}
+          y1={LOGO_SWOOSH_FROM.y}
+          x2={LOGO_SWOOSH_TO.x}
+          y2={LOGO_SWOOSH_TO.y}
         >
-          SERMA
-        </span>
+          <stop offset="0" stopColor={LOGO_SWOOSH_STOPS[0]} />
+          <stop offset="1" stopColor={LOGO_SWOOSH_STOPS[1]} />
+        </linearGradient>
+        <clipPath id={clipId}>
+          <motion.rect
+            key={reduce ? "still" : "draw"}
+            x={SWOOSH_X}
+            y={50}
+            height={30}
+            initial={{ width: reduce ? SWOOSH_W : 0 }}
+            animate={{ width: SWOOSH_W }}
+            transition={reduce ? { duration: 0 } : { duration: 0.9, ease: [0.65, 0, 0.35, 1], delay: 0.35 }}
+          />
+        </clipPath>
+      </defs>
+      <path d={LOGO_LETTERS} fill="currentColor" />
+      <path d={LOGO_SWOOSH} fill={`url(#${gradId})`} clipPath={`url(#${clipId})`} />
+      {xl ? <path d={LOGO_TAGLINE} fill="currentColor" fillOpacity={0.8} /> : null}
+    </svg>
+  );
+
+  if (xl) {
+    return (
+      <span className={`block leading-none ${className}`}>
+        <span className="sr-only">SERMA Website Designs</span>
+        {/* `sd-wordmark` drives the CSS scroll-linked slide-in — keep it on this element. */}
+        <span className="sd-wordmark block w-full max-w-[min(100%,58rem)] pb-[0.5em]">{svg}</span>
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-2 text-bone">
+    <span className={`inline-flex items-center ${className}`}>
       <span className="sr-only">SERMA</span>
-      <BrandMark className="h-[26px] w-[26px] shrink-0 rounded-[7px] shadow-[0_6px_14px_-6px_rgb(var(--shadow)/0.7)] max-[389px]:hidden" />
-      <span aria-hidden="true" className="whitespace-nowrap font-serif text-[1.0625rem] font-semibold uppercase leading-none tracking-[0.18em] sm:text-[1.125rem]">
-        SERMA
-      </span>
+      {svg}
     </span>
   );
 }
