@@ -360,12 +360,14 @@ export function ServiceDemo() {
           mobilePosition="66% 50%"
           // Below lg the photo fills the top of the hero only and fades into the
           // deep teal under the type: the plumber stays above the headline, and a
-          // portrait crop is zoomed about half as much (sharper on phones).
-          className="max-sm:bottom-[34%] sm:max-lg:bottom-[26%]"
+          // portrait crop is zoomed about half as much (sharper on phones). On
+          // phones the box ends 17rem above the hero's bottom (about the type's
+          // height), so tall and short phones both meet the type at the fade.
+          className="max-sm:bottom-[17rem] sm:max-lg:bottom-[26%]"
           scrims={[
-            // Phones: the type sits below; solid for the bottom 13.5rem of the photo box
-            // (in px, so a short phone, where the type reaches higher, stays covered).
-            "sm:hidden bg-[linear-gradient(to_top,#0C3A36_0,#0C3A36_13.5rem,rgba(12,58,54,0.88)_16rem,rgba(12,58,54,0)_22rem)]",
+            // Phones: the type's top edge reaches up to ~9rem into the photo box (Spanish,
+            // short phones), so the shade is solid there and fades out above it.
+            "sm:hidden bg-[linear-gradient(to_top,#0C3A36_0,#0C3A36_10rem,rgba(12,58,54,0.88)_12rem,rgba(12,58,54,0)_17rem)]",
             // Portrait tablets: the same idea, scaled to the taller photo box.
             "hidden sm:block lg:hidden bg-gradient-to-t from-[#0C3A36] from-[34%] via-[#0C3A36]/90 via-[48%] to-[#0C3A36]/0 to-[80%]",
             // Desktop: the type sits on the left; the shade fades out across the plumber's arm.
@@ -413,8 +415,13 @@ export function ServiceDemo() {
                 className={`${BTN_LIGHT_HERO} h-12 px-5 text-[1rem] tabular-nums sm:h-[3.25rem] sm:text-[1.0625rem]`}
               >
                 <Phone className="h-5 w-5" />
-                <span className="sm:hidden">{L(c.hero.callShort)}</span>
-                <span className="hidden sm:inline">{L(c.hero.call)}</span>
+                {/* Short label where the row is tight: phones, and 1024-1279 px beside the plumber. */}
+                <span className="sm:hidden lg:inline xl:hidden">
+                  {L(c.hero.callShort)}
+                </span>
+                <span className="hidden sm:inline lg:hidden xl:inline">
+                  {L(c.hero.call)}
+                </span>
               </BookButton>
             </div>
           </div>

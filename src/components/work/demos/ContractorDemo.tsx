@@ -144,7 +144,7 @@ export function ContractorDemo() {
           labels={[L(c.hero.labels[0]), L(c.hero.labels[1])]}
           scrims={[
             // Phones and portrait tablets: from the top, over the type only (px stops: the type has a fixed height).
-            "lg:hidden bg-[linear-gradient(180deg,rgba(10,27,49,0.9)_0px,rgba(10,27,49,0.84)_480px,rgba(10,27,49,0.25)_620px,rgba(10,27,49,0)_700px)]",
+            "lg:hidden bg-[linear-gradient(180deg,rgba(10,27,49,0.88)_0px,rgba(10,27,49,0.82)_470px,rgba(10,27,49,0.2)_600px,rgba(10,27,49,0)_680px)]",
             // Desktop: from the left, dark behind the type column, gone before the island and the hood.
             "max-lg:hidden bg-[linear-gradient(90deg,rgba(10,27,49,0.88)_0%,rgba(10,27,49,0.78)_min(480px,42%),rgba(10,27,49,0.45)_min(680px,58%),rgba(10,27,49,0)_min(960px,80%))]",
           ]}

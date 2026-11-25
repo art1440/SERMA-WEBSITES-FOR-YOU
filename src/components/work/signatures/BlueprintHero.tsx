@@ -24,9 +24,9 @@ import { useDemoStill } from "../useDemoStill";
  * sequence begins at first paint, not at hydration; nothing loops):
  *   0.10-1.45 s  the trace draws over the navy (4 groups, 0.15 s apart)
  *   0.60-1.75 s  dimension lines and leaders draw; strings fade in 1.15-1.95 s
- *   1.90-3.10 s  the photo wipes in under the drawing, the orange edge leading
- *   3.40-4.10 s  the drawing fades away, so the headline reads on the photo
- *   ~4.1 s       every animation has finished -> data-state="rest"
+ *   1.80-3.00 s  the photo wipes in under the drawing, the orange edge leading
+ *   3.20-3.85 s  the drawing fades away, so the headline reads on the photo
+ *   ~3.85 s      every animation has finished -> data-state="rest"
  * At rest (and from the start under reduced motion, Pause or capture) the photo
  * is unclipped and fully opaque, and [data-linework] is visibility:hidden. One
  * React state flip when the sequence ends; no per-frame state.
@@ -53,15 +53,15 @@ const SETTLE = [0.22, 1, 0.36, 1] as const;
 const CSS = `
 .tf-draw{stroke-dasharray:1 1;stroke-dashoffset:1;animation:tf-draw .9s ${EASE_DRAW} var(--d,0s) both}
 @keyframes tf-draw{to{stroke-dashoffset:0}}
-.tf-wipe{clip-path:inset(0 100% 0 0);animation:tf-wipe 1.2s ${EASE_WIPE} 1.9s forwards}
+.tf-wipe{clip-path:inset(0 100% 0 0);animation:tf-wipe 1.2s ${EASE_WIPE} 1.8s forwards}
 @keyframes tf-wipe{to{clip-path:inset(0 0 0 0)}}
-.tf-track{transform:translateX(0);animation:tf-track 1.2s ${EASE_WIPE} 1.9s forwards}
+.tf-track{transform:translateX(0);animation:tf-track 1.2s ${EASE_WIPE} 1.8s forwards}
 @keyframes tf-track{to{transform:translateX(100%)}}
-.tf-edge{opacity:0;animation:tf-edge 1.5s linear 1.9s forwards}
+.tf-edge{opacity:0;animation:tf-edge 1.5s linear 1.8s forwards}
 @keyframes tf-edge{0%,80%{opacity:1}100%{opacity:0}}
 .tf-fade{opacity:0;animation:tf-fade .4s ease-out var(--d,0s) forwards}
 @keyframes tf-fade{to{opacity:1}}
-.tf-out{animation:tf-out .7s cubic-bezier(.22,1,.36,1) 3.4s forwards}
+.tf-out{animation:tf-out .65s cubic-bezier(.22,1,.36,1) 3.2s forwards}
 @keyframes tf-out{to{opacity:0}}
 .tf-box{container-type:size}
 .tf-cover{--w:max(100cqw,calc(100cqh*${RATIO}));position:absolute;width:var(--w);height:calc(var(--w)/${RATIO});left:calc((100cqw - var(--w))*var(--tf-px-m));top:calc((100cqh - var(--w)/${RATIO})*var(--tf-py-m))}
@@ -129,7 +129,7 @@ function delay(s: number): CSSProperties {
 }
 
 const pct = (x: number, y: number): CSSProperties => ({ left: `${(x / VB_W) * 100}%`, top: `${(y / VB_H) * 100}%` });
-const CHIP = "absolute whitespace-nowrap bg-[#0F2440] leading-none text-[#C4D5EC]";
+const CHIP = "absolute whitespace-nowrap bg-[#0F2440] leading-none text-[#C4D5EC] max-lg:hidden";
 
 function Drawing({ dims, labels, parallax }: { dims: Props["dims"]; labels: Props["labels"]; parallax: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -162,9 +162,12 @@ function Drawing({ dims, labels, parallax }: { dims: Props["dims"]; labels: Prop
           <div className="tf-cover">
             <svg viewBox={`0 0 ${VB_W} ${VB_H}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full" fill="none">
               {TRACE.map((group, g) => group.map((d) => path(d, 0.1 + g * 0.15)))}
-              {path(DIMS.pendants.d, 0.6, 1)}
-              {path(DIMS.island.d, 0.75, 1)}
-              {path(DIMS.height.d, 0.85, 1)}
+              {/* Dimensions and notes on desktop; phones and portrait tablets get the trace alone (the type sits over that part of the room there). */}
+              <g className="max-lg:hidden">
+                {path(DIMS.pendants.d, 0.6, 1)}
+                {path(DIMS.island.d, 0.75, 1)}
+                {path(DIMS.height.d, 0.85, 1)}
+              </g>
               <g className="max-lg:hidden">
                 {LEADERS.map((l, n) => (
                   <g key={n}>

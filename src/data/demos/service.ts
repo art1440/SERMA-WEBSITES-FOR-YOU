@@ -43,7 +43,7 @@ export type ServiceContent = Omit<DemoContent, "reviews"> & {
     intro: L10n;
     cta: L10n;
     call: L10n;
-    /** Phones (< 640px): the call button's short label, so both CTAs share one row. */
+    /** Phones and 1024-1279px: the call button's short label, so the CTA row stays short. */
     callShort: L10n;
     /** The full-width photo behind the headline (the LCP image). */
     image: DemoImage;

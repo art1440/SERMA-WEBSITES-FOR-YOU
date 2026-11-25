@@ -92,7 +92,7 @@ function HeroHeadline({ id, lines, className }: { id: string; lines: [string, st
 const HERO_SCRIMS = [
   "bg-[linear-gradient(to_bottom,rgb(246_233_234/0.55)_0rem,rgb(246_233_234/0.35)_3rem,rgb(246_233_234/0)_6.5rem)] lg:hidden",
   "bg-[linear-gradient(to_top,rgb(246_233_234/0.86)_0rem,rgb(246_233_234/0.72)_10rem,rgb(246_233_234/0.56)_18rem,rgb(246_233_234/0)_27rem)] lg:hidden",
-  "hidden lg:block bg-[linear-gradient(to_right,rgb(246_233_234/0.8)_0%,rgb(246_233_234/0.45)_24%,rgb(246_233_234/0)_44%)]",
+  "hidden lg:block bg-[linear-gradient(to_right,rgb(246_233_234/0.8)_0%,rgb(246_233_234/0.5)_27%,rgb(246_233_234/0)_46%)]",
 ];
 
 export function SalonDemo() {
