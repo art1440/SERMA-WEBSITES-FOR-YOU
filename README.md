@@ -2,7 +2,7 @@
 
 Bilingual (EN/ES), cookieless, interactive sales showcase: hero, system architecture, 6-niche Client Dashboard, missed-call → SMS simulator, revenue calculator, comparison matrix, a three-package Pricing tab (prices in `src/data/pricing.ts`) with the enquiry form, and legal pages. **The site collects no personal information** — no forms, no cookies, no trackers.
 
-**Stack:** Next.js 16 (App Router) · React 19 · Tailwind CSS 3.4 · Framer Motion · three.js + React Three Fiber (WebGL) · Lucide · self-hosted fonts via `next/font/local` · Higgsfield-generated motion loops.
+**Stack:** Next.js 16 (App Router) · React 19 · Tailwind CSS 3.4 · Framer Motion · Lenis (demo pages) · three.js + React Three Fiber (WebGL) · Lucide · self-hosted fonts via `next/font/local` · Higgsfield-generated motion loops.
 
 ## Hosting (Netlify)
 
@@ -88,6 +88,23 @@ Every demo is `noindex, nofollow` and is left out of `sitemap.xml`; `robots.txt`
 - `src/components/work/signatures/` — one bespoke scroll/drag interaction per demo (table above). Each marks itself with `data-signature="<id>"` and `data-state` (`rest` when settled; reduced motion always shows the rest state).
 - The gallery itself is `src/components/sections/work/` (`WorkGallery`, `WorkCard`, `WorkPreview`).
 
+**Motion kit** (`src/components/work/motion/`, shared by all six demos)
+
+| Device | What it does |
+| --- | --- |
+| `SmoothScroll` | Lenis wheel smoothing + anchor links that glide to their section and move focus there. Mounted by `DemoShell`; touch and keyboard stay native. |
+| `RevealImage` | Clip-path wipe (from any edge or the centre) while the photo settles from a zoom, then drifts inside its frame. |
+| `TextReveal` | Masked word or line entrance for headings; transform only, so text is never semi-transparent. |
+| `Parallax` | A depth plane: content travels at its own rate (plus optional x / rotate / scale) for layered heroes and collages. |
+| `StickyStory` | Desktop: the photo frame pins while steps scroll past and each step wipes its photo in. Phones: a plain stacked sequence. |
+| `HorizontalGallery` | Desktop: the section pins and vertical scroll walks a row of cards sideways. Phones: a native, focusable snap scroller. |
+| `ExpandImage` | A framed photo opens to full bleed while pinned, then short overlay copy rises in over a local scrim. |
+| `ScrollMarquee` | A row that moves only while the page scrolls (no autoplay, so no pause control needed); optional speed skew for type. |
+| `HoverPreview` | Cursor-following photo preview for price lists and menus (mouse / trackpad only, decorative). |
+| `Magnetic`, `RollText`, `ScrollProgress` | Primary-button pull, rolling labels, and a hairline progress bar in the sticky header. CSS helpers `demo-zoom` and `demo-underline` live in `globals.css`. |
+
+Rules the kit enforces: only `transform`, `opacity` and `clip-path` are animated; every device reads `useDemoStill()` and renders its final, unpinned state under reduced motion, the Pause switch, or `?capture=1` (so gallery screenshots show the whole page); pinned and hover devices are desktop / fine-pointer only, and only one layout variant is ever in the DOM, so no lazy image waits in a hidden branch.
+
 **Re-capturing the gallery screenshots**
 
 ```bash
@@ -119,4 +136,14 @@ npm run typecheck && npm run build && npm run verify:work home-smoke home-wiring
 
 All video loops in `public/media/` were generated with Higgsfield (Kling 3.0 Pro, silent, 1080p source) for this project, then re-encoded as seamless WebM + MP4 loops with posters (~7 MB total). They are illustrative renderings; they do not depict real client businesses (also stated on `/disclaimer`).
 
-The demo-site photos in `public/media/work/` are AI-generated (Higgsfield, GPT Image 2.6) for this project and depict no real businesses or clients.
+The original demo-site photos in `public/media/work/` (the `*-v1.webp` files listed in each demo's data file without a photographer) are AI-generated (Higgsfield, GPT Image 2.6) for this project and depict no real businesses or clients.
+
+The additional demo photos come from [Unsplash](https://unsplash.com/) (Unsplash License: free to use, no permission needed), downloaded through the Unsplash connector, re-encoded to WebP and self-hosted (the CSP allows no third-party images). Each demo credits its photographers in its footer (`photoCredits` in `src/data/demos/<id>.ts`). They are stock photos of other places and people, used to illustrate fictional businesses.
+
+To add another photo: download it into its own scratch folder, then
+
+```bash
+python3 -I scripts/import-photo.py path/to/photo.jpg public/media/work/<id> <name> --crop 4:5 --grade warm
+```
+
+which writes `<name>-v1.webp` (long edge 1600) and `<name>-v1-640.webp` and prints the width and height for `demoImage(...)`. `python3 -I scripts/import-photo.py contact sheet.jpg a.jpg b.jpg ...` builds a labelled contact sheet for choosing between candidates.
