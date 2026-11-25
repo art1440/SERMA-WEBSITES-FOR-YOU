@@ -150,11 +150,11 @@ const storyCall = demoImage(
   "service",
   "story-call",
   {
-    en: "A smiling dispatcher in a headset answers a call at his desk, a colleague on the phone beside him.",
-    es: "Un operador sonriente con auriculares atiende una llamada en su escritorio, junto a un compañero que también está al teléfono.",
+    en: "At home, a hand holds up a smartphone, ready to call, a fruit bowl blurred on the counter behind it.",
+    es: "En casa, una mano sostiene un teléfono móvil listo para llamar, con un frutero desenfocado en la encimera detrás.",
   },
-  1079,
-  1349,
+  1067,
+  1334,
 );
 const storyArrive = demoImage(
   "service",
@@ -180,8 +180,8 @@ const storyGuarantee = demoImage(
   "service",
   "story-guarantee",
   {
-    en: "An electrician in a hi-vis jacket gives a thumbs up beside a neatly finished breaker panel, a tester in his other hand.",
-    es: "Un electricista con chaqueta reflectante levanta el pulgar junto a un cuadro eléctrico terminado y ordenado, con un comprobador en la otra mano.",
+    en: "Across a dark table, a hand passes a pen over a clipboard while a homeowner signs the paperwork.",
+    es: "Sobre una mesa oscura, una mano acerca un bolígrafo a una carpeta mientras una clienta firma los papeles.",
   },
   1066,
   1333,
@@ -718,13 +718,6 @@ export const service: ServiceContent = {
           es: "Cambio de disyuntor · Cedar Flats",
         },
       },
-      {
-        image: storyGuarantee,
-        caption: {
-          en: "Panel tidy-up · Lakeview",
-          es: "Orden del panel · Lakeview",
-        },
-      },
     ],
   },
   reviewsBlock: {
@@ -816,7 +809,7 @@ export const service: ServiceContent = {
   },
   photoCredits: [
     "Timur Shakerzianov",
-    "LumenSoft Technologies",
+    "Jakub Żerdzicki",
     "Raze Solar",
     "Marc Zeman",
     "Toolmash Expo",
@@ -824,6 +817,7 @@ export const service: ServiceContent = {
     "HiveBoxx",
     "Eilis Garvey",
     "Joel Muniz",
+    "Annika Wischnewsky",
   ],
   footer: {
     tagline: {
