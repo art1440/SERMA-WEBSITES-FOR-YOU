@@ -365,8 +365,8 @@ export function ServiceDemo() {
             // the bottom so it tracks the type block on short and tall screens alike;
             // the Spanish block is taller, so its shade reaches a little higher.
             es
-              ? "sm:hidden bg-[linear-gradient(to_top,rgba(12,58,54,0.86)_0,rgba(12,58,54,0.8)_18rem,rgba(12,58,54,0.74)_28rem,rgba(12,58,54,0)_38rem)]"
-              : "sm:hidden bg-[linear-gradient(to_top,rgba(12,58,54,0.86)_0,rgba(12,58,54,0.8)_14rem,rgba(12,58,54,0.74)_22rem,rgba(12,58,54,0)_32rem)]",
+              ? "sm:hidden bg-[linear-gradient(to_top,rgba(12,58,54,0.84)_0,rgba(12,58,54,0.76)_18rem,rgba(12,58,54,0.68)_28rem,rgba(12,58,54,0)_38rem)]"
+              : "sm:hidden bg-[linear-gradient(to_top,rgba(12,58,54,0.84)_0,rgba(12,58,54,0.76)_14rem,rgba(12,58,54,0.68)_22rem,rgba(12,58,54,0)_32rem)]",
             "hidden sm:block lg:hidden bg-[linear-gradient(to_top,rgba(12,58,54,0.86)_0,rgba(12,58,54,0.8)_18rem,rgba(12,58,54,0.74)_30rem,rgba(12,58,54,0)_42rem)]",
             // Desktop: the type sits on the left; the shade fades out across the plumber's arm.
             "hidden lg:block bg-gradient-to-r from-[#0C3A36]/[0.94] from-[12%] via-[#0C3A36]/[0.78] via-[40%] to-[#0C3A36]/0 to-[60%]",
