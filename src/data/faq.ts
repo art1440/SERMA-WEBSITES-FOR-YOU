@@ -159,6 +159,18 @@ export const FAQ_ITEMS: FaqItem[] = [
     },
   },
   {
+    id: "installments",
+    group: "money",
+    q: {
+      en: "Can I pay over time?",
+      es: "¿Puedo pagar en partes?",
+    },
+    a: {
+      en: "Yes. On Business and Growth you can split the build into 3 equal monthly payments, with no interest and no fees. The first payment is due when you approve your finished site, so you still never pay for anything you haven’t seen.",
+      es: "Sí. En Negocio y Crecimiento puede dividir la construcción en 3 pagos mensuales iguales, sin intereses ni cargos. El primer pago se hace cuando aprueba su sitio terminado, así que nunca paga por algo que no haya visto.",
+    },
+  },
+  {
     id: "which-package",
     group: "money",
     q: {

@@ -32,6 +32,8 @@ export type Tier = {
   regularFrom?: boolean;
   /** Launch spots ALREADY SOLD on this package (real signed clients). Each package has LAUNCH.spots. */
   launchTaken?: number;
+  /** Number of equal monthly payments the build can be split into (no interest), or unset for none. */
+  installments?: number;
   /** The middle card: lifted and marked "Most popular". */
   featured?: boolean;
   /** "Everything in X, plus:" line above the list (tiers 2 and 3). */
@@ -117,6 +119,7 @@ export const TIERS: Tier[] = [
       es: "El sitio completo que lo hace ver como el mejor de la zona.",
     },
     price: 799,
+    installments: 3,
     regular: 999,
     monthly: 99.99,
     featured: true,
@@ -139,6 +142,7 @@ export const TIERS: Tier[] = [
       es: "Su sitio en inglés y español, más las herramientas del teléfono al lanzarse.",
     },
     price: 999,
+    installments: 3,
     regular: 1200,
     regularFrom: true,
     monthly: 99.99,
