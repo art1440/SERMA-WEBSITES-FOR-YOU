@@ -221,7 +221,7 @@ export function SalonDemo() {
                 </Magnetic>
                 <a
                   href="#menu"
-                  className={`text-[0.9375rem] font-medium text-[#3B1F2B] underline decoration-2 underline-offset-[7px] sm:text-[1rem] ${ACCENT_T} ${FOCUS}`}
+                  className={`relative text-[0.9375rem] font-medium text-[#3B1F2B] underline decoration-2 underline-offset-[7px] after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] sm:text-[1rem] ${ACCENT_T} ${FOCUS}`}
                   style={{ textDecorationColor: "var(--salon-accent)" }}
                 >
                   {L(c.hero.menuLink)}
