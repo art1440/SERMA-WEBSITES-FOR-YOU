@@ -11,12 +11,12 @@ import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { useLaunch } from "./LaunchOffer";
 
 /** Low end of what agencies typically charge; the bars are drawn to scale against it. */
-const AGENCY_FROM = 3000;
+const AGENCY_FROM = 2000;
 
 /**
  * Price anchor above the packages: what a typical agency charges next to where Serma starts,
  * as two bars that grow into place when they scroll into view. Drawn to scale (the agency bar
- * is $3,000), so the gap the eye sees is the real one. The Serma price follows the sale.
+ * is $2,000), so the gap the eye sees is the real one. The Serma price follows the sale.
  */
 export function PriceAnchor() {
   const { t, intlLocale } = useLanguage();
