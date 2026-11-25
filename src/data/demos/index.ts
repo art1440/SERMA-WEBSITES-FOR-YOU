@@ -64,7 +64,7 @@ const SHOT_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
 const MOBILE_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
   barbershop: { en: 22656, es: 23120 },
   salon: { en: 20224, es: 21102 },
-  beauty: { en: 20152, es: 20820 },
+  beauty: { en: 19592, es: 20180 },
   restaurant: { en: 18216, es: 19090 },
   contractor: { en: 19718, es: 20282 },
   service: { en: 29774, es: 30556 },
