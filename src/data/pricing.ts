@@ -5,7 +5,7 @@ import type { L10n } from "@/i18n/types";
  *
  * To publish a price, replace `null` with a number in US dollars, e.g. `price: 1490`.
  * While a price is `null` the card shows a "—" and "Price coming soon".
- * `monthly` is an optional ongoing fee (care plan / hosting); leave it `null` to hide the line.
+ * `monthly` is an optional ongoing fee (management and care plan); leave it `null` to hide the line.
  *
  * Every feature is a two-language string. A feature with `soon: true` is shown with a
  * "When it launches" tag (the phone side is still being built).
