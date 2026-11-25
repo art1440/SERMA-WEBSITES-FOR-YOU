@@ -25,15 +25,18 @@ import { BTN_LINE, BTN_SOLID, NAV_H, Rise, SMALL_CAPS, WRAP } from "./ui";
  *            which keeps the fire clear of the headline. Scrims: hearth from the
  *            left (>= 80% under the type column, gone by 60% across), ember up
  *            from the bottom edge so the hero melts into the menu.
- *   <  1024  a portrait frame crops a landscape photo to a narrow strip, and
- *            the type (kicker, headline, intro, buttons, walk-in line) runs long,
- *            so the type moves to the top and the content's bottom padding opens
- *            a window for the fire beneath it. The photo box is 75% of the plane,
- *            sits 4% up from its bottom and fades in at its top (IMG), so the
- *            flames land under the walk-in line in both the moving plane and the
- *            still one (the moving plane is 12% taller, so there they sit a
- *            little lower). object-position centres the fire. Scrims: hearth down
- *            from the top (>= 68% behind the type), ember up from the bottom.
+ *   <  1024  the photo still fills the whole hero, behind the type, but a
+ *            portrait frame crops it to a narrow strip, cover-scaled by height,
+ *            so the fire always sits 50-82% down the hero. The type therefore
+ *            runs from the top, over the dark ceiling and the copper hood, and
+ *            the content's bottom padding (28rem phones, 34rem tablets) makes the
+ *            hero about twice the type's height, so the flames start just under
+ *            the walk-in line (in the moving plane, 12% taller, a little lower).
+ *            The hero is taller than the screen there; the fire arrives as you
+ *            scroll. object-position 57-58% centres the fire in the strip.
+ *            Scrims: hearth down from the top behind the type (78% easing to 58%,
+ *            gone by 60% down, so the hood reads through), ember up from the
+ *            bottom edge.
  * Contrast is checked against the real pixels (herocontrast.cjs, EN + ES at
  * 1280 / 1440 / 390). Motion: the headline lines rise on load (transform only,
  * opaque from the first paint); kicker, intro and walk-in line fade up. Still:
@@ -44,14 +47,10 @@ const SCRIMS = [
   // Desktop: hearth from the left, under the type column.
   "lg:bg-[linear-gradient(to_right,rgba(30,9,7,0.9)_0%,rgba(30,9,7,0.8)_30%,rgba(30,9,7,0.42)_46%,rgba(30,9,7,0)_60%)]",
   // Phones and tablets: hearth down from the top, behind the type.
-  "max-lg:bg-[linear-gradient(to_bottom,rgba(30,9,7,0.86)_0%,rgba(30,9,7,0.8)_45%,rgba(30,9,7,0.68)_58%,rgba(30,9,7,0)_72%)]",
+  "max-lg:bg-[linear-gradient(to_bottom,rgba(30,9,7,0.78)_0%,rgba(30,9,7,0.7)_30%,rgba(30,9,7,0.58)_46%,rgba(30,9,7,0)_60%)]",
   // Every size: ember up from the bottom edge, into the menu section (drawn last, so the seam is exactly ember).
   "bg-[linear-gradient(to_top,#2A0F0C_0%,rgba(42,15,12,0.5)_8%,rgba(42,15,12,0)_22%)]",
 ];
-
-/** The photo box: see "< 1024" above. From 1024 up it fills the plane, pinned left. */
-const IMG =
-  "max-lg:top-auto max-lg:bottom-[4%] max-lg:h-[75%] max-lg:[mask-image:linear-gradient(to_bottom,transparent_0%,black_22%,black_88%,transparent_100%)] lg:[object-position:0%_50%]";
 
 function HeroHeadline({ lines, es, still }: { lines: string[]; es: boolean; still: boolean }) {
   // The Spanish lines are half as long again, so they run a size smaller.
@@ -100,13 +99,13 @@ export function Hero() {
       <HeroBackdrop
         image={c.hero.image}
         alt={L(c.hero.image.alt)}
-        position="62% 50%"
-        mobilePosition="58% 50%"
-        imgClassName={IMG}
+        position="58% 50%"
+        mobilePosition="57% 50%"
+        imgClassName="lg:[object-position:0%_50%]"
         scrims={SCRIMS}
       />
 
-      <div className={`${WRAP} w-full pb-[23rem] pt-8 sm:pb-[max(24rem,30svh)] sm:pt-14 lg:pb-16 lg:pt-28 xl:pb-20`}>
+      <div className={`${WRAP} w-full pb-[28rem] pt-8 sm:pb-[34rem] sm:pt-14 lg:pb-16 lg:pt-28 xl:pb-20`}>
         <Rise onLoad delay={0.15}>
           <p className={`${SMALL_CAPS} text-[#E0902F] max-sm:tracking-[0.18em]`}>{L(c.hero.kicker)}</p>
         </Rise>
