@@ -670,9 +670,9 @@ const CHECKS = {
       [...document.querySelectorAll("#work img")].map((i) => i.getAttribute("src") || "").filter((s) => s.includes("/media/work/")),
     );
     if (!srcs.length) throw new Error("es: no gallery images under #work");
-    const wrong = srcs.filter((s) => /shot-/.test(s) && !/shot-es-v1/.test(decodeURIComponent(s)));
+    const wrong = srcs.filter((s) => /shot-/.test(s) && !/shot-es-v\d+/.test(decodeURIComponent(s)));
     if (wrong.length) throw new Error(`es: gallery shots not Spanish: ${wrong.slice(0, 3).join(", ")}`);
-    if (!srcs.some((s) => /shot-es-v1/.test(decodeURIComponent(s)))) throw new Error(`es: no shot-es-v1 image in #work (${srcs.slice(0, 3).join(", ")})`);
+    if (!srcs.some((s) => /shot-es-v\d+/.test(decodeURIComponent(s)))) throw new Error(`es: no shot-es-v<n> image in #work (${srcs.slice(0, 3).join(", ")})`);
     assertNoErrors(errors);
   },
   "sitemap-clean": async ({ base }) => {
@@ -897,7 +897,7 @@ const CHECKS = {
       await img.decode().catch(() => null);
       return { src: img.currentSrc || img.src, nw: img.naturalWidth, w: img.getBoundingClientRect().width, vw: window.innerWidth };
     });
-    if (!/shot-en-mobile-v1\.jpg$/.test(shotInfo.src)) throw new Error(`phone preview shows ${shotInfo.src}, expected the mobile shot`);
+    if (!/shot-en-mobile-v\d+\.jpg$/.test(shotInfo.src)) throw new Error(`phone preview shows ${shotInfo.src}, expected the mobile shot`);
     if (shotInfo.nw !== 780 || Math.abs(shotInfo.w - shotInfo.vw) > 1) throw new Error(`phone shot ${shotInfo.nw}px natural, ${shotInfo.w}px shown (viewport ${shotInfo.vw})`);
     const visit = dialog.getByRole("link", { name: "Visit the full demo" });
     const vb = await visit.boundingBox();

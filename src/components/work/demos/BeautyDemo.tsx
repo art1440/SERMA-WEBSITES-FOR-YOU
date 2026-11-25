@@ -4,12 +4,16 @@ import { motion } from "framer-motion";
 import { useMemo, type ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { DemoCredit } from "@/components/work/DemoCredit";
+import { PhotoCredit } from "@/components/work/PhotoCredit";
+import { Magnetic, RevealImage, RollText, ScrollProgress, StickyStory, TextReveal, type StoryStep } from "@/components/work/motion";
 import { beauty as c } from "@/data/demos/beauty";
 import type { L10n } from "@/i18n/types";
 import { EASE_EDITORIAL, VIEWPORT_ONCE } from "@/lib/motion";
 import { BookButton } from "../DemoShell";
 import { MaskWindows } from "../signatures/MaskWindows";
 import { useDemoStill } from "../useDemoStill";
+import { HeroWindows } from "./beauty/HeroWindows";
+import { RoomStrip } from "./beauty/RoomStrip";
 
 /*
  * Velvet Room. Palette is hard-coded (the site's theme tokens flip under
@@ -20,13 +24,28 @@ import { useDemoStill } from "../useDemoStill";
  *   lichen     #B4C4B9  secondary text    fern   #2F5A3E  accent text on mist
  * Contrast: mist on deep sage 12.7:1, on moss 11.0:1; sage on deep sage 7.8:1,
  * on moss 6.7:1; lichen on deep sage 8.2:1, on moss 7.1:1; deep sage on sage
- * 7.8:1, on mist 12.7:1; fern on mist 6.8:1; #4A5D51 on mist 6.0:1.
+ * 7.8:1, on mist 12.7:1; fern on mist 6.8:1; #4A5D51 on mist 6.0:1; mist on
+ * fern 6.8:1.
  *
  * Fraunces is used light (300) with SOFT 100 and automatic optical sizing,
  * so display sizes get the soft, rounded high-opsz cut. Upright only.
+ *
+ * Pace: the slowest site in the collection. Entrances run 1.2-1.6 s over
+ * short distances (14-24px), nothing skews or snaps; hover moves stay in the
+ * 300-450ms band.
+ *
+ * Page grammar (one device per section, never repeated next door):
+ *   hero        Parallax planes: the window frame, the room inside it, a
+ *               smaller sage window in front (HeroWindows)
+ *   treatments  MaskWindows, the signature
+ *   the room    ScrollMarquee of textures, the quiet before the peak (RoomStrip)
+ *   your visit  StickyStory on the mist panel: THE PEAK (longest scroll span)
+ *   reviews     TextReveal heading over three floating quotes
+ *   book        RevealImage photo half + Magnetic / RollText CTA, then footer
  */
 const NAV_H = 64;
-const SCROLL_MARGIN = { scrollMarginTop: `calc(var(--demo-ribbon) + ${NAV_H}px)` };
+const STICKY_TOP = `calc(var(--demo-ribbon) + ${NAV_H}px)`;
+const SCROLL_MARGIN = { scrollMarginTop: STICKY_TOP };
 const WRAP = "mx-auto max-w-[1280px] px-4 sm:px-8 lg:px-12";
 const SOFT = "demo-display [font-variation-settings:'SOFT'_100]";
 const FOCUS = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9CC5A6]";
@@ -34,7 +53,9 @@ const KICKER = "text-[0.75rem] font-medium uppercase tracking-[0.22em]";
 const PILL = `inline-flex items-center justify-center rounded-full font-semibold transition-colors duration-300 ${FOCUS}`;
 /** Desktop offsets for the three quotes: left, right, then in between. */
 const REVIEW_OFFSETS = ["md:mr-[22%] lg:mr-[38%]", "md:ml-[22%] lg:ml-[38%]", "md:mx-[8%] lg:ml-[14%] lg:mr-[30%]"];
-const PILL_SOLID = `${PILL} bg-[#9CC5A6] text-[#1E2A24] hover:bg-[#E8EFE9]`;
+const PILL_SOLID = `group ${PILL} bg-[#9CC5A6] text-[#1E2A24] hover:bg-[#E8EFE9]`;
+/** Text links: the underline draws in from the left (globals.css demo-underline). */
+const UNDERLINE = `demo-underline rounded-[2px] pb-0.5 ${FOCUS}`;
 
 /** Slow fade-and-rise. `onLoad` plays on mount (hero), otherwise on first view. Plain markup when still. */
 function Drift({
@@ -60,31 +81,12 @@ function Drift({
   return (
     <M
       className={className}
-      initial={{ opacity: 0, y: 18 }}
+      initial={{ opacity: 0, y: 14 }}
       {...(onLoad ? { animate: to } : { whileInView: to, viewport: VIEWPORT_ONCE })}
-      transition={{ duration: 1.2, ease: EASE_EDITORIAL, delay }}
+      transition={{ duration: 1.4, ease: EASE_EDITORIAL, delay }}
     >
       {children}
     </M>
-  );
-}
-
-/**
- * The closed window: a tall, softly lit pill on the right of the hero, the
- * shape every treatment window starts from before it opens further down the
- * page. Static gradient and hairline only; never animated, no filter.
- */
-function ClosedWindow({ className }: { className: string }) {
-  return (
-    <div
-      aria-hidden="true"
-      className={`pointer-events-none absolute -z-10 rounded-full ${className}`}
-      style={{
-        background:
-          "radial-gradient(130% 55% at 50% 0%, rgba(156,197,166,0.40) 0%, rgba(156,197,166,0.14) 55%, rgba(156,197,166,0.05) 100%)",
-        boxShadow: "inset 0 0 0 1px rgba(156,197,166,0.30)",
-      }}
-    />
   );
 }
 
@@ -100,10 +102,10 @@ const HEADLINE_LINES = [
   { cls: "text-[#9CC5A6] sm:pl-[1em]", fvs: "'SOFT' 100, 'wght' 300" },
 ];
 
-function HeroHeadline({ lines }: { lines: string[] }) {
+function HeroHeadline({ lines, className = "" }: { lines: string[]; className?: string }) {
   const still = useDemoStill();
   return (
-    <h1 className="demo-display mt-6 text-[clamp(4.25rem,10.5vw,10rem)] leading-[0.92] tracking-[-0.03em] sm:mt-8">
+    <h1 className={`demo-display mt-6 text-[clamp(4.25rem,9.6vw,9rem)] leading-[0.92] tracking-[-0.03em] sm:mt-8 ${className}`}>
       {lines.map((text, i) => {
         const { cls, fvs } = HEADLINE_LINES[i];
         const style = { fontVariationSettings: fvs };
@@ -117,15 +119,26 @@ function HeroHeadline({ lines }: { lines: string[] }) {
             key={i}
             className={`block ${cls}`}
             style={style}
-            initial={{ y: 28 }}
+            initial={{ y: 24 }}
             animate={{ y: 0 }}
-            transition={{ duration: 1.3, ease: EASE_EDITORIAL, delay: 0.1 + i * 0.12 }}
+            transition={{ duration: 1.5, ease: EASE_EDITORIAL, delay: 0.1 + i * 0.14 }}
           >
             {text}{" "}
           </motion.span>
         );
       })}
     </h1>
+  );
+}
+
+/** Primary booking button: magnetic pull, label rolls on hover / focus. */
+function PrimaryBook({ label, className }: { label: string; className: string }) {
+  return (
+    <Magnetic strength={0.22} max={8}>
+      <BookButton className={`${PILL_SOLID} ${className}`}>
+        <RollText>{label}</RollText>
+      </BookButton>
+    </Magnetic>
   );
 }
 
@@ -155,6 +168,33 @@ export function BeautyDemo() {
     [locale],
   );
 
+  const roomItems = useMemo(
+    () => c.room.items.map((it) => ({ key: it.image.src, image: it.image, alt: it.image.alt[locale], caption: it.caption[locale] })),
+    [locale],
+  );
+
+  const storySteps: StoryStep[] = c.steps.items.map((s, i) => ({
+    key: s.title.en,
+    image: s.image,
+    alt: s.image.alt[locale],
+    content: (
+      <div className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-6 lg:max-w-[460px]">
+        {/* The marker fills with fern while its step is the one on the pinned photo. */}
+        <span
+          aria-hidden="true"
+          className={`${SOFT} flex h-14 w-14 items-center justify-center rounded-full border border-[#1E2A24]/25 bg-[#E8EFE9] text-[1.5rem] font-normal text-[#1E2A24] transition-colors duration-700 group-data-[active=true]/step:border-[#2F5A3E] group-data-[active=true]/step:bg-[#2F5A3E] group-data-[active=true]/step:text-[#E8EFE9]`}
+        >
+          {i + 1}
+        </span>
+        <div className="min-w-0 pt-1">
+          <p className={`${KICKER} text-[#2F5A3E]`}>{L(s.when)}</p>
+          <h3 className={`${SOFT} mt-3 text-[1.75rem] font-normal leading-[1.12] sm:text-[2.125rem]`}>{L(s.title)}</h3>
+          <p className="mt-4 max-w-[40ch] leading-relaxed text-[#4A5D51] md:text-[1.0625rem]">{L(s.body)}</p>
+        </div>
+      </div>
+    ),
+  }));
+
   const wordmark = (size: string) => (
     <span className={`${SOFT} inline-flex items-center gap-2.5 font-normal leading-none ${size}`}>
       <span aria-hidden="true" className="inline-block h-[0.55em] w-[0.55em] rounded-full bg-[#9CC5A6]" />
@@ -177,10 +217,7 @@ export function BeautyDemo() {
             <ul className="flex gap-9 text-[0.9375rem]">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <a
-                    href={l.href}
-                    className={`rounded-full text-[#E8EFE9]/90 underline decoration-transparent underline-offset-[6px] transition-[text-decoration-color,color] duration-300 hover:text-[#E8EFE9] hover:decoration-[#9CC5A6] ${FOCUS}`}
-                  >
+                  <a href={l.href} className={`${UNDERLINE} text-[#E8EFE9]/90 transition-colors duration-300 hover:text-[#E8EFE9] relative after:absolute after:-inset-x-2 after:-inset-y-3 after:content-['']`}>
                     {l.label}
                   </a>
                 </li>
@@ -188,11 +225,12 @@ export function BeautyDemo() {
             </ul>
           </nav>
           <BookButton
-            className={`${PILL} ml-auto h-10 shrink-0 border border-[#9CC5A6] px-5 text-[0.875rem] text-[#E8EFE9] hover:bg-[#9CC5A6] hover:text-[#1E2A24] lg:ml-0`}
+            className={`group ${PILL} ml-auto h-10 shrink-0 border border-[#9CC5A6] px-5 text-[0.875rem] text-[#E8EFE9] hover:bg-[#9CC5A6] hover:text-[#1E2A24] lg:ml-0`}
           >
-            {L(c.nav.book)}
+            <RollText>{L(c.nav.book)}</RollText>
           </BookButton>
         </div>
+        <ScrollProgress className="bg-[#9CC5A6]" />
       </header>
 
       {/* --------------------------------------------------------------- hero */}
@@ -201,54 +239,57 @@ export function BeautyDemo() {
         className="relative isolate flex flex-col"
         style={{ minHeight: `calc(100svh - var(--demo-ribbon) - ${NAV_H}px)` }}
       >
-        {/* Phones and tablets: off the top-right edge, clear of the headline. */}
-        <ClosedWindow className="-right-12 top-6 h-[220px] w-[120px] sm:right-[6%] sm:top-12 sm:h-[300px] sm:w-[170px] lg:hidden" />
+        {/* Phones: the text column dissolves (display: contents) into a two-column grid, so the
+            window can share the headline's row and sit beside its shorter second and third
+            lines (the first line, "Lashes," / "Pestañas,", is the widest and stays clear).
+            Placement is explicit so the overlap is deliberate. Tablets and desktop unchanged. */}
         <div
-          className={`${WRAP} grid w-full flex-1 content-center gap-y-8 lg:content-end pb-14 pt-8 sm:pb-20 sm:pt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:items-end lg:gap-x-16 lg:pb-24`}
+          className={`${WRAP} grid w-full flex-1 content-center gap-y-14 pb-16 pt-8 max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:gap-y-0 sm:pb-20 sm:pt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:content-end lg:items-end lg:gap-x-16`}
         >
-          <div>
-            <Drift onLoad>
+          <div className="max-sm:contents">
+            <Drift onLoad className="max-sm:col-span-2 max-sm:row-start-1">
               <p className={`${KICKER} text-[#B4C4B9]`}>{L(c.hero.kicker)}</p>
             </Drift>
-            <HeroHeadline lines={c.hero.headline.map(L)} />
-          </div>
-          <div className="relative lg:pb-3">
-            {/* Desktop: stands just above the intro, anchored to this column. */}
-            <ClosedWindow className="bottom-[calc(100%+2.5rem)] right-[10%] hidden h-[min(30vh,230px)] w-[150px] lg:block" />
-            <Drift onLoad delay={0.45}>
-              <p className="max-w-[40ch] text-[1.0625rem] leading-relaxed text-[#E8EFE9]/90 sm:text-[1.125rem]">{L(c.hero.intro)}</p>
+            <HeroHeadline lines={c.hero.headline.map(L)} className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2" />
+            <Drift onLoad delay={0.5} className="max-sm:col-span-2 max-sm:row-start-3">
+              <p className="mt-8 max-w-[40ch] text-[1.0625rem] leading-relaxed text-[#E8EFE9]/90 sm:mt-10 sm:text-[1.125rem]">{L(c.hero.intro)}</p>
             </Drift>
-            <Drift onLoad delay={0.55}>
+            <Drift onLoad delay={0.62} className="max-sm:col-span-2 max-sm:row-start-4">
               <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4 sm:mt-9">
-                <BookButton className={`${PILL_SOLID} h-14 px-8 text-[1rem]`}>{L(c.hero.cta)}</BookButton>
+                <PrimaryBook label={L(c.hero.cta)} className="h-14 px-8 text-[1rem]" />
                 <a
                   href="#treatments"
-                  className={`rounded-full text-[1rem] font-medium underline decoration-[#9CC5A6] decoration-2 underline-offset-[7px] ${FOCUS}`}
+                  className={`rounded-full text-[1rem] font-medium underline decoration-[#9CC5A6] decoration-2 underline-offset-[7px] transition-colors duration-300 hover:text-[#9CC5A6] ${FOCUS}`}
                 >
                   {L(c.hero.link)}
                 </a>
               </div>
             </Drift>
-            <Drift onLoad delay={0.65}>
-              <p className="mt-9 flex items-center gap-3 text-[0.875rem] text-[#B4C4B9] sm:mt-12">
-                <span aria-hidden="true" className="hidden h-px w-8 shrink-0 bg-[#9CC5A6] sm:block" />
+            {/* Phones only: the note that sits under the window on larger screens. */}
+            <Drift onLoad delay={0.7} className="sm:hidden max-sm:col-span-2 max-sm:row-start-5">
+              <p className="mt-8 flex items-center gap-3 text-[0.875rem] leading-relaxed text-[#B4C4B9]">
+                <span aria-hidden="true" className="h-px w-8 shrink-0 bg-[#9CC5A6]" />
                 {L(c.hero.note)}
               </p>
             </Drift>
           </div>
+          <HeroWindows
+            room={c.hero.room}
+            roomAlt={c.hero.room.alt[locale]}
+            detail={c.hero.detail}
+            detailAlt={c.hero.detail.alt[locale]}
+            note={L(c.hero.note)}
+          />
         </div>
       </section>
 
       {/* -------------------------------------------- treatments (signature) */}
-      <section id="treatments" aria-labelledby="treatments-title" style={SCROLL_MARGIN} className="py-24 md:py-32">
+      <section id="treatments" aria-labelledby="treatments-title" style={SCROLL_MARGIN} className="py-24 md:py-36">
         <div className={WRAP}>
           <Drift className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-end md:gap-16">
-            <div>
-              <p className={`${KICKER} text-[#9CC5A6]`}>{L(c.treatments.kicker)}</p>
-              <h2 id="treatments-title" className={`${SOFT} mt-4 text-[clamp(2.5rem,5vw,4.25rem)] font-light leading-[1.02] tracking-[-0.015em]`}>
-                {L(c.treatments.title)}
-              </h2>
-            </div>
+            <h2 id="treatments-title" className={`${SOFT} text-[clamp(2.5rem,5vw,4.25rem)] font-light leading-[1.02] tracking-[-0.015em]`}>
+              {L(c.treatments.title)}
+            </h2>
             <p className="max-w-[46ch] leading-relaxed text-[#B4C4B9] md:justify-self-end md:text-[1.0625rem]">{L(c.treatments.intro)}</p>
           </Drift>
           <MaskWindows
@@ -260,7 +301,20 @@ export function BeautyDemo() {
         </div>
       </section>
 
-      {/* ------------------------------------------------- how a visit works */}
+      {/* ------------------------------------------- the room (quiet interlude) */}
+      <section aria-labelledby="room-title" className="pb-28 md:pb-40">
+        <div className={WRAP}>
+          <Drift className="grid gap-5 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-end md:gap-16">
+            <h2 id="room-title" className={`${SOFT} text-[clamp(2.125rem,3.8vw,3.25rem)] font-light leading-[1.05] tracking-[-0.015em]`}>
+              {L(c.room.title)}
+            </h2>
+            <p className="max-w-[48ch] leading-relaxed text-[#B4C4B9] md:justify-self-end md:text-[1.0625rem]">{L(c.room.intro)}</p>
+          </Drift>
+        </div>
+        <RoomStrip items={roomItems} className="mt-12 md:mt-16" />
+      </section>
+
+      {/* ------------------------------------------ how a visit works (PEAK) */}
       <section
         id="visit"
         aria-labelledby="visit-title"
@@ -275,47 +329,29 @@ export function BeautyDemo() {
             </h2>
             <p className="mt-5 max-w-[46ch] leading-relaxed text-[#4A5D51] md:text-[1.0625rem]">{L(c.steps.intro)}</p>
           </Drift>
-          <ol className="relative mt-14 grid gap-12 md:mt-20 lg:grid-cols-3 lg:gap-10">
-            {c.steps.items.map((s, i) => (
-              <Drift
-                as="li"
-                key={s.title.en}
-                delay={0.15 + i * 0.18}
-                className="relative grid grid-cols-[3.5rem_minmax(0,1fr)] gap-x-6 lg:grid-cols-1 lg:gap-x-0"
-              >
-                {/* The thread to the next step: down the left on phones and tablets, across on desktop. */}
-                {i < c.steps.items.length - 1 && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute left-7 top-14 h-[calc(100%-0.5rem)] w-px bg-[#1E2A24]/20 lg:left-14 lg:top-7 lg:h-px lg:w-[calc(100%-1rem)]"
-                  />
-                )}
-                <span
-                  aria-hidden="true"
-                  className={`${SOFT} relative flex h-14 w-14 items-center justify-center rounded-full border border-[#1E2A24]/25 bg-[#E8EFE9] text-[1.5rem] font-normal`}
-                >
-                  {i + 1}
-                </span>
-                <div className="min-w-0 pt-1 lg:pt-8">
-                  <p className={`${KICKER} text-[#2F5A3E]`}>{L(s.when)}</p>
-                  <h3 className={`${SOFT} mt-3 text-[1.625rem] font-normal leading-[1.15] sm:text-[1.875rem]`}>{L(s.title)}</h3>
-                  <p className="mt-4 max-w-[40ch] leading-relaxed text-[#4A5D51]">{L(s.body)}</p>
-                </div>
-              </Drift>
-            ))}
-          </ol>
+          <StickyStory
+            className="mt-14 md:mt-20"
+            steps={storySteps}
+            top={STICKY_TOP}
+            mediaSide="left"
+            sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, 100vw"
+            frameClassName="rounded-t-full rounded-b-[36px] bg-[#D5E0D8]"
+            progressClassName="bg-[#2F5A3E]"
+            stepClassName="group/step"
+            mobileImageClassName="aspect-[4/5] max-w-[460px] rounded-t-full rounded-b-[28px] bg-[#D5E0D8]"
+          />
         </div>
       </section>
 
       {/* ------------------------------------------------------------ reviews */}
-      <section id="reviews" aria-labelledby="reviews-title" style={SCROLL_MARGIN} className="py-24 md:py-32">
+      <section id="reviews" aria-labelledby="reviews-title" style={SCROLL_MARGIN} className="py-28 md:py-40">
         <div className={WRAP}>
-          <Drift>
-            <p className={`${KICKER} text-[#9CC5A6]`}>{L(c.reviewsKicker)}</p>
-            <h2 id="reviews-title" className={`${SOFT} mt-4 max-w-[18ch] text-[clamp(2.25rem,4.4vw,3.75rem)] font-light leading-[1.05] tracking-[-0.015em]`}>
-              {L(c.reviewsTitle)}
-            </h2>
-          </Drift>
+          <TextReveal
+            id="reviews-title"
+            text={L(c.reviewsTitle)}
+            tilt={2}
+            className={`${SOFT} max-w-[18ch] text-[clamp(2.25rem,4.4vw,3.75rem)] font-light leading-[1.08] tracking-[-0.015em]`}
+          />
           {/* Plain typography, no boxes: three quotes stepping across the page like the windows above. */}
           <ul className="mt-14 space-y-16 md:mt-20 md:space-y-24">
             {c.reviews.map((r, i) => (
@@ -340,39 +376,53 @@ export function BeautyDemo() {
 
       {/* -------------------------------------------------------- hours + book */}
       <section id="book" aria-labelledby="book-title" style={SCROLL_MARGIN} className={`${WRAP} pb-16`}>
-        <Drift className="relative isolate overflow-hidden rounded-[40px] bg-[#26352D] sm:rounded-[48px]">
-          <div className="grid gap-14 px-6 py-14 sm:px-12 sm:py-20 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-20 lg:px-16">
-            <div>
-              <p className={`${KICKER} text-[#9CC5A6]`}>{L(c.visit.kicker)}</p>
-              <h2 id="book-title" className={`${SOFT} mt-4 max-w-[14ch] text-[clamp(2.5rem,5vw,4.5rem)] font-light leading-[1.02] tracking-[-0.015em]`}>
-                {L(c.visit.title)}
-              </h2>
-              <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-[#E8EFE9]/90">{L(c.visit.body)}</p>
-              <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
-                <BookButton className={`${PILL_SOLID} h-14 px-8 text-[1rem]`}>{L(c.visit.cta)}</BookButton>
-                <p className="text-[0.9375rem] text-[#B4C4B9]">
-                  {L(c.visit.call)} <span className="whitespace-nowrap font-semibold text-[#E8EFE9]">{c.phone}</span>
-                </p>
-              </div>
-              <p className="mt-6 text-[0.9375rem] text-[#B4C4B9]">{L(c.visit.policy)}</p>
+        {/*
+          Phones: photo, then the booking copy and hours, then "Find us".
+          Desktop: the photo half and "Find us" on the left, the booking copy
+          and hours on the right (spanning both rows).
+        */}
+        <div className="relative isolate grid overflow-hidden rounded-[40px] bg-[#26352D] sm:rounded-[48px] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-rows-[auto_1fr]">
+          {/* The treatment room. Its own wipe is the card's only entrance. */}
+          <RevealImage
+            image={c.visit.image}
+            alt={c.visit.image.alt[locale]}
+            sizes="(min-width: 1280px) 500px, (min-width: 1024px) 40vw, 100vw"
+            fill
+            from="bottom"
+            parallax={6}
+            className="aspect-[4/3] w-full sm:aspect-[16/10] lg:col-start-1 lg:row-start-1 lg:aspect-square"
+            imgClassName="object-[50%_55%]"
+          />
+          <div className="px-6 pb-4 pt-12 sm:px-12 sm:pt-16 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:px-14 lg:py-20">
+            <p className={`${KICKER} text-[#9CC5A6]`}>{L(c.visit.kicker)}</p>
+            <h2 id="book-title" className={`${SOFT} mt-4 max-w-[14ch] text-[clamp(2.5rem,4.6vw,4.25rem)] font-light leading-[1.02] tracking-[-0.015em]`}>
+              {L(c.visit.title)}
+            </h2>
+            <p className="mt-6 max-w-[46ch] text-[1.0625rem] leading-relaxed text-[#E8EFE9]/90">{L(c.visit.body)}</p>
+            <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
+              <PrimaryBook label={L(c.visit.cta)} className="h-14 px-8 text-[1rem]" />
+              <p className="text-[0.9375rem] text-[#B4C4B9]">
+                {L(c.visit.call)} <span className="whitespace-nowrap font-semibold text-[#E8EFE9]">{c.phone}</span>
+              </p>
             </div>
-            <div className="lg:pt-2">
-              <h3 className={`${KICKER} text-[#9CC5A6]`}>{L(c.visit.hoursLabel)}</h3>
-              <dl className="mt-4 border-t border-[#E8EFE9]/15">
-                {c.hours.map((h) => (
-                  <div key={h.days.en} className="flex items-baseline justify-between gap-6 border-b border-[#E8EFE9]/15 py-4">
-                    <dt>{L(h.days)}</dt>
-                    <dd className={`${SOFT} whitespace-nowrap text-[1.125rem] tabular-nums`}>{L(h.time)}</dd>
-                  </div>
-                ))}
-              </dl>
-              <p className="mt-4 text-[0.9375rem] text-[#B4C4B9]">{L(c.visit.closed)}</p>
-              <h3 className={`${KICKER} mt-12 text-[#9CC5A6]`}>{L(c.visit.findUs)}</h3>
-              <p className={`${SOFT} mt-4 text-[1.625rem] font-light leading-tight`}>{c.address}</p>
-              <p className="mt-2 max-w-[40ch] text-[0.9375rem] leading-relaxed text-[#B4C4B9]">{L(c.visit.directions)}</p>
-            </div>
+            <p className="mt-6 text-[0.9375rem] text-[#B4C4B9]">{L(c.visit.policy)}</p>
+            <h3 className={`${KICKER} mt-12 text-[#9CC5A6]`}>{L(c.visit.hoursLabel)}</h3>
+            <dl className="mt-4 max-w-[520px] border-t border-[#E8EFE9]/15">
+              {c.hours.map((h) => (
+                <div key={h.days.en} className="flex items-baseline justify-between gap-6 border-b border-[#E8EFE9]/15 py-4">
+                  <dt>{L(h.days)}</dt>
+                  <dd className={`${SOFT} whitespace-nowrap text-[1.125rem] tabular-nums`}>{L(h.time)}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-4 text-[0.9375rem] text-[#B4C4B9]">{L(c.visit.closed)}</p>
           </div>
-        </Drift>
+          <div className="px-6 pb-14 pt-10 sm:px-12 sm:pb-16 lg:col-start-1 lg:row-start-2 lg:px-14 lg:pb-20 lg:pt-12">
+            <h3 className={`${KICKER} text-[#9CC5A6]`}>{L(c.visit.findUs)}</h3>
+            <p className={`${SOFT} mt-4 text-[1.625rem] font-light leading-tight`}>{c.address}</p>
+            <p className="mt-2 max-w-[40ch] text-[0.9375rem] leading-relaxed text-[#B4C4B9]">{L(c.visit.directions)}</p>
+          </div>
+        </div>
       </section>
 
       {/* ------------------------------------------------------------- footer */}
@@ -386,11 +436,17 @@ export function BeautyDemo() {
           </span>
           <span className="whitespace-nowrap">{c.phone}</span>
         </p>
-        <p className="mt-14 w-full border-t border-[#E8EFE9]/10 pt-6 text-[0.8125rem] text-[#B4C4B9]">
-          <DemoCredit className={`rounded underline decoration-[#B4C4B9]/50 underline-offset-4 hover:text-[#E8EFE9] ${FOCUS}`}>
-            {L(c.footer.credit)}
-          </DemoCredit>
-        </p>
+        <div className="mt-14 w-full space-y-2 border-t border-[#E8EFE9]/10 pt-6 text-[0.8125rem] text-[#B4C4B9]">
+          <PhotoCredit
+            names={c.photoCredits}
+            linkClassName={`rounded underline decoration-[#B4C4B9]/50 underline-offset-4 hover:text-[#E8EFE9] ${FOCUS}`}
+          />
+          <p>
+            <DemoCredit className={`rounded underline decoration-[#B4C4B9]/50 underline-offset-4 hover:text-[#E8EFE9] ${FOCUS}`}>
+              {L(c.footer.credit)}
+            </DemoCredit>
+          </p>
+        </div>
       </footer>
     </div>
   );

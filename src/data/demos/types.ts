@@ -17,7 +17,7 @@ export type DemoCard = {
   tag: L10n;
   href: `/work/${DemoId}/`;
   /**
-   * /media/work/<id>/shot-<locale>-v1(.jpg|-640.jpg). `width`/`height` are the full
+   * /media/work/<id>/shot-<locale>-v<n>(.jpg|-640.jpg). `width`/`height` are the full
    * (1280 w) file's pixels; `small` is the same shot at 640 w (same aspect ratio).
    */
   shots: Record<
@@ -42,4 +42,6 @@ export type DemoContent = {
   address: string;
   hours: { days: L10n; time: L10n }[];
   reviews: { quote: L10n; name: string }[];
+  /** Unsplash photographers whose photos this demo uses (credited in its footer). */
+  photoCredits?: string[];
 };

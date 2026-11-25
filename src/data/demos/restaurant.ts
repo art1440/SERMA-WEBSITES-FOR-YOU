@@ -28,7 +28,7 @@ export type RestaurantReview = DemoContent["reviews"][number] & { table: L10n; o
 
 export type RestaurantContent = Omit<DemoContent, "reviews"> & {
   reviews: RestaurantReview[];
-  nav: { menu: L10n; room: L10n; reviews: L10n; hours: L10n; reserve: L10n; home: L10n; primary: L10n };
+  nav: { menu: L10n; fire: L10n; room: L10n; reviews: L10n; hours: L10n; reserve: L10n; home: L10n; primary: L10n };
   hero: {
     kicker: L10n;
     /** Two lines; the h1 reads "Wood fire. Late tables." */
@@ -40,9 +40,10 @@ export type RestaurantContent = Omit<DemoContent, "reviews"> & {
     /** The ticket pinned to the hero photo (desktop): what is in the photo, priced as on the menu. */
     special: { label: L10n; name: L10n; price: number };
     image: DemoImage;
+    /** The small print of oak embers that floats over the hero photo (foreground plane). */
+    embers: DemoImage;
   };
   menu: {
-    kicker: L10n;
     title: L10n;
     intro: L10n;
     cardTitle: L10n;
@@ -54,6 +55,24 @@ export type RestaurantContent = Omit<DemoContent, "reviews"> & {
     flatbreadCaption: L10n;
     steakCaption: L10n;
   };
+  /** The page's peak: the oven opens to full bleed, then three lines on how the kitchen cooks. */
+  fire: {
+    image: DemoImage;
+    /** Overlay line on the open photo (the section's h2). Short, non-interactive. */
+    title: L10n;
+    caption: L10n;
+    kicker: L10n;
+    /** Three lines, revealed one by one. */
+    lines: [L10n, L10n, L10n];
+    body: L10n;
+  };
+  /** Interlude: two counter-running rows of dish photos and a row of dish names. */
+  dishes: {
+    title: L10n;
+    rowA: DemoImage[];
+    rowB: DemoImage[];
+    names: L10n[];
+  };
   room: {
     kicker: L10n;
     title: L10n;
@@ -61,8 +80,10 @@ export type RestaurantContent = Omit<DemoContent, "reviews"> & {
     facts: { label: L10n; value: L10n }[];
     cta: L10n;
     image: DemoImage;
+    /** The collage beside the room photo: the long table, a glass by candlelight. */
+    table: DemoImage;
+    wine: DemoImage;
   };
-  reviewsKicker: L10n;
   reviewsTitle: L10n;
   orderedLabel: L10n;
   visit: {
@@ -77,6 +98,7 @@ export type RestaurantContent = Omit<DemoContent, "reviews"> & {
     findUs: L10n;
     directions: L10n;
     call: L10n;
+    image: DemoImage;
   };
   footer: { tagline: L10n; credit: L10n };
 };
@@ -92,6 +114,7 @@ export const restaurant: RestaurantContent = {
   ],
   nav: {
     menu: { en: "Menu", es: "Carta" },
+    fire: { en: "The fire", es: "El fuego" },
     room: { en: "Private dining", es: "Comedor privado" },
     reviews: { en: "Reviews", es: "Reseñas" },
     hours: { en: "Hours", es: "Horario" },
@@ -130,9 +153,15 @@ export const restaurant: RestaurantContent = {
       1024,
       688,
     ),
+    embers: demoImage(
+      "restaurant",
+      "embers",
+      { en: "Oak embers glowing red under a charred log.", es: "Brasas de roble al rojo bajo un tronco carbonizado." },
+      720,
+      900,
+    ),
   },
   menu: {
-    kicker: { en: "The menu", es: "La carta" },
     title: { en: "Tonight, off the fire.", es: "Esta noche, a la brasa." },
     intro: {
       en: "The menu changes with the market. Order a few small plates for the table, then something from the fire each; the ribeye is built for two.",
@@ -262,6 +291,117 @@ export const restaurant: RestaurantContent = {
     flatbreadCaption: { en: "Burrata flatbread", es: "Pan plano con burrata" },
     steakCaption: { en: "Ember ribeye", es: "Ribeye a la leña" },
   },
+  fire: {
+    image: demoImage(
+      "restaurant",
+      "hearth",
+      {
+        en: "Inside the oak oven at full heat: split logs burning under a curl of flame, the light thrown back off the hearth stone.",
+        es: "El interior del horno de roble a pleno fuego: troncos partidos ardiendo bajo una lengua de llama, con su luz reflejada en la piedra del hogar.",
+      },
+      1600,
+      1202,
+    ),
+    title: { en: "Everything here touches the fire.", es: "Aquí todo pasa por el fuego." },
+    caption: { en: "The oak oven, an hour before service", es: "El horno de roble, una hora antes del servicio" },
+    kicker: { en: "How we cook", es: "Cómo cocinamos" },
+    lines: [
+      { en: "We light the oak at three every afternoon.", es: "Encendemos el roble cada tarde a las tres." },
+      { en: "Nothing on the menu sees a gas flame.", es: "Ningún plato de la carta pasa por una llama de gas." },
+      { en: "The last table eats as well as the first.", es: "La última mesa come tan bien como la primera." },
+    ],
+    body: {
+      en: "Red oak burns hot and clean and leaves a sweet smoke. The oven bakes the bread and blisters the flatbreads; its coals go under the grill for the steaks and into the pan for the clams. By closing there is nothing left but embers.",
+      es: "El roble rojo arde fuerte y limpio y deja un humo dulce. El horno cuece el pan y tuesta los panes planos; sus brasas pasan a la parrilla para la carne y a la sartén para las almejas. Al cerrar, solo quedan brasas.",
+    },
+  },
+  dishes: {
+    title: { en: "Out of the kitchen tonight", es: "Esta noche, de la cocina" },
+    rowA: [
+      demoImage(
+        "restaurant",
+        "oysters",
+        {
+          en: "Oysters on crushed ice on a wooden board, a lemon wedge beside them.",
+          es: "Ostras sobre hielo picado en una tabla de madera, con una cuña de limón al lado.",
+        },
+        880,
+        1100,
+      ),
+      demoImage(
+        "restaurant",
+        "cocktail",
+        {
+          en: "An amber cocktail over ice on a wooden board, finished with rosemary and a dried orange wheel.",
+          es: "Un cóctel ámbar con hielo sobre una tabla de madera, con romero y una rodaja de naranja deshidratada.",
+        },
+        880,
+        1100,
+      ),
+      demoImage(
+        "restaurant",
+        "chocolate",
+        {
+          en: "A dark chocolate cake under a slow pour of warm chocolate sauce.",
+          es: "Un bizcocho de chocolate negro bajo un hilo lento de salsa de chocolate caliente.",
+        },
+        880,
+        1100,
+      ),
+    ],
+    rowB: [
+      demoImage(
+        "restaurant",
+        "roots",
+        {
+          en: "Charred carrots and roasted roots in a black bowl, two serving spoons resting on the rim.",
+          es: "Zanahorias tatemadas y raíces asadas en un cuenco negro, con dos cucharas de servir apoyadas en el borde.",
+        },
+        880,
+        1100,
+      ),
+      demoImage(
+        "restaurant",
+        "grill",
+        {
+          en: "The wood grill at full flame, split oak burning behind the iron grates.",
+          es: "La parrilla de leña a pleno fuego, con troncos de roble ardiendo tras las rejillas de hierro.",
+        },
+        880,
+        1100,
+      ),
+      demoImage(
+        "restaurant",
+        "fish",
+        {
+          en: "A whole fish off the grill on a slate board, with charred green beans, cherry tomatoes and half a lime.",
+          es: "Un pescado entero a la parrilla sobre una pizarra, con judías verdes tostadas, tomates cherry y medio limón.",
+        },
+        880,
+        1100,
+      ),
+      demoImage(
+        "restaurant",
+        "negroni",
+        {
+          en: "The bartender twists an orange peel over a short amber drink, the oils catching the light.",
+          es: "El barman retuerce una piel de naranja sobre un trago corto de color ámbar; los aceites brillan a contraluz.",
+        },
+        880,
+        1100,
+      ),
+    ],
+    names: [
+      { en: "Ember ribeye", es: "Ribeye a la leña" },
+      { en: "Oysters on ice", es: "Ostras sobre hielo" },
+      { en: "Burrata flatbread", es: "Pan plano con burrata" },
+      { en: "Charred carrots", es: "Zanahorias tatemadas" },
+      { en: "Whole fish over the coals", es: "Pescado entero a las brasas" },
+      { en: "Clams in the embers", es: "Almejas en las brasas" },
+      { en: "Smoked chocolate", es: "Chocolate ahumado" },
+      { en: "Oak-smoked old fashioned", es: "Old fashioned ahumado en roble" },
+    ],
+  },
   room: {
     kicker: { en: "Private dining", es: "Comedor privado" },
     title: { en: "The back room seats up to 24.", es: "¿Una celebración? El salón del fondo acoge hasta 24." },
@@ -285,8 +425,24 @@ export const restaurant: RestaurantContent = {
       1024,
       688,
     ),
+    table: demoImage(
+      "restaurant",
+      "table",
+      {
+        en: "A long wooden table set family-style: shared plates, open wine and candles down the middle.",
+        es: "Una mesa larga de madera preparada para compartir: platos al centro, vino abierto y velas a lo largo.",
+      },
+      1120,
+      1400,
+    ),
+    wine: demoImage(
+      "restaurant",
+      "wine",
+      { en: "A glass of red wine catching the candlelight.", es: "Una copa de vino tinto a la luz de las velas." },
+      880,
+      1100,
+    ),
   },
-  reviewsKicker: { en: "Reviews", es: "Reseñas" },
   reviewsTitle: { en: "What they ordered, and what they said.", es: "Qué pidieron y qué dijeron." },
   orderedLabel: { en: "Ordered", es: "Pidieron" },
   reviews: [
@@ -339,9 +495,33 @@ export const restaurant: RestaurantContent = {
       es: "En el antiguo edificio de la fundición; busque el humo. Estacionamiento en la calle a partir de las 18:00.",
     },
     call: { en: "Phone", es: "Teléfono" },
+    image: demoImage(
+      "restaurant",
+      "bar",
+      {
+        en: "The long bar at night: low stools, candles on the counter and shelves of bottles lit warm behind it.",
+        es: "La barra larga de noche: taburetes bajos, velas sobre la barra y estantes de botellas con luz cálida al fondo.",
+      },
+      1066,
+      1333,
+    ),
   },
   footer: {
     tagline: { en: "Wood fire, late tables, Foundry Street.", es: "Fuego de leña y mesas hasta tarde en Foundry Street." },
     credit: { en: "Demo design by Serma", es: "Diseño de demostración por Serma" },
   },
+  photoCredits: [
+    "Ty Finck",
+    "Marius",
+    "Mitili Mitili",
+    "Ash Edmonds",
+    "Jordane Mathieu",
+    "Christina Rumpf",
+    "Maxim Abramov",
+    "Alina Bosakova",
+    "Martina Alpeza",
+    "Stephanie McCabe",
+    "Austin",
+    "Shawn DENG",
+  ],
 };

@@ -4,7 +4,7 @@
 //   desktop: 1280×800 viewport, DPR 1 -> shot-<locale>-<v>.jpg (+ a 640 px copy, the gallery cards)
 //   mobile:  390×844 viewport, DPR 2  -> shot-<locale>-mobile-<v>.jpg (780 px wide, the phone preview)
 // The overwrite guard is per set: `--only mobile` adds the mobile files while the desktop ones exist.
-// Requires a prior `npm run build`, plus python3 with Pillow (for the 640 px copies).
+// Requires a prior `npm run build`, plus python3 with Pillow (JPEG encoding and the 640 px copies).
 // Starts `next start` on PORT and always kills it.
 //
 // VERSIONING: /media is served immutable for a year. NEVER overwrite a deployed
@@ -91,6 +91,21 @@ function resize(src, dst) {
     src, dst]);
 }
 
+/** python: <png> <jpg> <q0> <qMin> <budget> -> "q bytes width height" (one encode, quality stepped down to fit). */
+const ENCODE = [
+  "import io, sys",
+  "from PIL import Image",
+  "src, dst, q, qmin, budget = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5])",
+  "im = Image.open(src).convert('RGB')",
+  "while True:",
+  "    buf = io.BytesIO()",
+  "    im.save(buf, 'JPEG', quality=q, optimize=True, progressive=True)",
+  "    if buf.tell() <= budget or q <= qmin: break",
+  "    q -= 4",
+  "open(dst, 'wb').write(buf.getvalue())",
+  "print(q, buf.tell(), im.width, im.height)",
+].join("\n");
+
 /** Per set: viewport, pixel ratio, JPEG quality ladder and size budget. */
 const SET_OPTS = {
   desktop: { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1, q0: 80, qMin: 68, budget: 900 * 1024 },
@@ -133,19 +148,18 @@ async function capture(browser, id, locale, set) {
     fs.mkdirSync(dir, { recursive: true });
     const [name, smallName] = filesFor(set, locale);
     const full = path.join(dir, name);
-    let q = o.q0, size;
-    for (;;) {
-      await page.screenshot({ path: full, fullPage: true, type: "jpeg", quality: q });
-      size = fs.statSync(full).size;
-      if (size <= o.budget || q <= o.qMin) break;
-      q -= 4;
-    }
+    // Lossless capture first, then a single JPEG encode whose quality steps down until the
+    // file fits the budget (re-screenshotting at each quality re-encoded every attempt).
+    const png = `${full}.tmp.png`;
+    await page.screenshot({ path: png, fullPage: true, type: "png" });
+    const out = execFileSync("python3", ["-c", ENCODE, png, full, String(o.q0), String(o.qMin), String(Math.round(o.budget))]).toString().trim();
+    fs.rmSync(png, { force: true });
+    const [q, size, w, h] = out.split(" ").map(Number);
     if (q !== o.q0) console.log(`NOTE ${id}/${locale}/${set}: quality lowered to ${q} (${Math.round(size / 1024)} KB)`);
     if (size > o.budget) console.log(`WARN ${id}/${locale}/${set}: ${Math.round(size / 1024)} KB is over budget at the minimum quality`);
     if (smallName) resize(full, path.join(dir, smallName));
-    const dims = execFileSync("python3", ["-c", "import sys\nfrom PIL import Image\nim=Image.open(sys.argv[1])\nprint(im.width, im.height)", full]).toString().trim();
-    console.log(`ok ${id} ${locale} ${set} q${q} ${Math.round(size / 1024)}KB ${dims}`);
-    ((HEIGHTS[set] ??= {})[id] ??= {})[locale] = Number(dims.split(" ")[1]);
+    console.log(`ok ${id} ${locale} ${set} q${q} ${Math.round(size / 1024)}KB ${w} ${h}`);
+    ((HEIGHTS[set] ??= {})[id] ??= {})[locale] = h;
   } finally {
     await context.close();
   }

@@ -10,6 +10,10 @@ import { demoImage, type DemoContent, type DemoImage } from "./index";
  * straight marks: 24'-0", 1/4" = 1'-0". (Barlow's true primes, U+2032/2033,
  * carry a wide right side-bearing that opens a gap before the hyphen:
  * "24′ -0″". The straight marks set tight.)
+ *
+ * Photos: kitchen, addition and deck are the original set; everything else is
+ * from Unsplash (photographers in `photoCredits`), graded cool so the set reads
+ * as one shoot: daylight, white and navy, pale oak.
  */
 
 export type ContractorService = {
@@ -19,17 +23,20 @@ export type ContractorService = {
   schedule: L10n;
   /** Typical starting price, USD. */
   from: number;
+  /** Shown beside the row while a mouse hovers it (decorative). */
+  preview: DemoImage;
 };
 
 export type ContractorProject = {
-  id: "addition" | "deck";
-  /** The detail tag on the drawing: "1" over "A-201". */
+  id: "addition" | "kitchen" | "bath" | "wholehome" | "deck" | "attic" | "porch" | "windowseat";
+  /** The detail number on the sheet: "3" reads A-201.3. */
   detail: string;
   title: L10n;
   location: string;
   duration: L10n;
   /** The dimension set over the photo, e.g. 24'-0". */
   dimension: string;
+  /** Scope first, then one detail worth knowing. */
   facts: { label: L10n; value: L10n }[];
   image: DemoImage;
 };
@@ -41,6 +48,7 @@ export type ContractorStep = {
   span: L10n;
   body: L10n;
   deliverable: L10n;
+  image: DemoImage;
 };
 
 export type ContractorReview = DemoContent["reviews"][number] & { project: L10n };
@@ -74,10 +82,11 @@ export type ContractorContent = Omit<DemoContent, "reviews"> & {
     keynotesLabel: L10n;
     titleBlock: { label: L10n; value: L10n }[];
     sheetLabel: L10n;
+    /** The small detail photo that floats over the sheet on wide screens. */
+    detail: DemoImage;
   };
   services: {
     sheet: string;
-    kicker: L10n;
     title: L10n;
     intro: L10n;
     cols: { no: L10n; scope: L10n; includes: L10n; schedule: L10n; from: L10n };
@@ -90,20 +99,26 @@ export type ContractorContent = Omit<DemoContent, "reviews"> & {
     kicker: L10n;
     title: L10n;
     intro: L10n;
+    /** Accessible name of the sideways scroller on phones. */
+    label: L10n;
     items: ContractorProject[];
   };
   process: {
     sheet: string;
-    kicker: L10n;
     title: L10n;
     intro: L10n;
     deliverableLabel: L10n;
     steps: ContractorStep[];
   };
-  reviewsBlock: { sheet: string; kicker: L10n; title: L10n };
-  estimate: {
+  reviewsBlock: {
     sheet: string;
     kicker: L10n;
+    title: L10n;
+    /** The type row that runs with the scroll. */
+    trades: L10n[];
+  };
+  estimate: {
+    sheet: string;
     title: L10n;
     body: L10n;
     cta: L10n;
@@ -116,9 +131,116 @@ export type ContractorContent = Omit<DemoContent, "reviews"> & {
     warranty: L10n;
     areaLabel: L10n;
     area: L10n;
+    elevationLabel: L10n;
+    /** Overall width set over the elevation photo (language-neutral). */
+    elevationDim: string;
+    image: DemoImage;
   };
   footer: { tagline: L10n; credit: L10n; sheets: L10n };
 };
+
+/* ------------------------------------------------------------------ photos */
+
+const KITCHEN = demoImage(
+  "contractor",
+  "kitchen",
+  {
+    en: "A finished kitchen remodel: navy Shaker cabinets with brass pulls, two brass dome pendants over a white quartz waterfall island with three stools, and tall black-framed windows onto the garden.",
+    es: "Una cocina reformada y terminada: gabinetes tipo Shaker azul marino con tiradores de latón, dos lámparas de cúpula de latón sobre una isla de cuarzo blanco en cascada con tres taburetes y ventanales de marco negro hacia el jardín.",
+  },
+  1344,
+  752,
+);
+
+const ADDITION = demoImage(
+  "contractor",
+  "addition",
+  {
+    en: "A two-story addition clad in navy board-and-batten siding, with tall black-framed windows and glass doors, joined to an older shingled house at golden hour.",
+    es: "Una ampliación de dos plantas revestida de tablas verticales azul marino, con ventanales de marco negro y puertas acristaladas, unida a una casa más antigua de tejas al atardecer.",
+  },
+  896,
+  1120,
+);
+
+const DECK = demoImage(
+  "contractor",
+  "deck",
+  {
+    en: "A cedar deck with a built-in L-shaped bench, black cable railings and wide steps down to the lawn, string lights overhead at sunset.",
+    es: "Una terraza de cedro con un banco en L integrado, barandillas negras de cable y escalones anchos hasta el césped, con guirnaldas de luces al atardecer.",
+  },
+  896,
+  1120,
+);
+
+const OPEN_KITCHEN = demoImage(
+  "contractor",
+  "project-kitchen",
+  {
+    en: "An open kitchen with white quartz counters, a long island with walnut base cabinets and a built-in oven, glass pendants, and wide oak floors running into a bright living room.",
+    es: "Una cocina abierta con cubiertas de cuarzo blanco, una isla larga con gabinetes bajos de nogal y horno integrado, lámparas colgantes de vidrio y suelo ancho de roble que continúa hasta una sala luminosa.",
+  },
+  1600,
+  1066,
+);
+
+const BATH = demoImage(
+  "contractor",
+  "project-bath",
+  {
+    en: "A curbless walk-in shower behind a black-framed glass panel: white hexagon mosaic floor with a linear drain, a brushed brass rain head and hand shower, a tiled bench and a recessed niche, with a window onto green trees.",
+    es: "Una ducha a ras de suelo tras un panel de vidrio con perfil negro: suelo de mosaico hexagonal blanco con desagüe lineal, rociador de lluvia y ducha de mano en latón cepillado, un banco alicatado y una hornacina, con una ventana hacia los árboles.",
+  },
+  1120,
+  1400,
+);
+
+const WHOLE_HOME = demoImage(
+  "contractor",
+  "project-wholehome",
+  {
+    en: "A bright open living room under a vaulted ceiling with a cedar beam: two wood-and-linen armchairs and a white sofa on a pale rug, wide plank floors, and a white kitchen with brass pendants and a long island behind.",
+    es: "Una sala abierta y luminosa bajo un techo abovedado con una viga de cedro: dos butacas de madera y lino y un sofá blanco sobre una alfombra clara, suelo de tablas anchas y, al fondo, una cocina blanca con lámparas de latón y una isla larga.",
+  },
+  1600,
+  1066,
+);
+
+const ATTIC = demoImage(
+  "contractor",
+  "project-attic",
+  {
+    en: "An attic bedroom under exposed timber rafters and collar ties, with a stone fireplace, a pine wardrobe, wide pine floorboards and a patterned rug.",
+    es: "Un dormitorio en el ático bajo pares y tirantes de madera a la vista, con chimenea de piedra, un armario de pino, tablas anchas de pino en el suelo y una alfombra estampada.",
+  },
+  1600,
+  1066,
+);
+
+const PORCH = demoImage(
+  "contractor",
+  "project-porch",
+  {
+    en: "A covered back porch with a dark painted beadboard ceiling and a ceiling fan, white columns, gray painted floorboards, a gray Adirondack chair and a large fern, open to a green garden.",
+    es: "Un porche trasero cubierto con techo de friso pintado en tono oscuro y ventilador, columnas blancas, tablas de suelo pintadas de gris, una silla Adirondack gris y un helecho grande, abierto a un jardín verde.",
+  },
+  1120,
+  1400,
+);
+
+const WINDOW_SEAT = demoImage(
+  "contractor",
+  "project-windowseat",
+  {
+    en: "A built-in window seat with a channel-tufted cushion and drawers below, beside floor-to-ceiling white cabinets and open wood shelves with white vases, and a small round black-and-walnut table.",
+    es: "Un banco de ventana a medida con cojín acolchado en canales y cajones debajo, junto a armarios blancos de suelo a techo y estantes abiertos de madera con jarrones blancos, y una mesita redonda negra y de nogal.",
+  },
+  1120,
+  1400,
+);
+
+/* -------------------------------------------------------------- content */
 
 export const contractor: ContractorContent = {
   id: "contractor",
@@ -128,6 +250,19 @@ export const contractor: ContractorContent = {
   hours: [
     { days: { en: "Monday – Friday", es: "Lunes a viernes" }, time: { en: "7am – 5pm", es: "7:00 – 17:00" } },
     { days: { en: "Saturday", es: "Sábado" }, time: { en: "8am – noon", es: "8:00 – 12:00" } },
+  ],
+  photoCredits: [
+    "josh A. D.",
+    "Lucas Kepner",
+    "Troy Mortier",
+    "Clay Banks",
+    "Zac Gudakov",
+    "Alexander Fife",
+    "Bailey Alexander",
+    "Tanner Marquis",
+    "Franco Debartolo",
+    "Roger Starnes Sr",
+    "Sven Mieke",
   ],
   licence: {
     en: "Licensed & insured · Lic. #CB-000000 (demo)",
@@ -160,16 +295,7 @@ export const contractor: ContractorContent = {
       en: "Free on-site visit · itemized written estimate within 48 hours",
       es: "Visita gratuita · presupuesto detallado por escrito en 48 horas",
     },
-    image: demoImage(
-      "contractor",
-      "kitchen",
-      {
-        en: "A finished kitchen remodel: navy Shaker cabinets with brass pulls, two brass dome pendants over a white quartz waterfall island with three stools, and tall black-framed windows onto the garden.",
-        es: "Una cocina reformada y terminada: gabinetes tipo Shaker azul marino con tiradores de latón, dos lámparas de cúpula de latón sobre una isla de cuarzo blanco en cascada con tres taburetes y ventanales de marco negro hacia el jardín.",
-      },
-      1344,
-      752,
-    ),
+    image: KITCHEN,
     // Proportional to the 1344:752 frame (1.79:1): 16'-0" x 9'-0" (1.78:1); the
     // island spans 46.7% of the width, 7'-6" of 16'-0".
     dims: { overall: "16'-0\"", height: "9'-0\"", island: "7'-6\"" },
@@ -185,10 +311,19 @@ export const contractor: ContractorContent = {
       { label: { en: "Scale", es: "Escala" }, value: { en: "1/4\" = 1'-0\"", es: "1/4\" = 1'-0\"" } },
     ],
     sheetLabel: { en: "Sheet", es: "Hoja" },
+    detail: demoImage(
+      "contractor",
+      "detail-pencil",
+      {
+        en: "Close-up of a sharpened pencil resting on a construction drawing, its tip beside a dimension line.",
+        es: "Primer plano de un lápiz afilado sobre un plano de obra, con la punta junto a una línea de cota.",
+      },
+      640,
+      800,
+    ),
   },
   services: {
     sheet: "A-102",
-    kicker: { en: "Services", es: "Servicios" },
     title: { en: "What we build", es: "Lo que construimos" },
     intro: {
       en: "Five kinds of work, done by our own carpenters with the licensed electricians and plumbers we have used for years. Prices are typical starting points; your estimate is itemized and fixed before anything is torn out.",
@@ -212,6 +347,7 @@ export const contractor: ContractorContent = {
         },
         schedule: { en: "6–10 weeks", es: "6–10 semanas" },
         from: 38000,
+        preview: OPEN_KITCHEN,
       },
       {
         id: "baths",
@@ -222,6 +358,7 @@ export const contractor: ContractorContent = {
         },
         schedule: { en: "3–5 weeks", es: "3–5 semanas" },
         from: 16500,
+        preview: BATH,
       },
       {
         id: "additions",
@@ -232,6 +369,7 @@ export const contractor: ContractorContent = {
         },
         schedule: { en: "12–20 weeks", es: "12–20 semanas" },
         from: 145000,
+        preview: ADDITION,
       },
       {
         id: "decks",
@@ -242,6 +380,7 @@ export const contractor: ContractorContent = {
         },
         schedule: { en: "2–4 weeks", es: "2–4 semanas" },
         from: 14000,
+        preview: DECK,
       },
       {
         id: "whole",
@@ -252,6 +391,7 @@ export const contractor: ContractorContent = {
         },
         schedule: { en: "4–8 months", es: "4–8 meses" },
         from: 180000,
+        preview: WHOLE_HOME,
       },
     ],
     footnote: {
@@ -262,11 +402,12 @@ export const contractor: ContractorContent = {
   projects: {
     sheet: "A-201",
     kicker: { en: "Recent projects", es: "Obras recientes" },
-    title: { en: "Two jobs from last season", es: "Dos obras de la última temporada" },
+    title: { en: "Finished work, sheet by sheet", es: "Obra terminada, hoja por hoja" },
     intro: {
-      en: "Both finished on the date written into the contract. Ask us for the homeowners’ numbers; they are happy to talk.",
-      es: "Las dos se terminaron en la fecha que figuraba en el contrato. Pídanos el teléfono de los propietarios; están encantados de hablar con usted.",
+      en: "Every one finished on the date written into the contract. Ask us for the homeowners’ numbers; they are happy to talk.",
+      es: "Todas se terminaron en la fecha que figuraba en el contrato. Pídanos el teléfono de los propietarios; están encantados de hablar con usted.",
     },
+    label: { en: "Recent projects", es: "Obras recientes" },
     items: [
       {
         id: "addition",
@@ -288,20 +429,77 @@ export const contractor: ContractorContent = {
             value: { en: "Approved in 11 days; every inspection passed first time", es: "Aprobado en 11 días; todas las inspecciones superadas a la primera" },
           },
         ],
-        image: demoImage(
-          "contractor",
-          "addition",
+        image: ADDITION,
+      },
+      {
+        id: "kitchen",
+        detail: "2",
+        title: { en: "Open kitchen & island", es: "Cocina abierta con isla" },
+        location: "Birch Hill",
+        duration: { en: "9 weeks", es: "9 semanas" },
+        dimension: "18'-6\"",
+        facts: [
           {
-            en: "A two-story addition clad in navy board-and-batten siding, with tall black-framed windows and glass doors, joined to an older shingled house at golden hour.",
-            es: "Una ampliación de dos plantas revestida de tablas verticales azul marino, con ventanales de marco negro y puertas acristaladas, unida a una casa más antigua de tejas al atardecer.",
+            label: { en: "Scope", es: "Obra" },
+            value: {
+              en: "Wall to the dining room taken out, walnut and white cabinets, a long island with seating",
+              es: "Muro hacia el comedor retirado, gabinetes de nogal y blancos, una isla larga con asientos",
+            },
           },
-          896,
-          1120,
-        ),
+          {
+            label: { en: "Detail", es: "Detalle" },
+            value: { en: "The new beam sits flush in the ceiling: no soffit", es: "La viga nueva queda a ras del techo: sin falso techo" },
+          },
+        ],
+        image: OPEN_KITCHEN,
+      },
+      {
+        id: "bath",
+        detail: "3",
+        title: { en: "Curbless primary shower", es: "Ducha a ras de suelo" },
+        location: "Maple Row",
+        duration: { en: "4 weeks", es: "4 semanas" },
+        dimension: "9'-0\"",
+        facts: [
+          {
+            label: { en: "Scope", es: "Obra" },
+            value: {
+              en: "Linear drain, hex mosaic floor, a tiled bench and a niche sized for real bottles",
+              es: "Desagüe lineal, mosaico hexagonal, un banco alicatado y una hornacina a la medida de los frascos de verdad",
+            },
+          },
+          {
+            label: { en: "Detail", es: "Detalle" },
+            value: { en: "Waterproofing flood-tested before a single tile went up", es: "Impermeabilización probada con agua antes de poner un solo azulejo" },
+          },
+        ],
+        image: BATH,
+      },
+      {
+        id: "wholehome",
+        detail: "4",
+        title: { en: "Whole-home remodel", es: "Reforma integral" },
+        location: "Oak Terrace",
+        duration: { en: "5 months", es: "5 meses" },
+        dimension: "32'-0\"",
+        facts: [
+          {
+            label: { en: "Scope", es: "Obra" },
+            value: {
+              en: "Kitchen and living room opened up, a vaulted ceiling, new floors throughout",
+              es: "Cocina y sala unidas, techo abovedado y suelos nuevos en toda la casa",
+            },
+          },
+          {
+            label: { en: "Phasing", es: "Fases" },
+            value: { en: "Three phases; the family stayed at home the whole time", es: "Tres fases; la familia siguió viviendo en casa todo el tiempo" },
+          },
+        ],
+        image: WHOLE_HOME,
       },
       {
         id: "deck",
-        detail: "2",
+        detail: "5",
         title: { en: "Cedar deck & built-in bench", es: "Terraza de cedro con banco" },
         location: "Linden Park",
         duration: { en: "3 weeks", es: "3 semanas" },
@@ -319,22 +517,78 @@ export const contractor: ContractorContent = {
             value: { en: "Hidden fasteners: no screw heads underfoot", es: "Fijaciones ocultas: ni un tornillo a la vista" },
           },
         ],
-        image: demoImage(
-          "contractor",
-          "deck",
+        image: DECK,
+      },
+      {
+        id: "attic",
+        detail: "6",
+        title: { en: "Attic primary suite", es: "Suite en el ático" },
+        location: "Willow Bend",
+        duration: { en: "10 weeks", es: "10 semanas" },
+        dimension: "22'-0\"",
+        facts: [
           {
-            en: "A cedar deck with a built-in L-shaped bench, black cable railings and wide steps down to the lawn, string lights overhead at sunset.",
-            es: "Una terraza de cedro con un banco en L integrado, barandillas negras de cable y escalones anchos hasta el césped, con guirnaldas de luces al atardecer.",
+            label: { en: "Scope", es: "Obra" },
+            value: {
+              en: "Rafters and collar ties left exposed, new insulation, wide pine floors",
+              es: "Pares y tirantes a la vista, aislamiento nuevo y suelo ancho de pino",
+            },
           },
-          896,
-          1120,
-        ),
+          {
+            label: { en: "Structure", es: "Estructura" },
+            value: { en: "Floor reframed to carry a bedroom, signed off by the engineer", es: "Suelo reforzado para un dormitorio, con el visto bueno del ingeniero" },
+          },
+        ],
+        image: ATTIC,
+      },
+      {
+        id: "porch",
+        detail: "7",
+        title: { en: "Covered back porch", es: "Porche trasero cubierto" },
+        location: "Millbrook",
+        duration: { en: "5 weeks", es: "5 semanas" },
+        dimension: "14'-0\"",
+        facts: [
+          {
+            label: { en: "Scope", es: "Obra" },
+            value: {
+              en: "Painted beadboard ceiling, a fan on its own switch, composite floorboards",
+              es: "Techo de friso pintado, ventilador con interruptor propio y tablas de compuesto",
+            },
+          },
+          {
+            label: { en: "Detail", es: "Detalle" },
+            value: { en: "Roof tied into the house with no seam you can see", es: "Tejado unido a la casa sin una sola junta a la vista" },
+          },
+        ],
+        image: PORCH,
+      },
+      {
+        id: "windowseat",
+        detail: "8",
+        title: { en: "Window seat & built-ins", es: "Banco de ventana a medida" },
+        location: "Elm Park",
+        duration: { en: "2 weeks", es: "2 semanas" },
+        dimension: "7'-6\"",
+        facts: [
+          {
+            label: { en: "Scope", es: "Obra" },
+            value: {
+              en: "Cushioned seat with drawers, floor-to-ceiling cabinets, open oak shelves",
+              es: "Banco tapizado con cajones, armarios de suelo a techo y estantes abiertos de roble",
+            },
+          },
+          {
+            label: { en: "Detail", es: "Detalle" },
+            value: { en: "Built in our shop, installed in two days", es: "Fabricado en nuestro taller, instalado en dos días" },
+          },
+        ],
+        image: WINDOW_SEAT,
       },
     ],
   },
   process: {
     sheet: "A-301",
-    kicker: { en: "Process", es: "Proceso" },
     title: { en: "How a job runs", es: "Cómo avanza una obra" },
     intro: {
       en: "Four steps, the same on a deck as on an addition. You always know what happens next and who is doing it.",
@@ -351,6 +605,16 @@ export const contractor: ContractorContent = {
           es: "Recorremos el espacio con usted, medimos y le preguntamos cómo usa de verdad la estancia. Sin coste ni compromiso.",
         },
         deliverable: { en: "An itemized written estimate", es: "Un presupuesto detallado por escrito" },
+        image: demoImage(
+          "contractor",
+          "step-measure",
+          {
+            en: "A hand holding a tape measure up against a window opening, the yellow blade lit by daylight.",
+            es: "Una mano sostiene una cinta métrica contra el hueco de una ventana, con la hoja amarilla iluminada por la luz del día.",
+          },
+          880,
+          1100,
+        ),
       },
       {
         id: "design",
@@ -361,6 +625,16 @@ export const contractor: ContractorContent = {
           es: "Planos, selección de materiales y documentación para el permiso. No se pide nada hasta que usted aprueba cada acabado.",
         },
         deliverable: { en: "Drawings and a filed permit", es: "Planos y permiso tramitado" },
+        image: demoImage(
+          "contractor",
+          "step-drawings",
+          {
+            en: "A pencil floor plan marked Second Level, Scale 1/8\" = 1'-0\", with a mechanical pencil, a roll of tape, a tray of drafting pens and a drawing tube.",
+            es: "Un plano a lápiz rotulado Second Level, escala 1/8\" = 1'-0\", con un portaminas, un rollo de cinta, una bandeja de rotuladores técnicos y un tubo para planos.",
+          },
+          879,
+          1100,
+        ),
       },
       {
         id: "build",
@@ -371,6 +645,16 @@ export const contractor: ContractorContent = {
           es: "Un calendario con fechas en su refrigerador, un mensaje de su jefe de obra cada viernes y la obra barrida cada tarde.",
         },
         deliverable: { en: "A Friday update, every week", es: "Un resumen cada viernes" },
+        image: demoImage(
+          "contractor",
+          "step-framing",
+          {
+            en: "New roof trusses in pale timber with steel connector plates, braced and standing against a clear blue sky.",
+            es: "Cerchas nuevas de madera clara con placas de acero, arriostradas y recortadas contra un cielo azul despejado.",
+          },
+          880,
+          1100,
+        ),
       },
       {
         id: "walkthrough",
@@ -381,6 +665,16 @@ export const contractor: ContractorContent = {
           es: "Revisamos estancia por estancia con una lista de remates y no nos vamos hasta cerrarla entera.",
         },
         deliverable: { en: "A 2-year workmanship warranty, in writing", es: "Garantía de mano de obra de 2 años, por escrito" },
+        image: demoImage(
+          "contractor",
+          "step-walkthrough",
+          {
+            en: "A finished dining room: a long oak table on a cream rug under a round brass chandelier, with black-framed windows and glass doors onto a wooded yard.",
+            es: "Un comedor terminado: una mesa larga de roble sobre una alfombra crema bajo una lámpara circular de latón, con ventanas de marco negro y puertas de vidrio hacia un jardín arbolado.",
+          },
+          880,
+          1100,
+        ),
       },
     ],
   },
@@ -388,6 +682,13 @@ export const contractor: ContractorContent = {
     sheet: "A-401",
     kicker: { en: "Reviews", es: "Reseñas" },
     title: { en: "Signed off by the homeowners", es: "Con el visto bueno de los propietarios" },
+    trades: [
+      { en: "Kitchens", es: "Cocinas" },
+      { en: "Baths", es: "Baños" },
+      { en: "Additions", es: "Ampliaciones" },
+      { en: "Decks", es: "Terrazas" },
+      { en: "Whole-home", es: "Reformas integrales" },
+    ],
   },
   reviews: [
     {
@@ -417,7 +718,6 @@ export const contractor: ContractorContent = {
   ],
   estimate: {
     sheet: "A-501",
-    kicker: { en: "Free estimate", es: "Presupuesto gratis" },
     title: { en: "Let’s measure your project.", es: "Midamos su proyecto." },
     body: {
       en: "Tell us what you have in mind. We come out, measure, and send an itemized estimate within 48 hours. If we are not the right crew for the job, we will tell you who is.",
@@ -433,6 +733,18 @@ export const contractor: ContractorContent = {
     warranty: { en: "2 years on workmanship, in writing", es: "2 años en mano de obra, por escrito" },
     areaLabel: { en: "Service area", es: "Zona de trabajo" },
     area: { en: "Within 25 miles of the shop", es: "A menos de 25 millas del taller" },
+    elevationLabel: { en: "Front elevation, finished", es: "Alzado principal, terminado" },
+    elevationDim: "64'-0\"",
+    image: demoImage(
+      "contractor",
+      "exterior",
+      {
+        en: "A finished white farmhouse with a dark standing-seam porch roof, three dormers, black shutters and a wide front porch, behind a freshly mown lawn in evening light.",
+        es: "Una casa de campo blanca terminada, con tejado de porche de chapa oscura, tres buhardillas, contraventanas negras y un amplio porche delantero, tras un césped recién cortado con luz de tarde.",
+      },
+      1600,
+      800,
+    ),
   },
   footer: {
     tagline: { en: "Remodels and additions, measured twice.", es: "Reformas y ampliaciones, medidas dos veces." },

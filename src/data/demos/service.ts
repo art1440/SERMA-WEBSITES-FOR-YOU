@@ -13,6 +13,7 @@ import { demoImage, type DemoContent, type DemoImage } from "./index";
 export type ServiceTrade = {
   id: "plumbing" | "electrical" | "hvac" | "water";
   name: L10n;
+  image: DemoImage;
   lede: L10n;
   /** Lowest of the jobs below, USD. */
   from: number;
@@ -42,12 +43,25 @@ export type ServiceContent = Omit<DemoContent, "reviews"> & {
     intro: L10n;
     cta: L10n;
     call: L10n;
+    /** The photo plate behind the headline (the LCP image). */
+    image: DemoImage;
     eta: { tag: L10n; label: L10n; value: L10n; note: L10n };
-    route: {
+    /** A compact, three-stop version of the visit timeline on the foreground card. */
+    stops: { time: string; text: L10n }[];
+  };
+  /** "What happens when you call": the pinned story (the page's peak). */
+  story: {
+    title: L10n;
+    intro: L10n;
+    /** Labels the times as a typical example. */
+    caption: L10n;
+    steps: {
+      key: string;
+      time: string;
       title: L10n;
-      caption: L10n;
-      stops: { time: string; text: L10n }[];
-    };
+      body: L10n;
+      image: DemoImage;
+    }[];
   };
   services: {
     kicker: L10n;
@@ -76,17 +90,30 @@ export type ServiceContent = Omit<DemoContent, "reviews"> & {
     quoted: L10n;
     paid: L10n;
     price: string;
+    /** Supporting photos beside the slider: other jobs from the same week. */
+    more: {
+      title: L10n;
+      body: L10n;
+      items: { image: DemoImage; caption: L10n }[];
+    };
   };
   guarantees: {
     kicker: L10n;
     title: L10n;
     intro: L10n;
+    image: DemoImage;
+    caption: L10n;
     items: {
       id: "upfront" | "workmanship" | "techs";
       label: L10n;
       promise: L10n;
       body: L10n;
     }[];
+  };
+  /** A scroll-driven strip of recent jobs between the guarantees and the reviews. */
+  jobLog: {
+    label: L10n;
+    items: { image: DemoImage; caption: L10n }[];
   };
   reviewsBlock: { kicker: L10n; title: L10n };
   area: {
@@ -99,10 +126,146 @@ export type ServiceContent = Omit<DemoContent, "reviews"> & {
     afterHoursLabel: L10n;
     afterHours: L10n;
     phoneLabel: L10n;
-    cta: L10n;
+    image: DemoImage;
   };
+  /** The closing booking band above the footer. */
+  band: { title: L10n; body: L10n; cta: L10n; call: L10n };
   footer: { tagline: L10n; credit: L10n };
 };
+
+/* ------------------------------------------------------------------ photos */
+// Unsplash photos, graded cool so they sit with the before/after pair. Credits in photoCredits.
+
+const heroPlumber = demoImage(
+  "service",
+  "hero-plumber",
+  {
+    en: "A plumber in a red work shirt reaches under a kitchen sink to tighten a white drain trap, the cabinet lit in cool blue.",
+    es: "Un plomero con camisa de trabajo roja se agacha bajo el fregadero para ajustar un sifón blanco, con el mueble iluminado en azul frío.",
+  },
+  1120,
+  1400,
+);
+const storyCall = demoImage(
+  "service",
+  "story-call",
+  {
+    en: "At home, a hand holds up a smartphone, ready to call, a fruit bowl blurred on the counter behind it.",
+    es: "En casa, una mano sostiene un teléfono móvil listo para llamar, con un frutero desenfocado en la encimera detrás.",
+  },
+  1067,
+  1334,
+);
+const storyArrive = demoImage(
+  "service",
+  "story-arrive",
+  {
+    en: "A technician in a blue hoodie and cap opens the electric meter box on the outside wall of a house.",
+    es: "Un técnico con sudadera azul y gorra abre la caja del medidor eléctrico en la pared exterior de una casa.",
+  },
+  900,
+  1125,
+);
+const storyFix = demoImage(
+  "service",
+  "story-fix",
+  {
+    en: "Close up, the plumber concentrates as he works on the pipes under the sink.",
+    es: "De cerca, el plomero se concentra mientras trabaja en las tuberías bajo el fregadero.",
+  },
+  1120,
+  1400,
+);
+const storyGuarantee = demoImage(
+  "service",
+  "story-guarantee",
+  {
+    en: "Across a dark table, a hand passes a pen over a clipboard while a homeowner signs the paperwork.",
+    es: "Sobre una mesa oscura, una mano acerca un bolígrafo a una carpeta mientras una clienta firma los papeles.",
+  },
+  1066,
+  1333,
+);
+const tradePlumbing = demoImage(
+  "service",
+  "trade-plumbing",
+  {
+    en: "Hands tightening a drain fitting under a sink, a steel watch on one wrist.",
+    es: "Unas manos aprietan una conexión de desagüe bajo un fregadero, con un reloj de acero en la muñeca.",
+  },
+  960,
+  1200,
+);
+const tradeElectrical = demoImage(
+  "service",
+  "trade-electrical",
+  {
+    en: "A gloved hand tests the terminals of an electrical panel with a red multimeter probe.",
+    es: "Una mano con guante comprueba los bornes de un cuadro eléctrico con la punta roja de un multímetro.",
+  },
+  960,
+  1200,
+);
+const tradeHvac = demoImage(
+  "service",
+  "trade-hvac",
+  {
+    en: "A technician in a yellow hi-vis jacket kneels at a wall cabinet, adjusting the manifold of a heating system.",
+    es: "Un técnico con chaqueta reflectante amarilla, de rodillas junto a un armario de pared, ajusta el colector de un sistema de calefacción.",
+  },
+  960,
+  1200,
+);
+const tradeWater = demoImage(
+  "service",
+  "trade-water",
+  {
+    en: "A pair of yellow-handled pliers grips the inlet pipe on top of a white tank water heater.",
+    es: "Unos alicates de mango amarillo sujetan la tubería de entrada sobre un calentador de agua de tanque blanco.",
+  },
+  960,
+  1200,
+);
+const explain = demoImage(
+  "service",
+  "explain",
+  {
+    en: "In a bright hallway, a technician in a navy T-shirt talks a smiling homeowner through the work.",
+    es: "En un pasillo luminoso, un técnico con camiseta azul marino le explica el trabajo a una clienta sonriente.",
+  },
+  1600,
+  1200,
+);
+const areaStreet = demoImage(
+  "service",
+  "area-street",
+  {
+    en: "A quiet suburban street in autumn: white clapboard houses, wide lawns and power lines under a soft sky.",
+    es: "Una calle residencial tranquila en otoño: casas blancas de madera, jardines amplios y cables eléctricos bajo un cielo suave.",
+  },
+  1600,
+  1200,
+);
+const jobToilet = demoImage(
+  "service",
+  "job-toilet",
+  {
+    en: "A technician in red work gloves fits the flush plate of a wall-hung toilet in a marble-tiled bathroom.",
+    es: "Un técnico con guantes rojos coloca el pulsador de un inodoro suspendido en un baño de mármol.",
+  },
+  1200,
+  900,
+);
+const jobAc = demoImage(
+  "service",
+  "job-ac",
+  {
+    en: "Hands connect a gauge hose to the service valve of an outdoor air conditioning unit.",
+    es: "Unas manos conectan la manguera del manómetro a la válvula de servicio de una unidad exterior de aire acondicionado.",
+  },
+  1200,
+  900,
+);
 
 export const service: ServiceContent = {
   id: "service",
@@ -151,6 +314,7 @@ export const service: ServiceContent = {
     },
     cta: { en: "Book a visit", es: "Reserve una visita" },
     call: { en: "Call (555) 555-0171", es: "Llame al (555) 555-0171" },
+    image: heroPlumber,
     eta: {
       tag: { en: "Example", es: "Ejemplo" },
       label: {
@@ -163,50 +327,79 @@ export const service: ServiceContent = {
         es: "La hora estimada de llegada que recibe por mensaje al reservar. Esta hora es solo un ejemplo.",
       },
     },
-    route: {
-      title: { en: "What happens when you call", es: "Qué pasa cuando llama" },
-      caption: {
-        en: "A typical same-day visit",
-        es: "Una visita típica del mismo día",
+    stops: [
+      {
+        time: "9:02",
+        text: { en: "A person answers", es: "Le atiende una persona" },
       },
-      stops: [
-        {
-          time: "9:02",
-          text: {
-            en: "A person in our Lakeview office answers. No phone tree.",
-            es: "Le atiende una persona en nuestra oficina de Lakeview. Sin menús automáticos.",
-          },
-        },
-        {
-          time: "9:05",
-          text: {
-            en: "You get your arrival window and the $89 visit fee by text, before anyone drives out.",
-            es: "Recibe por mensaje su franja de llegada y la tarifa de visita de $89, antes de que salgamos.",
-          },
-        },
-        {
-          time: "9:44",
-          text: {
-            en: "“Marcus, licensed plumber, is 10 minutes away,” with his photo.",
-            es: "«Marcus, plomero con licencia, llega en 10 minutos», con su foto.",
-          },
-        },
-        {
-          time: "9:55",
-          text: {
-            en: "He finds the problem and quotes a fixed price. Nothing starts until you say yes.",
-            es: "Encuentra el problema y le da un precio cerrado. No se empieza nada hasta que usted diga que sí.",
-          },
-        },
-        {
-          time: "11:20",
-          text: {
-            en: "Fixed, cleaned up, and guaranteed for a year.",
-            es: "Reparado, limpio y con un año de garantía.",
-          },
-        },
-      ],
+      {
+        time: "9:44",
+        text: { en: "Your tech is 10 min out", es: "Su técnico, a 10 min" },
+      },
+      {
+        time: "11:20",
+        text: { en: "Fixed and guaranteed", es: "Reparado y garantizado" },
+      },
+    ],
+  },
+  story: {
+    title: { en: "What happens when you call", es: "Qué pasa cuando llama" },
+    intro: {
+      en: "No mystery window, no surprise invoice. This is how a normal weekday call goes, from the first ring to the signed guarantee.",
+      es: "Sin franjas misteriosas ni facturas sorpresa. Así va una llamada normal entre semana, desde el primer timbre hasta la garantía firmada.",
     },
+    caption: {
+      en: "Times are an example from a typical morning.",
+      es: "Las horas son un ejemplo de una mañana típica.",
+    },
+    steps: [
+      {
+        key: "call",
+        time: "9:02",
+        title: {
+          en: "You call. A person answers.",
+          es: "Usted llama. Le atiende una persona.",
+        },
+        body: {
+          en: "Someone in our Lakeview office picks up, not a phone tree. Within a few minutes you get your arrival window and the $89 visit fee by text, before anyone drives out.",
+          es: "Contesta alguien de nuestra oficina de Lakeview, no un menú automático. En pocos minutos recibe por mensaje su franja de llegada y la tarifa de visita de $89, antes de que salgamos.",
+        },
+        image: storyCall,
+      },
+      {
+        key: "arrive",
+        time: "9:44",
+        title: {
+          en: "A tech arrives in the window.",
+          es: "Un técnico llega dentro de la franja.",
+        },
+        body: {
+          en: "Ten minutes out you get a text with your tech’s name and photo. They knock, introduce themselves and put on shoe covers before stepping inside.",
+          es: "Diez minutos antes recibe un mensaje con el nombre y la foto de su técnico. Llama a la puerta, se presenta y se pone cubrezapatos antes de entrar.",
+        },
+        image: storyArrive,
+      },
+      {
+        key: "fix",
+        time: "9:55",
+        title: { en: "Fixed, and explained.", es: "Reparado, y explicado." },
+        body: {
+          en: "Your tech finds the problem, shows it to you and quotes a fixed price. Nothing starts until you say yes, and before packing up they walk you through what was done.",
+          es: "Su técnico encuentra el problema, se lo enseña y le da un precio cerrado. No se empieza nada hasta que usted diga que sí, y antes de recoger le explica lo que se hizo.",
+        },
+        image: storyFix,
+      },
+      {
+        key: "guarantee",
+        time: "11:20",
+        title: { en: "Guaranteed in writing.", es: "Garantizado por escrito." },
+        body: {
+          en: "The invoice matches the quote, and the one-year workmanship guarantee is printed on it and signed by your tech. Cleaned up, tools out, done.",
+          es: "La factura coincide con el presupuesto, y la garantía de un año de mano de obra va impresa en ella y firmada por su técnico. Todo limpio, herramientas recogidas, listo.",
+        },
+        image: storyGuarantee,
+      },
+    ],
   },
   services: {
     kicker: { en: "Services & prices", es: "Servicios y precios" },
@@ -231,6 +424,7 @@ export const service: ServiceContent = {
     items: [
       {
         id: "plumbing",
+        image: tradePlumbing,
         name: { en: "Plumbing", es: "Plomería" },
         lede: {
           en: "Leaks, clogs, toilets, faucets, disposals and sump pumps.",
@@ -254,6 +448,7 @@ export const service: ServiceContent = {
       },
       {
         id: "electrical",
+        image: tradeElectrical,
         name: { en: "Electrical", es: "Electricidad" },
         lede: {
           en: "Outlets, breakers, lighting, EV chargers and panels. Master electricians on staff.",
@@ -280,6 +475,7 @@ export const service: ServiceContent = {
       },
       {
         id: "hvac",
+        image: tradeHvac,
         name: { en: "Heating & cooling", es: "Calefacción y aire" },
         lede: {
           en: "Furnaces, AC and heat pumps. Tune-ups before the season, repairs the day it quits.",
@@ -303,6 +499,7 @@ export const service: ServiceContent = {
       },
       {
         id: "water",
+        image: tradeWater,
         name: { en: "Water heaters", es: "Calentadores de agua" },
         lede: {
           en: "Tank and tankless: repair, flush or replace, usually installed the same day.",
@@ -395,7 +592,34 @@ export const service: ServiceContent = {
     quoted: { en: "Quoted", es: "Presupuesto" },
     paid: { en: "Paid", es: "Pagado" },
     price: "$385",
+    more: {
+      title: {
+        en: "Same week, other jobs",
+        es: "La misma semana, otros trabajos",
+      },
+      body: {
+        en: "Every job is photographed before and after, and the photos go on your invoice. Two more from that week:",
+        es: "Fotografiamos cada trabajo antes y después, y las fotos van en su factura. Dos más de esa semana:",
+      },
+      items: [
+        {
+          image: jobToilet,
+          caption: {
+            en: "Wall-hung toilet, new flush valve · Harbor Heights",
+            es: "Inodoro suspendido, válvula nueva · Harbor Heights",
+          },
+        },
+        {
+          image: jobAc,
+          caption: {
+            en: "AC tune-up and recharge · Pine Ridge",
+            es: "Revisión y recarga de aire · Pine Ridge",
+          },
+        },
+      ],
+    },
   },
+
   guarantees: {
     kicker: { en: "Our guarantees", es: "Nuestras garantías" },
     title: {
@@ -405,6 +629,11 @@ export const service: ServiceContent = {
     intro: {
       en: "They are printed on every invoice and signed by your tech, so you never have to take our word for it.",
       es: "Van impresas en cada factura y firmadas por su técnico, para que nunca tenga que fiarse solo de nuestra palabra.",
+    },
+    image: explain,
+    caption: {
+      en: "Before we leave, your tech walks you through the repair and the paperwork.",
+      es: "Antes de irnos, su técnico le explica la reparación y los papeles.",
     },
     items: [
       {
@@ -444,6 +673,49 @@ export const service: ServiceContent = {
         body: {
           en: "No subcontractors. You get your tech’s name and photo by text before the doorbell rings, and they wear shoe covers inside.",
           es: "Sin subcontratistas. Recibe el nombre y la foto de su técnico por mensaje antes de que llame a la puerta, y dentro de casa usa cubrezapatos.",
+        },
+      },
+    ],
+  },
+  jobLog: {
+    label: {
+      en: "Recent jobs around Lakeview",
+      es: "Trabajos recientes en Lakeview",
+    },
+    items: [
+      {
+        image: tradeWater,
+        caption: {
+          en: "Water heater flush · Elm Grove",
+          es: "Purga de calentador · Elm Grove",
+        },
+      },
+      {
+        image: storyArrive,
+        caption: {
+          en: "Meter and panel check · Westbrook",
+          es: "Revisión de medidor y panel · Westbrook",
+        },
+      },
+      {
+        image: tradeHvac,
+        caption: {
+          en: "Heating manifold repair · North Shore",
+          es: "Reparación de colector · North Shore",
+        },
+      },
+      {
+        image: tradePlumbing,
+        caption: {
+          en: "Disposal swap · Millbrook",
+          es: "Cambio de triturador · Millbrook",
+        },
+      },
+      {
+        image: tradeElectrical,
+        caption: {
+          en: "Breaker replacement · Cedar Flats",
+          es: "Cambio de disyuntor · Cedar Flats",
         },
       },
     ],
@@ -521,8 +793,32 @@ export const service: ServiceContent = {
       es: "¿Fuga activa, sin calefacción o sin luz? El mismo número le comunica con nuestro técnico de guardia. Recargo de $149, avisado por adelantado.",
     },
     phoneLabel: { en: "Phone", es: "Teléfono" },
-    cta: { en: "Book a visit", es: "Reserve una visita" },
+    image: areaStreet,
   },
+  band: {
+    title: {
+      en: "Something leaking, tripping or blowing cold?",
+      es: "¿Algo gotea, salta o no calienta?",
+    },
+    body: {
+      en: "Call before 2pm for a same-day visit. You get a fixed price before any work starts.",
+      es: "Llame antes de las 14:00 para una visita hoy mismo. Recibe un precio cerrado antes de empezar.",
+    },
+    cta: { en: "Book a visit", es: "Reserve una visita" },
+    call: { en: "Call (555) 555-0171", es: "Llame al (555) 555-0171" },
+  },
+  photoCredits: [
+    "Timur Shakerzianov",
+    "Jakub Żerdzicki",
+    "Raze Solar",
+    "Marc Zeman",
+    "Toolmash Expo",
+    "Marian Florinel Condruz",
+    "HiveBoxx",
+    "Eilis Garvey",
+    "Joel Muniz",
+    "Annika Wischnewsky",
+  ],
   footer: {
     tagline: {
       en: "Plumbing, electrical and heating & cooling for Greater Lakeview.",
