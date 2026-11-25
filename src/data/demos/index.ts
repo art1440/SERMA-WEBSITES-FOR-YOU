@@ -53,25 +53,21 @@ const ORDER: DemoId[] = ["contractor", "service", "restaurant", "barbershop", "s
 /** Pixel height of each full shot (all are 1280 wide), read from the files. Re-read after a re-capture. */
 const SHOT_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
   barbershop: { en: 10401, es: 10655 },
-  salon: { en: 9029, es: 9306 },
+  salon: { en: 8965, es: 9242 },
   beauty: { en: 8608, es: 8878 },
   restaurant: { en: 7810, es: 7975 },
   contractor: { en: 6823, es: 6972 },
   service: { en: 9985, es: 10081 },
 };
 
-/**
- * Height of each phone shot at 780 px wide (390 CSS px at 2x), as printed by capture:work.
- * A few very long pages are stored proportionally narrower so they stay under 16 MP
- * (iOS decodes larger images subsampled); width/height here only set the aspect ratio.
- */
+/** Pixel height of each phone shot (all are 780 wide: 390 CSS px at 2×), read from the files. */
 const MOBILE_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
-  barbershop: { en: 22661, es: 23142 },
-  salon: { en: 20320, es: 21205 },
-  beauty: { en: 20152, es: 20825 },
+  barbershop: { en: 22656, es: 23120 },
+  salon: { en: 20224, es: 21102 },
+  beauty: { en: 20152, es: 20820 },
   restaurant: { en: 18216, es: 19090 },
   contractor: { en: 19718, es: 20282 },
-  service: { en: 29793, es: 30559 },
+  service: { en: 29774, es: 30556 },
 };
 
 const shot = (id: DemoId, locale: "en" | "es") => ({
