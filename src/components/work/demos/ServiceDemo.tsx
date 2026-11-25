@@ -357,19 +357,17 @@ export function ServiceDemo() {
           image={c.hero.image}
           alt={L(c.hero.image.alt)}
           position="50% 40%"
-          mobilePosition="66% 50%"
-          // Below lg the photo fills the top of the hero only and fades into the
-          // deep teal under the type: the plumber stays above the headline, and a
-          // portrait crop is zoomed about half as much (sharper on phones). On
-          // phones the box ends 17rem above the hero's bottom (about the type's
-          // height), so tall and short phones both meet the type at the fade.
-          className="max-sm:bottom-[17rem] sm:max-lg:bottom-[26%]"
+          mobilePosition="62% 50%"
           scrims={[
-            // Phones: the type's top edge reaches up to ~9rem into the photo box (Spanish,
-            // short phones), so the shade is solid there and fades out above it.
-            "sm:hidden bg-[linear-gradient(to_top,#0C3A36_0,#0C3A36_10rem,rgba(12,58,54,0.88)_12rem,rgba(12,58,54,0)_17rem)]",
-            // Portrait tablets: the same idea, scaled to the taller photo box.
-            "hidden sm:block lg:hidden bg-gradient-to-t from-[#0C3A36] from-[34%] via-[#0C3A36]/90 via-[48%] to-[#0C3A36]/0 to-[80%]",
+            // Below lg the type sits at the bottom, over the plumber's legs and toolbox,
+            // and his head and shoulders stay clear above it. The shade is translucent
+            // throughout (the photo reads through behind the type), measured in rem from
+            // the bottom so it tracks the type block on short and tall screens alike;
+            // the Spanish block is taller, so its shade reaches a little higher.
+            es
+              ? "sm:hidden bg-[linear-gradient(to_top,rgba(12,58,54,0.86)_0,rgba(12,58,54,0.8)_18rem,rgba(12,58,54,0.74)_28rem,rgba(12,58,54,0)_38rem)]"
+              : "sm:hidden bg-[linear-gradient(to_top,rgba(12,58,54,0.86)_0,rgba(12,58,54,0.8)_14rem,rgba(12,58,54,0.74)_22rem,rgba(12,58,54,0)_32rem)]",
+            "hidden sm:block lg:hidden bg-[linear-gradient(to_top,rgba(12,58,54,0.86)_0,rgba(12,58,54,0.8)_18rem,rgba(12,58,54,0.74)_30rem,rgba(12,58,54,0)_42rem)]",
             // Desktop: the type sits on the left; the shade fades out across the plumber's arm.
             "hidden lg:block bg-gradient-to-r from-[#0C3A36]/[0.94] from-[12%] via-[#0C3A36]/[0.78] via-[40%] to-[#0C3A36]/0 to-[60%]",
             // ...and a low shade from the bottom under the CTA row and the dispatch card.

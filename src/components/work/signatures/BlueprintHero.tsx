@@ -28,7 +28,8 @@ import { useDemoStill } from "../useDemoStill";
  *   3.20-3.85 s  the drawing fades away, so the headline reads on the photo
  *   ~3.85 s      every animation has finished -> data-state="rest"
  * At rest (and from the start under reduced motion, Pause or capture) the photo
- * is unclipped and fully opaque, and [data-linework] is visibility:hidden. One
+ * is unclipped and fully opaque, and [data-linework] is visibility:hidden (a
+ * prefers-reduced-motion rule shows that state before hydration too). One
  * React state flip when the sequence ends; no per-frame state.
  *
  * Alignment: the trace is drawn in the photo's own pixels (1600 x 1067) on a
@@ -67,6 +68,7 @@ const CSS = `
 .tf-cover{--w:max(100cqw,calc(100cqh*${RATIO}));position:absolute;width:var(--w);height:calc(var(--w)/${RATIO});left:calc((100cqw - var(--w))*var(--tf-px-m));top:calc((100cqh - var(--w)/${RATIO})*var(--tf-py-m))}
 @media (min-width:640px){.tf-cover{left:calc((100cqw - var(--w))*var(--tf-px));top:calc((100cqh - var(--w)/${RATIO})*var(--tf-py))}}
 [data-signature="contractor"][data-state="rest"] [data-linework]{visibility:hidden}
+@media (prefers-reduced-motion:reduce){.tf-wipe{animation:none;clip-path:none}.tf-track{display:none}[data-signature="contractor"] [data-linework]{visibility:hidden}}
 `;
 
 /** The faint drafting sheet under the trace (fades with it). */
