@@ -11,8 +11,10 @@ import { useDemoStill } from "../useDemoStill";
  * hero section; it fills the section (absolute, inset 0) and sits under the
  * content (-z-10), so the section's own markup (h1, CTAs) stays in normal flow.
  *
- * Sharpness: srcSet carries the 640 / 1600 / 2560 px files (heroImage), sizes
- * 100vw, so a wide or 2x screen gets the 2560 file and a phone the small one.
+ * Sharpness: srcSet carries the 640 / 1600 / 2560 px files (heroImage), and
+ * sizes describes the drawn width honestly (100vw on landscape screens, about
+ * 100vh x the photo's ratio on portrait ones, where cover crops it), so every
+ * screen gets a file at least as wide as it is drawn.
  * It is the page's LCP image: eager, fetchPriority high, never faded in.
  *
  * Motion (editorial, restrained):
@@ -65,12 +67,17 @@ export function HeroBackdrop({
   const srcSet = [`${image.small} 640w`, `${image.src} ${image.width}w`, image.large ? `${image.large} 2560w` : null]
     .filter(Boolean)
     .join(", ");
+  // object-fit: cover. When the screen is proportionally narrower than the photo (any portrait
+  // phone), the photo is drawn height-bound, about 100vh x its aspect ratio wide, not 100vw:
+  // say so, or the browser picks a file several times too small and the hero looks soft.
+  const ratio = image.width / image.height;
+  const sizes = `(max-aspect-ratio: ${image.width}/${image.height}) calc(100vh * ${ratio.toFixed(3)}), 100vw`;
   const posStyle = { "--hero-pos": position, "--hero-pos-m": mobilePosition ?? position } as CSSProperties;
   const imgCls = `absolute inset-0 h-full w-full object-cover [object-position:var(--hero-pos-m)] sm:[object-position:var(--hero-pos)] ${imgClassName}`;
   const imgProps = {
     src: image.src,
     srcSet,
-    sizes: "100vw",
+    sizes,
     width: image.width,
     height: image.height,
     alt,
