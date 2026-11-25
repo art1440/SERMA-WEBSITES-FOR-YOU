@@ -380,7 +380,7 @@ export function BeautyDemo() {
             from="bottom"
             parallax={6}
             className="aspect-[4/3] w-full sm:aspect-[16/10] lg:col-start-1 lg:row-start-1 lg:aspect-square"
-            imgClassName="object-[50%_72%]"
+            imgClassName="object-[50%_55%]"
           />
           <div className="px-6 pb-4 pt-12 sm:px-12 sm:pt-16 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:px-14 lg:py-20">
             <p className={`${KICKER} text-[#9CC5A6]`}>{L(c.visit.kicker)}</p>
