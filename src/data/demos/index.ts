@@ -89,6 +89,14 @@ export const DEMOS: DemoCard[] = ORDER.map((id) => ({
   shots: { en: shot(id, "en"), es: shot(id, "es") },
 }));
 
+/**
+ * A full-width hero photo: like demoImage, plus the 2560 px file written by
+ * `scripts/import-photo.py ... --hero`. `width` / `height` are the 1600 px file's pixels.
+ */
+export function heroImage(id: DemoId, name: string, alt: L10n, width: number, height: number): DemoImage {
+  return { ...demoImage(id, name, alt, width, height), large: asset(`/media/work/${id}/${name}-v1-2560.webp`) };
+}
+
 export function demoImage(id: DemoId, name: string, alt: L10n, width: number, height: number): DemoImage {
   return {
     src: asset(`/media/work/${id}/${name}-v1.webp`),

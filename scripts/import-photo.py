@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Turn a downloaded photo into the demo-site pair: <name>-v1.webp + <name>-v1-640.webp.
 
-    python3 -I scripts/import-photo.py SRC OUT_DIR NAME [--max 1600] [--crop 4:5] [--focus 0.5,0.4] [--grade warm|cool|none]
+    python3 -I scripts/import-photo.py SRC OUT_DIR NAME [--max 1600] [--crop 4:5] [--focus 0.5,0.4] [--grade warm|cool|none] [--hero] [--sharpen 0|1]
 
   SRC      a local JPEG/PNG (download it first, e.g. with curl, into its own scratch folder)
   OUT_DIR  e.g. public/media/work/barbershop
@@ -10,6 +10,9 @@
   --crop   crop to an aspect ratio W:H before resizing (default: keep the photo's own)
   --focus  crop centre as x,y fractions (default 0.5,0.5)
   --grade  a light, consistent colour grade so stock photos sit with each other
+  --hero   also write <name>-v1-2560.webp for full-width heroes (download the source
+           at w=3000 or more; a smaller source is never upscaled, and a WARN is printed)
+  --sharpen  light unsharp mask after every downscale (default 1), so resized photos stay crisp
 
 Prints "NAME WIDTH HEIGHT" for the large file (use those in demoImage(...)).
 
@@ -23,7 +26,7 @@ Needs Pillow with WebP support. Metadata (EXIF, GPS) is never written out.
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageEnhance, ImageOps
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageOps
 
 
 def grade(im: Image.Image, mode: str) -> Image.Image:
@@ -56,25 +59,47 @@ def crop_to(im: Image.Image, ratio: str, focus: tuple[float, float]) -> Image.Im
     return im.crop((0, top, w, top + nh))
 
 
+SHARPEN = True
+
+
+def crisp(im: Image.Image) -> Image.Image:
+    """Light unsharp mask: restores the edge contrast a LANCZOS downscale softens."""
+    return im.filter(ImageFilter.UnsharpMask(radius=0.8, percent=55, threshold=2)) if SHARPEN else im
+
+
 def fit(im: Image.Image, longest: int) -> Image.Image:
     w, h = im.size
     s = min(1.0, longest / max(w, h))
-    return im.resize((round(w * s), round(h * s)), Image.LANCZOS) if s < 1 else im
+    return crisp(im.resize((round(w * s), round(h * s)), Image.LANCZOS)) if s < 1 else im
 
 
 def import_photo(argv: list[str]) -> None:
+    global SHARPEN
     src, out_dir, name = argv[0], Path(argv[1]), argv[2]
-    opts = dict(zip(argv[3::2], argv[4::2]))
+    rest = argv[3:]
+    hero = "--hero" in rest
+    if hero:
+        rest.remove("--hero")
+    opts = dict(zip(rest[0::2], rest[1::2]))
+    SHARPEN = opts.get("--sharpen", "1") != "0"
     longest = int(opts.get("--max", 1600))
     focus = tuple(float(x) for x in opts.get("--focus", "0.5,0.5").split(","))
     im = ImageOps.exif_transpose(Image.open(src)).convert("RGB")
     if "--crop" in opts:
         im = crop_to(im, opts["--crop"], focus)  # type: ignore[arg-type]
     im = grade(im, opts.get("--grade", "none"))
-    big = fit(im, longest)
-    small = big.resize((640, round(big.height * 640 / big.width)), Image.LANCZOS) if big.width > 640 else big
     out_dir.mkdir(parents=True, exist_ok=True)
-    big.save(out_dir / f"{name}-v1.webp", "WEBP", quality=80, method=6)
+    if hero:
+        # Width-based for heroes (they are landscape and shown full width).
+        if im.width < 2560:
+            print(f"WARN {name}: source is {im.width} px wide; the -2560 file is not upscaled", file=sys.stderr)
+        large = crisp(im.resize((2560, round(im.height * 2560 / im.width)), Image.LANCZOS)) if im.width > 2560 else im
+        large.save(out_dir / f"{name}-v1-2560.webp", "WEBP", quality=80, method=6)
+        big = crisp(im.resize((1600, round(im.height * 1600 / im.width)), Image.LANCZOS)) if im.width > 1600 else im
+    else:
+        big = fit(im, longest)
+    small = crisp(big.resize((640, round(big.height * 640 / big.width)), Image.LANCZOS)) if big.width > 640 else big
+    big.save(out_dir / f"{name}-v1.webp", "WEBP", quality=82 if hero else 80, method=6)
     small.save(out_dir / f"{name}-v1-640.webp", "WEBP", quality=78, method=6)
     print(name, big.width, big.height)
 

@@ -8,7 +8,12 @@ import type { L10n, Locale } from "@/i18n/types";
 
 export type DemoId = NicheId;
 
-export type DemoImage = { src: string; small: string; alt: L10n; width: number; height: number };
+/**
+ * A photo record. `src` is the 1600 px file, `small` the 640 px copy; hero photos
+ * (heroImage) also carry `large`, a 2560 px file for full-width heroes on wide / 2x screens.
+ * `width` / `height` are the `src` file's pixels.
+ */
+export type DemoImage = { src: string; small: string; large?: string; alt: L10n; width: number; height: number };
 
 export type DemoCard = {
   id: DemoId;
