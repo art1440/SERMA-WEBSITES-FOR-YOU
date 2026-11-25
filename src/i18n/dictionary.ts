@@ -400,7 +400,7 @@ const es: Dictionary = {
     oneTime: "pago único",
     fromNote: "pago único · cotización a medida",
     priceSoon: "Precio muy pronto",
-    monthly: "luego {amount}/mes por gestión y mantenimiento",
+    monthly: "luego {amount}/mes por administración y mantenimiento",
     noMonthly: "Sin cuota mensual",
     choose: "Elegir {plan}",
     soon: "Próximamente",
