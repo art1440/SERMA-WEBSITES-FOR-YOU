@@ -1,5 +1,6 @@
 "use client";
 
+import { Wordmark } from "@/components/ui/Wordmark";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Check, X } from "lucide-react";
 import { useRef, useState, type MouseEvent } from "react";
@@ -150,7 +151,7 @@ export function ComparisonMatrix() {
                 </span>
               ))}
               <span role="columnheader" className="flex flex-col items-center px-2 pb-5 pt-7 text-center sm:px-4 sm:pt-9">
-                <span className="font-display text-base font-bold tracking-[0.18em] text-ink-900 sm:text-2xl">{c.us.name.toUpperCase()}</span>
+                <Wordmark className="text-ink-900" markClassName="h-[18px] sm:h-7" />
                 <span className="mt-2 hidden text-[0.8125rem] font-semibold leading-snug text-ink-900/80 sm:block">{c.us.note}</span>
               </span>
             </div>
