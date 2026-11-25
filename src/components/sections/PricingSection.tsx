@@ -14,6 +14,7 @@ import { useMotionPause } from "@/context/MotionPauseContext";
 import { useScene } from "@/context/SceneContext";
 import { LAUNCH, PROMISES, TIERS, type Tier } from "@/data/pricing";
 import { LaunchMeta, RotatingPerk, SaleBanner, useLaunch } from "./LaunchOffer";
+import { PriceAnchor } from "./PriceAnchor";
 import { fill } from "@/i18n/types";
 import { formatMetric } from "@/lib/format";
 import { EASE_EDITORIAL, SPRING_SNAPPY } from "@/lib/motion";
@@ -225,6 +226,21 @@ function PriceCard({ tier, onPick }: { tier: Tier; onPick: (tier: Tier) => void 
                   ? fill(p.monthly, { amount: `$${tier.monthly}` })
                   : p.noMonthly}
             </p>
+            {price !== null && tier.installments ? (
+              <p className="mt-1.5 text-sm font-semibold text-aqua-glow">
+                {fill(showFrom ? p.installmentsFrom : p.installments, {
+                  n: tier.installments,
+                  // Cents only when the split isn't a whole number ($266.33, but $333).
+                  amount: ((v) =>
+                    new Intl.NumberFormat(intlLocale, {
+                      style: "currency",
+                      currency: "USD",
+                      minimumFractionDigits: Number.isInteger(v) ? 0 : 2,
+                      maximumFractionDigits: 2,
+                    }).format(v))(Math.round((price / tier.installments) * 100) / 100),
+                })}
+              </p>
+            ) : null}
             {price === null ? null : <RotatingPerk index={TIERS.indexOf(tier)} />}
           </div>
 
@@ -334,6 +350,8 @@ export function PricingSection() {
             })}
           </ul>
         ) : null}
+
+        <PriceAnchor />
 
         <ol className="mt-12 grid items-stretch gap-6 md:mt-16 lg:grid-cols-3 lg:gap-5 xl:gap-7">
           {TIERS.map((tier) => (

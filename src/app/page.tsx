@@ -3,6 +3,7 @@
 import { HeroChapter } from "@/components/chapters/HeroChapter";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { StickyCta } from "@/components/layout/StickyCta";
 import { TabPanels } from "@/components/layout/TabPanels";
 import { ComparisonMatrix } from "@/components/sections/ComparisonMatrix";
 import { InclusionsList } from "@/components/sections/InclusionsList";
@@ -30,6 +31,7 @@ export default function HomePage() {
           <span id="top" aria-hidden="true" />
           <Stage />
           <Navbar />
+          <StickyCta />
           <main id="main" tabIndex={-1} className="relative z-10 focus:outline-none">
             <TabPanels
               panels={[
