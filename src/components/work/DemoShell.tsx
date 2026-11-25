@@ -7,6 +7,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useMockup } from "@/context/MockupContext";
 import type { DemoId } from "@/data/demos";
 import { DemoBookingSheet } from "./DemoBookingSheet";
+import { SmoothScroll } from "./motion/SmoothScroll";
 
 type BookingValue = { openBooking: () => void };
 const DemoBookingContext = createContext<BookingValue>({ openBooking: () => undefined });
@@ -120,6 +121,7 @@ export function DemoShell({ id, className, children }: { id: DemoId; className?:
           {children}
         </main>
         <DemoBookingSheet open={sheetOpen} onClose={closeSheet} onMockup={openMockup} />
+        <SmoothScroll />
       </div>
     </DemoBookingContext.Provider>
   );

@@ -42,4 +42,6 @@ export type DemoContent = {
   address: string;
   hours: { days: L10n; time: L10n }[];
   reviews: { quote: L10n; name: string }[];
+  /** Unsplash photographers whose photos this demo uses (credited in its footer). */
+  photoCredits?: string[];
 };
