@@ -136,9 +136,9 @@ npm run typecheck && npm run build && npm run verify:work home-smoke home-wiring
 
 All video loops in `public/media/` were generated with Higgsfield (Kling 3.0 Pro, silent, 1080p source) for this project, then re-encoded as seamless WebM + MP4 loops with posters (~7 MB total). They are illustrative renderings; they do not depict real client businesses (also stated on `/disclaimer`).
 
-The original demo-site photos in `public/media/work/` (the `*-v1.webp` files listed in each demo's data file without a photographer) are AI-generated (Higgsfield, GPT Image 2.6) for this project and depict no real businesses or clients.
+The original demo-site photos in `public/media/work/` are AI-generated (Higgsfield, GPT Image 2.6) for this project and depict no real businesses or clients: barbershop `fade`, `interior`, `razor`; salon `colour`, `hero`, `interior`; beauty `brows`, `facial`, `lashes`; restaurant `flatbread`, `hero`, `room`, `steak`; contractor `addition`, `deck`, `kitchen`; service `before`, `after`.
 
-The additional demo photos come from [Unsplash](https://unsplash.com/) (Unsplash License: free to use, no permission needed), downloaded through the Unsplash connector, re-encoded to WebP and self-hosted (the CSP allows no third-party images). Each demo credits its photographers in its footer (`photoCredits` in `src/data/demos/<id>.ts`). They are stock photos of other places and people, used to illustrate fictional businesses.
+The additional demo photos come from [Unsplash](https://unsplash.com/) (Unsplash License: free to use, no permission needed), downloaded through the Unsplash connector, re-encoded to WebP and self-hosted (the CSP allows no third-party images). Each demo credits its photographers in its footer (`photoCredits` in `src/data/demos/<id>.ts`). They are stock photos of other places and people, used to illustrate fictional businesses; a few were cropped or retouched to remove visible brand names, and Velvet Room's hero room is a photoreal render published on Unsplash.
 
 To add another photo: download it into its own scratch folder, then
 

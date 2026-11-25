@@ -4,7 +4,9 @@
 //   desktop: 1280×800 viewport, DPR 1 -> shot-<locale>-<v>.jpg (+ a 640 px copy, the gallery cards)
 //   mobile:  390×844 viewport, DPR 2  -> shot-<locale>-mobile-<v>.jpg (780 px wide, the phone preview)
 // The overwrite guard is per set: `--only mobile` adds the mobile files while the desktop ones exist.
-// Requires a prior `npm run build`, plus python3 with Pillow (for the 640 px copies).
+// Requires a prior `npm run build`, plus python3 with Pillow (JPEG encoding and the 640 px copies).
+// Shots over 16 MP are stored proportionally narrower (iOS decodes larger images subsampled);
+// the printed heights are always at the nominal width (1280 desktop / 780 mobile).
 // Starts `next start` on PORT and always kills it.
 //
 // VERSIONING: /media is served immutable for a year. NEVER overwrite a deployed
@@ -91,6 +93,29 @@ function resize(src, dst) {
     src, dst]);
 }
 
+/** Largest image a phone preview may decode at full resolution (iOS subsamples beyond ~16.7 MP). */
+const MAX_PIXELS = 16_000_000;
+
+/** python: <png> <jpg> <maxPixels> <q0> <qMin> <budget> -> "q bytes width height shrunk" */
+const ENCODE = [
+  "import io, sys",
+  "from PIL import Image",
+  "src, dst, maxpx, q, qmin, budget = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), int(sys.argv[6])",
+  "im = Image.open(src).convert('RGB')",
+  "shrunk = 0",
+  "if im.width * im.height > maxpx:",
+  "    s = (maxpx / (im.width * im.height)) ** 0.5",
+  "    im = im.resize((int(im.width * s), int(im.height * s)), Image.LANCZOS)",
+  "    shrunk = 1",
+  "while True:",
+  "    buf = io.BytesIO()",
+  "    im.save(buf, 'JPEG', quality=q, optimize=True, progressive=True)",
+  "    if buf.tell() <= budget or q <= qmin: break",
+  "    q -= 4",
+  "open(dst, 'wb').write(buf.getvalue())",
+  "print(q, buf.tell(), im.width, im.height, shrunk)",
+].join("\n");
+
 /** Per set: viewport, pixel ratio, JPEG quality ladder and size budget. */
 const SET_OPTS = {
   desktop: { viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1, q0: 80, qMin: 68, budget: 900 * 1024 },
@@ -133,19 +158,22 @@ async function capture(browser, id, locale, set) {
     fs.mkdirSync(dir, { recursive: true });
     const [name, smallName] = filesFor(set, locale);
     const full = path.join(dir, name);
-    let q = o.q0, size;
-    for (;;) {
-      await page.screenshot({ path: full, fullPage: true, type: "jpeg", quality: q });
-      size = fs.statSync(full).size;
-      if (size <= o.budget || q <= o.qMin) break;
-      q -= 4;
-    }
+    // Lossless capture first, then one JPEG encode: shrink (proportionally) anything over
+    // MAX_PIXELS, then step the quality down until the file fits the budget.
+    const png = `${full}.tmp.png`;
+    await page.screenshot({ path: png, fullPage: true, type: "png" });
+    const out = execFileSync("python3", ["-c", ENCODE, png, full, String(MAX_PIXELS), String(o.q0), String(o.qMin), String(Math.round(o.budget))]).toString().trim();
+    fs.rmSync(png, { force: true });
+    const [q, size, w, h, shrunk] = out.split(" ").map(Number);
+    if (shrunk) console.log(`NOTE ${id}/${locale}/${set}: over ${MAX_PIXELS / 1e6} MP, stored at ${w} px wide (iOS decodes larger images subsampled)`);
     if (q !== o.q0) console.log(`NOTE ${id}/${locale}/${set}: quality lowered to ${q} (${Math.round(size / 1024)} KB)`);
     if (size > o.budget) console.log(`WARN ${id}/${locale}/${set}: ${Math.round(size / 1024)} KB is over budget at the minimum quality`);
     if (smallName) resize(full, path.join(dir, smallName));
-    const dims = execFileSync("python3", ["-c", "import sys\nfrom PIL import Image\nim=Image.open(sys.argv[1])\nprint(im.width, im.height)", full]).toString().trim();
-    console.log(`ok ${id} ${locale} ${set} q${q} ${Math.round(size / 1024)}KB ${dims}`);
-    ((HEIGHTS[set] ??= {})[id] ??= {})[locale] = Number(dims.split(" ")[1]);
+    console.log(`ok ${id} ${locale} ${set} q${q} ${Math.round(size / 1024)}KB ${w} ${h}`);
+    // Heights are recorded at the set's nominal width (1280 / 780), which is what the
+    // width/height attributes in src/data/demos/index.ts describe (they only set the aspect ratio).
+    const nominal = o.viewport.width * o.deviceScaleFactor;
+    ((HEIGHTS[set] ??= {})[id] ??= {})[locale] = Math.round((h * nominal) / w);
   } finally {
     await context.close();
   }

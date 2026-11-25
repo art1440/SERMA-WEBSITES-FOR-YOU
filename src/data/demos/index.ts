@@ -52,31 +52,35 @@ const ORDER: DemoId[] = ["contractor", "service", "restaurant", "barbershop", "s
 
 /** Pixel height of each full shot (all are 1280 wide), read from the files. Re-read after a re-capture. */
 const SHOT_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
-  barbershop: { en: 5136, es: 5303 },
-  salon: { en: 5905, es: 6043 },
-  beauty: { en: 5270, es: 5448 },
-  restaurant: { en: 5195, es: 5387 },
-  contractor: { en: 6232, es: 6421 },
-  service: { en: 5743, es: 5920 },
+  barbershop: { en: 10401, es: 10655 },
+  salon: { en: 9029, es: 9306 },
+  beauty: { en: 8608, es: 8878 },
+  restaurant: { en: 7810, es: 7975 },
+  contractor: { en: 6823, es: 6972 },
+  service: { en: 9985, es: 10081 },
 };
 
-/** Pixel height of each phone shot (all are 780 wide: 390 CSS px at 2×), read from the files. */
+/**
+ * Height of each phone shot at 780 px wide (390 CSS px at 2x), as printed by capture:work.
+ * A few very long pages are stored proportionally narrower so they stay under 16 MP
+ * (iOS decodes larger images subsampled); width/height here only set the aspect ratio.
+ */
 const MOBILE_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
-  barbershop: { en: 10730, es: 10962 },
-  salon: { en: 13996, es: 14594 },
-  beauty: { en: 15040, es: 15568 },
-  restaurant: { en: 13388, es: 14196 },
-  contractor: { en: 18460, es: 19130 },
-  service: { en: 15878, es: 16678 },
+  barbershop: { en: 22661, es: 23142 },
+  salon: { en: 20320, es: 21205 },
+  beauty: { en: 20152, es: 20825 },
+  restaurant: { en: 18216, es: 19090 },
+  contractor: { en: 19718, es: 20282 },
+  service: { en: 29793, es: 30559 },
 };
 
 const shot = (id: DemoId, locale: "en" | "es") => ({
-  full: asset(`/media/work/${id}/shot-${locale}-v1.jpg`),
-  small: asset(`/media/work/${id}/shot-${locale}-v1-640.jpg`),
+  full: asset(`/media/work/${id}/shot-${locale}-v2.jpg`),
+  small: asset(`/media/work/${id}/shot-${locale}-v2-640.jpg`),
   width: 1280,
   height: SHOT_HEIGHT[id][locale],
   mobile: {
-    src: asset(`/media/work/${id}/shot-${locale}-mobile-v1.jpg`),
+    src: asset(`/media/work/${id}/shot-${locale}-mobile-v2.jpg`),
     width: 780,
     height: MOBILE_HEIGHT[id][locale],
   },

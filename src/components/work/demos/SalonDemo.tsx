@@ -338,18 +338,19 @@ export function SalonDemo() {
                 {L(c.work.colour.caption)}
               </figcaption>
             </figure>
-            {/* A small collage: two studio details, the second set lower. */}
+            {/* Two studio details as a matched pair of arches (the salon's mirror shape). */}
             <figure className="order-4 lg:order-none lg:mt-20">
               <div className="grid grid-cols-2 items-start gap-4 sm:gap-6">
                 {c.work.details.images.map((img, i) => (
-                  <div key={img.src} className={`group ${i === 1 ? "mt-12 sm:mt-16" : ""}`}>
+                  <div key={img.src} className="group">
                     <RevealImage
                       image={img}
                       alt={L(img.alt)}
                       sizes="(min-width: 1024px) 270px, 50vw"
                       from={i === 0 ? "bottom" : "top"}
+                      delay={i * 0.12}
                       parallax={8}
-                      className={`bg-[#E9D3D6] ${i === 0 ? "rounded-t-[999px]" : ""}`}
+                      className="rounded-t-[999px] bg-[#E9D3D6]"
                       imgClassName="demo-zoom"
                     />
                   </div>
