@@ -201,7 +201,7 @@ function Drawing({ dims, labels, parallax }: { dims: Props["dims"]; labels: Prop
             {LEADERS.map((l, n) => (
               <span
                 key={`l${n}`}
-                className={`${CHIP} tf-fade -translate-y-1/2 px-2 py-1 text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#E9F0FA] max-lg:hidden`}
+                className={`${CHIP} tf-fade -translate-y-1/2 px-2 py-1 text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[#E9F0FA]`}
                 style={{ ...pct(l.label[0], l.label[1]), ...delay(1.35 + n * 0.15) }}
               >
                 {labels[n]}

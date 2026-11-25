@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { DemoCredit } from "@/components/work/DemoCredit";
 import { PhotoCredit } from "@/components/work/PhotoCredit";
@@ -78,6 +78,25 @@ function HeroHeadline({ id, lines, className }: { id: string; lines: [string, st
       {line(lines[0], 0, false)}
       {line(lines[1], 1, true)}
     </h1>
+  );
+}
+
+/**
+ * Hero copy entrance on load (not on view: the CTA can sit in the bottom 10% of a
+ * phone, below the whileInView margin). Plain markup when still.
+ */
+function HeroRise({ children, delay, className }: { children: ReactNode; delay: number; className?: string }) {
+  const still = useDemoStill();
+  if (still) return <div className={className}>{children}</div>;
+  return (
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay }}
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -173,7 +192,7 @@ export function SalonDemo() {
           scrims={HERO_SCRIMS}
         />
         <div className="flex flex-1 flex-col px-4 pb-7 pt-5 sm:px-8 sm:pb-12 sm:pt-8 lg:px-14 lg:pb-16 lg:pt-10">
-          <Rise>
+          <HeroRise delay={0.05}>
             <p className={`${KICKER} text-[#3B1F2B]`}>
               {L(c.hero.kicker)}
               <span aria-hidden="true" className="hidden px-2 sm:inline">
@@ -181,17 +200,17 @@ export function SalonDemo() {
               </span>
               <span className="mt-1.5 block whitespace-nowrap sm:mt-0 sm:inline">{c.address}</span>
             </p>
-          </Rise>
+          </HeroRise>
           <div className="mt-auto pt-16 lg:max-w-[min(46vw,44rem)]">
             <HeroHeadline
               id="hero-title"
               lines={[L(c.hero.lines[0]), L(c.hero.lines[1])]}
               className={`${DISPLAY} text-[2.75rem] leading-[1] tracking-[-0.02em] text-[#3B1F2B] sm:text-[3.5rem] lg:text-[clamp(3.25rem,5vw,5.5rem)]`}
             />
-            <Rise delay={0.4}>
+            <HeroRise delay={0.45}>
               <p className="mt-5 max-w-[34ch] text-[1.0625rem] leading-relaxed text-[#3B1F2B] sm:mt-6 lg:text-[1.125rem]">{L(c.hero.intro)}</p>
-            </Rise>
-            <Rise delay={0.5}>
+            </HeroRise>
+            <HeroRise delay={0.55}>
               <div className="mt-6 flex flex-wrap items-center gap-x-7 gap-y-4 sm:mt-8">
                 <Magnetic>
                   <BookButton
@@ -208,7 +227,7 @@ export function SalonDemo() {
                   {L(c.hero.menuLink)}
                 </a>
               </div>
-            </Rise>
+            </HeroRise>
           </div>
         </div>
       </section>
