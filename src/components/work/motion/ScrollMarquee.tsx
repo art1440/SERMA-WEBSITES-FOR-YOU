@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { useDemoStill } from "../useDemoStill";
 
 /**
@@ -14,6 +14,9 @@ import { useDemoStill } from "../useDemoStill";
  * on photos). Reverse direction with `direction={-1}` to counter-run two rows.
  *
  * The wrapper clips horizontally, so the page never gains a sideways scrollbar.
+ * Lazy images inside are switched to eager once the row is within ~1000px of
+ * the screen: the off-screen repeats sit far to the side of the viewport, where
+ * the browser's lazy loader would otherwise never start them.
  * Still: one static row (the first copy), cropped by the wrapper.
  */
 type Props = {
@@ -33,6 +36,21 @@ export function ScrollMarquee({ children, distance = 35, direction = 1, skew = f
   const x = useTransform(scrollYProgress, [0, 1], direction === 1 ? [`${-distance}%`, "0%"] : ["0%", `${-distance}%`]);
   const velocity = useVelocity(scrollY);
   const lean = useSpring(useTransform(velocity, [-2500, 0, 2500], [6, 0, -6], { clamp: true }), { stiffness: 260, damping: 40 });
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        el.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => (img.loading = "eager"));
+        io.disconnect();
+      },
+      { rootMargin: "1000px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [still]);
 
   const copy = (hidden: boolean) => (
     <div className={`flex shrink-0 items-center ${rowClassName}`} aria-hidden={hidden || undefined}>
