@@ -52,31 +52,31 @@ const ORDER: DemoId[] = ["contractor", "service", "restaurant", "barbershop", "s
 
 /** Pixel height of each full shot (all are 1280 wide), read from the files. Re-read after a re-capture. */
 const SHOT_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
-  barbershop: { en: 10401, es: 10655 },
-  salon: { en: 8965, es: 9242 },
-  beauty: { en: 8608, es: 8878 },
-  restaurant: { en: 7810, es: 7975 },
-  contractor: { en: 6823, es: 6972 },
-  service: { en: 9985, es: 10081 },
+  barbershop: { en: 10401, es: 10615 },
+  salon: { en: 8885, es: 9162 },
+  beauty: { en: 8599, es: 8820 },
+  restaurant: { en: 7858, es: 8023 },
+  contractor: { en: 6808, es: 6959 },
+  service: { en: 9449, es: 9545 },
 };
 
 /** Pixel height of each phone shot (all are 780 wide: 390 CSS px at 2×), read from the files. */
 const MOBILE_HEIGHT: Record<DemoId, Record<"en" | "es", number>> = {
-  barbershop: { en: 22656, es: 23120 },
-  salon: { en: 20224, es: 21102 },
+  barbershop: { en: 22248, es: 22712 },
+  salon: { en: 20096, es: 20840 },
   beauty: { en: 19592, es: 20180 },
-  restaurant: { en: 18216, es: 19090 },
-  contractor: { en: 19718, es: 20282 },
-  service: { en: 29774, es: 30556 },
+  restaurant: { en: 18426, es: 19178 },
+  contractor: { en: 18820, es: 19298 },
+  service: { en: 27398, es: 28206 },
 };
 
 const shot = (id: DemoId, locale: "en" | "es") => ({
-  full: asset(`/media/work/${id}/shot-${locale}-v2.jpg`),
-  small: asset(`/media/work/${id}/shot-${locale}-v2-640.jpg`),
+  full: asset(`/media/work/${id}/shot-${locale}-v3.jpg`),
+  small: asset(`/media/work/${id}/shot-${locale}-v3-640.jpg`),
   width: 1280,
   height: SHOT_HEIGHT[id][locale],
   mobile: {
-    src: asset(`/media/work/${id}/shot-${locale}-mobile-v2.jpg`),
+    src: asset(`/media/work/${id}/shot-${locale}-mobile-v3.jpg`),
     width: 780,
     height: MOBILE_HEIGHT[id][locale],
   },
