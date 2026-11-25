@@ -102,10 +102,10 @@ const HEADLINE_LINES = [
   { cls: "text-[#9CC5A6] sm:pl-[1em]", fvs: "'SOFT' 100, 'wght' 300" },
 ];
 
-function HeroHeadline({ lines }: { lines: string[] }) {
+function HeroHeadline({ lines, className = "" }: { lines: string[]; className?: string }) {
   const still = useDemoStill();
   return (
-    <h1 className="demo-display mt-6 text-[clamp(4.25rem,9.6vw,9rem)] leading-[0.92] tracking-[-0.03em] sm:mt-8">
+    <h1 className={`demo-display mt-6 text-[clamp(4.25rem,9.6vw,9rem)] leading-[0.92] tracking-[-0.03em] sm:mt-8 ${className}`}>
       {lines.map((text, i) => {
         const { cls, fvs } = HEADLINE_LINES[i];
         const style = { fontVariationSettings: fvs };
@@ -239,18 +239,22 @@ export function BeautyDemo() {
         className="relative isolate flex flex-col"
         style={{ minHeight: `calc(100svh - var(--demo-ribbon) - ${NAV_H}px)` }}
       >
+        {/* Phones: the text column dissolves (display: contents) into a two-column grid, so the
+            window can share the headline's row and sit beside its shorter second and third
+            lines (the first line, "Lashes," / "Pestañas,", is the widest and stays clear).
+            Placement is explicit so the overlap is deliberate. Tablets and desktop unchanged. */}
         <div
-          className={`${WRAP} grid w-full flex-1 content-center gap-y-14 pb-16 pt-8 sm:pb-20 sm:pt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:content-end lg:items-end lg:gap-x-16`}
+          className={`${WRAP} grid w-full flex-1 content-center gap-y-14 pb-16 pt-8 max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:gap-y-0 sm:pb-20 sm:pt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:content-end lg:items-end lg:gap-x-16`}
         >
-          <div>
-            <Drift onLoad>
+          <div className="max-sm:contents">
+            <Drift onLoad className="max-sm:col-span-2 max-sm:row-start-1">
               <p className={`${KICKER} text-[#B4C4B9]`}>{L(c.hero.kicker)}</p>
             </Drift>
-            <HeroHeadline lines={c.hero.headline.map(L)} />
-            <Drift onLoad delay={0.5}>
+            <HeroHeadline lines={c.hero.headline.map(L)} className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2" />
+            <Drift onLoad delay={0.5} className="max-sm:col-span-2 max-sm:row-start-3">
               <p className="mt-8 max-w-[40ch] text-[1.0625rem] leading-relaxed text-[#E8EFE9]/90 sm:mt-10 sm:text-[1.125rem]">{L(c.hero.intro)}</p>
             </Drift>
-            <Drift onLoad delay={0.62}>
+            <Drift onLoad delay={0.62} className="max-sm:col-span-2 max-sm:row-start-4">
               <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4 sm:mt-9">
                 <PrimaryBook label={L(c.hero.cta)} className="h-14 px-8 text-[1rem]" />
                 <a
@@ -260,6 +264,13 @@ export function BeautyDemo() {
                   {L(c.hero.link)}
                 </a>
               </div>
+            </Drift>
+            {/* Phones only: the note that sits under the window on larger screens. */}
+            <Drift onLoad delay={0.7} className="sm:hidden max-sm:col-span-2 max-sm:row-start-5">
+              <p className="mt-8 flex items-center gap-3 text-[0.875rem] leading-relaxed text-[#B4C4B9]">
+                <span aria-hidden="true" className="h-px w-8 shrink-0 bg-[#9CC5A6]" />
+                {L(c.hero.note)}
+              </p>
             </Drift>
           </div>
           <HeroWindows
