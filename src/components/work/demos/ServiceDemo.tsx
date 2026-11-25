@@ -36,8 +36,9 @@ import { RadiusMap } from "./service/RadiusMap";
  *               Desktop: the type sits on the left over a deep-teal scrim from
  *               the left, the plumber stays clear right of centre, and one
  *               small dispatch card (an example ETA) sits bottom right.
- *               Phones / portrait tablets: the plumber shows at the top, the
- *               type sits at the bottom over a scrim from the bottom.
+ *               Phones / portrait tablets: the photo still fills the hero; the
+ *               plumber shows in the upper part and the type sits at the bottom
+ *               over a translucent deep-teal scrim from the bottom.
  *               The h1 rises line by line (TextReveal on load).
  *   visit       THE PEAK: "What happens when you call" pinned (StickyStory),
  *               four steps, each with its own photo, a yellow progress rule
