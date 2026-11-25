@@ -154,8 +154,8 @@ export const FAQ_ITEMS: FaqItem[] = [
       es: "¿Qué cubre el pago único y qué es la cuota de $99.99 al mes?",
     },
     a: {
-      en: "The one-time price is the fixed price to build your site, with everything listed in your package, paid only after you approve it. After that, it’s $99.99 a month for hosting and care: we keep your site online, fast and working on your domain, and a real person is there when you need something. No hourly billing, no surprise add-ons.",
-      es: "El pago único es el precio fijo por construir su sitio, con todo lo que aparece en su paquete, y lo paga solo después de aprobarlo. Después son $99.99 al mes de alojamiento y mantenimiento: mantenemos su sitio en línea, rápido y funcionando en su dominio, y una persona real lo atiende cuando necesite algo. Sin cobro por hora y sin extras sorpresa.",
+      en: "The one-time price is the fixed price to build your site, with everything listed in your package, paid only after you approve it. After that, it’s $99.99 a month for management and care: we keep your site online, fast and working on your domain, and a real person is there when you need something. No hourly billing, no surprise add-ons.",
+      es: "El pago único es el precio fijo por construir su sitio, con todo lo que aparece en su paquete, y lo paga solo después de aprobarlo. Después son $99.99 al mes de gestión y mantenimiento: mantenemos su sitio en línea, rápido y funcionando en su dominio, y una persona real lo atiende cuando necesite algo. Sin cobro por hora y sin extras sorpresa.",
     },
   },
   {
@@ -178,8 +178,8 @@ export const FAQ_ITEMS: FaqItem[] = [
       es: "¿Qué tan rápido estará listo mi sitio?",
     },
     a: {
-      en: "Your finished site is ready for you to review within 7 days of our 15-minute intro call, once we have your details and photos. If it isn’t, your first month of hosting and care ($99.99) is free. Going live then happens as soon as you say yes.",
-      es: "Su sitio terminado está listo para que lo revise a más tardar 7 días después de nuestra llamada de 15 minutos, una vez que tengamos sus datos y fotos. Si no lo está, su primer mes de alojamiento y mantenimiento ($99.99) es gratis. Se publica en cuanto usted diga que sí.",
+      en: "Your finished site is ready for you to review within 7 days of our 15-minute intro call, once we have your details and photos. If it isn’t, your first month of management and care ($99.99) is free. Going live then happens as soon as you say yes.",
+      es: "Su sitio terminado está listo para que lo revise a más tardar 7 días después de nuestra llamada de 15 minutos, una vez que tengamos sus datos y fotos. Si no lo está, su primer mes de gestión y mantenimiento ($99.99) es gratis. Se publica en cuanto usted diga que sí.",
     },
   },
   {
