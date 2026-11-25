@@ -58,7 +58,7 @@ export function HeroChapter() {
 
         <h1
           id="hero-title"
-          className="mt-7 font-display text-display-xl font-black [font-variation-settings:'wght'_900] !leading-[0.92] !tracking-[-0.045em] text-bone-50 max-sm:text-[clamp(2.2rem,10.5vw,3rem)] max-sm:!leading-[1] lg:mt-9 lg:text-[clamp(3rem,7.4vw,9rem)]"
+          className="mt-7 font-brand text-[clamp(2.6rem,6.4vw,4.5rem)] font-extrabold [font-variation-settings:'wght'_800] !leading-[1.04] !tracking-[0.005em] text-bone-50 max-sm:text-[clamp(1.75rem,8.1vw,2.5rem)] max-sm:!leading-[1.1] lg:mt-9 lg:text-[clamp(3rem,5.1vw,6rem)]"
         >
           {t.hero.headline.map((line, i) => (
             <HeadlineLine key={i} index={i} emphasis={t.hero.headlineEmphasis}>
@@ -172,7 +172,7 @@ function Emphasis({ children, delay }: { children: string; delay: number }) {
       {/* Padding stops background-clip from trimming the italic overhang. */}
       <motion.em
         key={reduce ? "still" : "sheen"}
-        className="relative z-10 -mr-[0.06em] bg-[linear-gradient(100deg,rgb(var(--aqua-deep))_0%,rgb(var(--aqua))_35%,rgb(var(--aqua-glow))_47%,#fff_50%,rgb(var(--aqua-glow))_53%,rgb(var(--aqua))_65%,rgb(var(--aqua-deep))_100%)] bg-[length:250%_100%] bg-clip-text pr-[0.06em] font-display font-black not-italic [font-variation-settings:'wght'_900] text-transparent [-webkit-box-decoration-break:clone] [box-decoration-break:clone]"
+        className="relative z-10 -mr-[0.06em] bg-[linear-gradient(100deg,rgb(var(--aqua-deep))_0%,rgb(var(--aqua))_35%,rgb(var(--aqua-glow))_47%,#fff_50%,rgb(var(--aqua-glow))_53%,rgb(var(--aqua))_65%,rgb(var(--aqua-deep))_100%)] bg-[length:250%_100%] bg-clip-text pr-[0.06em] font-brand font-extrabold not-italic [font-variation-settings:'wght'_800] text-transparent [-webkit-box-decoration-break:clone] [box-decoration-break:clone]"
         initial={{ backgroundPosition: "100% 0%" }}
         animate={{ backgroundPosition: reduce ? "100% 0%" : "0% 0%" }}
         transition={{ duration: 1.6, ease: [0.45, 0, 0.2, 1], delay: delay + 0.55 }}
