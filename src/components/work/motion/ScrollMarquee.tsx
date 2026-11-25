@@ -13,7 +13,9 @@ import { useDemoStill } from "../useDemoStill";
  * `skew` leans it a few degrees with scroll speed (good for type, use sparingly
  * on photos). Reverse direction with `direction={-1}` to counter-run two rows.
  *
- * The wrapper clips horizontally, so the page never gains a sideways scrollbar.
+ * The wrapper clips horizontally (and is positioned, so even absolutely
+ * positioned children such as sr-only text are clipped), so the page never
+ * gains a sideways scrollbar.
  * Lazy images inside are switched to eager once the row is within ~1000px of
  * the screen: the off-screen repeats sit far to the side of the viewport, where
  * the browser's lazy loader would otherwise never start them.
@@ -60,14 +62,14 @@ export function ScrollMarquee({ children, distance = 35, direction = 1, skew = f
 
   if (still) {
     return (
-      <div ref={ref} className={`overflow-hidden ${className}`}>
+      <div ref={ref} className={`relative overflow-hidden ${className}`}>
         <div className="flex w-max">{copy(false)}</div>
       </div>
     );
   }
 
   return (
-    <div ref={ref} className={`overflow-hidden ${className}`}>
+    <div ref={ref} className={`relative overflow-hidden ${className}`}>
       <motion.div className={`flex w-max will-change-transform ${rowClassName}`} style={{ x, skewX: skew ? lean : 0 }}>
         {copy(false)}
         {copy(true)}
