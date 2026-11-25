@@ -127,7 +127,7 @@ export function SalonDemo() {
             <ul className="flex gap-8 text-[0.8125rem] uppercase tracking-[0.16em] xl:gap-9">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className={`demo-underline pb-1 ${FOCUS}`}>
+                  <a href={l.href} className={`demo-underline pb-1 relative after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] ${FOCUS}`}>
                     {l.label}
                   </a>
                 </li>

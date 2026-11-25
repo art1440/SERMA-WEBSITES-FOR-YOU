@@ -87,7 +87,7 @@ export function RestaurantDemo() {
             <ul className="flex gap-8 text-[0.9375rem]">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className={`demo-underline rounded-[2px] pb-1 text-[#F7E4CF]/90 transition-colors duration-300 hover:text-[#F7E4CF] ${FOCUS}`}>
+                  <a href={l.href} className={`demo-underline rounded-[2px] pb-1 text-[#F7E4CF]/90 transition-colors duration-300 hover:text-[#F7E4CF] relative after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] ${FOCUS}`}>
                     {l.label}
                   </a>
                 </li>

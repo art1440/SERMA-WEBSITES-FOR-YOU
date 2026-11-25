@@ -217,7 +217,7 @@ export function BeautyDemo() {
             <ul className="flex gap-9 text-[0.9375rem]">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className={`${UNDERLINE} text-[#E8EFE9]/90 transition-colors duration-300 hover:text-[#E8EFE9]`}>
+                  <a href={l.href} className={`${UNDERLINE} text-[#E8EFE9]/90 transition-colors duration-300 hover:text-[#E8EFE9] relative after:absolute after:-inset-x-2 after:-inset-y-3 after:content-['']`}>
                     {l.label}
                   </a>
                 </li>

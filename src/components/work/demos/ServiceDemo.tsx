@@ -310,7 +310,7 @@ export function ServiceDemo() {
                 <li key={l.href}>
                   <a
                     href={l.href}
-                    className={`demo-underline rounded-sm pb-0.5 ${FOCUS}`}
+                    className={`demo-underline rounded-sm pb-0.5 relative after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] ${FOCUS}`}
                   >
                     {l.label}
                   </a>

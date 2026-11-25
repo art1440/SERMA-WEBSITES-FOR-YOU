@@ -56,7 +56,7 @@ export function BarbershopDemo() {
             <ul className="flex gap-8 text-[0.875rem] font-medium">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className={`demo-underline pb-1 text-[#EFE6D6]/85 transition-colors hover:text-[#C9A45C] ${FOCUS}`}>
+                  <a href={l.href} className={`demo-underline pb-1 text-[#EFE6D6]/85 transition-colors hover:text-[#C9A45C] relative after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] ${FOCUS}`}>
                     {l.label}
                   </a>
                 </li>
