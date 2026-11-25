@@ -5,14 +5,13 @@ import { useMemo, type ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { DemoCredit } from "@/components/work/DemoCredit";
 import { PhotoCredit } from "@/components/work/PhotoCredit";
-import { Magnetic, RevealImage, RollText, ScrollProgress, StickyStory, TextReveal, type StoryStep } from "@/components/work/motion";
+import { HeroBackdrop, Magnetic, RevealImage, RollText, ScrollProgress, StickyStory, TextReveal, type StoryStep } from "@/components/work/motion";
 import { beauty as c } from "@/data/demos/beauty";
 import type { L10n } from "@/i18n/types";
 import { EASE_EDITORIAL, VIEWPORT_ONCE } from "@/lib/motion";
 import { BookButton } from "../DemoShell";
 import { MaskWindows } from "../signatures/MaskWindows";
 import { useDemoStill } from "../useDemoStill";
-import { HeroWindows } from "./beauty/HeroWindows";
 import { RoomStrip } from "./beauty/RoomStrip";
 
 /*
@@ -35,8 +34,9 @@ import { RoomStrip } from "./beauty/RoomStrip";
  * 300-450ms band.
  *
  * Page grammar (one device per section, never repeated next door):
- *   hero        Parallax planes: the window frame, the room inside it, a
- *               smaller sage window in front (HeroWindows)
+ *   hero        HeroBackdrop: one wide photo of garden sage in low light,
+ *               deep sage scrim from the text side; the photo settles and
+ *               drifts slower than the type (two planes), the h1 lines rise
  *   treatments  MaskWindows, the signature
  *   the room    ScrollMarquee of textures, the quiet before the peak (RoomStrip)
  *   your visit  StickyStory on the mist panel: THE PEAK (longest scroll span)
@@ -102,10 +102,10 @@ const HEADLINE_LINES = [
   { cls: "text-[#9CC5A6] sm:pl-[1em]", fvs: "'SOFT' 100, 'wght' 300" },
 ];
 
-function HeroHeadline({ lines, className = "" }: { lines: string[]; className?: string }) {
+function HeroHeadline({ lines }: { lines: string[] }) {
   const still = useDemoStill();
   return (
-    <h1 className={`demo-display mt-6 text-[clamp(4.25rem,9.6vw,9rem)] leading-[0.92] tracking-[-0.03em] sm:mt-8 ${className}`}>
+    <h1 className="demo-display text-[clamp(4.25rem,min(9.6vw,15.5svh),9rem)] leading-[0.92] tracking-[-0.03em]">
       {lines.map((text, i) => {
         const { cls, fvs } = HEADLINE_LINES[i];
         const style = { fontVariationSettings: fvs };
@@ -234,52 +234,56 @@ export function BeautyDemo() {
       </header>
 
       {/* --------------------------------------------------------------- hero */}
+      {/*
+        One photo, one headline, one intro, one CTA row, one quiet line. The sage
+        sits centre-right in deep green shadow; the scrims are deep sage and only
+        where the type is: from the left on larger screens, from the bottom on
+        phones (where the text column spans the width).
+      */}
       <section
         aria-label={L(c.hero.kicker)}
-        className="relative isolate flex flex-col"
-        style={{ minHeight: `calc(100svh - var(--demo-ribbon) - ${NAV_H}px)` }}
+        className="relative isolate flex flex-col overflow-hidden"
+        style={{ minHeight: `min(960px, calc(100svh - var(--demo-ribbon) - ${NAV_H}px))` }}
       >
-        {/* Phones: the text column dissolves (display: contents) into a two-column grid, so the
-            window can share the headline's row and sit beside its shorter second and third
-            lines (the first line, "Lashes," / "Pestañas,", is the widest and stays clear).
-            Placement is explicit so the overlap is deliberate. Tablets and desktop unchanged. */}
-        <div
-          className={`${WRAP} grid w-full flex-1 content-center gap-y-14 pb-16 pt-8 max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:gap-y-0 sm:pb-20 sm:pt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:content-end lg:items-end lg:gap-x-16`}
-        >
-          <div className="max-sm:contents">
-            <Drift onLoad className="max-sm:col-span-2 max-sm:row-start-1">
-              <p className={`${KICKER} text-[#B4C4B9]`}>{L(c.hero.kicker)}</p>
-            </Drift>
-            <HeroHeadline lines={c.hero.headline.map(L)} className="max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2" />
-            <Drift onLoad delay={0.5} className="max-sm:col-span-2 max-sm:row-start-3">
-              <p className="mt-8 max-w-[40ch] text-[1.0625rem] leading-relaxed text-[#E8EFE9]/90 sm:mt-10 sm:text-[1.125rem]">{L(c.hero.intro)}</p>
-            </Drift>
-            <Drift onLoad delay={0.62} className="max-sm:col-span-2 max-sm:row-start-4">
-              <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4 sm:mt-9">
-                <PrimaryBook label={L(c.hero.cta)} className="h-14 px-8 text-[1rem]" />
-                <a
-                  href="#treatments"
-                  className={`rounded-full text-[1rem] font-medium underline decoration-[#9CC5A6] decoration-2 underline-offset-[7px] transition-colors duration-300 hover:text-[#9CC5A6] ${FOCUS}`}
-                >
-                  {L(c.hero.link)}
-                </a>
-              </div>
-            </Drift>
-            {/* Phones only: the note that sits under the window on larger screens. */}
-            <Drift onLoad delay={0.7} className="sm:hidden max-sm:col-span-2 max-sm:row-start-5">
-              <p className="mt-8 flex items-center gap-3 text-[0.875rem] leading-relaxed text-[#B4C4B9]">
-                <span aria-hidden="true" className="h-px w-8 shrink-0 bg-[#9CC5A6]" />
+        <HeroBackdrop
+          image={c.hero.image}
+          alt={c.hero.image.alt[locale]}
+          position="50% 58%"
+          mobilePosition="44% 40%"
+          parallax={8}
+          scrims={[
+            "bg-gradient-to-t from-[#1E2A24]/90 via-[#1E2A24]/55 via-45% to-transparent sm:hidden",
+            "max-sm:hidden bg-gradient-to-r from-[#1E2A24]/80 via-[#1E2A24]/35 via-45% to-transparent to-75%",
+            "max-sm:hidden bg-gradient-to-t from-[#1E2A24]/70 via-[#1E2A24]/15 via-30% to-transparent to-55%",
+          ]}
+        />
+        <div className={`${WRAP} flex w-full flex-1 flex-col justify-end pb-10 pt-8 sm:pb-16 sm:pt-14 lg:pb-14`}>
+          <HeroHeadline lines={c.hero.headline.map(L)} />
+          <div className="mt-7 grid gap-x-16 sm:mt-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <div>
+              <Drift onLoad delay={0.5}>
+                <p className="max-w-[42ch] text-[1.0625rem] leading-relaxed text-[#E8EFE9]/90 sm:text-[1.125rem]">{L(c.hero.intro)}</p>
+              </Drift>
+              <Drift onLoad delay={0.62}>
+                <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4 sm:mt-9">
+                  <PrimaryBook label={L(c.hero.cta)} className="h-14 px-8 text-[1rem]" />
+                  <a
+                    href="#treatments"
+                    className={`rounded-full text-[1rem] font-medium underline decoration-[#9CC5A6] decoration-2 underline-offset-[7px] transition-colors duration-300 hover:text-[#9CC5A6] ${FOCUS}`}
+                  >
+                    {L(c.hero.link)}
+                  </a>
+                </div>
+              </Drift>
+            </div>
+            {/* The one quiet line: under the CTAs on phones and tablets, bottom right on desktop. */}
+            <Drift onLoad delay={0.8}>
+              <p className="mt-8 flex items-center gap-2.5 text-[0.8125rem] leading-relaxed text-[#B4C4B9] sm:gap-3 sm:text-[0.875rem] lg:mt-0 lg:pb-4">
+                <span aria-hidden="true" className="h-px w-6 shrink-0 bg-[#9CC5A6] sm:w-8" />
                 {L(c.hero.note)}
               </p>
             </Drift>
           </div>
-          <HeroWindows
-            room={c.hero.room}
-            roomAlt={c.hero.room.alt[locale]}
-            detail={c.hero.detail}
-            detailAlt={c.hero.detail.alt[locale]}
-            note={L(c.hero.note)}
-          />
         </div>
       </section>
 
