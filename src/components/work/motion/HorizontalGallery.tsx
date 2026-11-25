@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useDemoStill } from "../useDemoStill";
 import { useIsDesktop } from "./hooks";
 
@@ -12,6 +12,10 @@ import { useIsDesktop } from "./hooks";
  *
  * Phones, tablets and still mode: a native horizontal scroller with snap
  * points; it is keyboard-focusable and named (axe: scrollable-region-focusable).
+ *
+ * Lazy images inside switch to eager once the section is within ~1000px of
+ * the screen: cards further along a native scroller sit outside its visible
+ * area, where the browser's lazy loader would never start them.
  *
  * `children` are the cards, laid out in a row (give each a width and
  * `shrink-0`). `lead` is optional content pinned at the start of the row.
@@ -50,6 +54,21 @@ export function HorizontalGallery({ children, lead, label, top, className = "", 
       ro.disconnect();
       window.removeEventListener("resize", measure);
     };
+  }, [pinned]);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        el.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => (img.loading = "eager"));
+        io.disconnect();
+      },
+      { rootMargin: "1000px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, [pinned]);
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
