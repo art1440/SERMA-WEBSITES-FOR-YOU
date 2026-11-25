@@ -1,5 +1,5 @@
 import type { L10n } from "@/i18n/types";
-import { demoImage, type DemoContent, type DemoImage } from "./index";
+import { demoImage, heroImage, type DemoContent, type DemoImage } from "./index";
 
 /**
  * Ironside Barber Co. (fictional). Every user-facing string on /work/barbershop/
@@ -15,7 +15,7 @@ export type Barber = { name: string; role: L10n; bio: L10n; image: DemoImage };
 
 export type BarberContent = DemoContent & {
   nav: { services: L10n; shop: L10n; barbers: L10n; reviews: L10n; book: L10n; home: L10n; primary: L10n };
-  hero: { lines: [L10n, L10n]; intro: L10n; cta: L10n; prices: L10n; walkIns: L10n; plate: DemoImage; caption: L10n };
+  hero: { lines: [L10n, L10n]; intro: L10n; cta: L10n; prices: L10n; image: DemoImage };
   services: { title: L10n; intro: L10n; items: BarberService[]; minutes: L10n; note: L10n };
   ritual: { title: L10n; intro: L10n; steps: RitualStep[] };
   craft: { title: L10n; words: L10n[]; items: { image: DemoImage; caption: L10n }[] };
@@ -53,13 +53,16 @@ const RAZOR = img(
   1120,
 );
 
-/* Unsplash, graded warm. */
-const HERO_PLATE = img(
-  "hero-plate",
-  "Low view of a quilted brown leather barber chair in the dim shop, bottles lit on the shelves behind it.",
-  "Vista baja de un sillón de barbero de cuero marrón acolchado en la barbería en penumbra, con botellas iluminadas en los estantes del fondo.",
+/* Unsplash, graded warm. The hero is the wide one (640 / 1600 / 2560 files). */
+const HERO = heroImage(
+  "barbershop",
+  "hero-wide",
+  {
+    en: "A barber's tattooed hand trims a reclining client's grey beard with scissors, the shop warm and dim behind them.",
+    es: "La mano tatuada de un barbero recorta con tijeras la barba canosa de un cliente recostado, con la barbería cálida y en penumbra al fondo.",
+  },
   1600,
-  1066,
+  1067,
 );
 const CLASSIC_CUT = img(
   "classic-cut",
@@ -126,12 +129,7 @@ export const barbershop: BarberContent = {
     },
     cta: { en: "Book a chair", es: "Reserve su silla" },
     prices: { en: "See prices", es: "Ver precios" },
-    walkIns: {
-      en: "Walk-ins welcome when a chair is free",
-      es: "Le atendemos sin cita si hay un sillón libre",
-    },
-    plate: HERO_PLATE,
-    caption: { en: "Chair two, 8:40 on a Tuesday", es: "Sillón dos, martes a las 8:40" },
+    image: HERO,
   },
   services: {
     title: { en: "Cuts & shaves", es: "Cortes y afeitado" },
@@ -415,6 +413,7 @@ export const barbershop: BarberContent = {
     credit: { en: "Demo design by Serma", es: "Diseño de demostración por Serma" },
   },
   photoCredits: [
+    "Allef Vinicius",
     "Redd Francisco",
     "André Reis",
     "Tá Focando",

@@ -3,14 +3,13 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { DemoCredit } from "@/components/work/DemoCredit";
 import { PhotoCredit } from "@/components/work/PhotoCredit";
-import { ExpandImage, Magnetic, Parallax, RollText, ScrollProgress, TextReveal, waveDelay } from "@/components/work/motion";
+import { ExpandImage, HeroBackdrop, Magnetic, Parallax, RollText, ScrollProgress, TextReveal, waveDelay } from "@/components/work/motion";
 import { barbershop as c } from "@/data/demos/barbershop";
 import type { L10n } from "@/i18n/types";
 import { BookButton } from "../DemoShell";
 import { RazorCutHero } from "../signatures/RazorCutHero";
 import { Barbers } from "./barbershop/Barbers";
 import { CraftStrip } from "./barbershop/CraftStrip";
-import { HeroPlate } from "./barbershop/HeroPlate";
 import { PriceList } from "./barbershop/PriceList";
 import { Ritual } from "./barbershop/Ritual";
 import { DISPLAY, FOCUS, NAV_H, Rise, SCROLL_MARGIN, STICKY_TOP } from "./barbershop/ui";
@@ -18,7 +17,7 @@ import { DISPLAY, FOCUS, NAV_H, Rise, SCROLL_MARGIN, STICKY_TOP } from "./barber
 /*
  * Ironside Barber Co. Page grammar (one device per section, never repeated
  * next door):
- *   hero      RazorCutHero (signature) over a slow Parallax photo plate
+ *   hero      RazorCutHero (signature) over a HeroBackdrop photo, edge to edge
  *   prices    HoverPreview price list (inline thumbnails on touch)
  *   ritual    StickyStory, square frame, brass progress rule
  *   craft     ScrollMarquee photo row + counter-running type row
@@ -75,38 +74,45 @@ export function BarbershopDemo() {
       </header>
 
       {/* --------------------------------------------------------------- hero */}
+      {/*
+        A grooming-magazine cover: one low-key photo edge to edge (the client's
+        face and the scissors high in the frame, the dark cape and the barber's
+        shoulder below and to the left), the razor-cut headline over that dark
+        lower left, the brass cut slicing on across the picture. Scrims only
+        where the type sits: from the left and from the bottom (on phones,
+        where the text spans the width, from the bottom only).
+      */}
       <RazorCutHero
         lines={[L(c.hero.lines[0]), L(c.hero.lines[1])]}
-        className="relative mx-auto flex max-w-[1480px] flex-col justify-between px-4 pb-10 pt-8 sm:px-8 sm:pb-12 lg:px-12"
-        style={{ minHeight: `max(560px, calc(100svh - var(--demo-ribbon) - ${NAV_H}px))` }}
-        headlineClassName={`${DISPLAY} text-[clamp(64px,13vw,200px)] leading-[0.9] tracking-[-0.02em] text-[#EFE6D6]`}
+        className="relative isolate flex flex-col overflow-hidden px-4 pb-8 pt-5 sm:px-8 sm:pb-12 sm:pt-8 lg:px-[max(3rem,calc((100%_-_1384px)/2))] lg:pb-14"
+        style={{ minHeight: `min(960px, max(560px, calc(100svh - var(--demo-ribbon) - ${NAV_H}px)))` }}
+        headlineClassName={`${DISPLAY} text-[clamp(48px,10vw,176px)] leading-[0.9] tracking-[-0.02em] text-[#EFE6D6]`}
         before={
           <>
-            <div className="relative z-10 -order-1 flex items-center justify-between gap-4 pb-8 text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-[#A8A091] lg:order-none">
+            <HeroBackdrop
+              image={c.hero.image}
+              alt={L(c.hero.image.alt)}
+              position="50% 22%"
+              mobilePosition="55% 50%"
+              scrims={[
+                "sm:hidden bg-gradient-to-t from-[#0E0E0E]/90 via-[#0E0E0E]/55 via-40% to-transparent to-70%",
+                "max-sm:hidden bg-gradient-to-r from-[#0E0E0E]/75 via-[#0E0E0E]/30 via-35% to-transparent to-65%",
+                "max-sm:hidden bg-gradient-to-t from-[#0E0E0E]/85 via-[#0E0E0E]/30 via-30% to-transparent to-55%",
+              ]}
+            />
+            <p className="mb-auto flex items-center justify-between gap-4 pb-10 text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-[#EFE6D6]/80">
               <span>{c.address}</span>
               <span className="hidden sm:inline">{c.phone}</span>
-            </div>
-            <HeroPlate
-              image={c.hero.plate}
-              alt={L(c.hero.plate.alt)}
-              caption={L(c.hero.caption)}
-              className="relative order-1 -mx-4 mt-10 aspect-[4/3] sm:-mx-8 sm:aspect-[16/9] lg:absolute lg:inset-y-0 lg:right-[calc((100%-100vw)/2)] lg:order-none lg:mx-0 lg:mt-0 lg:aspect-auto lg:w-[min(66vw,1180px)]"
-            />
+            </p>
           </>
         }
         after={
-          <div className="relative z-10 order-2 mt-10 grid gap-8 border-t border-[#EFE6D6]/15 pt-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-16 lg:order-none lg:mt-12">
-            <div>
-              <p className="max-w-[44ch] text-[1.0625rem] leading-relaxed text-[#EFE6D6]/90 sm:text-[1.125rem]">{L(c.hero.intro)}</p>
-              <p className="mt-4 flex items-center gap-3 text-[0.8125rem] text-[#A8A091]">
-                <span aria-hidden="true" className="h-2 w-2 rotate-45 bg-[#C9A45C]" />
-                {L(c.hero.walkIns)}
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+          <div className="mt-6 grid gap-6 sm:mt-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-16">
+            <p className="max-w-[44ch] text-[0.9375rem] leading-relaxed text-[#EFE6D6]/90 sm:text-[1.0625rem] lg:text-[1.125rem]">{L(c.hero.intro)}</p>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-4 sm:gap-x-8">
               <Magnetic>
                 <BookButton
-                  className={`group inline-flex h-14 items-center bg-[#C9A45C] px-8 text-[0.9375rem] font-semibold uppercase tracking-[0.14em] text-[#0E0E0E] transition-colors duration-300 hover:bg-[#EFE6D6] ${FOCUS}`}
+                  className={`group inline-flex h-14 items-center bg-[#C9A45C] px-6 text-[0.875rem] font-semibold uppercase tracking-[0.12em] text-[#0E0E0E] transition-colors duration-300 hover:bg-[#EFE6D6] sm:px-8 sm:text-[0.9375rem] sm:tracking-[0.14em] ${FOCUS}`}
                 >
                   <RollText>{L(c.hero.cta)}</RollText>
                 </BookButton>
