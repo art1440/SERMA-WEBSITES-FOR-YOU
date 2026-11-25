@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Providers } from "@/components/layout/Providers";
 import { SkipLink } from "@/components/layout/SkipLink";
-import { displaySerif, geistMono, workSans } from "./fonts";
+import { displaySerif, geistMono, workSans, cinzel } from "./fonts";
 import { buildCsp } from "@/config/csp";
 import { siteConfig } from "@/config/site";
 import { BASE_PATH } from "@/lib/asset";
@@ -79,7 +79,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${displaySerif.variable} ${workSans.variable} ${geistMono.variable}`}
+      className={`${displaySerif.variable} ${workSans.variable} ${geistMono.variable} ${cinzel.variable}`}
       // The inline script below may add `dark` to <html> before React hydrates.
       suppressHydrationWarning
     >

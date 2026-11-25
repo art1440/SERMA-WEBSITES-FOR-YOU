@@ -39,3 +39,14 @@ export const geistMono = localFont({
   display: "swap",
   fallback: ["ui-monospace", "Menlo", "monospace"],
 });
+
+/** Brand / logo face: Cinzel (variable 400–900, OFL-Cinzel.txt). Used for the hero headline. */
+export const cinzel = localFont({
+  src: [
+    { path: "./fonts/Cinzel-latin.woff2", weight: "400 900", style: "normal" },
+    { path: "./fonts/Cinzel-latin-ext.woff2", weight: "400 900", style: "normal" },
+  ],
+  variable: "--font-brand",
+  display: "swap",
+  fallback: ["Georgia", "Times New Roman", "serif"],
+});

@@ -75,6 +75,8 @@ const config: Config = {
           ["var(--font-display)", "Georgia", "Times New Roman", "serif"],
           { fontVariationSettings: '"wght" 700' },
         ],
+        /* Brand face (the logo's Cinzel): hero headline. */
+        brand: ["var(--font-brand)", "Georgia", "Times New Roman", "serif"],
         /* Accent words in the same serif, italic. */
         serif: ["var(--font-display)", "Georgia", "Times New Roman", "serif"],
         /* Body = Work Sans (brand). */
