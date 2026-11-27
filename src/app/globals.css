@@ -592,7 +592,9 @@ html.dark,
     --glass-blur: 0px;
   }
   html.dark .btn-line,
-  html.dark .btn-line-dark {
+  html.dark .btn-line-dark,
+  .hero-night .btn-line,
+  .hero-night .btn-line-dark {
     background: rgba(40, 62, 100, 0.45);
   }
   .btn-line:hover,

@@ -40,3 +40,14 @@
 @media (prefers-reduced-motion: reduce) {
   .soffit { transition: none; }
 }
+
+/* Navbar glass over the hero: fades out, then hides (a hidden layer's backdrop blur is not
+ * computed, and the hero canvas under it repaints every frame). Coming back, it shows at once and fades in. */
+.nav-glass {
+  transition: opacity var(--dur-slow) var(--ease-editorial), visibility 0s;
+}
+.nav-glass.is-clear {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-slow) var(--ease-editorial), visibility 0s linear var(--dur-slow);
+}

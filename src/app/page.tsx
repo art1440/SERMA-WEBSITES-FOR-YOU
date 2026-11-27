@@ -30,7 +30,7 @@ export default function HomePage() {
           <DocumentTitle title={t.meta.title} />
           <span id="top" aria-hidden="true" />
           <Stage />
-          <Navbar />
+          <Navbar overHeroAtTop />
           <StickyCta />
           <main id="main" tabIndex={-1} className="relative z-10 focus:outline-none">
             <TabPanels

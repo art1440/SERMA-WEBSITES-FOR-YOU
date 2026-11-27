@@ -40,10 +40,24 @@ function MenuIcon({ open, reduce }: { open: boolean; reduce: boolean }) {
  * section). The outer wrapper is transparent and click-through. No scroll
  * listeners of any kind — the reading-progress line is CSS scroll-driven.
  */
-export function Navbar() {
+export function Navbar({ overHeroAtTop = false }: { overHeroAtTop?: boolean } = {}) {
   const { t } = useLanguage();
   const [loginOpen, setLoginOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Over the hero the bar dissolves: no glass, light-on-dark tokens, the light field runs to the top
+  // edge. A 1px sentinel near the hero's foot ([data-hero-end]) flips it back — no scroll listener.
+  const [overHero, setOverHero] = useState(overHeroAtTop);
+  useEffect(() => {
+    const end = document.querySelector("[data-hero-end]");
+    if (!end) {
+      setOverHero(false);
+      return;
+    }
+    const io = new IntersectionObserver(([e]) => setOverHero(e.isIntersecting || e.boundingClientRect.top > 0));
+    io.observe(end);
+    return () => io.disconnect();
+  }, []);
+  const clear = overHero && !menuOpen;
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const tabs = useTabs();
   const { openMockup } = useMockup();
@@ -95,7 +109,11 @@ export function Navbar() {
 
   return (
     <>
-      <header data-theme="dark" className="pointer-events-none sticky top-0 z-50 px-3 pt-2 sm:px-4 sm:pt-3 lg:px-5">
+      <header
+        data-theme="dark"
+        data-clear={clear || undefined}
+        className={`pointer-events-none sticky top-0 z-50 px-3 pt-2 sm:px-4 sm:pt-3 lg:px-5 ${clear ? "hero-night" : ""}`}
+      >
         {/* Scrim behind the open menu: mutes the page (opacity only, no blur) and closes on tap. */}
         <AnimatePresence>
           {menuOpen ? (
@@ -112,7 +130,9 @@ export function Navbar() {
           ) : null}
         </AnimatePresence>
         <div className="relative mx-auto max-w-[87.5rem]">
-          <div className="glass-dark glass-solid pointer-events-auto relative flex h-14 items-center justify-between gap-2 rounded-full pl-3.5 pr-1.5 [--glass-blur:14px] sm:pl-4 lg:pl-5">
+          <div className="pointer-events-auto relative isolate flex h-14 items-center justify-between gap-2 rounded-full pl-3.5 pr-1.5 text-bone sm:pl-4 lg:pl-5">
+            {/* The glass lives on its own backing layer so it can fade out over the hero. */}
+            <NavGlass clear={clear} className="glass-solid [--glass-blur:14px]" />
             {/* Reading-progress line along the capsule's lower edge (CSS scroll-driven; no JS).
                 The wrapper clips it to the capsule's rounded shape. */}
             <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
@@ -138,7 +158,8 @@ export function Navbar() {
                 selected={tabs.selected}
                 onPick={tabs.go}
                 label={t.nav.tabsLabel}
-                className="max-xl:absolute max-xl:inset-x-0 max-xl:top-full max-xl:mt-2 max-xl:glass-dark max-xl:glass-solid max-xl:glass-flat max-xl:rounded-full xl:mx-1 xl:min-w-0 xl:flex-1"
+                clear={clear}
+                className="max-xl:absolute max-xl:inset-x-0 max-xl:top-full max-xl:mt-2 max-xl:rounded-full xl:mx-1 xl:min-w-0 xl:flex-1"
               />
             ) : (
             <nav aria-label={t.nav.primaryLabel} className="hidden [@media(min-width:80em)]:block">
@@ -271,6 +292,21 @@ export function Navbar() {
 }
 
 /**
+ * The bar's glass as a backing layer (behind the content, inside the isolated capsule). While clear
+ * it fades out and then goes visibility:hidden — a hidden layer's backdrop blur is not computed, which
+ * matters because the hero canvas under it repaints every frame.
+ */
+function NavGlass({ clear, className = "" }: { clear: boolean; className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`nav-glass glass-dark pointer-events-none rounded-[inherit] ${clear ? "is-clear" : ""} ${className}`}
+      style={{ position: "absolute", inset: 0, zIndex: -1 }}
+    />
+  );
+}
+
+/**
  * The section nav. Inside the capsule from 1280px (xl); a slim rail just below it on
  * smaller screens (eight tabs, and the longer Spanish labels, don't fit the capsule at 1024). A glass pill marks the section in view and slides between
  * items (shared layout, snappy spring). Overflowing items scroll sideways under
@@ -281,8 +317,10 @@ function TabBar({
   selected,
   onPick,
   label,
+  clear = false,
   className = "",
 }: {
+  clear?: boolean;
   items: { id: TabId; label: string }[];
   selected: TabId;
   onPick: (id: TabId) => void;
@@ -302,7 +340,9 @@ function TabBar({
   }, [selected]);
 
   return (
-    <nav aria-label={label} data-nav-rail className={`pointer-events-auto ${className}`}>
+    <nav aria-label={label} data-nav-rail className={`pointer-events-auto isolate ${className}`}>
+      {/* Phones/tablets: the rail is its own glass strip below the capsule (inside it from xl). */}
+      <NavGlass clear={clear} className="glass-solid glass-flat xl:hidden" />
       <div
         ref={railRef}
         className="flex h-11 items-center gap-0.5 overflow-x-auto xl:gap-0 overscroll-x-contain px-1.5 [mask-image:linear-gradient(to_right,transparent,#000_14px,#000_calc(100%-14px),transparent)] [scrollbar-width:none] lg:[justify-content:safe_center] xl:px-2 [&::-webkit-scrollbar]:hidden"

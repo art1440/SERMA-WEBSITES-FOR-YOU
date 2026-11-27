@@ -35,9 +35,11 @@ export function HeroChapter() {
       id="home"
       aria-labelledby="hero-title"
       data-theme="dark"
-      className="hero-night relative isolate min-h-[100svh] overflow-hidden bg-[#062334] text-bone"
+      className="hero-night relative isolate -mt-16 min-h-[100svh] overflow-hidden sm:-mt-[4.25rem] bg-[#062334] text-bone"
     >
       <SoffitGradient />
+      {/* The navbar's sentinel: once this scrolls past the top, the bar turns back into glass. */}
+      <span data-hero-end aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-[4.5rem] h-px" />
       {/* Readability scrim: the gradient's own ground colour pooled behind the copy column, so the
           light can blaze at the edges without ever passing under a word. Static, no blur. */}
       <div
