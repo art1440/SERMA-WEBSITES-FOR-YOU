@@ -3,10 +3,9 @@
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { type MouseEvent, type ReactNode } from "react";
-import { AmbientField } from "@/components/ui/AmbientField";
 import { HeroSaleChip } from "@/components/sections/LaunchOffer";
-import { HeroLight } from "@/components/ui/HeroLight";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { SoffitGradient } from "@/components/ui/SoffitGradient";
 import { useLanguage } from "@/context/LanguageContext";
 import { useMockup } from "@/context/MockupContext";
 import { EASE_EDITORIAL } from "@/lib/motion";
@@ -14,8 +13,8 @@ import { useReducedMotionSafe } from "@/lib/useReducedMotionSafe";
 import { goToPricing } from "@/lib/scroll";
 
 /**
- * Static hero: one screen, no scroll track, no 3D. The only motion is the
- * one-time entrance (headline mask reveal, then sub copy and CTAs).
+ * One-screen hero over the Soffit WebGL2 light field (shader-only motion, pointer-steered),
+ * plus the one-time entrance (headline mask reveal, then sub copy and CTAs).
  */
 export function HeroChapter() {
   const { t } = useLanguage();
@@ -36,10 +35,15 @@ export function HeroChapter() {
       id="home"
       aria-labelledby="hero-title"
       data-theme="dark"
-      className="relative isolate min-h-[100svh] overflow-hidden"
+      className="hero-night relative isolate min-h-[100svh] overflow-hidden bg-[#062334] text-bone"
     >
-      <AmbientField variant={0} />
-      <HeroLight />
+      <SoffitGradient />
+      {/* Readability scrim: the gradient's own ground colour pooled behind the copy column, so the
+          light can blaze at the edges without ever passing under a word. Static, no blur. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_62%_54%_at_50%_54%,rgb(6_35_52/0.72),rgb(6_35_52/0.38)_55%,transparent_82%)] max-sm:bg-[radial-gradient(ellipse_95%_60%_at_50%_52%,rgb(6_35_52/0.72),rgb(6_35_52/0.4)_60%,transparent_90%)]"
+      />
 
       <div className="frame relative flex min-h-[100svh] flex-col items-center justify-center pb-12 pt-28 text-center lg:pb-16 lg:pt-28">
         <div className="flex min-w-0 flex-col items-center">

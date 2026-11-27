@@ -27,3 +27,16 @@
   transition-duration: var(--dur-base);
   transition-timing-function: var(--ease-editorial);
 }
+
+/* Soffit hero light: the canvas draws one frame, then the light comes up out of the shade.
+ * One-shot opacity only — every per-frame change lives in the shader. */
+.soffit {
+  opacity: 0;
+  transition: opacity 1400ms var(--ease-editorial);
+}
+.soffit[data-ready="true"] {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .soffit { transition: none; }
+}

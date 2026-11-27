@@ -59,7 +59,10 @@
   /* Warm moon / stars (only drawn in dark mode). */
   --star: 246 214 139;
 }
-html.dark {
+/* .hero-night: the hero sits on the Soffit light field (a deep night ground) in BOTH schemes,
+   so it borrows the dark token set locally and its copy stays light over the gradient. */
+html.dark,
+.hero-night {
   color-scheme: dark;
   --ink: 10 18 32;
   --ink-900: 19 31 53;
